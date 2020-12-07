@@ -1,0 +1,153 @@
+<script src="https://unpkg.com/vue"></script>
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<!-- 引入组件库 -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<div id="app">
+    <h2> ClusterMap</h2>
+    <el-row>
+        <div>
+            <el-row>
+                <el-col :offset="8" :span="8" class="imgRow">
+                    <img :src="neighborsMap" class="imgStyle"/>
+
+                </el-col>
+            </el-row>
+            <el-row>
+                <div class="tableName">Figure</div>
+            </el-row>
+
+        </div>
+    </el-row>
+    <el-row class="imgRow">
+        <div v-for="(srcPath, index) in imgPath">
+            <el-col :span="8">
+                <img :src="srcPath" class="imgStyle"/>
+            </el-col>
+        </div>
+    </el-row>
+    <el-row>
+        <div class="tableName">Figure</div>
+    </el-row>
+
+    <el-row>
+        <el-col :span="8" :offset="8">
+            <div class="tableName">Table Values of Moran's coefficient for the six variables. P-values obtained by a
+                randomization testing
+                procedure (999 permutations) are given in parentheses
+            </div>
+            <el-table :data="dataTable" style="width: 100%" align="center">
+                <el-table-column prop="name" label="Name" width="180">
+                </el-table-column>
+                <el-table-column prop="value" label="MC" width="180" align="right">
+                </el-table-column>
+            </el-table>
+        </el-col>
+    </el-row>
+</div>
+
+<style>
+    .imgStyle {
+        width: 100%;
+        height: auto;
+    }
+
+    .imgRow {
+        border: 2px solid rgb(0, 0, 0);
+    }
+
+    .tableName {
+        font-style: italic;
+        font-size: 14px;
+        text-align: center;
+
+    }
+</style>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            neighborsMap: "http://223.2.44.111:8081/data_service/fetch/5ec523f226e21770b6f3295c",
+            imgPath: [
+                "http://223.2.44.111:8081/data_service/fetch/5ec5231326e21770b6f3292b",
+                "http://223.2.44.111:8081/data_service/fetch/5ec5232026e21770b6f32932",
+                "http://223.2.44.111:8081/data_service/fetch/5ec5239d26e21770b6f32940",
+                "http://223.2.44.111:8081/data_service/fetch/5ec523af26e21770b6f3294a",
+                "http://223.2.44.111:8081/data_service/fetch/5ec523b626e21770b6f32951",
+                "http://223.2.44.111:8081/data_service/fetch/5ec523f226e21770b6f32958",
+            ],
+            mc: []
+
+
+        },
+        methods: {
+            async fetchMC(url) {
+                let data = await (await fetch(url)).text();
+                return data.split("\r\n")[1].split(",")[1];
+            }
+
+        },
+        async mounted() {
+            let Crime_pers = await this.fetchMC(
+                "http://223.2.44.111:8081/data_service/fetch/5ec5231326e21770b6f3292d");
+            let Crime_prop = await this.fetchMC(
+                "http://223.2.44.111:8081/data_service/fetch/5ec5232026e21770b6f32934");
+            let Literacy = await this.fetchMC(
+                "http://223.2.44.111:8081/data_service/fetch/5ec5239d26e21770b6f32942");
+            let Donations = await this.fetchMC(
+                "http://223.2.44.111:8081/data_service/fetch/5ec523f226e21770b6f3295a");
+            let Infants = await this.fetchMC(
+                "http://223.2.44.111:8081/data_service/fetch/5ec523af26e21770b6f3294c");
+            let Suicides = await this.fetchMC(
+                "http://223.2.44.111:8081/data_service/fetch/5ec523b626e21770b6f32953");
+            this.mc.push({
+                name: "Crime_pers",
+                value: Crime_pers
+            })
+            this.mc.push({
+                name: "Crime_prop",
+                value: Crime_prop
+            })
+
+            this.mc.push({
+                name: "Literacy",
+                value: Literacy
+            })
+
+            this.mc.push({
+                name: "Donations",
+                value: Donations
+            })
+
+            this.mc.push({
+                name: "Infants",
+                value: Infants
+            })
+
+            this.mc.push({
+                name: "Suicides",
+                value: Suicides
+            })
+        },
+        computed: {
+            dataTable() {
+                let arr = [];
+                this.mc.forEach(
+                    ({
+                         name,
+                         value
+                     }) => {
+                        let val = parseFloat(value).toFixed(3) + "(0.001)";
+                        let inner = {
+                            name,
+                            value: val
+                        };
+                        arr.push(inner);
+                    }
+                );
+                console.log(arr);
+                return arr;
+            }
+        }
+    })
+</script>

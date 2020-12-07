@@ -1,0 +1,58 @@
+{
+  "id": "999014",
+  "name": "myIcon",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "129300",
+      "name": "data",
+      "font_class": "data",
+      "unicode": "e8de",
+      "unicode_decimal": 59614
+    },
+    {
+      "icon_id": "211433",
+      "name": "process",
+      "font_class": "process",
+      "unicode": "e6ce",
+      "unicode_decimal": 59086
+    },
+    {
+      "icon_id": "400697",
+      "name": "earth",
+      "font_class": "earth",
+      "unicode": "e6de",
+      "unicode_decimal": 59102
+    },
+    {
+      "icon_id": "586888",
+      "name": "fire",
+      "font_class": "fire",
+      "unicode": "e729",
+      "unicode_decimal": 59177
+    },
+    {
+      "icon_id": "10265400",
+      "name": "data analysis",
+      "font_class": "dataanalysis",
+      "unicode": "e615",
+      "unicode_decimal": 58901
+    },
+    {
+      "icon_id": "11161101",
+      "name": "tree",
+      "font_class": "tree",
+      "unicode": "e848",
+      "unicode_decimal": 59464
+    },
+    {
+      "icon_id": "11891796",
+      "name": "model",
+      "font_class": "model",
+      "unicode": "e66e",
+      "unicode_decimal": 58990
+    }
+  ]
+}
