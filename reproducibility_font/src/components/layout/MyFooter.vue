@@ -1,23 +1,3 @@
-<style scoped>
-.footer {
-  background-color: #515a6e;
-  height: 60px;
-  width: 100%;
-  bottom: 0;
-  flex: 0 0 auto;
-}
-.footerTop {
-  text-align: center;
-  color: white;
-  font-weight: bold;
-  margin-top: 10px;
-}
-.footerBottom {
-  text-align: center;
-  color: white;
-  font-size: 0.8em;
-}
-</style>
 <template>
   <div class="container">
     <div class="footer">
@@ -31,5 +11,22 @@
   </div>
 </template>
 <script>
-export default {};
+export default {}
 </script>
+<style scoped lang="scss">
+.container {
+  height: 60px;
+  width: 100%;
+  background-color: $headerBackground;
+  text-align: center;
+  color: white;
+
+  .footerTop {
+    font-weight: bold;
+    padding-top: 10px;
+  }
+  .footerBottom {
+    font-size: 0.8em;
+  }
+}
+</style>

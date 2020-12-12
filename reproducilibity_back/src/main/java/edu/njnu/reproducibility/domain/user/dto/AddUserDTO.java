@@ -5,6 +5,7 @@ import edu.njnu.reproducibility.domain.user.User;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author ：Zhiyi
@@ -30,7 +31,7 @@ public class AddUserDTO implements ToDomainConverter<User> {
     String homepage;
     String introduction;
     String createdTime;
-    ArrayList<String> organizations;
-    ArrayList<String> domain;
-    ArrayList<String> loginIp;
+    List<String> organizations;
+    List<String> domain;
+    List<String> loginIp;
 }

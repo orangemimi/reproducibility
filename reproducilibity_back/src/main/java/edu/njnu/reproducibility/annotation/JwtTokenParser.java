@@ -15,5 +15,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JwtTokenParser {
-    String key() default "id";
+    String key() default "userId";
 }

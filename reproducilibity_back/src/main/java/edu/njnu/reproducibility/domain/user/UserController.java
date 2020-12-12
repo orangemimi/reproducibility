@@ -1,7 +1,9 @@
 package edu.njnu.reproducibility.domain.user;
 
+import cn.hutool.json.JSONUtil;
 import edu.njnu.reproducibility.annotation.JwtTokenParser;
 import edu.njnu.reproducibility.common.untils.JsonResult;
+import edu.njnu.reproducibility.common.untils.ResultUtils;
 import edu.njnu.reproducibility.domain.user.dto.AddUserDTO;
 import edu.njnu.reproducibility.domain.user.dto.UpdateUserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +28,8 @@ public class UserController {
     }
 
     @RequestMapping (value = "/login", method = RequestMethod.POST)
-    public String doLogin(@RequestParam ("email") String email,@RequestParam ("password") String password) {
-        return userService.login(email, password);
+    public JsonResult doLogin(@RequestParam ("email") String email,@RequestParam ("password") String password) {
+        return ResultUtils.success(userService.login(email, password));
     }
 
     @RequestMapping (value = "", method = RequestMethod.PATCH)
@@ -39,6 +41,4 @@ public class UserController {
     public JsonResult forgetPassword(String email,String password) {
         return userService.forgetPassword(email,password);
     }
-
-
 }

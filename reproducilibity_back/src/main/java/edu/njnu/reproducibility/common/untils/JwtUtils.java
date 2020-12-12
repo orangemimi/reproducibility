@@ -27,11 +27,12 @@ public class JwtUtils {
     private static final String TOKEN_PREFIX = "Bearer";
     private static final Key KEY = new SecretKeySpec(SECRET.getBytes(), SignatureAlgorithm.HS256.getJcaName());
 
-    public static String generateToken(String userId, String name, String password) {
+    public static String generateToken(String userId, String name, String password, String avatar) {
         HashMap<String, Object> map = new HashMap<>(30);
         map.put("userId", userId);
-        map.put("name", name);
+        map.put("userName", name);
         map.put("password", password);
+        map.put("avatar", avatar);
         map.put("type", "JWT");
         return Jwts.builder()
                 .setClaims(map)

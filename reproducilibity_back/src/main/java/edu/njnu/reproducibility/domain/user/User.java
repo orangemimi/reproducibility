@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author ：Zhiyi
@@ -41,17 +42,15 @@ public class User extends BaseEntity {
     String homepage;
     String introduction;
     String createdTime;
-    ArrayList<String> organizations;
-    ArrayList<String> domain;
-    ArrayList<String> loginIp;
+    List<String> organizations;
+    List<String> domain;
+    List<String> loginIp;
     //private ArrayList<String> resource;
 
     /**
      * Unique
      * adi
      */
-    private ArrayList<String> joinedProjects;
-    private ArrayList<String> manageProjects;
-
-
+    List<String> joinedProjects;
+    List<String> createdProjects;
 }

@@ -1,9 +1,11 @@
 package edu.njnu.reproducibility.domain.user.dto;
 
-import com.alibaba.fastjson.JSONArray;
+import cn.hutool.json.JSONArray;
 import edu.njnu.reproducibility.common.dto.ToDomainConverter;
 import edu.njnu.reproducibility.domain.user.User;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * @Author ：Zhiyi
@@ -29,6 +31,6 @@ public class UpdateUserDTO implements ToDomainConverter<User> {
     String homePage;
     String avatar;
 
-    JSONArray joinedProjects;
-    JSONArray manageProjects;
+    List<String> joinedProjects;
+    List<String> createdProjects;
 }

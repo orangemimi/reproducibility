@@ -9,6 +9,7 @@ import mavonEditor from "mavon-editor";
 import "mavon-editor/dist/css/index.css";
 
 import "./assets/iconfont/iconfont.css";
+// import "./assets/variable.scss";
 
 Vue.config.productionTip = false;
 Vue.use(ElementUI);

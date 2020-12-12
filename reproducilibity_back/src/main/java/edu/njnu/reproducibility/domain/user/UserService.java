@@ -1,7 +1,6 @@
 package edu.njnu.reproducibility.domain.user;
 
 import cn.hutool.core.lang.UUID;
-import cn.hutool.json.JSON;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import edu.njnu.reproducibility.common.enums.ResultEnum;
@@ -48,11 +47,20 @@ public class UserService {
         return ResultUtils.success(userRepository.save(userFromDB));
     }
 
-    public String login(String email, String password) {
+    public JSONObject login(String email, String password) {
         User userFromDB = userRepository.findByEmail(email).orElseThrow(MyException::noObject);
         if(userFromDB.getPassword().equals(password)){
-            String jwtToken = JwtUtils.generateToken(userFromDB.getUserId(), userFromDB.getName(), password);
-            return "Bearer" + " " + jwtToken;
+            String jwtToken = JwtUtils.generateToken(userFromDB.getUserId(), userFromDB.getName(), password,userFromDB.getAvatar());
+            JSONObject json = new JSONObject();
+            json.put("userName",userFromDB.getName());
+            json.put("avatar",userFromDB.getAvatar());
+            json.put("joinedProjects",userFromDB.getJoinedProjects());
+            json.put("createdProjects",userFromDB.getCreatedProjects());
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("token","Bearer" + " " + jwtToken);
+            jsonObject.put("userInfo",json);
+            return jsonObject;
         }else{
             throw new MyException(ResultEnum.USER_PASSWORD_NOT_MATCH);
         }

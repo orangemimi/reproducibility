@@ -5,6 +5,7 @@ import edu.njnu.reproducibility.common.enums.ResultEnum;
 import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.common.untils.JwtUtils;
 import edu.njnu.reproducibility.domain.user.User;
+import edu.njnu.reproducibility.domain.user.UserRepository;
 import edu.njnu.reproducibility.domain.user.UserService;
 import io.jsonwebtoken.Claims;
 import org.aspectj.lang.annotation.Aspect;
@@ -18,6 +19,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 /**
  * @ClassName NeedAuthAspect
@@ -31,11 +33,11 @@ import javax.servlet.http.HttpServletResponse;
 @Order(2)
 public class NeedAuthAspect {
     private static final String TOKEN_PREFIX = "Bearer";
-    private static final String NAME = "name";
+    private static final String USER_ID = "userId";
     private static final String PASSWORD = "password";
 
     @Autowired
-    UserService userService;
+    UserRepository userRepository;
 
     @Pointcut("@annotation(edu.njnu.reproducibility.annotation.NeedAuth)")
     public void point() {
@@ -53,7 +55,7 @@ public class NeedAuthAspect {
             throw new MyException(ResultEnum.NO_TOKEN);
         } else {
             Claims claims = JwtUtils.parseJWT(auth);
-            User creator = userService.findByName((String) claims.get(NAME));
+            User creator = userRepository.findByUserId((String) claims.get(USER_ID)).orElseThrow(MyException::noObject);
             if (creator == null) {
                 response.setStatus(401);
                 throw new MyException(ResultEnum.NO_OBJECT);

@@ -2,71 +2,69 @@
   <div>
     <div class="login-box">
       <div class="radio-group">
-        <div
-          class="radio-btn"
-          :class="{ active: tab == 'login' }"
-          @click="tab = 'login'"
-        >
+        <div class="radio-btn" :class="{ active: tab == 'login' }" @click="tab = 'login'">
           Login
         </div>
-        <div
-          class="radio-btn"
-          :class="{ active: tab == 'register' }"
-          @click="tab = 'register'"
-        >
+        <div class="radio-btn" :class="{ active: tab == 'register' }" @click="tab = 'register'">
           Register
         </div>
       </div>
-      <el-input placeholder="Please enter your name" v-model="formItem.name"> </el-input>
-      <el-input
-        placeholder="Please enter the passward"
-        :type="tab == 'login' ? 'password' : 'text'"
-        v-model="formItem.password"
-        style="margin-top: 10px;"
-      >
-      </el-input>
+      <el-form :model="formItem" status-icon ref="formItem" label-width="80px">
+        <el-form-item label="E-mail" prop="pass">
+          <el-input v-model="formItem.email" placeholder="Please enter your name"></el-input>
+        </el-form-item>
+        <el-form-item label="Password" prop="pass">
+          <el-input v-model="formItem.password" type="password" placeholder="Please enter the passward"></el-input>
+        </el-form-item>
+      </el-form>
     </div>
 
     <div class="btn-wrapper">
-      <span class="btn" @click="handleClick">Enter </span>
+      <span class="btn" @click="handleClick">Enter</span>
     </div>
   </div>
 </template>
 
 <script>
-import { post } from "@/axios";
-import { mapActions } from "vuex";
-import md5 from "js-md5";
+import { post } from '@/axios';
+import { mapActions } from 'vuex';
+import md5 from 'js-md5';
+import jwtDecode from 'jwt-decode';
 export default {
   data() {
     return {
-      tab: "login",
+      tab: 'login',
       formItem: {
-        name: "",
-        password: ""
+        email: '',
+        password: ''
       }
     };
   },
   methods: {
-    ...mapActions(["handleLogOut", "handleLogIn"]),
+    ...mapActions(['handleLogOut', 'handleLogIn']),
     async handleClick() {
       try {
         await this.handleLogOut();
         let form = new FormData();
-        form.append("name", this.formItem.name);
-        form.append("password", md5(this.formItem.password));
-        let token = await post(`/creator/${this.tab}`, form);
+        form.append('email', this.formItem.email);
+        form.append('password', md5(this.formItem.password)); //前端加密
+        let data = await post(`/users/login`, form); //name,password,type,userId
+        console.log(data);
+
+        const decode = jwtDecode(data.token);
+        console.log(decode);
+
         await this.handleLogIn({
-          name: this.formItem.name,
-          token
+          userInfo: data.userInfo,
+          token: data.token
         });
-        let redirect = decodeURIComponent(this.$route.query.redirect || "/");
+        let redirect = decodeURIComponent(this.$route.query.redirect || '/');
         if (redirect != undefined) {
           this.$router.push({
             path: redirect
           });
         } else {
-          this.$router.push({ name: "home" });
+          this.$router.push({ name: 'Home' });
         }
       } catch (error) {
         this.$throw(error);
@@ -79,10 +77,10 @@ export default {
 <style lang="scss" scoped>
 .login-box {
   background: #ffffff;
-  width: 240px;
+  width: 400px;
   margin: 20px auto 40px;
   padding: 0 40px 36px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.06);
+  box-shadow: $normalBoxShadow;
   .radio-group {
     text-align: center;
     .radio-btn {
