@@ -46,7 +46,7 @@ export default {
       dialogVisible: false,
       disabled: false,
       uploadFileForm: new FormData(), //上传文件的form
-      fileList: [], //el-upload上传的文件列表,
+      //   fileList: [], //el-upload上传的文件列表,
       dataItemList: [],
       file: {}
     };
@@ -55,9 +55,8 @@ export default {
   methods: {
     //上传文件发生改变时
     onChange(file, fileList) {
+      console.log(fileList);
       this.file = file;
-      this.fileList = fileList;
-      console.log(this.fileList);
     },
 
     handleRemove(file) {
@@ -74,9 +73,9 @@ export default {
       let form = new FormData();
       form.append('pictureFile', file);
       let fileName = await post(`projects/picture`, form);
-      let url = `${window.location.host}/r/pictureFile/${fileName}`;
-
-      console.log(url);
+      let url = `r/pictureFile/${fileName}`;
+      this.file.staticUrl = url;
+      this.$emit('uploadImgResponse', url);
     }
   },
 

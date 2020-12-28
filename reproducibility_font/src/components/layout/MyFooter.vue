@@ -11,7 +11,7 @@
   </div>
 </template>
 <script>
-export default {}
+export default {};
 </script>
 <style scoped lang="scss">
 .container {
@@ -23,7 +23,7 @@ export default {}
 
   .footerTop {
     font-weight: bold;
-    padding-top: 10px;
+    // padding-top: 10px;
   }
   .footerBottom {
     font-size: 0.8em;

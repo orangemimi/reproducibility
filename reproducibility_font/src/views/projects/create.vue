@@ -27,17 +27,18 @@
           <el-input v-model="form.tag" />
         </el-form-item> -->
           <el-form-item label="Image">
-            <add-image></add-image>
+            <add-image @uploadImgResponse="uploadImgResponse"></add-image>
           </el-form-item>
         </el-form>
       </el-col>
     </el-row>
-    <div class="title"><el-button>Create</el-button></div>
+    <div class="title"><el-button @click="createProject">Create</el-button></div>
   </div>
 </template>
 
 <script>
 import addImage from '_com/AddImage';
+import { post, get, patch } from '@/axios';
 export default {
   components: { addImage },
 
@@ -52,14 +53,39 @@ export default {
         description: '',
         privacy: '',
         tag: [],
-        picture: ''
+        picture: '',
+        userInfo: {}
       }
     };
   },
 
-  methods: {},
+  methods: {
+    async createProject() {
+      let data = await post(`/projects`, this.form);
+      console.log(data);
+      this.userInfo.createdProjects.push(data.id);
+      let update = { createdProjects: this.userInfo.createdProjects };
+      await patch(`/users`, update);
 
-  mounted() {}
+      this.$notify({
+        title: 'Success',
+        message: 'You have create the project successfully!',
+        type: 'success'
+      });
+    },
+    async getUserInfo() {
+      let data = await get(`/users`);
+      this.userInfo = data;
+      console.log(data);
+    },
+    uploadImgResponse(val) {
+      this.form.picture = val;
+    }
+  },
+
+  mounted() {
+    this.getUserInfo();
+  }
 };
 </script>
 <style lang="scss" scoped>

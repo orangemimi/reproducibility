@@ -42,7 +42,7 @@ axiosInstance.interceptors.response.use(
       res.data.code == -5 || //TOKEN_WRONG
       res.data.code == -6 // USER_PASSWORD_NOT_MATCH
     ) {
-      store.dispatch('handleLogOut');
+      store.dispatch('user/handleLogOut');
       router.push({
         name: 'Login'
       });

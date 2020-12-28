@@ -1,6 +1,7 @@
 package edu.njnu.reproducibility.domain.user.dto;
 
 import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONObject;
 import edu.njnu.reproducibility.common.dto.ToDomainConverter;
 import edu.njnu.reproducibility.domain.user.User;
 import lombok.Data;
@@ -17,19 +18,23 @@ import java.util.List;
 public class UpdateUserDTO implements ToDomainConverter<User> {
 
     String name;
-    String userName;
     String password;
 
-    String mobilePhone;
-    String gender;
-    String jobTitle;
-    String country;
-    String city;
-    String organization;
-    String introduction;
-    String direction;
-    String homePage;
+    /**
+     * User server
+     */
     String avatar;
+    String phone;
+    String title;
+    String country;
+    String province;    // County / State / Province
+    String city;
+    String homepage;
+    String introduction;
+    String createdTime;
+    List<String> organizations;
+    List<String> domain;
+    List<String> loginIp;
 
     List<String> joinedProjects;
     List<String> createdProjects;

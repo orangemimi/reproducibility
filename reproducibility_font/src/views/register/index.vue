@@ -3,12 +3,28 @@
     <el-row>Register</el-row>
     <el-row>
       <div class="register-form">
-        <el-form ref="registerForm" :rules="registerRules" :model="registerForm" label-width="150px" label-position="right">
-          <el-form-item label="Name" prop="name" required><el-input v-model="registerForm.name" /></el-form-item>
-          <el-form-item label="E-mail" prop="email" required><el-input v-model="registerForm.email" /></el-form-item>
-          <el-form-item label="Password" prop="password" required><el-input v-model="registerForm.password" type="password" autocomplete="off" /></el-form-item>
-          <el-form-item label="Confirm Password" prop="checkPassword" required><el-input v-model="registerForm.checkPassword" type="password" autocomplete="off" /></el-form-item>
-          <el-form-item label="Organization" prop="organization"><el-input v-model="registerForm.organization" /></el-form-item>
+        <el-form
+          ref="registerForm"
+          :rules="registerRules"
+          :model="registerForm"
+          label-width="150px"
+          label-position="right"
+        >
+          <el-form-item label="Name" prop="name" required>
+            <el-input v-model="registerForm.name" />
+          </el-form-item>
+          <el-form-item label="E-mail" prop="email" required>
+            <el-input v-model="registerForm.email" />
+          </el-form-item>
+          <el-form-item label="Password" prop="password" required>
+            <el-input v-model="registerForm.password" type="password" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="Confirm Password" prop="checkPassword" required>
+            <el-input v-model="registerForm.checkPassword" type="password" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="Organization" prop="organization">
+            <el-input v-model="registerForm.organization" />
+          </el-form-item>
         </el-form>
         <el-button @click="toLogin">Login</el-button>
         <el-button @click="reset">Reset</el-button>
@@ -76,7 +92,9 @@ export default {
             name: this.registerForm.name,
             email: this.registerForm.email,
             organization: this.registerForm.organization,
-            password: md5(this.registerForm.password) //前端加密
+            password: md5(this.registerForm.password), //前端加密
+            joinedProjects: [],
+            createdProjects: []
           };
           await post(`/users/register`, form);
           this.$notify({

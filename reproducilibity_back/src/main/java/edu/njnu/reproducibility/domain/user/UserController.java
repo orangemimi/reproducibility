@@ -8,6 +8,7 @@ import edu.njnu.reproducibility.domain.user.dto.AddUserDTO;
 import edu.njnu.reproducibility.domain.user.dto.UpdateUserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @Author ：Zhiyi
@@ -22,9 +23,15 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    @RequestMapping (value = "", method = RequestMethod.GET)
+    public JsonResult getUserInfo(@JwtTokenParser(key="userId") String userId)  {
+        return ResultUtils.success(userService.getUserInfo(userId));
+    }
+
+
     @RequestMapping (value = "/register", method = RequestMethod.POST)
     public JsonResult doRegister(@RequestBody AddUserDTO add) {
-        return userService.register(add);
+        return ResultUtils.success(userService.register(add));
     }
 
     @RequestMapping (value = "/login", method = RequestMethod.POST)
@@ -34,11 +41,11 @@ public class UserController {
 
     @RequestMapping (value = "", method = RequestMethod.PATCH)
     public JsonResult update( @JwtTokenParser(key="userId") String userId, @RequestBody UpdateUserDTO update) {
-        return userService.updateByUserId(userId,update);
+        return ResultUtils.success(userService.updateByUserId(userId,update));
     }
 
     @RequestMapping (value = "/{email}/{password}", method = RequestMethod.PATCH)
     public JsonResult forgetPassword(String email,String password) {
-        return userService.forgetPassword(email,password);
+        return ResultUtils.success(userService.forgetPassword(email,password));
     }
 }

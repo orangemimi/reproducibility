@@ -34,4 +34,7 @@ public class AddUserDTO implements ToDomainConverter<User> {
     List<String> organizations;
     List<String> domain;
     List<String> loginIp;
+
+    List<String> joinedProjects;
+    List<String> createdProjects;
 }

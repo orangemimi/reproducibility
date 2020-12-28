@@ -22,16 +22,19 @@ public class Project extends BaseEntity {
     String id;
     String name;
     String description;
+    String introduction;
     String purpose;
     String privacy;
     String picture;
-//    List<String> tag;
+    List<String> tag;
 
+//    Creator creator;
     String creator;
-    List<String> members;
+    List<Member> members;//type: ['builder', 'rebuilder_explorer','rebuilder_operator', 'visitor']
     Integer level=0;
 
-
-
+    Integer starCount;
+    Integer watchCount;
+    Integer folkCount;
 
 }

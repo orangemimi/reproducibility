@@ -30,7 +30,7 @@ public class JwtUtils {
     public static String generateToken(String userId, String name, String password, String avatar) {
         HashMap<String, Object> map = new HashMap<>(30);
         map.put("userId", userId);
-        map.put("userName", name);
+        map.put("name", name);
         map.put("password", password);
         map.put("avatar", avatar);
         map.put("type", "JWT");

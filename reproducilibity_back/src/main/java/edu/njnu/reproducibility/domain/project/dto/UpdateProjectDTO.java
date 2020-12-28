@@ -1,6 +1,8 @@
 package edu.njnu.reproducibility.domain.project.dto;
 
 import edu.njnu.reproducibility.common.dto.ToDomainConverter;
+import edu.njnu.reproducibility.domain.project.Creator;
+import edu.njnu.reproducibility.domain.project.Member;
 import edu.njnu.reproducibility.domain.project.Project;
 import lombok.Data;
 
@@ -16,8 +18,15 @@ import java.util.List;
 public class UpdateProjectDTO implements ToDomainConverter<Project> {
     String name;
     String description;
+    String introduction;
     String purpose;
     String privacy;
     String picture;
-    List<String> members;
+    List<String> tag;
+
+    List<Member> members;//type: ['builder', 'rebuilder_explorer','rebuilder_operator', 'visitor']
+
+    Integer starCount;
+    Integer watchCount;
+    Integer folkCount;
 }

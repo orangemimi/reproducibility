@@ -33,14 +33,21 @@ public class ProjectController {
         return ResultUtils.success(projectService.get(projectId));
     }
 
-    @RequestMapping (value = "", method = RequestMethod.GET)
-    public JsonResult getAllProjects() {
-        return ResultUtils.success(projectService.getAllProjects());
+    @RequestMapping (value = "/user/{projectId}", method = RequestMethod.GET)
+    public JsonResult getProjectAndUsers(@PathVariable("projectId") String projectId) {
+        return ResultUtils.success(projectService.getProjectAndUsers(projectId));
     }
+
+    @RequestMapping (value = "", method = RequestMethod.GET)
+    public JsonResult getAllProjects(@JwtTokenParser(key = "userId") String userId) {
+        return ResultUtils.success(projectService.getAllProjects(userId));
+    }
+
     @RequestMapping (value = "/createdProjects", method = RequestMethod.GET)
     public JsonResult getCreatedProjectsByUser(@JwtTokenParser(key = "userId") String userId) {
         return ResultUtils.success(projectService.getCreatedProjectsByUser(userId));
     }
+
     @RequestMapping (value = "/joinedProjects", method = RequestMethod.GET)
     public JsonResult getJoinedProjectsByUser(@JwtTokenParser(key = "userId") String userId) {
         return ResultUtils.success(projectService.getJoinedProjectsByUser(userId));
@@ -54,8 +61,8 @@ public class ProjectController {
     }
 
     @RequestMapping (value = "", method = RequestMethod.POST)
-    public JsonResult create(@JwtTokenParser(key="userId") String userId, @RequestBody AddProjectDTO add) {
-        return ResultUtils.success(projectService.create(userId,add));
+    public JsonResult create(@JwtTokenParser(key="userId") String userId,@JwtTokenParser(key="name") String name, @RequestBody AddProjectDTO add) {
+        return ResultUtils.success(projectService.create(userId,name,add));
     }
 
     @RequestMapping (value = "/{projectId}", method = RequestMethod.DELETE)

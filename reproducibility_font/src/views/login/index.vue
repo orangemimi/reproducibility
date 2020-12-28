@@ -14,7 +14,11 @@
           <el-input v-model="formItem.email" placeholder="Please enter your name"></el-input>
         </el-form-item>
         <el-form-item label="Password" prop="pass">
-          <el-input v-model="formItem.password" type="password" placeholder="Please enter the passward"></el-input>
+          <el-input
+            v-model="formItem.password"
+            type="password"
+            placeholder="Please enter the passward"
+          ></el-input>
         </el-form-item>
       </el-form>
     </div>
@@ -26,10 +30,10 @@
 </template>
 
 <script>
-import { post } from '@/axios';
+// import { post } from '@/axios';
 import { mapActions } from 'vuex';
-import md5 from 'js-md5';
-import jwtDecode from 'jwt-decode';
+// import md5 from 'js-md5';
+// import jwtDecode from 'jwt-decode';
 export default {
   data() {
     return {
@@ -41,23 +45,13 @@ export default {
     };
   },
   methods: {
-    ...mapActions(['handleLogOut', 'handleLogIn']),
+    ...mapActions({ logout: 'user/handleLogOut' }),
     async handleClick() {
       try {
-        await this.handleLogOut();
-        let form = new FormData();
-        form.append('email', this.formItem.email);
-        form.append('password', md5(this.formItem.password)); //前端加密
-        let data = await post(`/users/login`, form); //name,password,type,userId
-        console.log(data);
+        await this.logout();
+        //如果需要向actions里面传值就手动调用,不能使用this.方法名 调用
+        await this.$store.dispatch('user/handleLogIn', this.formItem);
 
-        const decode = jwtDecode(data.token);
-        console.log(decode);
-
-        await this.handleLogIn({
-          userInfo: data.userInfo,
-          token: data.token
-        });
         let redirect = decodeURIComponent(this.$route.query.redirect || '/');
         if (redirect != undefined) {
           this.$router.push({
@@ -107,7 +101,7 @@ export default {
     padding: 12px 32px;
     background: rgba(0, 0, 0, 0.5);
     color: #ffffff;
-    transition: background 0.3s ease;
+    transition: rgba(0, 0, 0, 0.5) 0.3s ease;
     font-size: 14px;
     border-radius: 50px;
     &:hover {

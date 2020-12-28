@@ -3,7 +3,8 @@
     <div class="header">
       <router-view name="header"></router-view>
     </div>
-    <div class="main" :style="{ minHeight: contentHeight - 120 + 'px' }">
+    <!-- <div class="main" :style="{ minHeight: contentHeight - 120 + 'px' }"> -->
+    <div class="main" style="min-height: calc(100vh - 120px)">
       <router-view name="main"></router-view>
     </div>
     <div class="footer">
@@ -17,17 +18,17 @@ export default {
   data() {
     return {
       contentHeight: 0
-    }
+    };
   },
   methods: {
     initSize() {
-      this.contentHeight = window.innerHeight
+      this.contentHeight = window.innerHeight;
     }
   },
   created() {
-    this.initSize()
+    this.initSize();
   }
-}
+};
 </script>
 
 <style scoped lang="scss">

@@ -1,69 +1,134 @@
 import Vue from 'vue';
-import VueRouter from 'vue-router';
-import routes from './routes';
+import Router from 'vue-router';
 
-const originalPush = VueRouter.prototype.push;
-VueRouter.prototype.push = function push(location) {
-  return originalPush.call(this, location).catch(err => err);
-};
-Vue.use(VueRouter);
+Vue.use(Router);
 
-const router = new VueRouter({
-  routes
-});
-
-router.beforeEach((to, from, next) => {
-  try {
-    document.title = to.meta.title;
-  } catch (e) {
-    console.warn('load title warning!');
+/**
+ * meta可配置的参数有：
+ * meta:{
+ * title:(string)
+ * requireAuth:(true)
+ * roles: ['builder', 'rebuilder_explorer','rebuilder_operator', 'visitor']
+ * }
+ */
+export const constantRoutes = [
+  {
+    path: '*',
+    name: 'error_404',
+    meta: {
+      title: '404-页面不存在'
+    },
+    component: () => import('@/views/error-page/404.vue')
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    meta: {
+      title: 'Login'
+    },
+    component: () => import('@/views/login')
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    meta: {
+      title: 'Register'
+    },
+    component: () => import('@/views/register')
+  },
+  {
+    path: '/',
+    redirect: '/home',
+    component: () => import('_com/layout/NormalLayout.vue'),
+    children: [
+      {
+        path: '/home',
+        name: 'Home',
+        meta: {
+          title: 'r2 | home'
+        },
+        components: {
+          header: () => import('_com/layout/MyHeader.vue'),
+          main: () => import('@/views/home'),
+          footer: () => import('_com/layout/MyFooter.vue')
+        }
+      },
+      {
+        path: '/projects',
+        name: 'Projects',
+        meta: {
+          title: 'r2 | projects'
+        },
+        components: {
+          header: () => import('_com/layout/MyHeader.vue'),
+          main: () => import('@/views/projects'),
+          footer: () => import('_com/layout/MyFooter.vue')
+        }
+      },
+      {
+        path: '/newproject',
+        name: 'NewProject',
+        meta: {
+          title: 'newproject',
+          requireAuth: true
+        },
+        components: {
+          header: () => import('_com/layout/MyHeader.vue'),
+          main: () => import('@/views/projects/create'),
+          footer: () => import('_com/layout/MyFooter.vue')
+        }
+      },
+      {
+        path: '/project/:id',
+        name: 'Project',
+        meta: {
+          title: 'r2 | project',
+          requireAuth: true
+          // roles: ['builder'] // or you can only set roles in sub nav
+        },
+        components: {
+          header: () => import('_com/layout/MyHeader.vue'),
+          main: () => import('@/views/project'),
+          footer: () => import('_com/layout/MyFooter.vue')
+        },
+        children: [
+          {
+            path: 'info',
+            name: 'Information',
+            component: () => import('@/views/project/info'),
+            meta: {
+              requireAuth: true,
+              roles: ['builder', 'visitor'] // or you can only set roles in sub nav
+            }
+          },
+          {
+            path: 'construction',
+            name: 'Construction',
+            component: () => import('@/views/project/construction'),
+            meta: {
+              requireAuth: true,
+              roles: ['builder'] // or you can only set roles in sub nav
+            }
+          }
+        ]
+      }
+    ]
   }
+];
 
-  if (to.matched.some(r => r.meta.requireAuth)) {
-    // this route requires auth, check if logged in
-    // if not, redirect to login page.
-    //默认token存在
-    const token = localStorage.getItem('token');
-    if (token) {
-      // if (to.name === 'Login') {
-      //   // 已登录且要跳转的页面不是登录页，需要进行权限验证
-      //   next({
-      //     name: 'Home' // 跳转到home页
-      //   });
-      // } else {
-      //   // store
-      //   //   .dispatch('GetUserInfo')
-      //   //   .then(res => {
-      //   //     // 拉取user_info
-      //   //     const roles = res.data.data.roles; // note: roles must be a array! such as: ['editor','develop']
-      //   //     store.dispatch('GenerateRoutes', { roles }).then(() => {
-      //   //       // 根据roles权限生成可访问的路由表
-      //   //       router.addRoutes(store.getters.addRouters); // 动态添加可访问路由表
-      //   //       next({ ...to, replace: true }); // hack方法 确保addRoutes已完成 ,set the replace:
-      //   //     });
-      //   //   })
-      //   //   .catch(err => {
-      //   //     store.dispatch('FedLogOut').then(() => {
-      //   //       Message.error(err || 'Verification failed, please login again');
-      //   //       next({ path: '/' });
-      //   //     });
-      //   //   });
-      // }
-    } else {
-      // no token
-      //   next(); // 跳转
-      next({
-        path: '/login',
-        query: { redirect: to.fullPath } //把要跳转的地址作为参数传到下一步,重定向
-      });
-    }
-  } else {
-    next();
-  }
-});
+const createRouter = () =>
+  new Router({
+    // mode: 'history', // require service support
+    // scrollBehavior: () => ({ y: 0 }),
+    routes: constantRoutes
+  });
 
-router.afterEach(() => {
-  window.scrollTo(0, 0);
-});
+const router = createRouter();
+
+// Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
+export function resetRouter() {
+  const newRouter = createRouter();
+  router.matcher = newRouter.matcher; // reset router
+}
 
 export default router;

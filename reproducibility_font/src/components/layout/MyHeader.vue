@@ -14,16 +14,22 @@
           <el-menu-item index="4">Help</el-menu-item>
         </el-menu>
       </el-col>
-      <!-- {{ user.token }} -->
-      <el-col v-if="user.token == null" class="user" :span="3" :offset="7">
-        <el-button @click="register">Regisiter</el-button>
-        <el-button @click="login">Login</el-button>
+      <el-col v-if="user.name == null || user.name == undefined" class="user" :span="3" :offset="7">
+        <el-button @click="register" type="text">Regisiter</el-button>
+        <el-button @click="login" type="text">Login</el-button>
       </el-col>
-      <el-col v-else class="user" :span="1" :offset="9">
-        <el-dropdown placement="bottom-start" v-if="user.userInfo" @command="handleCommond">
-          <avatar :username="user.userInfo.userName" :size="40" style="margin-top: 10px"></avatar>
 
-          <!-- <avatar :username="user.avatar == undefined || null ? user.name : user.avatar" :size="40" style="margin-top: 10px" :title="user.name"></avatar> -->
+      <el-col v-else class="user" :span="1" :offset="9">
+        <el-dropdown placement="bottom-start" @command="handleCommond">
+          <avatar
+            :username="
+              user.avatar != 'undefined' && user.avatar != 'null' && user.avatar != undefined
+                ? user.avatar
+                : user.name
+            "
+            :size="40"
+            style="margin-top: 10px"
+          ></avatar>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="logout">logout</el-dropdown-item>
           </el-dropdown-menu>
@@ -45,7 +51,7 @@ export default {
     ...mapState(['user'])
   },
   methods: {
-    ...mapActions(['handleLogOut']),
+    ...mapActions({ handleLogOut: 'user/handleLogOut' }),
     handleSelect(key) {
       switch (key) {
         case '1':
@@ -58,7 +64,7 @@ export default {
         case '2':
           {
             this.$router.push({
-              name: 'g2s_list'
+              name: 'Projects'
             });
           }
           break;
@@ -127,6 +133,10 @@ export default {
     .el-menu--horizontal > .el-menu-item {
       color: $white;
     }
+
+    .el-menu--horizontal > .el-menu-item.is-active {
+      border-bottom: 2px solid $selectOrangeBorderColor;
+    }
     .el-menu {
       background-color: $headerBackground;
     }
@@ -134,6 +144,7 @@ export default {
     .el-menu--horizontal .el-menu-item:not(.is-disabled):hover {
       background-color: $headerBackground;
       color: $whiteHover;
+      border-bottom: 2px solid $selectOrangeBorderColor;
     }
     .el-menu--horizontal {
       border: none;
