@@ -12,5 +12,5 @@ import lombok.Data;
 public class Member {
     String id;
 //    String name;
-    String type;
+    String role;
 }

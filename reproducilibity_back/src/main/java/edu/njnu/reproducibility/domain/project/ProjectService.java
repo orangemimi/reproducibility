@@ -9,18 +9,11 @@ import edu.njnu.reproducibility.domain.project.dto.AddProjectDTO;
 import edu.njnu.reproducibility.domain.project.dto.UpdateProjectDTO;
 import edu.njnu.reproducibility.domain.user.User;
 import edu.njnu.reproducibility.domain.user.UserService;
-import edu.njnu.reproducibility.domain.user.dto.UpdateUserDTO;
 import edu.njnu.reproducibility.utils.FileUtil;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ClassUtils;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.yaml.snakeyaml.util.ArrayUtils;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -61,7 +54,7 @@ public class ProjectService {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("id",member.getUserId());
             jsonObject.put("name",member.getName());
-            jsonObject.put("type",memberIdList.get(i).getType());
+            jsonObject.put("role",memberIdList.get(i).getRole());
             memberList.add(jsonObject);
         }
 

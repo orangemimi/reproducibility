@@ -73,7 +73,7 @@ export default {
       let form = new FormData();
       form.append('pictureFile', file);
       let fileName = await post(`projects/picture`, form);
-      let url = `r/pictureFile/${fileName}`;
+      let url = `${window.location.host}/r/pictureFile/${fileName}`;
       this.file.staticUrl = url;
       this.$emit('uploadImgResponse', url);
     }

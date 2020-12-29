@@ -6,10 +6,6 @@
         <el-col :span="12">
           <div class="info-card">
             <div class="info-card-top">
-              <div class="info-img">
-                <img src="r/pictureFile/f97dcd2d-e1cf-4c10-a99c-d40667ba0899地球2.png " />
-              </div>
-
               <div class="info-detail">
                 <div class="content">
                   <strong>Title:</strong>
@@ -25,8 +21,7 @@
                 </div>
                 <div class="content">
                   <strong>Tag:</strong>
-                  <div v-for="(item, index) in projectInfo.tag" :key="index"></div>
-                  {{ item }}
+                  <div v-for="(item, index) in projectInfo.tag" :key="index">{{ item }}</div>
                 </div>
 
                 <div class="content">
@@ -36,6 +31,32 @@
                 <div class="content">
                   <strong>Update time:</strong>
                   {{ projectInfo.updateTime }}
+                </div>
+              </div>
+
+              <div class="info-img">
+                <div style="float:right">
+                  <el-button-group>
+                    <el-button type="info" plain size="small">Edit</el-button>
+                  </el-button-group>
+                  <el-button-group>
+                    <el-button type="info" plain size="small">
+                      <i class="el-icon-share"></i>
+                    </el-button>
+                    <el-button type="info" plain size="small">
+                      <i class="el-icon-more"></i>
+                    </el-button>
+                  </el-button-group>
+                </div>
+                <div>
+                  <avatar
+                    username="projectInfo.name"
+                    :src="projectInfo.picture"
+                    :size="150"
+                    style="margin-top: 10px"
+                    :rounded="false"
+                    class="avatar-img"
+                  ></avatar>
                 </div>
               </div>
             </div>
@@ -56,10 +77,37 @@
           </div>
         </el-col>
         <el-col :span="12">
-          <div class="info-card">
-            {{ creator }}
-            <div class="" v-for="(member, index) in members" :key="index">
-              {{ member.name }}
+          <div class="info-card-right">
+            <div class="participants">
+              <div class="info">
+                <div class="title">Participants</div>
+                <div class="add-participant">
+                  <el-button size="small">+ Add participants</el-button>
+                </div>
+              </div>
+
+              <div class="content">
+                <vue-scroll :ops="ops" class="scroll" style="height: calc(100vh - 554px);">
+                  <user-card :user="{ name: creator.name, role: 'builder' }" class=""></user-card>
+                  <div v-for="(member, index) in members" :key="index">
+                    <!-- {{ { name: member.name, role: member.role } }} -->
+                    <user-card :user="member"></user-card>
+                  </div>
+                </vue-scroll>
+              </div>
+            </div>
+            <div class="citation">
+              <div class="info">
+                <div class="title">Citation</div>
+                <div class="edit">
+                  <el-button size="small">Edit</el-button>
+                </div>
+              </div>
+
+              <!-- bind with document -->
+              <div class="content">
+                <el-input></el-input>
+              </div>
             </div>
           </div>
         </el-col>
@@ -70,15 +118,32 @@
 
 <script>
 import { get } from '@/axios';
+import Avatar from 'vue-avatar';
+import userCard from '_com/UserCard';
+// import reBuilderCard from '_com/UserCard/ReBuilderCard';
 export default {
-  components: {},
+  components: {
+    Avatar,
+    userCard
+    // reBuilderCard
+  },
 
   watch: {},
 
   computed: {},
 
   data() {
-    return { projectId: this.$route.params.id, projectInfo: {}, creator: {}, members: [] };
+    return {
+      projectId: this.$route.params.id,
+      projectInfo: {},
+      creator: {},
+      members: [],
+      ops: {
+        bar: {
+          background: '#808695'
+        }
+      }
+    };
   },
 
   methods: {
@@ -115,23 +180,27 @@ export default {
       width: 100%;
       height: 280px;
 
-      .info-img {
-        width: 280px;
-        height: 100%;
-        border: 1px solid $btnBorder;
-        float: left;
-        margin-right: 32px;
-
-        img {
-          width: 100%;
-          height: 100%;
-        }
-      }
       .info-detail {
+        width: 60%;
         height: 100%;
-
+        float: left;
         .content {
           margin-bottom: 5px;
+        }
+      }
+
+      .info-img {
+        // width: 40%;
+        // height: 100%;
+        float: right;
+        // border: 1px solid $btnBorder;
+        .avatar-img {
+          float: right;
+          border: 1px solid $btnBorder;
+        }
+        .el-avatar {
+          float: right;
+          border: 1px solid $btnBorder;
         }
       }
     }
@@ -157,6 +226,71 @@ export default {
           height: 200px;
           border: 1px dotted $btnBorder;
         }
+      }
+    }
+  }
+
+  .info-card-right {
+    background-color: white;
+    min-height: calc(100vh - 242px);
+    padding: 20px 32px;
+    .participants {
+      .info {
+        height: 32px;
+        line-height: 32px;
+        margin-bottom: 5px;
+        .title {
+          float: left;
+          font-weight: 800;
+        }
+        .add-participant {
+          float: right;
+          .el-button {
+            background-color: $contain2Background;
+            color: $normalFontColor;
+            font-weight: 400;
+            font-family: inherit;
+          }
+          .el-button:hover {
+            color: $normalFontColor;
+            border-color: $btnBorder;
+            background-color: $btnHoverBg;
+          }
+        }
+      }
+      .content {
+        .scroll {
+        }
+      }
+    }
+
+    .citation {
+      .info {
+        margin-bottom: 5px;
+
+        .title {
+          float: left;
+          font-weight: 800;
+        }
+        .edit {
+          float: right;
+          .el-button {
+            background-color: $contain2Background;
+            color: $normalFontColor;
+            font-weight: 400;
+            font-family: inherit;
+          }
+          .el-button:hover {
+            color: $normalFontColor;
+            border-color: $btnBorder;
+            background-color: $btnHoverBg;
+          }
+        }
+      }
+
+      .content {
+        margin-top: 5px;
+        height: 200px;
       }
     }
   }

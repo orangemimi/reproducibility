@@ -13,9 +13,13 @@ import './assets/iconfont/iconfont.css';
 import '@/router/permission'; // permission control
 // import "./assets/variable.scss";
 
+// 滚轮样式
+import vuescroll from 'vuescroll';
+
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
 Vue.use(mavonEditor);
+Vue.use(vuescroll);
 
 Vue.config.errorHandler = errorHandler;
 Vue.prototype.$throw = error => errorHandler(error, this);
