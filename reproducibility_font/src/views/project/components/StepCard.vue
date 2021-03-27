@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="card">
     <el-row>
       <el-col :span="24">
-        <div class="card">
+        <div>
           <div class="top">
             <div class="title">{{ info.btnType }}</div>
             <div class="top-icon"><i class="el-icon-top-right"></i></div>
@@ -19,16 +19,16 @@
 </template>
 
 <script>
-import ContextContent from './ContextContent';
-// import ConstructionContent from "./ConstructionContent";
-// import ResourceContent from "./ResourceContent";
+import ContextContent from './Context/ContextContent';
+import ConstructionContent from './Construction/ConstructionContent';
+import ResourceContent from './Resource/ResourceContent';
 // import ResultContent from "./ResultContent";
 // import AnalysisContent from "./AnalysisContent";
 export default {
   components: {
-    ContextContent
-    // ConstructionContent,
-    // ResourceContent,
+    ContextContent,
+    ConstructionContent,
+    ResourceContent
     // ResultContent,
     // AnalysisContent,
   },
@@ -89,10 +89,10 @@ export default {
   background: #ffffff;
   box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
   opacity: 1;
-  //   height: 500px;
+  height: 100%;
   margin: 10px;
   .top {
-    background: #444444;
+    background: $headerBackground;
     color: rgb(255, 255, 255);
     font-size: 16px;
     line-height: 30px;

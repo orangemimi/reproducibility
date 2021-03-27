@@ -71,7 +71,7 @@ export default {
         case '3':
           {
             this.$router.push({
-              name: 'resource'
+              name: 'Models'
             });
           }
           break;

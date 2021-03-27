@@ -1,7 +1,9 @@
 package edu.njnu.reproducibility.utils;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
+import edu.njnu.reproducibility.domain.user.User;
 
+import java.util.List;
 import java.util.UUID;
 
 public class Utils {
@@ -59,4 +61,17 @@ public class Utils {
             data.put("convertMdlJson",jsonStates);
             return data;
     }
+
+    public static JSONArray filterUserInfo(List<User> users){
+        JSONArray userList= new JSONArray();
+        for(User user :users){
+            JSONObject jsonObject =new JSONObject();
+            jsonObject.put("value",user.getName());
+            jsonObject.put("userId",user.getUserId());
+            jsonObject.put("email",user.getEmail());
+            userList.add(jsonObject);
+        }
+        return userList;
+    }
+
 }

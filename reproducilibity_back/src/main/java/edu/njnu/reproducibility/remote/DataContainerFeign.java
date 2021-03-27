@@ -17,28 +17,25 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 
 @FeignClient(name = "dataContainer",
-        url = "http://111.229.14.128",
+        url = "http://221.226.60.2:8082",
         fallback = DataContainerFeign.FeignServiceFallBack.class)
 @Primary
 public interface DataContainerFeign {
-    @RequestMapping(value = ":8081/dataitem/addByStorage",method = RequestMethod.POST)
-    JSONObject addData(@RequestBody MultiValueMap<String, Object> form);
+//    @RequestMapping(value = ":8081/dataitem/addByStorage",method = RequestMethod.POST)
+//    JSONObject addData(@RequestBody MultiValueMap<String, Object> form);
 
-    @RequestMapping(value = ":8082/data/{id}",method = RequestMethod.GET)
+    @RequestMapping(value = "data/{id}",method = RequestMethod.GET)
     JSONObject download(@RequestBody String urlStr);
 
 
-    @RequestMapping(value = ":8082/data",method = RequestMethod.POST)
+    @RequestMapping(value = "/data",method = RequestMethod.POST)
     JSONObject upload(@RequestBody MultiValueMap<String, Object> form);
 
 
 
     @Component
     class FeignServiceFallBack implements DataContainerFeign {
-        @Override
-        public JSONObject addData(MultiValueMap<String, Object> form) {
-            return null;
-        }
+
 
         @Override
         public JSONObject download(String urlStr) {

@@ -3,7 +3,7 @@
     <el-form
       ref="contextForm"
       :model="contextForm"
-      label-width="150px"
+      label-width="110px"
       @submit.native.prevent
       size="mini"
     >
@@ -30,14 +30,26 @@
           </el-tag>
         </div>
       </el-form-item>
-      <el-form-item label="Simulation Purpose">
+      <el-form-item label="Purpose">
         <el-input v-model="contextForm.purpose" placeholder="Please enter the content."></el-input>
       </el-form-item>
-      <el-form-item label="Simulation Object">
-        <el-input v-model="contextForm.object" placeholder="Please enter the content."></el-input>
+      <el-form-item label="Object">
+        <el-input v-model="contextForm.objects" placeholder="Please enter the content."></el-input>
       </el-form-item>
-      <el-form-item label="Spatio-temporal scale">
-        <el-input v-model="contextForm.scale" placeholder="Please enter the content."></el-input>
+      <el-form-item label="Temporal scale">
+        <el-input
+          v-model="contextForm.temporalScale"
+          placeholder="Please enter the content."
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="Spatio scale">
+        <el-input
+          v-model="contextForm.spatioScale"
+          placeholder="Please enter the content."
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="Method">
+        <el-input v-model="contextForm.methods" placeholder="Please enter the content."></el-input>
       </el-form-item>
       <el-form-item label="Discussion">
         <el-input
@@ -54,6 +66,8 @@
 
 <script>
 import { post, get, patch } from '@/axios';
+import { mapState } from 'vuex';
+
 export default {
   components: {},
   props: {
@@ -61,6 +75,13 @@ export default {
       type: Object
     }
   },
+  computed: {
+    ...mapState({
+      userId: state => state.user.userId,
+      userName: state => state.user.name
+    })
+  },
+
   watch: {
     projectInfo: {
       handler(val) {
@@ -77,22 +98,31 @@ export default {
       contextForm: {
         themes: [],
         purpose: '',
-        object: '',
-        scale: '',
+        objects: '',
+        temporalScale: '',
+        spatialScale: '',
+        methods: '',
         discussion: ''
       },
+
       themeTag: '',
       tagInputVisible: false,
       projectInfomation: this.projectInfo,
-      updateContext: true,
-      userInfo: this.$store.getters.userInfo
+      updateContext: true
     };
   },
+
   methods: {
     async getContext() {
-      let data = await get(
-        `/contextDefinition/${this.projectInfomation.projectId}`
-      );
+      console.log(this.projectInfomation.id);
+      if (this.projectInfomation.id == null) {
+        this.$message({
+          message: 'Get information error!',
+          type: 'error'
+        });
+        return;
+      }
+      let data = await get(`/contextDefinition/${this.projectInfomation.id}`);
       if (data == null) {
         this.updateContext = false;
       } else {
@@ -105,9 +135,8 @@ export default {
         if (valid) {
           if (!this.updateContext) {
             let contextForm = this.contextForm;
-            contextForm.userId = this.userInfo.userId;
-            contextForm.pid = this.projectInfomation.projectId;
-            let data = await post(`/GeoProblemSolving/r/contextDefinition`, contextForm);
+            contextForm.projectId = this.projectInfomation.id;
+            let data = await post(`/contextDefinition`, contextForm);
             this.saveRecord(data, 'created');
             this.$message({
               message: 'You have save the context successfully',
@@ -115,7 +144,7 @@ export default {
             });
           } else {
             let data = await patch(
-              `/GeoProblemSolving/r/contextDefinition/${this.projectInfomation.projectId}`,
+              `/contextDefinition/${this.projectInfomation.id}`,
               this.contextForm
             );
             this.saveRecord(data, 'updated');
@@ -131,12 +160,11 @@ export default {
 
     async saveRecord(context, tag) {
       let record = {};
-      record.eventId = context.id;
-      record.eventType = 'contextDefinition';
-      record.projectId = this.projectInfomation.projectId;
-      record.userId = this.userInfo.userId;
-      record.content = `${this.userInfo.userName} has ${tag} a context definition in this reproducible project`;
-      await post(`/GeoProblemSolving/r/records`, record);
+      record.nodeId = context.id;
+      record.nodeType = 'contextDefinition';
+      record.projectId = this.projectInfomation.id;
+      record.content = `${this.userName} has ${tag} a context definition in this reproducible project`;
+      await post(`/records`, record);
     },
 
     showTagInput() {
@@ -160,13 +188,13 @@ export default {
   },
   created() {},
   mounted() {
-    this.getContext();
+    // this.getContext();
   }
 };
 </script>
 <style lang="scss" scoped>
 .main {
   margin: 0 20px;
-  height: 450px;
+  height: 100%;
 }
 </style>

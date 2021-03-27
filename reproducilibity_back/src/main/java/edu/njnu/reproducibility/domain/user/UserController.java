@@ -28,6 +28,10 @@ public class UserController {
         return ResultUtils.success(userService.getUserInfo(userId));
     }
 
+    @RequestMapping (value = "/like/{email}", method = RequestMethod.GET)
+    public JsonResult getUserInfoLike(@PathVariable String email)  {
+        return ResultUtils.success(userService.getUserInfoLike(email));
+    }
 
     @RequestMapping (value = "/register", method = RequestMethod.POST)
     public JsonResult doRegister(@RequestBody AddUserDTO add) {
@@ -45,7 +49,7 @@ public class UserController {
     }
 
     @RequestMapping (value = "/{email}/{password}", method = RequestMethod.PATCH)
-    public JsonResult forgetPassword(String email,String password) {
+    public JsonResult forgetPassword(@PathVariable String email,@PathVariable String password) {
         return ResultUtils.success(userService.forgetPassword(email,password));
     }
 }

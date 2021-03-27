@@ -7,12 +7,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.util.Assert;
 
 /**
- * @ClassName SplitPageDTO
- * @Description todo
- * @Author sun_liber
- * @Date 2018/9/8
- * @Version 1.0.0
+ * @Author     ：Zhiyi
+ * @Date       ：2021/3/27 9:52
+ * @modified By：
+ * @version:     1.0.0
  */
+
 @Data
 public class SplitPageDTO {
     private Integer page = 0;

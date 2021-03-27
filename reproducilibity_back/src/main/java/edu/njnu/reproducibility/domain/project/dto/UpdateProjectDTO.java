@@ -29,4 +29,11 @@ public class UpdateProjectDTO implements ToDomainConverter<Project> {
     Integer starCount;
     Integer watchCount;
     Integer folkCount;
+
+    //fork detail
+    Boolean isForking; //是否从别的项目Fork出来
+    String forkingProject;
+
+    Boolean isForked;//别的项目fork的本人的项目
+    List<String> forkedProjectList;
 }

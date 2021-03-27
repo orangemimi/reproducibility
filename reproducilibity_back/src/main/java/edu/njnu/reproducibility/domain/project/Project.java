@@ -26,7 +26,7 @@ public class Project extends BaseEntity {
     String purpose;
     String privacy;
     String picture;
-    List<String> tag;
+    List<String> tags;
 
 //    Creator creator;
     String creator;
@@ -36,5 +36,13 @@ public class Project extends BaseEntity {
     Integer starCount;
     Integer watchCount;
     Integer folkCount;
+
+    //fork detail
+    Boolean isForking; //是否从别的项目Fork出来
+    String forkingProject;
+
+    Boolean isForked;
+    List<String> forkedProjectList;
+
 
 }

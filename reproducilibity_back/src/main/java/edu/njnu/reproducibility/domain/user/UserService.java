@@ -1,5 +1,6 @@
 package edu.njnu.reproducibility.domain.user;
 
+import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import edu.njnu.reproducibility.common.enums.ResultEnum;
@@ -9,6 +10,10 @@ import edu.njnu.reproducibility.domain.user.dto.AddUserDTO;
 import edu.njnu.reproducibility.domain.user.dto.UpdateUserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+import static edu.njnu.reproducibility.utils.Utils.filterUserInfo;
 
 /**
  * @Author ：Zhiyi
@@ -25,10 +30,14 @@ public class UserService {
         return userRepository.findByName(s).orElse(null);
     }
 
+    public JSONArray getUserInfoLike(String value) {
+        List<User> userList =userRepository.findByEmailLike(value);
+        return filterUserInfo(userList);
+    }
 
     public User register(AddUserDTO add) {
-        JSONObject userObj= JSONUtil.parseObj(add);
-        if(userRepository.findByEmail(userObj.getStr("email")).isPresent()){
+        JSONObject userObj = JSONUtil.parseObj(add);
+        if (userRepository.findByEmail(userObj.getStr("email")).isPresent()) {
             throw new MyException(ResultEnum.EXIST_OBJECT);
         }
         User user = new User();
@@ -44,21 +53,21 @@ public class UserService {
 
     public JSONObject login(String email, String password) {
         User userFromDB = userRepository.findByEmail(email).orElseThrow(MyException::noObject);
-        if(userFromDB.getPassword().equals(password)){
-            String jwtToken = JwtUtils.generateToken(userFromDB.getUserId(), userFromDB.getName(), password,userFromDB.getAvatar());
+        if (userFromDB.getPassword().equals(password)) {
+            String jwtToken = JwtUtils.generateToken(userFromDB.getUserId(), userFromDB.getName(), password, userFromDB.getAvatar());
             JSONObject json = new JSONObject();
-            json.put("name",userFromDB.getName());
-            json.put("userId",userFromDB.getUserId());
-            json.put("avatar",userFromDB.getAvatar());
-            json.put("joinedProjects",userFromDB.getJoinedProjects());
-            json.put("createdProjects",userFromDB.getCreatedProjects());
-            json.put("token","Bearer" + " " + jwtToken);
+            json.put("name", userFromDB.getName());
+            json.put("userId", userFromDB.getUserId());
+            json.put("avatar", userFromDB.getAvatar());
+            json.put("joinedProjects", userFromDB.getJoinedProjects());
+            json.put("createdProjects", userFromDB.getCreatedProjects());
+            json.put("token", "Bearer" + " " + jwtToken);
 
 //            JSONObject jsonObject = new JSONObject();
 //            jsonObject.put("token","Bearer" + " " + jwtToken);
 //            jsonObject.put("userInfo",json);
             return json;
-        }else{
+        } else {
             throw new MyException(ResultEnum.USER_PASSWORD_NOT_MATCH);
         }
 
@@ -75,9 +84,11 @@ public class UserService {
         return userFromDB;
     }
 
-    public User getUserInfoById( String userId) {
+    public User getUserInfoById(String userId) {
         User userFromDB = userRepository.findByUserId(userId).orElseThrow(MyException::noObject);
         return userFromDB;
 
     }
+
+
 }

@@ -2,9 +2,11 @@
 <template>
   <div class="upload-container">
     <el-upload
+      ref="upload"
       list-type="picture-card"
       :on-change="onChange"
       :http-request="submitUpload"
+      :file-list="fileList"
       action
       :auto-upload="true"
     >
@@ -25,7 +27,7 @@
         </span>
       </div>
     </el-upload>
-    <el-dialog :visible.sync="dialogVisible">
+    <el-dialog :visible.sync="dialogVisible" style="z-index:9999">
       <img width="100%" :src="dialogImageUrl" alt="" />
     </el-dialog>
   </div>
@@ -33,12 +35,36 @@
 
 <script>
 import { post } from '@/axios';
+
+import { mapState } from 'vuex';
 export default {
+  props: {
+    fileUrl: {
+      type: String
+    },
+    uploadPath: {
+      type: String
+    }
+  },
+
   components: {},
 
-  watch: {},
+  watch: {
+    fileUrl: {
+      handler(val) {
+        if (val) {
+          this.fileList = [{ url: this.fileUrl }];
+        }
+      },
+      deep: true
+    }
+  },
 
-  computed: {},
+  computed: {
+    ...mapState({
+      userId: state => state.user.userId
+    })
+  },
 
   data() {
     return {
@@ -46,40 +72,52 @@ export default {
       dialogVisible: false,
       disabled: false,
       uploadFileForm: new FormData(), //上传文件的form
-      //   fileList: [], //el-upload上传的文件列表,
+      fileList: [], //el-upload上传的文件列表,
       dataItemList: [],
       file: {}
+      // ordinaryFileUrl:
     };
   },
 
   methods: {
     //上传文件发生改变时
-    onChange(file, fileList) {
-      console.log(fileList);
+    onChange(file) {
       this.file = file;
+      this.fileList = [file];
     },
 
     handleRemove(file) {
+      this.$refs.upload.clearFiles();
       console.log(file);
     },
+
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
     },
+
     handleDownload(file) {
       console.log(file);
     },
+
     async submitUpload({ file }) {
       let form = new FormData();
       form.append('pictureFile', file);
-      let fileName = await post(`projects/picture`, form);
-      let url = `${window.location.host}/r/pictureFile/${fileName}`;
+      let fileName = await post(`${this.uploadPath}`, form);
+      let url = `http://${window.location.host}/r/${this.userId}/projectPicture/${fileName}`;
+      console.log(url);
       this.file.staticUrl = url;
       this.$emit('uploadImgResponse', url);
+    },
+    clear() {
+      this.file = {};
+      this.fileUrl = '';
     }
   },
 
-  mounted() {}
+  mounted() {
+    // this.clear();
+  }
 };
 </script>
 <style scoped lang="scss">

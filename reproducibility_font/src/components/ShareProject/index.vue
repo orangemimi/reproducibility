@@ -1,0 +1,78 @@
+<!-- update -->
+<template>
+  <div class="main-contain">
+    <el-row>
+      <el-col :span="24">
+        <!-- <el-input v-model="inputValue" placeholder="Search by email" size="medium"></el-input> -->
+        <el-autocomplete
+          v-model="inputValue"
+          :fetch-suggestions="querySearchAsync"
+          placeholder="Search by email"
+          :trigger-on-focus="false"
+          @select="handleSelect"
+        ></el-autocomplete>
+      </el-col>
+    </el-row>
+    <div class="title"><el-button @click="sendEmail" type="primary">Send</el-button></div>
+  </div>
+</template>
+
+<script>
+import { get, post } from '@/axios';
+export default {
+  props: {
+    projectInfo: {
+      type: Object
+    }
+  },
+
+  computed: {},
+
+  data() {
+    return {
+      //   form: JSON.parse(JSON.stringify(this.projectInfo)),
+      inputValue: '', //输入框的值
+      selectUser: {},
+      searchList: [] //匹配的值
+    };
+  },
+
+  methods: {
+    async getRecipientInfo(email) {
+      let form = new FormData();
+      form.append('value', email);
+
+      let data = await get(`/users/like/${email}`);
+      console.log(data);
+      return data;
+    },
+
+    async querySearchAsync(queryString, callback) {
+      let data = await this.getRecipientInfo(queryString);
+      callback(data);
+    },
+
+    handleSelect(item) {
+      this.selectUser = item;
+    },
+
+    async sendEmail() {
+      let json = { recipient: this.selectUser.email };
+      let data = await post(`/emails/invite`, json);
+      console.log(data);
+      let notice = { recipientId: this.selectUser.userId };
+      let send = await post(`/notices/`, notice);
+      console.log(send);
+    }
+  }
+};
+</script>
+<style lang="scss" scoped>
+.main-contain {
+  //   width: 100%;
+  .title {
+    text-align: right;
+    // width: 100%;
+  }
+}
+</style>

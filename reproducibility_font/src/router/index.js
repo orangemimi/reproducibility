@@ -111,6 +111,32 @@ export const constantRoutes = [
             }
           }
         ]
+      },
+      {
+        path: '/newmodel',
+        name: 'NewModel',
+        meta: {
+          title: 'newmodel',
+          requireAuth: true
+        },
+        components: {
+          header: () => import('_com/layout/MyHeader.vue'),
+          main: () => import('@/views/models/create.vue'),
+          footer: () => import('_com/layout/MyFooter.vue')
+        }
+      },
+      {
+        path: '/models',
+        name: 'Models',
+        meta: {
+          title: 'models',
+          requireAuth: true
+        },
+        components: {
+          header: () => import('_com/layout/MyHeader.vue'),
+          main: () => import('@/views/models/index.vue'),
+          footer: () => import('_com/layout/MyFooter.vue')
+        }
       }
     ]
   }

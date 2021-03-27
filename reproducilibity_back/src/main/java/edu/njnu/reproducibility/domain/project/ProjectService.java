@@ -106,7 +106,7 @@ public class ProjectService {
 
     public Object uploadPicture(MultipartFile upload, String userId) {
         //这里获取的是项目的根路径，直接加上了static/imgupload/下就找到图片，找不到，就直接去电脑文件夹找
-        String filePath = ClassUtils.getDefaultClassLoader().getResource("").getPath() + "static/pictureFile/";
+        String filePath = ClassUtils.getDefaultClassLoader().getResource("").getPath() + "static/"+userId+"/projectPicture/";
         try {
             return FileUtil.uploadFile(upload, filePath);
         } catch (Exception e) {
@@ -116,7 +116,7 @@ public class ProjectService {
 
 
     public Object deletePicture(String fileName, String userId) {
-        String filePath = ClassUtils.getDefaultClassLoader().getResource("").getPath() + "static/pictureFile/" + userId +"/"+ fileName;
+        String filePath = ClassUtils.getDefaultClassLoader().getResource("").getPath() + "static/projectPicture/" + userId +"/"+ fileName;
         return FileUtil.deleteFile(filePath);
     }
 

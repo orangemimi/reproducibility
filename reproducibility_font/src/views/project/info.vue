@@ -20,8 +20,10 @@
                   Reproduction
                 </div>
                 <div class="content">
-                  <strong>Tag:</strong>
-                  <div v-for="(item, index) in projectInfo.tag" :key="index">{{ item }}</div>
+                  <strong style="float:left">Tag:</strong>
+                  <div v-for="(item, index) in projectInfo.tag" :key="index">
+                    <el-tag type="info" style="float:left">{{ item }}</el-tag>
+                  </div>
                 </div>
 
                 <div class="content">
@@ -37,7 +39,9 @@
               <div class="info-img">
                 <div style="float:right">
                   <el-button-group>
-                    <el-button type="info" plain size="small">Edit</el-button>
+                    <el-button type="info" plain size="small" @click="editProjectInfoDialog">
+                      Edit
+                    </el-button>
                   </el-button-group>
                   <el-button-group>
                     <el-button type="info" plain size="small">
@@ -82,7 +86,9 @@
               <div class="info">
                 <div class="title">Participants</div>
                 <div class="add-participant">
-                  <el-button size="small">+ Add participants</el-button>
+                  <el-button size="small" @click="addParticipantDialogShow = true">
+                    + Add participant
+                  </el-button>
                 </div>
               </div>
 
@@ -113,6 +119,29 @@
         </el-col>
       </el-row>
     </el-col>
+
+    <!-- edit the project dialog -->
+    <el-dialog
+      title="Edit Project Info"
+      :visible.sync="editProjectInfoDialogShow"
+      width="40%"
+      :close-on-click-modal="false"
+    >
+      <edit-info-form
+        :projectInfo="projectInfo"
+        @editProjectInfoResponse="editProjectInfoResponse"
+      ></edit-info-form>
+    </el-dialog>
+
+    <!-- share the project with email  -->
+    <el-dialog
+      :title="'Invite a collaborator to ' + projectInfo.name"
+      :visible.sync="addParticipantDialogShow"
+      width="40%"
+      :close-on-click-modal="false"
+    >
+      <share-project></share-project>
+    </el-dialog>
   </div>
 </template>
 
@@ -120,11 +149,15 @@
 import { get } from '@/axios';
 import Avatar from 'vue-avatar';
 import userCard from '_com/UserCard';
+import editInfoForm from './components/EditProjectInfo';
+import shareProject from '_com/ShareProject';
 // import reBuilderCard from '_com/UserCard/ReBuilderCard';
 export default {
   components: {
     Avatar,
-    userCard
+    userCard,
+    editInfoForm,
+    shareProject
     // reBuilderCard
   },
 
@@ -142,7 +175,9 @@ export default {
         bar: {
           background: '#808695'
         }
-      }
+      },
+      editProjectInfoDialogShow: false,
+      addParticipantDialogShow: false
     };
   },
 
@@ -160,7 +195,24 @@ export default {
       this.members = data.members;
     },
 
-    async getAllUsers() {}
+    editProjectInfoDialog() {
+      this.editProjectInfoDialogShow = true;
+    },
+
+    async getAllUsers() {},
+
+    async editProjectInfoResponse(val) {
+      if (val) {
+        this.editProjectInfoDialogShow = false;
+        await this.getProjectInfo();
+
+        this.$notify({
+          title: 'Success',
+          message: 'You have update the project successfully!',
+          type: 'success'
+        });
+      }
+    }
   },
 
   mounted() {
@@ -186,6 +238,13 @@ export default {
         float: left;
         .content {
           margin-bottom: 5px;
+          clear: both;
+
+          .el-tag {
+            display: inline;
+            font-size: 14px;
+            margin: 0 5px;
+          }
         }
       }
 
