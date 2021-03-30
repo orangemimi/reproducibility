@@ -1,148 +1,127 @@
 <template>
   <div class="main">
-    <div class="mainContainerMask" v-show="isNewTaskContainerShow">
-      <div class="taskInfoForm">
-        <el-form ref="taskInfoForm" :model="taskInfo" label-width="180px">
-          <el-form-item label="Task Name">
-            <el-input v-model="taskInfo.taskName"></el-input>
-          </el-form-item>
-          <el-form-item label="Task Description">
-            <el-input v-model="taskInfo.taskDescription"></el-input>
-          </el-form-item>
-        </el-form>
-      </div>
-
-      <!-- 进入，如果没有task，则弹出创建一个新画布 -->
-      <div class="taskInfoBtn">
-        <el-button @click="createNewTask" class="createTask">Create a New Task</el-button>
-        <div class="or">or</div>
-        <integrate-tasks @selectTask="selectTask" class="selectTask"></integrate-tasks>
-        <div class="newTaskBtnTip">
-          Please Enter the task name and description to create your task!
-        </div>
-      </div>
+    <div class="modelbarContainer">
+      <el-row>
+        <all-models
+          ref="allModels"
+          @getPersonalModels="getPersonalModels"
+          @getPublicModels="getPublicModels"
+        ></all-models>
+      </el-row>
     </div>
-    <div class="customToolbarContainer" v-show="!isNewTaskContainerShow">
-      <div class="toolbarContainer">
-        <el-row>
-          <all-tools
-            ref="allTools"
-            @getPersonalTools="getPersonalTools"
-            @getPublicTools="getPublicTools"
-          ></all-tools>
-        </el-row>
-      </div>
-      <div class="mainContainer">
-        <div class="toolbarTop">
-          <!-- <el-button @click="updateGraph" type="text" size="mini">Output</el-button> -->
-          <el-button @click="exportGraph" type="text" size="mini">Export as XML</el-button>
-          <!-- <input @change="readFile" ref="importInput" class="hide" type="file" />
+
+    <div class="mainContainer">
+      <div class="modelbarTop">
+        <!-- <el-button @click="updateGraph" type="text" size="mini">Output</el-button> -->
+        <el-button @click="exportGraph" type="text" size="mini">Export as XML</el-button>
+        <!-- <input @change="readFile" ref="importInput" class="hide" type="file" />
           <el-button @click="importGraphFile" type="text" size="mini">Import mxGraph</el-button> -->
-          <el-button
-            @click="checked ? deleteCells() : deleteCellsConfirmDialog()"
-            type="text"
-            size="mini"
-            :disabled="selectionCells.length == 0"
-          >
-            Delete
-          </el-button>
-          <el-button @click="undo" type="text" size="mini">Undo</el-button>
-          <el-button @click="redo" type="text" size="mini">Redo</el-button>
-          <!-- 创建一个新的画布  均为create-->
-          <el-button @click="showCreateNewTask" type="success" size="mini">New Task</el-button>
-          <!-- 保存现有的画布 均为update-->
-          <el-button @click="updateGraph" type="warning" size="mini">Save Task</el-button>
-          <el-button @click="runGraph" size="mini">Run Task</el-button>
-          <integrate-tasks @selectTask="selectTask" style="float: left"></integrate-tasks>
-        </div>
-        <vue-scroll style="height: 630px; width: 100%">
-          <div class="graphContainer" ref="container"></div>
-        </vue-scroll>
-
-        <!-- <div class="outline-wrapper">
-          <h4>导航器</h4>
-          <div id="graphOutline" />
-        </div> -->
+        <el-button
+          @click="checked ? deleteCells() : deleteCellsConfirmDialog()"
+          type="text"
+          size="mini"
+          :disabled="selectionCells.length == 0"
+        >
+          Delete
+        </el-button>
+        <el-button @click="undo" type="text" size="mini">Undo</el-button>
+        <el-button @click="redo" type="text" size="mini">Redo</el-button>
+        <!-- 创建一个新的画布  均为create-->
+        <el-button @click="showCreateNewTask" type="success" size="mini">New Task</el-button>
+        <!-- 保存现有的画布 均为update-->
+        <el-button @click="updateGraph" type="warning" size="mini">Save Task</el-button>
+        <el-button @click="runGraph" size="mini">Run Task</el-button>
+        <integrate-tasks @selectTask="selectTask" style="float: left"></integrate-tasks>
       </div>
+      <vue-scroll style="height: 630px; width: 100%">
+        <div class="graphContainer" ref="container"></div>
+      </vue-scroll>
 
-      <div class="editCellContainer">
-        <!-- <edit-cell :visible="editCellVisible" @currentGraph="grapg"></edit-cell> -->
-        <div v-if="toolClick" class="normalContaniner">
-          <div>Node Info</div>
-          <!-- <vue-scroll style="height: 630px; width: 100%">
+      <!-- <div class="outline-wrapper">
+        <h4>导航器</h4>
+        <div id="graphOutline" />
+      </div> -->
+    </div>
+
+    <div class="editCellContainer">
+      <!-- <edit-cell :visible="editCellVisible" @currentGraph="grapg"></edit-cell> -->
+      <div v-if="modelClick" class="normalContaniner">
+        <div>Node Info</div>
+        <!-- <vue-scroll style="height: 630px; width: 100%">
             <data-item-info :cell="dataNode"></data-item-info>
           </vue-scroll> -->
-        </div>
-        <div v-show="toolDoubleClick" class="normalContaniner">
-          <div>Node Info</div>
-          <vue-scroll style="height: 630px; width: 100%">
-            <data-item-toolbar
-              :cell="cell"
-              ref="dataItem"
-              @getInAndOut="getInAndOut"
-              :key="dataItemToolbarKey"
-            ></data-item-toolbar>
-          </vue-scroll>
-        </div>
-        <div v-show="dataClick" class="expandContaniner">
-          <div>Node Info</div>
-          <data-item-info
-            :cell="dataNode"
-            @currentEventWithFile="currentEventWithFile"
-          ></data-item-info>
-        </div>
-        <div v-show="dataDoubleClick">
-          <div>Node Info</div>
-          <!-- <data-item-info :cell="dataNode"></data-item-info> -->
-        </div>
       </div>
-
-      <div class="dialogs">
-        <el-dialog :visible.sync="deleteCellsVisible" width="30%">
-          <span>Are you sure to delete this node?</span>
-          <span slot="footer" class="dialog-footer">
-            <el-checkbox v-model="checked" label="1">Ignore this tip in this action</el-checkbox>
-            <el-button @click="deleteCellsVisible = false">Cancel</el-button>
-            <el-button type="primary" @click="deleteCells">Confirm</el-button>
-          </span>
-        </el-dialog>
+      <div v-show="modelDoubleClick" class="normalContaniner">
+        <div>Node Info</div>
+        <vue-scroll style="height: 630px; width: 100%">
+          <data-item-modelbar
+            :cell="cell"
+            ref="dataItem"
+            @getInAndOut="getInAndOut"
+            :key="dataItemModelbarKey"
+          ></data-item-modelbar>
+        </vue-scroll>
+      </div>
+      <div v-show="dataClick" class="expandContaniner">
+        <div>Node Info</div>
+        <data-item-info
+          :cell="dataNode"
+          @currentEventWithFile="currentEventWithFile"
+        ></data-item-info>
+      </div>
+      <div v-show="dataDoubleClick">
+        <div>Node Info</div>
+        <!-- <data-item-info :cell="dataNode"></data-item-info> -->
       </div>
     </div>
+
+    <div class="dialogs">
+      <el-dialog :visible.sync="deleteCellsVisible" width="30%">
+        <span>Are you sure to delete this node?</span>
+        <span slot="footer" class="dialog-footer">
+          <el-checkbox v-model="checked" label="1">Ignore this tip in this action</el-checkbox>
+          <el-button @click="deleteCellsVisible = false">Cancel</el-button>
+          <el-button type="primary" @click="deleteCells">Confirm</el-button>
+        </span>
+      </el-dialog>
+    </div>
   </div>
+  <!-- </div> -->
 </template>
 
 <script>
 import mxgraph from '@/components/MxGraph/index';
 
-import nodeCard from '@/components/MxGraph/components/NodeCard';
-import editCell from '@/components/MxGraph/components/EditCell';
+// import nodeCard from '@/components/MxGraph/components/NodeCard';
+// import editCell from '@/components/MxGraph/components/EditCell';
 import FileSaver from 'file-saver';
 
-// import allTools from '@/components/r2/AllTools';
+import allModels from './AllModels';
 import { get, post, patch } from '@/axios';
-import dataItemToolbar from './../Construction/DataItemToolbar';
-import dataItemInfo from './../Construction/DataItemInfo';
+import dataItemModelbar from './../../Construction/DataItemToolbar';
+import dataItemInfo from './../../Construction/DataItemInfo';
 
-import integrateTasks from './../Construction/IntegrateTasks';
+import integrateTasks from './../../Construction/IntegrateTasks';
+import { mapState } from 'vuex';
 
 const {
   mxGraph,
   mxOutline,
   mxEvent,
-  mxCell,
-  mxGeometry,
+  // mxCell,
+  // mxGeometry,
   mxUtils,
-  mxEventObject,
-  mxConnectionHandler,
-  mxGraphHandler,
+  // mxEventObject,
+  // mxConnectionHandler,
+  // mxGraphHandler,
   mxRubberband,
   mxConstants,
   mxCellState,
   mxCellEditor,
-  mxGraphView,
+  // mxGraphView,
   mxCodec,
-  mxUndoManager,
-  mxCellOverlay
+  mxUndoManager
+  // mxCellOverlay
 } = mxgraph;
 
 export default {
@@ -153,10 +132,10 @@ export default {
   },
 
   components: {
-    nodeCard,
-    editCell,
-    allTools,
-    dataItemToolbar,
+    // nodeCard,
+    // editCell,
+    allModels,
+    dataItemModelbar,
     dataItemInfo,
     integrateTasks
   },
@@ -172,12 +151,16 @@ export default {
     }
   },
 
-  computed: {},
+  computed: {
+    ...mapState({
+      userId: state => state.user.userId,
+      userName: state => state.user.name
+    })
+  },
 
   data() {
     return {
-      userInfo: this.$store.getters.userInfo,
-      projectId: this.$route.params.projectId,
+      projectId: this.$route.params.id,
       contentHeight: 0,
       graph: null,
       editCellVisible: false,
@@ -202,11 +185,11 @@ export default {
         ]
       },
       getXml: this.sendXml,
-      //toolbar
-      toolItemList: [],
-      publicTools: [],
-      personalTools: [],
-      userInfo: this.$store.getters.userInfo,
+      //modelbar
+      modelItemList: [],
+      publicModels: [],
+      personalModels: [],
+
       doi: '',
       cell: {}, //双击事件 cell
       state: {},
@@ -216,18 +199,18 @@ export default {
       nodeActiveName: 'info',
       dataNode: {},
 
-      toolClick: false,
-      toolDoubleClick: false,
+      modelClick: false,
+      modelDoubleClick: false,
       dataClick: false,
       dataDoubleClick: false,
-      toolListInGraph: [],
+      modelListInGraph: [],
       dataInputInGraph: [],
       dataLinkInGraph: [], //下一模型的输入数据
       dataOutputInGraph: [],
       linkEdgeList: [],
 
       stateList: [],
-      dataItemToolbarKey: 0,
+      dataItemModelbarKey: 0,
       taskInfo: {
         taskName: '',
         taskDescription: ''
@@ -239,7 +222,7 @@ export default {
 
       //document
       nodeList: [],
-      modelItemList: [],
+      modelItemList2: [],
       dataItemList: [],
 
       //task
@@ -250,7 +233,7 @@ export default {
   methods: {
     async init() {
       await this.getIntegrateTasks();
-      await this.getMethods();
+      // await this.getMethods();
       this.initSize();
       this.createGraph();
       this.initConnectStyle();
@@ -263,41 +246,43 @@ export default {
 
       this.getGraphXml();
 
-      this.initToolbar('toolItemList');
+      this.initModelbar('modelItemList');
       // this.initPopupMenu();
     },
 
-    getPublicTools(val) {
-      this.$set(this, 'publicTools', val);
+    //--------------初始化 bar的modelItem的内容--由 AllModels组件返回
+    getPublicModels(val) {
+      this.$set(this, 'publicModels', val);
+      this.modelItemList = this.publicModels;
     },
 
-    getPersonalTools(val) {
-      this.$set(this, 'personalTools', val);
-      this.toolItemList = this.personalTools;
+    getPersonalModels(val) {
+      this.$set(this, 'personalModels', val);
+      this.modelItemList = this.personalModels;
     },
 
     async getIntegrateTasks() {
-      let data = await get(`/GeoProblemSolving/r/integrateTasks/all/${this.projectId}`); //获得该项目的所有tasks
+      let data = await get(`/integrateTasks/all/${this.projectId}`); //获得该项目的所有tasks
       if (data != null) {
         this.nodeList = data.nodeList;
-        this.modelItemList = data.modelItemList;
+        this.modelItemList2 = data.modelItemList2;
         this.dataItemList = data.dataItemList;
       }
     },
 
-    async getMethods() {
-      let data = await get(`/GeoProblemSolving/r/methods/${this.projectId}`); //获得该项目的所有tasks
-      if (data != null) {
-        this.taskList = data;
-      }
-    },
+    // async getMethods() {
+    //   let data = await get(`/methods/${this.projectId}`); //获得该项目的所有tasks
+    //   if (data != null) {
+    //     this.taskList = data;
+    //   }
+    // },
 
     getInAndOut(input, output) {
       // this.state = val;
       this.inputItemList = input;
       this.outputItemList = output;
-      this.initToolbar('inputItemList');
-      this.initToolbar('outputItemList');
+      this.initModelbar('inputItemList');
+      this.initModelbar('outputItemList');
     },
 
     initSize() {
@@ -314,12 +299,14 @@ export default {
         // 从value中获取显示的内容
         return cell.name;
       };
-
-      let outline = new mxOutline(this.graph, document.getElementById('graphOutline'));
-
+      new mxOutline(this.graph, document.getElementById('graphOutline'));
+      // let outline = new mxOutline(this.graph, document.getElementById('graphOutline'));
+      // console.log(outline);
       this.setCursor();
     },
+
     setCursor() {},
+
     initPopupMenu() {
       // console.log(document.body);
       mxEvent.disableContextMenu(document.body);
@@ -334,20 +321,20 @@ export default {
         if (!cell) {
           return;
         }
-        let clickToolType = cell.style.includes('toolType');
-        let dataType = cell.style.includes('data');
-        if (clickToolType) {
-          this.dataItemToolbarKey++;
-          // console.log(this.dataItemToolbarKey);
+        let clickModelType = cell.style.includes('modelType');
+        // let dataType = cell.style.includes('data');
+        if (clickModelType) {
+          this.dataItemModelbarKey++;
+          // console.log(this.dataItemModelbarKey);
           await this.$refs.dataItem.initSetTimeOut();
-          this.toolDoubleClick = true;
+          this.modelDoubleClick = true;
           this.cell = cell;
-          this.dataDoubleClick = this.dataClick = this.toolClick = false;
+          this.dataDoubleClick = this.dataClick = this.modelClick = false;
         }
         // else if (dataType) {
         //   this.dataDoubleClick = true;
         //   this.dataNode = cell;
-        //   this.toolDoubleClick = this.toolClick = this.dataClick = false;
+        //   this.modelDoubleClick = this.modelClick = this.dataClick = false;
         // }
       });
 
@@ -358,15 +345,15 @@ export default {
         if (!cell) {
           return;
         }
-        const clickToolType = cell.style.includes('toolType');
+        const clickModelType = cell.style.includes('modelType');
         const dataType = cell.style.includes('data');
-        if (clickToolType) {
+        if (clickModelType) {
           // 使用 mxGraph 事件中心，触发自定义事件
           // this.cell = cell;
-          this.toolClick = true;
-          this.toolDoubleClick = this.dataClick = this.dataDoubleClick = false;
+          this.modelClick = true;
+          this.modelDoubleClick = this.dataClick = this.dataDoubleClick = false;
         } else if (dataType) {
-          this.toolDoubleClick = this.toolClick = this.dataDoubleClick = false;
+          this.modelDoubleClick = this.modelClick = this.dataDoubleClick = false;
           this.dataClick = true;
           // console.log(cell);
           this.dataNode = cell;
@@ -461,15 +448,15 @@ export default {
       };
     },
 
-    initToolbar(panel) {
+    initModelbar(panel) {
       let refType;
       let listName = [];
       let styleIn = {};
-      if (panel == 'toolItemList') {
-        refType = 'allTools';
-        listName = this.toolItemList;
+      if (panel == 'modelItemList') {
+        refType = 'allModels';
+        listName = this.modelItemList;
         styleIn = {
-          toolType: '',
+          modelType: '',
           fillColor: '#f8f5ec',
           shape: 'rectangle'
         };
@@ -490,18 +477,20 @@ export default {
           shape: 'rectangle'
         };
       }
+
       const domArray = this.$refs[refType].$refs[panel];
 
       if (!(domArray instanceof Array) || domArray.length <= 0) {
         return;
       }
-      // console.log(listName);
-      // console.log(domArray);
-      domArray.forEach((dom, domIndex) => {
-        const toolItem = listName[domIndex];
 
+      domArray.forEach((dom, domIndex) => {
+        const modelItem = listName[domIndex];
+
+        console.log(modelItem);
         const dropHandler = (graph, evt, cell, x, y) => {
-          this.addCell(toolItem, x, y, panel, styleIn);
+          console.log(evt);
+          this.addCell(modelItem, x, y, panel, styleIn);
         };
 
         const createDragPreview = () => {
@@ -535,9 +524,9 @@ export default {
       this.graph.getModel().beginUpdate();
 
       try {
-        if (type == 'toolItemList') {
+        if (type == 'modelItemList') {
           let vertex = this.addCellToContainer(styleObj, x, y);
-          vertex.name = item.toolName;
+          vertex.name = item.name;
           vertex.doi = item.doi;
           // vertex.step = "1";
           vertex.iterationNum = '1';
@@ -603,7 +592,7 @@ export default {
       FileSaver.saveAs(blob, 'mxgraph.xml');
     },
 
-    importGraphFile(evt) {
+    importGraphFile() {
       this.$refs['importInput'].click();
     },
     readFile(evt) {
@@ -761,12 +750,10 @@ export default {
     async createNewTask() {
       let postJson = {
         projectId: this.projectId,
-        userName: this.userInfo.userName,
-        userId: this.userInfo.userId,
         ...this.taskInfo
       };
       // console.log(postJson);
-      let data = await post(`/GeoProblemSolving/r/integrateTasks`, postJson);
+      let data = await post(`/integrateTasks`, postJson);
       this.currentTask = data;
       this.isNewTaskContainerShow = false;
       // console.log(data);
@@ -782,7 +769,7 @@ export default {
       await this.getProcessDoc();
       let xml = this.generateXml();
       let graphXml = this.getGraphXml();
-      let modelActions = this.generateTaskModelInfo();
+      // let modelActions = this.generateTaskModelInfo();
       let postJson = {
         xml: xml,
         mxgraph: graphXml,
@@ -791,11 +778,8 @@ export default {
         taskDescription: this.taskInfo.taskDescription
       };
       // console.log(postJson);
-      let data = await patch(
-        `/GeoProblemSolving/r/integrateTasks/${this.currentTask.id}`,
-        postJson
-      );
-      // console.log(data);
+      let data = await patch(`/integrateTasks/${this.currentTask.id}`, postJson);
+      console.log(data);
     },
 
     selectTask(val) {
@@ -829,17 +813,18 @@ export default {
       let formData = new FormData();
       formData.append('file', file);
       formData.append('taskName', this.taskInfo.taskName);
-      let data = await post(`/GeoProblemSolving/r/integrateTasks`, formData);
+      let data = await post(`/integrateTasks`, formData);
+      console.log(data);
     },
 
     currentEventWithFile(val) {
-      let dataItem = {
-        name: val.name,
-        value: val.value,
-        eventId: val.eventId,
-        isDirect: val.isDirect,
-        reference: ''
-      };
+      // let dataItem = {
+      //   name: val.name,
+      //   value: val.value,
+      //   eventId: val.eventId,
+      //   isDirect: val.isDirect,
+      //   reference: ''
+      // };
 
       this.graph.getModel().beginUpdate();
 
@@ -855,17 +840,17 @@ export default {
     },
 
     async getCells() {
-      // this.toolListInGraph = this.dataOutputInGraph = this.dataInputInGraph = this.dataLinkInGraph = [];
-      let toolListInGraph = [];
+      // this.modelListInGraph = this.dataOutputInGraph = this.dataInputInGraph = this.dataLinkInGraph = [];
+      let modelListInGraph = [];
       let dataOutputInGraph = [];
       let dataInputInGraph = [];
       let dataLinkInGraph = [];
-      let dataLineInputInGrapg = [];
+      // let dataLineInputInGrapg = [];
 
       Object.values(this.graph.getModel().cells).forEach(cell => {
         if (cell.style != undefined) {
-          if (cell.style.includes('toolType')) {
-            toolListInGraph.push(cell);
+          if (cell.style.includes('modelType')) {
+            modelListInGraph.push(cell);
           } else if (cell.style.includes('dataOutputType')) {
             dataOutputInGraph.push(cell);
           } else if (cell.style.includes('dataInputType')) {
@@ -877,11 +862,11 @@ export default {
 
       // console.log(this.graph.getModel().cells);
       let links = Object.values(this.graph.getModel().cells).filter(cell =>
-        cell.hasOwnProperty('edge')
+        Object.prototype.hasOwnProperty.call(cell, 'edge')
       );
       this.linkEdgeList = links;
 
-      this.toolListInGraph = toolListInGraph;
+      this.modelListInGraph = modelListInGraph;
       this.dataOutputInGraph = dataOutputInGraph;
       this.dataInputInGraph = dataInputInGraph;
       this.dataLinkInGraph = dataLinkInGraph;
@@ -889,45 +874,45 @@ export default {
 
     async getProcessDoc() {
       let nodeList = [];
-      let modelItemList = [];
+      let modelItemList2 = [];
       let dataItemList = [];
 
-      let toolListInGraph = this.toolListInGraph;
-      let dataOutputInGraph = this.dataOutputInGraph;
+      // let modelListInGraph = this.modelListInGraph;
+      // let dataOutputInGraph = this.dataOutputInGraph;
       let dataInputInGraph = this.dataInputInGraph;
-      let dataLinkInGraph = this.dataLinkInGraph;
+      // let dataLinkInGraph = this.dataLinkInGraph;
       let linkEdgeList = this.linkEdgeList;
 
       await Promise.all(
-        this.toolListInGraph.map(async tool => {
+        this.modelListInGraph.map(async model => {
           //GET NODE
           let node = {};
-          node.name = tool.name;
-          node.description = tool.description; //model description
+          node.name = model.name;
+          node.description = model.description; //model description
           node.type = 'simulationDeduction'; //dataProcessing/simulationDeduction/visualization/resultAnalysis
-          node.step = tool.id;
-          node.ref = tool.doi; //model doi//除了wzh integratedtask之外 其他均用doi作为标识符
+          node.step = model.id;
+          node.ref = model.doi; //model doi//除了wzh integratedtask之外 其他均用doi作为标识符
           nodeList.push(node);
 
           //GET MODEL INFOMATION
-          let data = await get(`/GeoProblemSolving/modelTask/ModelBehaviorOrdinary/${tool.doi}`);
-          tool.md5 = data.md5; //integrate task
+          let data = await get(`/modelTask/ModelBehaviorOrdinary/${model.doi}`);
+          model.md5 = data.md5; //integrate task
 
-          //get modelItemList
+          //get modelItemList2
 
           let modelItem = {
             name: data.name,
             descriprion: data.description,
-            modelRef: tool.doi,
-            nodeRef: tool.id,
+            modelRef: model.doi,
+            nodeRef: model.id,
             stateList: []
           };
 
           //GET ALL RELATED EVENT
           let eventList = [];
-          let dataItemList = [];
+          // let dataItemList = [];
           linkEdgeList.forEach(link => {
-            if (link.target.id == tool.id && link.source.style.includes('dataInputType')) {
+            if (link.target.id == model.id && link.source.style.includes('dataInputType')) {
               let event = {
                 name: link.source.name,
                 dataRef: link.source.value,
@@ -948,7 +933,7 @@ export default {
               //   name=
               // }
             }
-            if (link.source.id == tool.id && link.target.style.includes('dataOutputType')) {
+            if (link.source.id == model.id && link.target.style.includes('dataOutputType')) {
               let event = {
                 name: link.target.name,
                 dataRef: link.target.value,
@@ -965,6 +950,7 @@ export default {
           let stateInfos = [];
           stateInfoList.forEach(state => {
             let { Event, ...list } = state;
+            console.log(Event);
             list.Event = [];
             stateInfos.push(list);
           });
@@ -978,7 +964,7 @@ export default {
             });
           });
           modelItem.stateList = stateInfos;
-          modelItemList.push(modelItem);
+          modelItemList2.push(modelItem);
         })
       );
 
@@ -996,14 +982,14 @@ export default {
       });
 
       let method = {
-        userId: this.userInfo.userId,
+        userId: this.userId,
         pid: this.projectId,
         nodeList: nodeList,
-        modelCollection: modelItemList,
+        modelCollection: modelItemList2,
         dataCollection: dataItemList
       };
       console.log(method);
-      let data = await post(`/GeoProblemSolving/r/methods`, method);
+      let data = await post(`/methods`, method);
       console.log(data);
       //modelItem
     },
@@ -1011,7 +997,7 @@ export default {
     generateXml() {
       let version = '1.0';
       let uid = this.generateGUID();
-      let dataLinks = [];
+      // let dataLinks = [];
       let xml = '';
       let name = this.taskInfo.taskName;
 
@@ -1020,7 +1006,7 @@ export default {
       xml += '<Models>';
 
       //没有md5-->只有doi       xml += `<Model name='${model.name}' pid='${model.md5}' description='' doi='${model.doi}'/>`;
-      this.toolListInGraph.forEach(model => {
+      this.modelListInGraph.forEach(model => {
         xml += `<Model name='${model.name}' description='' pid='${model.md5}'/>`;
       });
       xml += `</Models>`;
@@ -1028,12 +1014,12 @@ export default {
       //modelAction标签
       xml += `<ModelActions>`;
 
-      this.toolListInGraph.forEach(tool => {
-        xml += `<ModelAction id='${tool.id}' name = '${tool.name}' description = '' 
-        model='${tool.md5} ' step ='${tool.step}' iterationNum='${tool.iterationNum}'>`;
+      this.modelListInGraph.forEach(model => {
+        xml += `<ModelAction id='${model.id}' name = '${model.name}' description = ''
+        model='${model.md5} ' step ='${model.step}' iterationNum='${model.iterationNum}'>`;
 
-        let inputList = this.dataInputInGraph.filter(event => event.md5 == tool.md5);
-        let outputList = this.dataOutputInGraph.filter(event => event.md5 == tool.md5);
+        let inputList = this.dataInputInGraph.filter(event => event.md5 == model.md5);
+        let outputList = this.dataOutputInGraph.filter(event => event.md5 == model.md5);
 
         xml += `<Inputs>`;
         inputList.forEach(item => {
@@ -1061,7 +1047,7 @@ export default {
       //data links标签
       xml += '<DataLinks>';
       this.linkEdgeList.forEach(item => {
-        xml += `<DataLink from='${item.source.eventId}'  to='${item.target.eventId}'  tool='' config='' />`;
+        xml += `<DataLink from='${item.source.eventId}'  to='${item.target.eventId}'  model='' config='' />`;
       });
       xml += '</DataLinks></TaskConfiguration>';
       // console.log(xml);
@@ -1084,22 +1070,22 @@ export default {
     generateTaskModelInfo() {
       let addModelActions = [];
       //拼接集成模型中的models部分
-      let tools = this.toolListInGraph;
-      tools.forEach(tool => {
+      let models = this.modelListInGraph;
+      models.forEach(model => {
         let addModelAction = {
-          id: tool.id,
-          modelOid: tool.doi,
-          md5: tool.md5,
-          name: tool.name,
-          description: tool.description,
+          id: model.id,
+          modelOid: model.doi,
+          md5: model.md5,
+          name: model.name,
+          description: model.description,
           outputData: [],
           inputData: [],
-          step: tool.step,
-          iterationNum: tool.iterationNum
+          step: model.step,
+          iterationNum: model.iterationNum
         };
 
-        let inputList = this.dataInputInGraph.filter(event => event.md5 == tool.md5);
-        let outputList = this.dataOutputInGraph.filter(event => event.md5 == tool.md5);
+        let inputList = this.dataInputInGraph.filter(event => event.md5 == model.md5);
+        let outputList = this.dataOutputInGraph.filter(event => event.md5 == model.md5);
 
         inputList.forEach(item => {
           let inputData = {
@@ -1115,7 +1101,7 @@ export default {
             inputData.fileName = item.fileName; //文件名
             inputData.suffix = item.suffix; //文件类型
           } else if (item.type == 'link') {
-            let link = this.linkEdgeList.filter(el => el.target.eventId == item.eventId);
+            // let link = this.linkEdgeList.filter(el => el.target.eventId == item.eventId);
             inputData.link = item.link;
             inputData.linkEvent = item.link[0].target.eventId;
           }
@@ -1139,7 +1125,7 @@ export default {
     }
   },
   async mounted() {
-    await this.$refs.allTools.initSetTimeOut();
+    await this.$refs.allModels.initSetTimeOut();
     await this.init();
   },
   created() {
@@ -1154,44 +1140,6 @@ export default {
   height: 100%;
   display: flex;
   position: relative;
-  .mainContainerMask {
-    // display: flex;
-    position: relative;
-    width: 100%;
-    .taskInfoForm {
-      margin: 100px 190px;
-      width: 700px;
-    }
-    .taskInfoBtn {
-      // margin: 80px 50px;
-      text-align: center;
-      .createTask {
-        margin-left: 400px;
-        width: 200px;
-        float: left;
-      }
-      .or {
-        margin-left: 8px;
-        width: 10px;
-        font-size: 18px;
-        line-height: 40px;
-        float: left;
-      }
-      .selectTask {
-        width: 200px;
-        line-height: 40px;
-        float: left;
-      }
-      .newTaskBtnTip {
-        clear: both;
-        margin-top: 10px;
-        font-style: italic;
-        color: rgb(102, 102, 102);
-        font-size: 14px;
-      }
-    }
-    z-index: 999;
-  }
 
   .integrateTaskContainer {
     position: relative;
@@ -1201,83 +1149,77 @@ export default {
     box-shadow: 0px 0px 5px rgb(207, 207, 207);
   }
 
-  .customToolbarContainer {
+  .modelbarContainer {
+    position: relative;
+    width: 200px;
+    // margin: 0 5px;
+    // background-color: rgb(251, 251, 251);
+    .modelbarTitle {
+      font-size: 20px;
+      font-weight: 600;
+      text-align: center;
+      margin: 5px 0;
+    }
+
+    .items {
+      margin-top: 2px;
+      .item {
+        margin: 0 10px;
+        width: 120px;
+        text-align: center;
+        margin-bottom: 5px;
+      }
+    }
+    // z-index: 1;
+  }
+
+  .editCellContainer {
+    position: absolute;
+    width: 300px;
+    padding: 0 5px;
+    background-color: rgba(243, 243, 243, 0.5);
+    z-index: auto;
+    height: 90%;
+    top: 60px;
+    right: 0px;
+  }
+
+  .mainContainer {
     width: 100%;
     height: 100%;
-    display: flex;
-    position: relative;
-
-    .toolbarContainer {
-      position: relative;
-      width: 160px;
-      // margin: 0 5px;
-      // background-color: rgb(251, 251, 251);
-      .toolbarTitle {
-        font-size: 20px;
-        font-weight: 600;
-        text-align: center;
-        margin: 5px 0;
-      }
-
-      .items {
-        margin-top: 2px;
-        .item {
-          margin: 0 10px;
-          width: 120px;
-          text-align: center;
-          margin-bottom: 5px;
-        }
-      }
-      // z-index: 1;
-    }
-
-    .editCellContainer {
-      position: absolute;
-      width: 300px;
-      padding: 0 5px;
-      background-color: rgba(255, 255, 255, 0.5);
-      z-index: auto;
-      height: 90%;
-      top: 60px;
-      right: 0px;
-    }
-
-    .mainContainer {
-      width: 100%;
-      height: 100%;
-      .toolbarTop {
-        background: rgb(251, 251, 251);
-        padding-left: 10px;
-        border-radius: 4px;
-        margin-bottom: 10px;
-      }
-      .graphContainer {
-        overflow: hidden;
-        height: 100%;
-        width: 100%;
-        min-width: 930px;
-        min-height: 630px;
-        background: rgb(251, 251, 251) url('@/assets/images/mxgraph/point.gif') 0 0 repeat;
-        border-radius: 4px;
-      }
-    }
-
-    .outline-wrapper {
-      border: 1px solid #dedede;
-      background: #fff;
-      position: fixed;
-      right: 30px;
-      bottom: 40px;
+    .modelbarTop {
+      background: rgb(251, 251, 251);
+      padding-left: 10px;
       border-radius: 4px;
-      z-index: 10;
-      > h4 {
-        padding: 6px;
-        font-size: 12px;
-        border-bottom: 1px solid #e6e6e6;
-      }
-      #graphOutline {
-        width: 200px;
-      }
+      margin-bottom: 10px;
+    }
+    .graphContainer {
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+      min-width: 930px;
+      min-height: 630px;
+      background: rgb(251, 251, 251) url('./../../../../../assets/images/mxgraph/point.gif') 0 0
+        repeat;
+      border-radius: 4px;
+    }
+  }
+
+  .outline-wrapper {
+    border: 1px solid #dedede;
+    background: #fff;
+    position: fixed;
+    right: 30px;
+    bottom: 40px;
+    border-radius: 4px;
+    z-index: 10;
+    > h4 {
+      padding: 6px;
+      font-size: 12px;
+      border-bottom: 1px solid #e6e6e6;
+    }
+    #graphOutline {
+      width: 200px;
     }
   }
 }

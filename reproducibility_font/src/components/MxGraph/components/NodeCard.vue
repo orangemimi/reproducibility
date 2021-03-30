@@ -9,7 +9,7 @@
         />-->
         <!-- <i :class="nodeInfo"></i> -->
         <div>
-          <span>{{nodeInfo.toolName}}</span>
+          <span>{{ nodeInfo.toolName }}</span>
           <div class="bottom clearfix">
             <!-- <time class="time">{{ currentDate }}</time> -->
           </div>
@@ -23,29 +23,29 @@
 export default {
   props: {
     item: {
-      type: Object,
-    },
+      type: Object
+    }
   },
   watch: {
     item: {
       handler(val) {
         this.nodeInfo = val;
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   components: {},
   data() {
     return {
-      nodeInfo: this.item,
+      nodeInfo: this.item
     };
   },
   methods: {},
   created() {},
-  mounted() {},
+  mounted() {}
 };
 </script>
-<style  scoped>
+<style scoped>
 .card {
   text-align: center;
   height: 50px;
@@ -55,8 +55,7 @@ export default {
   transition: all 0.2s ease-in-out;
   border-radius: 4px;
   background: #ffffff;
-  box-shadow: 0px 1.6px 3.6px rgba(0, 0, 0, 0.13),
-    0px 0px 2.9px rgba(0, 0, 0, 0.11);
+  box-shadow: 0px 1.6px 3.6px rgba(0, 0, 0, 0.13), 0px 0px 2.9px rgba(0, 0, 0, 0.11);
 }
 .card:hover {
   cursor: pointer;

@@ -6,11 +6,13 @@ import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
 import edu.njnu.reproducibility.domain.resource.model.dto.AddModelItemDTO;
-import edu.njnu.reproducibility.domain.resource.tool.ToolItem;
-import edu.njnu.reproducibility.domain.resource.tool.dto.AddToolItemDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 /**
@@ -42,8 +44,16 @@ public class ModelItemService {
         return ResultUtils.success(modelItemRepository.insert(modelItem));
     }
 
-    public List<ModelItem> getAll(String userId) {
-        List<ModelItem> modelItemList = modelItemRepository.findAllByUploaderIdOrPrivacy(userId,"public").orElseThrow(MyException::noObject);
+    public Page<ModelItem> getAll(String userId,int currentPage,int pagesize) {
+//        PageRequest pageable =  PageRequest.of(currentPage, pagesize, Sort.Direction.DESC);
+        PageRequest pageable =  PageRequest.of(currentPage, pagesize);
+        Page<ModelItem> modelItemList = modelItemRepository.findAllByUploaderIdOrPrivacy(userId,"public",pageable);
+        return modelItemList;
+    }
+
+    public Page<ModelItem> getPublicModels(String privacy,int currentPage, int pagesize) {
+        PageRequest pageable =  PageRequest.of(currentPage, pagesize);
+        Page<ModelItem> modelItemList = modelItemRepository.findAllByPrivacy(privacy,pageable);
         return modelItemList;
     }
 

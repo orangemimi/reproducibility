@@ -35,10 +35,7 @@
         <el-button>DownLoad</el-button>
       </div>
       <div v-else>
-        <div
-          v-if="currentEvent.datasetItem.type == `internal`"
-          class="uploadContent"
-        >
+        <div v-if="currentEvent.datasetItem.type == `internal`" class="uploadContent">
           <vue-scroll style="height: 100%" :ops="ops">
             <div v-if="filterEvent">
               <el-table
@@ -50,12 +47,7 @@
               >
                 <el-table-column type="expand" width="20">
                   <template slot-scope="props">
-                    <el-form
-                      label-position="top"
-                      inline
-                      class="table-expand"
-                      size="mini"
-                    >
+                    <el-form label-position="top" inline class="table-expand" size="mini">
                       <el-form-item label="Parameter">
                         <span>{{ props.row.name }}</span>
                       </el-form-item>
@@ -68,11 +60,7 @@
                     </el-form>
                   </template>
                 </el-table-column>
-                <el-table-column
-                  prop="name"
-                  label="Parameter"
-                  width="120"
-                ></el-table-column>
+                <el-table-column prop="name" label="Parameter" width="120"></el-table-column>
                 <el-table-column label="Value" width="140">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.value"></el-input>
@@ -115,9 +103,7 @@
           </el-select>
         </div>
         <div>
-          <el-button size="small" type="success" round @click="submitResource"
-            >Submit</el-button
-          >
+          <el-button size="small" type="success" round @click="submitResource">Submit</el-button>
         </div>
       </div>
     </el-row>
@@ -125,54 +111,59 @@
 </template>
 
 <script>
-import file from "@/components/dataTemplate/File";
-import { get, del, post, put, patch } from "@/axios";
+// import file from '@/components/dataTemplate/File';
+import { get, post } from '@/axios';
 export default {
   props: {
     cell: {
-      type: Object,
-    },
+      type: Object
+    }
   },
   watch: {
     cell: {
       handler(val) {
-        if (val != "") {
+        if (val != '') {
           this.doi = val.doi;
           this.currentCell = val;
           this.selectDataId = this.currentCell.fileId;
           this.init();
         }
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
 
   computed: {
     filterEvent() {
       let datasetItem = this.currentDatasetItem;
-      if (datasetItem.hasOwnProperty("UdxDeclaration")) {
-        if (datasetItem.UdxDeclaration[0].UdxNode != "") {
-          if (
-            datasetItem.UdxDeclaration[0].UdxNode[0].UdxNode[0].hasOwnProperty(
-              "UdxNode"
-            )
-          ) {
-            return false;
-          } else {
-            let udxNode = datasetItem.UdxDeclaration[0].UdxNode;
-            return udxNode;
-          }
+      if (Object.prototype.hasOwnProperty.call(datasetItem, 'UdxDeclaration')) {
+        if (datasetItem.UdxDeclaration[0].UdxNode != '') {
+          // if (
+          //   Object.prototype.hasOwnProperty.call(
+          //     datasetItem.UdxDeclaration[0].UdxNode[0].UdxNode[0],
+          //     'UdxNode'
+          //   )
+          // ) {
+          //   return;
+          // }
+          // if (datasetItem.UdxDeclaration[0].UdxNode[0].UdxNode[0].hasOwnProperty('UdxNode')) {
+          return false;
+        } else {
+          let udxNode = datasetItem.UdxDeclaration[0].UdxNode;
+          return udxNode;
         }
+      } else {
+        return false;
       }
-    },
+    }
   },
 
   data() {
     return {
-      doi: "",
+      doi: '',
       modelIntroduction: {},
       modelInstance: {},
-      md5: "",
+      md5: '',
       stateList: [],
       stateInView: {},
       currentCell: this.cell,
@@ -183,12 +174,12 @@ export default {
       currentDatasetItem: {},
       ops: {
         bar: {
-          background: "#808695",
-          keepShow: true,
-        },
+          background: '#808695',
+          keepShow: true
+        }
       },
-      selectDataId: "",
-      selectDataItem: {},
+      selectDataId: '',
+      selectDataItem: {}
     };
   },
 
@@ -199,9 +190,7 @@ export default {
     },
 
     async getModelInfo() {
-      let data = await get(
-        `/GeoProblemSolving/modelTask/ModelBehavior/${this.doi}`
-      ); //获得模型所有信息
+      let data = await get(`/modelTask/ModelBehavior/${this.doi}`); //获得模型所有信息
       this.md5 = data.md5;
       this.modelIntroduction = data;
       this.stateList = data.convertMdlJson;
@@ -211,7 +200,7 @@ export default {
         this.currentEvent.value = this.currentCell.value;
         // this.$set(this.currentEvent, "value", this.currentCell.value);
       }
-      if (this.currentCell.hasOwnProperty("datasetItem")) {
+      if (Object.prototype.hasOwnProperty.call(this.currentCell, 'datasetItem')) {
         this.currentDatasetItem = this.currentCell.datasetItem;
       } else {
         this.currentDatasetItem = this.currentEvent.datasetItem;
@@ -219,34 +208,34 @@ export default {
     },
 
     convertStateList() {
-      if (this.stateList == "") {
+      if (this.stateList == '') {
         return;
       }
       let stateList = this.stateList;
       let currentCell = this.currentCell;
       let current;
-      let event = stateList.forEach((state) => {
+      let event = stateList.forEach(state => {
         if (state.name == currentCell.stateName) {
           let events = state.Event;
-          current = events.filter((event) => {
+          current = events.filter(event => {
             return event.name == currentCell.name;
           });
           current = { state, Event, ...current[0] };
         }
       });
-      // console.log(current);
+      console.log(event);
 
       return current;
     },
 
     async getResources() {
-      let data = await get(`/GeoProblemSolving/r/dataItems/${this.projectId}`);
+      let data = await get(`/dataItems/${this.projectId}`);
       this.dataItemList = data;
     },
 
     changeSelectResource(id) {
       this.selectDataId = id;
-      let dataSelect = this.dataItemList.filter((e) => e.id == id);
+      let dataSelect = this.dataItemList.filter(e => e.id == id);
       this.selectDataItem = dataSelect[0];
       // this.selectDataId = this.selectDataItem.fileName;
 
@@ -258,31 +247,31 @@ export default {
 
       let event = this.currentEvent;
       if (
-        event.type == "response" &&
-        event.datasetItem.hasOwnProperty("UdxDeclaration") &&
-        event.datasetItem.UdxDeclaration[0].UdxNode != "" &&
-        !event.datasetItem.UdxDeclaration[0].UdxNode[0].UdxNode[0].hasOwnProperty(
-          "UdxNode"
+        event.type == 'response' &&
+        Object.prototype.hasOwnProperty.call(event.datasetItem, 'UdxDeclaration') &&
+        event.datasetItem.UdxDeclaration[0].UdxNode != '' &&
+        !Object.prototype.hasOwnProperty.call(
+          event.datasetItem.UdxDeclaration[0].UdxNode[0].UdxNode[0],
+          'UdxNode'
         )
       ) {
-        let content = "";
+        let content = '';
         let uploadFileForm = new FormData();
 
-        let udxNodeList = this.currentDatasetItem.UdxDeclaration[0].UdxNode[0]
-          .UdxNode;
+        let udxNodeList = this.currentDatasetItem.UdxDeclaration[0].UdxNode[0].UdxNode;
         console.log(udxNodeList);
-        udxNodeList.forEach((udx) => {
-          if (udx.hasOwnProperty("value")) {
+        udxNodeList.forEach(udx => {
+          if (Object.prototype.hasOwnProperty.call(udx, 'value')) {
             content += `<XDO name="${udx.name}" kernelType="string" value="${udx.value}" />`;
           }
         });
 
-        if (content != "") {
-          content = "<Dataset> " + content + " </Dataset>";
-          let file = new File([content], event.name + ".xml", {
-            type: "text/plain",
+        if (content != '') {
+          content = '<Dataset> ' + content + ' </Dataset>';
+          let file = new File([content], event.name + '.xml', {
+            type: 'text/plain'
           });
-          uploadFileForm.append("datafile", file); //http://111.229.14.128:8082/data
+          uploadFileForm.append('datafile', file); //http://111.229.14.128:8082/data
 
           // this.createConfigFile();
           let uploadedData = await this.submitUpload(uploadFileForm);
@@ -300,21 +289,18 @@ export default {
         this.currentCell.datasetItem = this.currentDatasetItem;
         if (this.selectDataItem != undefined) {
           this.$message({
-            message: "You have submit the file successfully",
-            type: "success",
+            message: 'You have submit the file successfully',
+            type: 'success'
           });
         }
       }
 
-      this.$emit("currentEventWithFile", this.currentCell);
+      this.$emit('currentEventWithFile', this.currentCell);
     },
 
     //上传文件到服务器
     async submitUpload(uploadFileForm) {
-      let uid = await post(
-        `/GeoProblemSolving/dataContainer/uploadSingle`,
-        uploadFileForm
-      );
+      let uid = await post(`/dataContainer/uploadSingle`, uploadFileForm);
 
       let url = `http://221.226.60.2:8082/data?uid=${uid}`;
 
@@ -322,23 +308,23 @@ export default {
         userId: this.userInfo.userId,
         pid: this.projectId,
         url: url,
-        name: uploadFileForm.get("datafile").name,
-        isDirect: false, //if true -- 是直接上传的数据    --false是中间数据
+        name: uploadFileForm.get('datafile').name,
+        isDirect: false //if true -- 是直接上传的数据    --false是中间数据
       };
       console.log(list);
 
-      let data = await post(`/GeoProblemSolving/r/dataItems`, list);
+      let data = await post(`/r/dataItems`, list);
       if (data != undefined) {
         this.$message({
-          message: "You have submit the parameter successfully",
-          type: "success",
+          message: 'You have submit the parameter successfully',
+          type: 'success'
         });
       }
       return data;
     },
 
-    async uploadResource() {},
-  },
+    async uploadResource() {}
+  }
 };
 </script>
 

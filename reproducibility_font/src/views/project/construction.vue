@@ -23,7 +23,7 @@
             <step-card
               :cardInfo="{ btnType: 'Simulation Construction' }"
               :projectInfo="projectInfo"
-              style="height:450px"
+              style="height:750px"
             ></step-card>
           </el-col>
         </el-row>

@@ -38,9 +38,16 @@
     </div>
     <div class="main">
       <div class="main-container">
-        <transition-group name="list" tag="p">
-          <ServiceCard :item="item" type="model" v-for="item in data" :key="item.id"></ServiceCard>
-        </transition-group>
+        <el-row
+          class="infinite-list"
+          v-infinite-scroll="extendData"
+          infinite-scroll-disabled="disabled"
+          style="overflow:auto"
+        >
+          <el-col :span="4" v-for="(item, index) in data" :key="index">
+            <serviceCard :item="item" type="model"></serviceCard>
+          </el-col>
+        </el-row>
       </div>
     </div>
 
@@ -58,13 +65,13 @@
 
 <script>
 import { get } from '@/axios';
-import ServiceCard from '_com/common/ServiceCard';
+import serviceCard from '_com/common/ServiceCard';
 import createModel from './create';
 export default {
   data() {
     return {
       data: [],
-      is_extending: true,
+      is_extending: false,
       value: '',
       dataFilter: {
         pageSize: 8,
@@ -73,40 +80,33 @@ export default {
       addModelDialogShow: false
     };
   },
+  computed: {
+    noMore() {
+      return this.count >= 20;
+    },
+    disabled() {
+      return this.loading || this.noMore;
+    }
+  },
   methods: {
     searchData() {
       this.dataFilter.page = 0;
-      this.getData(false);
+      this.getData();
     },
-    async getData(extend = true) {
-      //   try {
-      // let { content } = await get(
-      //   '/models',
-      //   {
-      //     page: this.dataFilter.page,
-      //     pageSize: this.dataFilter.pageSize,
-      //     asc: true,
-      //     value: this.value
-      //   },
-      //   null,
-      //   false
-      // );
 
-      let content = await get('/modelItems');
+    async getData() {
+      let { content } = await get(
+        `/modelItems/${this.dataFilter.page}/${this.dataFilter.pageSize}`
+      );
       console.log(content);
-      if (extend) {
-        if (content.length == 0) {
-          this.is_extending = false;
-          return;
-        }
-        this.data = this.data.concat(content);
+
+      if (content.length == 0) {
+        this.is_extending = false;
+        return;
       } else {
         this.data = content;
+        this.is_extending = true;
       }
-      //     this.is_extending = true;
-      //   } catch (error) {
-      //     this.$throw(error);
-      //   }
     },
 
     extendData() {
@@ -114,22 +114,13 @@ export default {
       this.getData();
     },
 
-    scrollDown() {
-      let scroll = document.documentElement.scrollTop || document.body.scrollTop;
-      if (scroll + window.innerHeight + 20 >= document.documentElement.offsetHeight) {
-        if (this.is_extending) {
-          this.is_extending = false;
-          this.extendData();
-        }
-      }
-    },
     addModelItem() {}
   },
   mounted() {
     this.getData();
-    window.addEventListener('scroll', this.scrollDown);
+    // window.addEventListener('scroll', this.scrollDown);
   },
-  components: { ServiceCard, createModel }
+  components: { serviceCard, createModel }
 };
 </script>
 

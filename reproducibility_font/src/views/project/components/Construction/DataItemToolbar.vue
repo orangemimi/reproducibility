@@ -2,9 +2,7 @@
   <div class="main">
     <el-col class="dataContainer" :span="22" :offset="1">
       <div class="params-group">
-        <el-row v-if="stateListInput !== undefined" class="stateTitle"
-          >Input</el-row
-        >
+        <el-row v-if="stateListInput !== undefined" class="stateTitle">Input</el-row>
         <div class="event">
           <div
             class="event-desc"
@@ -14,10 +12,7 @@
           >
             <el-card :title="modelInEvent.name">
               <div
-                v-show="
-                  modelInEvent.optional == 'False' ||
-                  modelInEvent.optional == 'false'
-                "
+                v-show="modelInEvent.optional == 'False' || modelInEvent.optional == 'false'"
                 class="event_option"
               >
                 *
@@ -31,9 +26,7 @@
       </div>
 
       <div class="params-group">
-        <el-row v-if="stateListOutput !== undefined" class="stateTitle"
-          >Output</el-row
-        >
+        <el-row v-if="stateListOutput !== undefined" class="stateTitle">Output</el-row>
         <div class="event">
           <div
             class="event-desc"
@@ -54,45 +47,45 @@
 </template>
 
 <script>
-import file from "@/components/dataTemplate/File";
-import { get, del, post, put, patch } from "@/axios";
+// import file from '@/components/dataTemplate/File';
+import { get } from '@/axios';
 export default {
   props: {
     cell: {
-      type: Object,
-    },
+      type: Object
+    }
   },
   watch: {
     cell: {
       handler(val) {
-        if (val != "") {
+        if (val != '') {
           this.doi = val.doi;
           this.init();
         }
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
 
   computed: {},
   data() {
     return {
-      doi: "",
+      doi: '',
       modelIntroduction: {},
       modelInstance: {},
-      md5: "",
+      md5: '',
       stateList: [],
       stateListInput: [],
-      stateListOutput: [],
+      stateListOutput: []
     };
   },
 
   methods: {
     initSetTimeOut() {
-      return new Promise(function (reslove, reject) {
+      return new Promise(function(reslove) {
         // 模拟异步，加载组件
-        setTimeout(function () {
-          console.log("等了1秒钟");
+        setTimeout(function() {
+          console.log('等了1秒钟');
           reslove(1000);
         }, 1000);
       });
@@ -103,9 +96,7 @@ export default {
     },
 
     async getModelInfo() {
-      let data = await get(
-        `/GeoProblemSolving/modelTask/ModelBehavior/${this.doi}`
-      ); //获得模型所有信息
+      let data = await get(`/modelTask/ModelBehavior/${this.doi}`); //获得模型所有信息
       this.md5 = data.md5;
       this.modelIntroduction = data;
       this.stateList = data.convertMdlJson;
@@ -115,11 +106,11 @@ export default {
       let stateList = this.stateList;
       let input = [];
       let output = [];
-      stateList.forEach((state) => {
-        state.Event.forEach((event) => {
-          if (event.type == "response") {
+      stateList.forEach(state => {
+        state.Event.forEach(event => {
+          if (event.type == 'response') {
             input.push(event);
-          } else if (event.type == "noresponse") {
+          } else if (event.type == 'noresponse') {
             output.push(event);
           }
         });
@@ -128,9 +119,9 @@ export default {
       this.stateListOutput = output;
       // console.log(this.stateListInput, this.stateListOutput);
       await this.initSetTimeOut();
-      this.$emit("getInAndOut", this.stateListInput, this.stateListOutput);
-    },
-  },
+      this.$emit('getInAndOut', this.stateListInput, this.stateListOutput);
+    }
+  }
 };
 </script>
 

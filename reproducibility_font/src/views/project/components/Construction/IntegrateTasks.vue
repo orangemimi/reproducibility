@@ -13,22 +13,20 @@
     </el-row> -->
     <el-dropdown @command="selectTask">
       <span class="el-dropdown-link">
-        Select an Exist Task<i class="el-icon-arrow-down el-icon--right"></i>
+        Select an Exist Task
+        <i class="el-icon-arrow-down el-icon--right"></i>
       </span>
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item
-          v-for="(task, index) in taskList"
-          :key="index"
-          :command="task"
-          >{{ task.taskName }}</el-dropdown-item
-        >
+        <el-dropdown-item v-for="(task, index) in taskList" :key="index" :command="task">
+          {{ task.taskName }}
+        </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
   </div>
 </template>
 
 <script>
-import { get, post, patch } from "@/axios";
+import { get } from '@/axios';
 export default {
   components: {},
   // props: {
@@ -52,9 +50,8 @@ export default {
 
   data() {
     return {
-      userInfo: this.$store.getters.userInfo,
-      projectId: this.$route.params.projectId,
-      taskList: [],
+      projectId: this.$route.params.id,
+      taskList: []
       // newTask: this.addNewTask,
     };
   },
@@ -64,23 +61,20 @@ export default {
       await this.getIntegrateTasks();
     },
     async getIntegrateTasks() {
-      let data = await get(
-        `/GeoProblemSolving/r/integrateTasks/all/${this.projectId}`
-      ); //获得该项目的所有tasks
+      let data = await get(`/integrateTasks/all/${this.projectId}`); //获得该项目的所有tasks
       if (data != null) {
         this.taskList = data;
       }
     },
     selectTask(task) {
       // console.log("task", task);
-      this.$emit("selectTask", task);
-    },
+      this.$emit('selectTask', task);
+    }
   },
 
   async mounted() {
     await this.init();
-  },
+  }
 };
 </script>
-<style lang='scss' scoped>
-</style>
+<style lang="scss" scoped></style>

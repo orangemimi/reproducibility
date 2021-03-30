@@ -37,6 +37,6 @@ public class ModelItem extends BaseEntity {
     String source;
     String privacy;
     String thumbnail;
-    List<String> tag;
+    List<String> tags;
     String uploaderId;
 }

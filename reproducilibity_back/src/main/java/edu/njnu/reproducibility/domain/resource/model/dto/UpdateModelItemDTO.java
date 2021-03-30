@@ -1,20 +1,11 @@
 package edu.njnu.reproducibility.domain.resource.model.dto;
 
 
-import cn.hutool.json.JSONObject;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import edu.njnu.reproducibility.common.dto.ToDomainConverter;
-import edu.njnu.reproducibility.common.entity.BaseEntity;
 import edu.njnu.reproducibility.domain.resource.model.ModelItem;
-import edu.njnu.reproducibility.domain.resource.model.support.CodeModel;
-import edu.njnu.reproducibility.domain.resource.model.support.ServiceModel;
-import edu.njnu.reproducibility.domain.resource.tool.ToolItem;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,7 +21,7 @@ import java.util.List;
 //        , @JsonSubTypes.Type(value = CodeModel.class, name = "code"),
 //})
 
-public class AddModelItemDTO implements ToDomainConverter<ModelItem> {
+public class UpdateModelItemDTO implements ToDomainConverter<ModelItem> {
     //    ComputableModel computableModel;
 
     String name;

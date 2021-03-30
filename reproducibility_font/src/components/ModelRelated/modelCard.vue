@@ -3,17 +3,18 @@
   <div class>
     <el-card class="cardBody">
       <div>
+        {{ item }}
         <div class="card_avatar">
           <el-tooltip placement="bottom" max-width="600">
             <avatar
-              :username="item.toolName"
+              :username="item.name"
               :size="30"
               style="margin-bottom: 6px"
               :rounded="false"
-              v-if="item.toolImg == '' || item.toolImg == undefined"
+              v-if="item.thumbnail == '' || item.thumbnail == undefined"
             ></avatar>
-            <div class="toolImgOuter" v-else>
-              <img :src="item.toolImg" class="toolImg" />
+            <div class="thumbnailOuter" v-else>
+              <img :src="item.thumbnail" class="thumbnail" />
             </div>
             <div slot="content">
               <div style="text-align: center">{{ item.description }}</div>
@@ -25,8 +26,8 @@
           </el-tooltip>
         </div>
         <div class="card_info">
-          <h4 :title="item.toolName" class="card_info_name">
-            {{ item.toolName }}
+          <h4 :title="item.name" class="card_info_name">
+            {{ item.name }}
           </h4>
         </div>
       </div>
@@ -45,7 +46,7 @@ import Avatar from 'vue-avatar';
 // import toolPreview from '@/components/common/tools/toolPreview';
 export default {
   props: {
-    toolFrom: {
+    modelFrom: {
       type: Object
     },
     isOpenTool: {
@@ -55,8 +56,9 @@ export default {
   },
 
   watch: {
-    toolFrom: {
+    modelFrom: {
       handler(val) {
+        console.log(val);
         this.item = val;
       },
       deep: true
@@ -69,7 +71,7 @@ export default {
   },
   data() {
     return {
-      item: this.toolFrom,
+      item: this.modelFrom,
       isOpen: this.isOpenTool,
       openTool: false,
       toolPreview
@@ -86,10 +88,10 @@ export default {
   height: 50px;
   // width: 250px;
 
-  .toolImgOuter {
+  .thumbnailOuter {
     height: 30px;
     width: 30px;
-    .toolImg {
+    .thumbnail {
       width: auto;
       height: auto;
       max-width: 100%;

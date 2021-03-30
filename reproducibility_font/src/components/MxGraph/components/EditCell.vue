@@ -1,4 +1,4 @@
- <template>
+<template>
   <div>
     <div class="editNodeContainer" v-show="dialogVisible">
       <span>这是一段信息</span>
@@ -8,32 +8,32 @@
     </div>
   </div>
 </template>
- 
- <script>
-import mxgraph from "../index.js";
+
+<script>
+// import mxgraph from '../index.js';
 
 export default {
   props: {
     visible: {
-      type: Boolean,
+      type: Boolean
     },
     currentGraph: {
-      type: Object,
-    },
+      type: Object
+    }
   },
   watch: {
     visible: {
       handler(val) {
         this.dialogVisible = val;
         console.log(val);
-      },
+      }
     },
     currentGraph: {
       handler(val) {
         this.graph = val;
         console.log(val);
-      },
-    },
+      }
+    }
   },
   components: {},
   data() {
@@ -43,13 +43,13 @@ export default {
     closeDialog() {
       this.dialogVisible = false;
     },
-    editCellValue() {},
+    editCellValue() {}
   },
   created() {},
-  mounted() {},
+  mounted() {}
 };
 </script>
- <style lang='scss' scoped>
+<style lang="scss" scoped>
 .editNodeContainer {
   position: relative;
   width: 500px;

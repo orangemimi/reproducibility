@@ -6,17 +6,15 @@
         <h3 class="title" :title="item.name">{{ item.name }}</h3>
         <p class="desc" :title="item.des">{{ item.description }}</p>
       </div>
-      <el-button class="config-btn" type="text" @click="view(item.id)"
-        >View</el-button
-      >
+      <el-button class="config-btn" type="text" @click="view(item.id)">View</el-button>
     </el-card>
   </div>
 </template>
 
 <script>
-import { imgBase64 } from "@/lib/utils";
+import { imgBase64 } from '@/lib/utils';
 export default {
-  props: ["item", "type"],
+  props: ['item', 'type'],
   methods: {
     imgPath(snapshot, name) {
       if (snapshot != undefined) {
