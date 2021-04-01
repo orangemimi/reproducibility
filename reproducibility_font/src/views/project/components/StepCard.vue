@@ -90,7 +90,9 @@ export default {
   box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
   opacity: 1;
   height: 100%;
+  width: 100%;
   margin: 10px;
+
   .top {
     background: $headerBackground;
     color: rgb(255, 255, 255);
@@ -109,7 +111,9 @@ export default {
     }
   }
   .content-comp {
-    margin: 10px;
+    padding: 10px;
+    width: 100%;
+    height: 100%;
   }
 }
 </style>

@@ -13,14 +13,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * @version: 1.0.0
  */
 @Data
-@Document(collection = "Record")
+@Document(collection = "ActionRecord")
 public class Record extends BaseEntity {
     @Id
     String id;
+    String nodeId;//context/resource.id
     String userId;
     String projectId;
     String description;
     String content;
     String nodeType; //context definition or resource collection or process...
-    String nodeId; //查询条件Id
+
 }

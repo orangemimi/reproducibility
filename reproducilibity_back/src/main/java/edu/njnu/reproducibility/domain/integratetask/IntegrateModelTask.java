@@ -24,7 +24,8 @@ public class IntegrateModelTask extends BaseEntity {
 
     String userId;
 
-    String taskId;//tid-->mangerserver fanhui
+    String taskId;//tid--> mangerserver fanhui
+
     String taskName;//自己起的
     String taskDescription;
 

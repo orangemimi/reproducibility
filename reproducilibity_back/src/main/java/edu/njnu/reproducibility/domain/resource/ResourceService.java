@@ -2,16 +2,24 @@ package edu.njnu.reproducibility.domain.resource;
 
 
 
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONObject;
 import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
+import edu.njnu.reproducibility.domain.data.DataItemRepository;
+import edu.njnu.reproducibility.domain.data.support.DataItem;
 import edu.njnu.reproducibility.domain.resource.dto.AddResourceDTO;
-import edu.njnu.reproducibility.domain.resource.dto.UpdateResourceDTO;
+import edu.njnu.reproducibility.domain.resource.dto.UpdateResourceDataDTO;
+import edu.njnu.reproducibility.domain.resource.dto.UpdateResourceModelDTO;
 import edu.njnu.reproducibility.utils.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author Zhiyi
@@ -22,22 +30,46 @@ import org.springframework.web.multipart.MultipartFile;
 public class ResourceService {
     @Autowired
     private ResourceRepository resourceRepository;
-    public JsonResult getResources(String pid) {
-        Resource resource =resourceRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
-        return  ResultUtils.success(resource);
+
+    @Autowired
+    DataItemRepository dataItemRepository;
+
+    public JsonResult getResources(String userId) {
+//        List<Resource> resources =resourceRepository.findAllByProjectId(userId);
+        return  ResultUtils.success();
+    }
+    public List<DataItem> getResourcesByProjectId(String projectId) {
+        Resource resources =resourceRepository.findByProjectId(projectId).orElseThrow(MyException::noObject);
+        List<DataItem> dataItemList =new ArrayList<>();
+        for(int i=0;i<resources.getDataItemCollection().size();i++){
+            String dataId = resources.getDataItemCollection().get(i);
+            DataItem dataItem = dataItemRepository.findById(dataId).orElseThrow(MyException::noObject);
+            dataItemList.add(dataItem);
+        }
+
+//        JSONObject jsonObject = new JSONObject();
+//        jsonObject.put()
+        return  dataItemList;
     }
 
-    public JsonResult updateResources(String pid, UpdateResourceDTO updateResourceDTO) {
+    public Resource updateResourceData(String pid, UpdateResourceDataDTO updateResourceDataDTO) {
         Resource resource =resourceRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
-        updateResourceDTO.updateTo(resource);
-        return ResultUtils.success(resourceRepository.save(resource));
+        updateResourceDataDTO.updateTo(resource);
+        return resourceRepository.save(resource);
+    }
+
+    public Resource updateResourceModel(String pid, UpdateResourceModelDTO updateResourceModelDTO) {
+        Resource resource =resourceRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
+        updateResourceModelDTO.updateTo(resource);
+        return resourceRepository.save(resource);
     }
 
 
-    public JsonResult saveResources(AddResourceDTO add) {
+    public Resource saveResources(AddResourceDTO add,String userId) {
         Resource resource = new Resource();
         add.convertTo(resource);
-        return  ResultUtils.success(resourceRepository.insert(resource));
+        resource.setUserId(userId);
+        return  resourceRepository.insert(resource);
     }
 
     public Object uploadPicture(MultipartFile upload, String userId) {
@@ -49,4 +81,6 @@ public class ResourceService {
             throw new MyException("Upload Failed");
         }
     }
+
+
 }

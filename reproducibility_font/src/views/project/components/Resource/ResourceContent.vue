@@ -1,25 +1,44 @@
 <template>
   <div class="main">
-    <el-row class="row-style">
-      <div class="data_container">
-        <el-button @click="uploadDataDialogShow = true" size="mini">Upload data</el-button>
-        <div>
-          <el-checkbox
-            :indeterminate="isIndeterminate"
-            v-model="checkAll"
-            @change="handleCheckAllChange"
-          >
-            Select all
-          </el-checkbox>
-          <div style="margin: 15px 0;"></div>
-          <el-checkbox-group v-model="checkedDataItemList" @change="checkDataItem">
-            <el-checkbox v-for="(item, index) in dataItemListDirect" :label="item" :key="index">
-              {{ item.name }}
-            </el-checkbox>
-          </el-checkbox-group>
-        </div>
+    <div class="row-style">
+      <!-- <div class="table"> -->
+      <el-table
+        ref="multipleTable"
+        :data="dataItemListDirect"
+        tooltip-effect="dark"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+        max-height="350"
+        :row-style="{ height: '0' }"
+        :cell-style="{ padding: '4px' }"
+      >
+        <template slot="empty">
+          Please upload a file
+        </template>
+        <el-table-column type="selection" width="50"></el-table-column>
+        <el-table-column label="Name" show-overflow-tooltip>
+          <template #default="scope">{{ scope.row.name }}</template>
+        </el-table-column>
+        <el-table-column label="Type" width="70">
+          <template #default="scope">{{ scope.row.type }}</template>
+        </el-table-column>
+        <el-table-column label="File size" width="100">
+          <template #default="scope">{{ scope.row.fileSize }}</template>
+        </el-table-column>
+        <el-table-column label="Upload time" width="180" show-overflow-tooltip>
+          <template #default="scope">{{ scope.row.createTime }}</template>
+        </el-table-column>
+      </el-table>
+      <!-- </div> -->
+    </div>
+    <div class="btnList">
+      <div class="btn">
+        <el-button size="mini" @click="uploadDataDialogShow = true">
+          Upload
+        </el-button>
       </div>
-    </el-row>
+      <div class="btn"><el-button size="mini" @click="submitBtn">Submit</el-button></div>
+    </div>
 
     <!-- upload data -->
     <el-dialog
@@ -28,13 +47,16 @@
       width="40%"
       :close-on-click-modal="false"
     >
-      <data-upload-info :projectInfo="projectInfo"></data-upload-info>
+      <data-upload-info
+        :projectInfo="projectInfo"
+        @uploadSuccess="uploadSuccess"
+      ></data-upload-info>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { get } from '@/axios';
+import { get, patch } from '@/axios';
 // import dataUpload from './DataUpload'; //dialogcontent
 import dataUploadInfo from './DataUploadInfo'; //dialogcontent
 export default {
@@ -69,41 +91,91 @@ export default {
       modelItemList: [],
       checkAll: false,
       checkedDataItemList: [],
-      isIndeterminate: false
+      isIndeterminate: false,
+
+      //table
+      multipleSelection: []
     };
   },
   computed: {
     dataItemListDirect() {
-      return this.dataItemList.filter(item => item.isDirect == true);
+      if (
+        this.dataItemList.length != 0 ||
+        this.dataItemList != null ||
+        this.dataItemList != undefined
+      ) {
+        return this.dataItemList.filter(item => item.isDirect == true);
+      } else {
+        return [];
+      }
     }
   },
 
   methods: {
+    //close the dialog
+    uploadSuccess(val) {
+      if (val) {
+        this.uploadDataDialogShow = false;
+      }
+    },
+
     downloadDataResource(data) {
       window.open(data.url);
     },
 
-    // async getResources() {
-    //   let dataItem = await get(`/dataItems/${this.projectId}`);
-    //   let modelItem = await get(`/toolItems/${this.projectId}`);
-
-    //   this.modelItemList = modelItem;
-    //   this.dataItemList = dataItem;
-    // },
+    //get all the data
     async getDataCollection() {
-      let data = await get(`/dataItems/${this.projectInfo.id}`, this.uploadFileForm);
+      let data = await get(`/dataItems`);
       this.dataItemList = data;
+
+      await this.getSelectedData();
     },
 
-    handleCheckAllChange(value) {
-      this.checkedDataItemList = value ? this.dataItemList : [];
-      this.isIndeterminate = false;
+    //get resources
+    async getSelectedData() {
+      let data = await get(`/resources/${this.projectId}`);
+      let dataSelected = data;
+      this.multipleSelection = this.dataItemListDirect.filter(item =>
+        dataSelected.some(selection => selection.id == item.id)
+      );
+      this.toggleSelection(this.multipleSelection);
     },
 
-    checkDataItem(value) {
-      let checkedCount = value.length;
-      this.checkAll = checkedCount === this.dataItemList.length;
-      this.isIndeterminate = checkedCount > 0 && checkedCount < this.dataItemList.length;
+    //init table selection
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row);
+        });
+      } else {
+        this.$refs.multipleTable.clearSelection();
+      }
+    },
+
+    //selection change
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    },
+
+    //submit
+    async submitBtn() {
+      if (this.multipleSelection.length == 0) {
+        this.$notify({
+          title: 'Warning',
+          message: 'You have not select any data!',
+          type: 'warning'
+        });
+      } else {
+        let filter = [];
+        this.multipleSelection.forEach(ele => {
+          filter.push(ele.id);
+        });
+        console.log(filter);
+        let data = await patch(`resources/data/${this.projectId}`, {
+          dataItemCollection: filter
+        });
+        console.log(data);
+      }
     }
   },
   async mounted() {
@@ -114,28 +186,26 @@ export default {
 
 <style lang="scss" scoped>
 .main {
-  margin: 0 20px;
+  padding: 0 10px;
   height: 100%;
+  width: 100%;
 
   .row-style {
-    margin: 0 10px;
+    padding: 0 10px;
     height: 100%;
+    width: 100%;
+    // position: relative;
+  }
 
-    .data_container {
-      // width: 300px;
+  .btnList {
+    width: 100%;
+    padding: 5% 35% 0 35%;
+
+    .btn {
       float: left;
-      margin-left: 15px;
-      height: 95%;
+      margin-right: 10px;
+      // width: 300px;
     }
-  }
-
-  .tools_container {
-    // width: 40px;
-    float: left;
-  }
-  .container_divider {
-    float: left;
-    height: 95%;
   }
 }
 </style>

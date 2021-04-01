@@ -16,6 +16,7 @@
         Select an Exist Task
         <i class="el-icon-arrow-down el-icon--right"></i>
       </span>
+      <!-- {{ taskList }} -->
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item v-for="(task, index) in taskList" :key="index" :command="task">
           {{ task.taskName }}

@@ -86,7 +86,13 @@ export default {
   methods: {
     async createProject() {
       let data = await post(`/projects`, this.form);
-      console.log(data);
+
+      let document = await post(`/methods`, { projectId: data.id, version: '1.0' });
+      console.log(document);
+
+      let resource = await post(`/resources`, { projectId: data.id });
+      console.log(resource);
+
       this.userInfo.createdProjects.push(data.id);
       let update = { createdProjects: this.userInfo.createdProjects };
       await patch(`/users`, update);

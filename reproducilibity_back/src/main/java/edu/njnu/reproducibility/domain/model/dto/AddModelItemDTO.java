@@ -1,10 +1,9 @@
-package edu.njnu.reproducibility.domain.resource.model.dto;
+package edu.njnu.reproducibility.domain.model.dto;
 
 
 import edu.njnu.reproducibility.common.dto.ToDomainConverter;
-import edu.njnu.reproducibility.domain.resource.model.ModelItem;
+import edu.njnu.reproducibility.domain.model.support.ModelItem;
 import lombok.Data;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
@@ -21,7 +20,7 @@ import java.util.List;
 //        , @JsonSubTypes.Type(value = CodeModel.class, name = "code"),
 //})
 
-public class UpdateModelItemDTO implements ToDomainConverter<ModelItem> {
+public class AddModelItemDTO implements ToDomainConverter<ModelItem> {
     //    ComputableModel computableModel;
 
     String name;

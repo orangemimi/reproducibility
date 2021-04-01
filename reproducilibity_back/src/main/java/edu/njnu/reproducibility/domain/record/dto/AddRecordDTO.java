@@ -14,10 +14,10 @@ import lombok.Data;
 
 @Data
 public class AddRecordDTO implements ToDomainConverter<Record> {
+    String nodeId;//context/resource.id
     String userId;
     String projectId;
     String description;
     String content;
-    String eventType; //context definition or resource collection or process...
-    String eventId; //查询条件Id
+    String nodeType; //context definition or resource collection or process...
 }

@@ -5,10 +5,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Author ：Zhiyi
@@ -16,13 +13,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @modified By：
  * @version: 1.0.0
  */
-@FeignClient(name = "user-service",
-        url = "http://geomodeling.njnu.edu.cn",
+@FeignClient(name = "portal",
+        url = "http://222.192.7.75:80",
         fallback = PortalFeign.FeignServiceFallBack.class)
 @Primary
 public interface PortalFeign {
     @RequestMapping(value ="/computableModel/getInfo/{doi}",method = RequestMethod.GET)
-    JSONObject getComputeModel(@PathVariable("id")  String doi);
+    JSONObject getComputeModel(@PathVariable(value="doi") String doi);
 
     @Component
     class FeignServiceFallBack implements PortalFeign {

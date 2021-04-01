@@ -23,7 +23,7 @@
       </div>
     </div>
     <div class="customToolbarContainer" v-show="!isNewTaskContainerShow">
-      <mx-graph :sendXml="mxgraph"></mx-graph>
+      <mx-graph :sendXml="mxgraph" :taskInfoInit="taskInfo"></mx-graph>
     </div>
   </div>
 </template>
@@ -82,29 +82,17 @@ export default {
           background: '#808695'
         }
       },
-      isOpenTool: false,
-      typeSelected: 'All',
-      typeOptions: [
-        'All',
-        'General step',
-        'Context definition & resource collection',
-        'Data processing',
-        'Data visualization',
-        'Geographic model construction',
-        'Model effectiveness evaluation',
-        'Geographical simulation',
-        'Quantitative and qualitative analysis',
-        'Decision-making for management',
-        'Others'
-      ],
-      panelList: [],
+      // isOpenTool: false,
+      // typeSelected: 'All',
+
+      // panelList: [],
       jupyterModal: false,
       currentModelInfo: {
         toolUrl: '',
         toolId: ''
       },
-      modelUrl: '',
-      modelDoi: '16e31602-bd05-4da4-bd01-cb7582c21ae8',
+      // modelUrl: '',
+      // modelDoi: '16e31602-bd05-4da4-bd01-cb7582c21ae8',
       // pageParams: {},
       modelInstances: [],
       instanceFolk: { id: '' },
@@ -185,8 +173,9 @@ export default {
     },
 
     async getDataItem() {
-      let dataItem = await get(`/dataItems/${this.projectInfo.id}`);
+      let dataItem = await get(`/resources/${this.projectInfo.id}`);
       this.$set(this.selectedResources, 'dataItemList', dataItem);
+
       if (this.$route.params.isInherit) {
         this.selectedResources.dataItemList = dataItem.filter(
           item =>
@@ -252,10 +241,10 @@ export default {
       this.modelInstances.push(instance);
     },
 
-    getModelDoi(url) {
-      let arr = url.split('/');
-      this.modelDoi = arr[arr.length - 1];
-    },
+    // getModelDoi(url) {
+    //   let arr = url.split('/');
+    //   this.modelDoi = arr[arr.length - 1];
+    // },
 
     async mapCreate() {
       this.filterCreateMapInstances = this.filterModelInstance.filter(
@@ -339,6 +328,8 @@ export default {
       // console.log(postJson);
       let data = await post(`/integrateTasks`, postJson);
       this.currentTask = data;
+      this.taskInfo = data;
+      this.mxgraph = data.mxgraph;
       this.isNewTaskContainerShow = false;
       // console.log(data);
     },

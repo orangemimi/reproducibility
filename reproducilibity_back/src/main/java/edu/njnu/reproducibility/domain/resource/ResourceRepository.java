@@ -2,6 +2,8 @@ package edu.njnu.reproducibility.domain.resource;
 
 
 import org.springframework.data.mongodb.repository.MongoRepository;
+
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -11,4 +13,5 @@ import java.util.Optional;
  */
 public interface ResourceRepository extends MongoRepository<Resource,String> {
     Optional<Resource> findFirstByProjectId(String pid);
+    Optional<Resource> findByProjectId(String pid);
 }

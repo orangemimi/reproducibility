@@ -1,19 +1,15 @@
-package edu.njnu.reproducibility.domain.resource.model;
+package edu.njnu.reproducibility.domain.model;
 
 
 
-import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
-import edu.njnu.reproducibility.domain.resource.model.dto.AddModelItemDTO;
+import edu.njnu.reproducibility.domain.model.dto.AddModelItemDTO;
+import edu.njnu.reproducibility.domain.model.support.ModelItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.awt.print.Pageable;
-import java.util.List;
 
 /**
  * @Author     ：Zhiyi

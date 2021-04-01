@@ -1,12 +1,9 @@
-package edu.njnu.reproducibility.domain.resource.model;
+package edu.njnu.reproducibility.domain.model;
 
-import edu.njnu.reproducibility.domain.resource.tool.ToolItem;
+import edu.njnu.reproducibility.domain.model.support.ModelItem;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * @Author     ：Zhiyi

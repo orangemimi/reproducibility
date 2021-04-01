@@ -1,4 +1,4 @@
-package edu.njnu.reproducibility.domain.resource.data;
+package edu.njnu.reproducibility.domain.data;
 
 import lombok.Data;
 

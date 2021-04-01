@@ -1,9 +1,9 @@
 package edu.njnu.reproducibility.domain.resource.dto;
 
 import edu.njnu.reproducibility.common.dto.ToDomainConverter;
-import edu.njnu.reproducibility.domain.resource.DataItem;
+import edu.njnu.reproducibility.domain.data.support.DataItem;
 import edu.njnu.reproducibility.domain.resource.Resource;
-import edu.njnu.reproducibility.domain.resource.model.ModelItem;
+import edu.njnu.reproducibility.domain.model.support.ModelItem;
 import lombok.Data;
 
 import java.util.List;
@@ -14,7 +14,6 @@ import java.util.List;
  * @Version 1.0.0
  */
 @Data
-public class UpdateResourceDTO implements ToDomainConverter<Resource> {
-    List<DataItem> dataItemCollection;
-    List<ModelItem> modelItemCollection;
+public class UpdateResourceDataDTO implements ToDomainConverter<Resource> {
+    List<String> dataItemCollection;
 }

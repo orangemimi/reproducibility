@@ -1,10 +1,11 @@
-package edu.njnu.reproducibility.domain.resource.data;
+package edu.njnu.reproducibility.domain.data;
 
 
 import edu.njnu.reproducibility.annotation.JwtTokenParser;
 import edu.njnu.reproducibility.common.untils.JsonResult;
-import edu.njnu.reproducibility.domain.resource.data.dto.AddDataItemDTO;
-import edu.njnu.reproducibility.domain.resource.data.dto.UpdateDataItemDTO;
+import edu.njnu.reproducibility.common.untils.ResultUtils;
+import edu.njnu.reproducibility.domain.data.dto.AddDataItemDTO;
+import edu.njnu.reproducibility.domain.data.dto.UpdateDataItemDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,9 +26,9 @@ public class DataItemController {
 //        return dataItemService.getDataItemBystep(stepId);
 //    }
 
-    @RequestMapping(value = "/{pid}",method = RequestMethod.GET)
-    public JsonResult getAll(@PathVariable("pid") String pid) {
-        return dataItemService.getAll(pid);
+    @RequestMapping(value = "",method = RequestMethod.GET)
+    public JsonResult getAll(@JwtTokenParser(key="userId") String userId) {
+        return ResultUtils.success(dataItemService.getAll(userId)) ;
     }
 
     //更新部分字段

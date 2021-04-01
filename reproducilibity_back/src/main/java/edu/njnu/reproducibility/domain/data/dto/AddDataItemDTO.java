@@ -1,11 +1,9 @@
-package edu.njnu.reproducibility.domain.resource.data.dto;
+package edu.njnu.reproducibility.domain.data.dto;
 
 import edu.njnu.reproducibility.common.dto.ToDomainConverter;
-import edu.njnu.reproducibility.domain.resource.data.DataItem;
+import edu.njnu.reproducibility.domain.data.support.DataItem;
 import edu.njnu.reproducibility.domain.resource.spatialTemporalInfo.SpatioTemporalInfo;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class AddDataItemDTO implements ToDomainConverter<DataItem> {
@@ -18,7 +16,7 @@ public class AddDataItemDTO implements ToDomainConverter<DataItem> {
     Boolean isDirect; //false--中间处理数据 //true--直接上传数据
     SpatioTemporalInfo spatioTemporalInfo;
 
-    String projectId;
+//    String projectId;
     String uploaderId;
     String fileSize;
     String privacy;     //public/private

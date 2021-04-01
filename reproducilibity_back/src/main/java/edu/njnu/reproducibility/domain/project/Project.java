@@ -41,8 +41,10 @@ public class Project extends BaseEntity {
     Boolean isForking; //是否从别的项目Fork出来
     String forkingProject;
 
-    Boolean isForked;
+    Boolean isForked;//是否被别的项目Fork
     List<String> forkedProjectList;
+
+    //不管是否被Fork 始终是一个Project 以ProjectId为标识
 
 
 }

@@ -1,5 +1,7 @@
-package edu.njnu.reproducibility.domain.resource.data;
+package edu.njnu.reproducibility.domain.data;
 
+import edu.njnu.reproducibility.domain.data.support.DataItem;
+import edu.njnu.reproducibility.domain.resource.Resource;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.Optional;
  * @Version 1.0.0
  */
 public interface DataItemRepository extends MongoRepository<DataItem,String> {
-    Optional<List<DataItem>> findAllByProjectId(String pid);
+    Optional<DataItem> findById(String pid);
+    List<DataItem> findAllByUploaderId(String id);
 //    Optional<List<DataItem>> findAllByStepBindId(String stepId);
 }

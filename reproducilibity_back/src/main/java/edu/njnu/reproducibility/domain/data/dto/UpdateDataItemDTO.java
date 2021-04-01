@@ -1,7 +1,7 @@
-package edu.njnu.reproducibility.domain.resource.data.dto;
+package edu.njnu.reproducibility.domain.data.dto;
 
 import edu.njnu.reproducibility.common.dto.ToDomainConverter;
-import edu.njnu.reproducibility.domain.resource.data.DataItem;
+import edu.njnu.reproducibility.domain.data.support.DataItem;
 import lombok.Data;
 
 import java.util.List;

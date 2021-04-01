@@ -69,6 +69,7 @@
               </el-table>
             </div>
             <div v-else>
+              <!-- {{ dataItemList }} -->
               <el-select
                 v-model="selectDataId"
                 clearable
@@ -168,8 +169,8 @@ export default {
       stateInView: {},
       currentCell: this.cell,
       dataItemList: [],
-      projectId: this.$route.params.projectId,
-      userInfo: this.$store.getters.userInfo,
+      projectId: this.$route.params.id,
+
       currentEvent: {},
       currentDatasetItem: {},
       ops: {
@@ -190,7 +191,7 @@ export default {
     },
 
     async getModelInfo() {
-      let data = await get(`/modelTask/ModelBehavior/${this.doi}`); //获得模型所有信息
+      let data = await get(`/portal/modelBehavior/${this.doi}`); //获得模型所有信息
       this.md5 = data.md5;
       this.modelIntroduction = data;
       this.stateList = data.convertMdlJson;
@@ -214,7 +215,7 @@ export default {
       let stateList = this.stateList;
       let currentCell = this.currentCell;
       let current;
-      let event = stateList.forEach(state => {
+      stateList.forEach(state => {
         if (state.name == currentCell.stateName) {
           let events = state.Event;
           current = events.filter(event => {
@@ -223,14 +224,16 @@ export default {
           current = { state, Event, ...current[0] };
         }
       });
-      console.log(event);
+      console.log(current);
 
       return current;
     },
 
     async getResources() {
-      let data = await get(`/dataItems/${this.projectId}`);
-      this.dataItemList = data;
+      let data = await get(`/resources/${this.projectId}`);
+      this.dataItemList = data; //id list
+
+      // await get(`/dataItems/`);
     },
 
     changeSelectResource(id) {
@@ -243,7 +246,7 @@ export default {
     },
 
     async submitResource() {
-      // console.log(this.currentEvent);
+      console.log(this.currentEvent);
 
       let event = this.currentEvent;
       if (

@@ -67,6 +67,8 @@ public class RemoteDataContainerController {
         Part part = multiRequest.getPart("file");
         String header = part.getHeader("Content-Disposition");
         String filename2 = header.substring(header.indexOf("filename=\"") + 10, header.lastIndexOf("\""));//filename=" (整个字符串长度为10，所以要加10)
+
+        String filename = FilenameUtils.getBaseName(filename2);
         //  获取文件后缀名
         String suffix = "." + FilenameUtils.getExtension(filename2);
         File file = File.createTempFile(part.getName(), suffix);//创建临时文件
@@ -77,7 +79,7 @@ public class RemoteDataContainerController {
         form.add("serverNode", "china");
         form.add("userId", id);
         form.add("datafile", resource);
-        form.add("name", name);
+        form.add("name", filename);
         form.add("origination", "reproducibility");
 
 //        return ResultUtils.success(dataContainerService.upload(file,id,name));

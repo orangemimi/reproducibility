@@ -1,48 +1,49 @@
 <template>
   <div class="main">
-    <el-col class="dataContainer" :span="22" :offset="1">
-      <div class="params-group">
-        <el-row v-if="stateListInput !== undefined" class="stateTitle">Input</el-row>
-        <div class="event">
-          <div
-            class="event-desc"
-            v-for="(modelInEvent, inEventIndex) in stateListInput"
-            :key="inEventIndex"
-            ref="inputItemList"
-          >
-            <el-card :title="modelInEvent.name">
-              <div
-                v-show="modelInEvent.optional == 'False' || modelInEvent.optional == 'false'"
-                class="event_option"
-              >
-                *
-              </div>
-              <div class="event_name">
-                {{ modelInEvent.name }}
-              </div>
-            </el-card>
+    <el-tabs v-model="activeName" type="card" class="tabs">
+      <el-tab-pane label="Input" name="input" class="tab">
+        <div class="events">
+          <div class="event">
+            <div
+              class="event-desc"
+              v-for="(modelInEvent, inEventIndex) in stateListInput"
+              :key="inEventIndex"
+              ref="inputItemList"
+            >
+              <el-card :title="modelInEvent.name">
+                <div
+                  v-show="modelInEvent.optional == 'False' || modelInEvent.optional == 'false'"
+                  class="event_option"
+                >
+                  *
+                </div>
+                <div class="event_name">
+                  {{ modelInEvent.name }}
+                </div>
+              </el-card>
+            </div>
           </div>
         </div>
-      </div>
-
-      <div class="params-group">
-        <el-row v-if="stateListOutput !== undefined" class="stateTitle">Output</el-row>
-        <div class="event">
-          <div
-            class="event-desc"
-            v-for="(modelOutEvent, outEventIndex) in stateListOutput"
-            :key="outEventIndex"
-            ref="outputItemList"
-          >
-            <el-card :title="modelOutEvent.name">
-              <div class="event_name">
-                {{ modelOutEvent.name }}
-              </div>
-            </el-card>
+      </el-tab-pane>
+      <el-tab-pane label="Output" name="output" class="tab">
+        <div class="events">
+          <div class="event">
+            <div
+              class="event-desc"
+              v-for="(modelOutEvent, outEventIndex) in stateListOutput"
+              :key="outEventIndex"
+              ref="outputItemList"
+            >
+              <el-card :title="modelOutEvent.name" class="event-card">
+                <div class="event_name">
+                  {{ modelOutEvent.name }}
+                </div>
+              </el-card>
+            </div>
           </div>
         </div>
-      </div>
-    </el-col>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
@@ -58,7 +59,8 @@ export default {
   watch: {
     cell: {
       handler(val) {
-        if (val != '') {
+        if (JSON.stringify(val) != '{}') {
+          console.log('cell', val);
           this.doi = val.doi;
           this.init();
         }
@@ -76,7 +78,8 @@ export default {
       md5: '',
       stateList: [],
       stateListInput: [],
-      stateListOutput: []
+      stateListOutput: [],
+      activeName: 'input'
     };
   },
 
@@ -96,7 +99,8 @@ export default {
     },
 
     async getModelInfo() {
-      let data = await get(`/modelTask/ModelBehavior/${this.doi}`); //获得模型所有信息
+      let data = await get(`/portal/modelBehavior/${this.doi}`); //获得模型所有信息
+      console.log(data);
       this.md5 = data.md5;
       this.modelIntroduction = data;
       this.stateList = data.convertMdlJson;
@@ -130,86 +134,62 @@ export default {
   position: relative;
   width: 200px;
 
-  .state-desc {
-    margin: 0px 0px 15px 0px;
-    padding: 4px 0px;
-    line-height: 2;
-    background-color: #f3f3f3;
-    font-size: 16px;
-    font-style: italic;
-  }
-  .el-tabs__item {
-    font-size: 16px;
-  }
-  .el-tabs__item:hover {
-    color: #00bbd8;
-    background-color: #b5dce244;
-  }
-  .el-tabs__item.is-active {
-    color: #00bbd8;
-  }
-  .el-tabs__active-bar {
-    background-color: #00bbd8;
-  }
-
-  .leftContainer {
-    background-color: rgba(142, 200, 255, 0.2);
-    border-radius: 5px;
-    // box-shadow: 0px 0px 4px rgb(203, 207, 212);
+  .tabs {
     width: 100%;
-    .modelState {
-      color: rgb(37, 44, 66);
-      font-size: 14px;
-    }
-  }
+    .tab {
+      .events {
+        .event {
+          .event-desc {
+            margin: 5px 0;
 
-  .stateTitle {
-    font-size: 16px;
-    font-weight: 600;
-    color: rgb(87, 173, 253);
-    font-style: italic;
-  }
+            /deep/ .el-card {
+              box-shadow: 0 1px 5px 0 rgba(161, 161, 161, 0.1);
+              .el-card__body {
+                padding: 5px;
+                width: 200px;
+                height: 40px;
+              }
+            }
 
-  .event {
-    .event:hover {
-      background-color: #c4d9f734;
-    }
-    .event_option {
-      color: red;
-      float: left;
-      width: 10px;
-      font-size: 14px;
-      font-weight: 600;
-    }
-    .event_name {
-      font-size: 14px;
-      font-weight: 600;
-      padding-left: 10px;
+            .el-card:hover {
+              background-color: #3067d61c;
+              border: 1px solid #25252534;
+            }
+            .event_option {
+              color: red;
+              float: left;
+              width: 10px;
+              font-size: 14px;
+              font-weight: 600;
+            }
+            .event_name {
+              font-size: 14px;
+              font-weight: 600;
+              padding-left: 10px;
+            }
+          }
 
-      /* padding: 10px 0; */
-    }
-    >>> .el-card__body {
-      padding: 5px;
-      width: 200px;
-    }
-    .event-desc:hover {
-      cursor: pointer;
-    }
-  }
+          .event-desc:hover {
+            cursor: pointer;
+          }
+        }
 
-  .des {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    /* !autoprefixer: off */
-    -webkit-box-orient: vertical;
-    font-size: 14px;
-  }
-  .title {
-    font-weight: 600;
-    font-size: 20px;
-    margin: 20px 0 10px 0;
+        .des {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          /* !autoprefixer: off */
+          -webkit-box-orient: vertical;
+          font-size: 14px;
+        }
+        .title {
+          font-weight: 600;
+          font-size: 20px;
+          margin: 20px 0 10px 0;
+        }
+      }
+    }
   }
 }
 </style>

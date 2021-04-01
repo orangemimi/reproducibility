@@ -2,52 +2,53 @@
 <template>
   <div>
     <el-col :span="24" v-if="recordList != undefined">
+      <!-- {{ recordList }} -->
       <el-row>
         <el-timeline v-for="(record, index) in recordList" :key="index">
           <el-timeline-item
-            v-if="record.eventType == 'contextDefinition'"
+            v-if="record.nodeType == 'contextDefinition'"
             icon="el-icon-edit"
             type="primary"
             size="large"
             :timestamp="record.createTime"
           >
-            <div>{{ record.content }}</div>
+            <div>1{{ record.content }}</div>
           </el-timeline-item>
           <el-timeline-item
-            v-if="record.eventType == 'resourceCollection'"
+            v-if="record.nodeType == 'resourceCollection'"
             icon="el-icon-folder"
             type="success"
             color="#0bbd87"
             :timestamp="record.createTime"
           >
-            <div>{{ record.content }}</div>
+            <div>2{{ record.content }}</div>
           </el-timeline-item>
           <el-timeline-item
-            v-if="record.eventType == 'dataProcessing'"
+            v-if="record.nodeType == 'dataProcessing'"
             icon="el-icon-coin"
             type="success"
             color="#0bbd87"
             :timestamp="record.createTime"
           >
-            <div>{{ record.content }}</div>
+            <div>3{{ record.content }}</div>
           </el-timeline-item>
           <el-timeline-item
-            v-if="record.eventType == 'simulationExecution'"
+            v-if="record.nodeType == 'simulationExecution'"
             icon="el-icon-coordinate"
             type="success"
             color="#0bbd87"
             :timestamp="record.createTime"
           >
-            <div>{{ record.content }}</div>
+            <div>4{{ record.content }}</div>
           </el-timeline-item>
           <el-timeline-item
-            v-if="record.eventType == 'resultAnalysis'"
+            v-if="record.nodeType == 'resultAnalysis'"
             icon="el-icon-reading"
             type="success"
             color="#0bbd87"
             :timestamp="record.createTime"
           >
-            <div>{{ record.content }}</div>
+            <div>5{{ record.content }}</div>
           </el-timeline-item>
         </el-timeline>
       </el-row>
@@ -93,9 +94,15 @@ export default {
     // },
     async getAllRecords() {
       let data = await get(`/records/all/${this.projectId}`);
+      console.log('recors', data);
       this.recordList = data;
     },
-    creatDocument() {}
+    async creatDocument() {
+      //document
+      // let methodForm = { id: data.id };
+      // let document = await patch(`/methods/${this.projectInfomation.id}`, methodForm);
+      // console.log(document);
+    }
   }
 
   //   mounted() {

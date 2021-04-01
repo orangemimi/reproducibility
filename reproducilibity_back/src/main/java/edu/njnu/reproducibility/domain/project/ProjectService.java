@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,37 +39,36 @@ public class ProjectService {
     }
 
     public Object getProjectAndUsers(String projectId) {
-        Project project=projectRepository.findById(projectId).orElse(null);
+        Project project = projectRepository.findById(projectId).orElse(null);
         String creatorId = project.getCreator();
-        User creator= userService.getUserInfoById(creatorId);
+        User creator = userService.getUserInfoById(creatorId);
         JSONObject creatorJson = new JSONObject();
-        creatorJson.put("id",creator.getUserId());
-        creatorJson.put("name",creator.getName());
-
-
+        creatorJson.put("id", creator.getUserId());
+        creatorJson.put("name", creator.getName());
 
         List<Member> memberIdList = project.getMembers();
         List<JSONObject> memberList = new ArrayList<>();
-        for (int i=0;i<memberIdList.size();i++){
-            User member = userService.getUserInfoById(memberIdList.get(i).getId());
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("id",member.getUserId());
-            jsonObject.put("name",member.getName());
-            jsonObject.put("role",memberIdList.get(i).getRole());
-            memberList.add(jsonObject);
+        JSONObject json = new JSONObject();
+
+        json.put("project", project);
+        json.put("creator", creatorJson);
+        if (!(memberIdList == null || memberIdList.size() == 0)) {
+            for (int i = 0; i < memberIdList.size(); i++) {
+                User member = userService.getUserInfoById(memberIdList.get(i).getId());
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("id", member.getUserId());
+                jsonObject.put("name", member.getName());
+                jsonObject.put("role", memberIdList.get(i).getRole());
+                memberList.add(jsonObject);
+            }
+            json.put("members", memberList);
         }
-
-        JSONObject json =new JSONObject();
-        json.put("project",project);
-        json.put("creator",creatorJson);
-        json.put("members",memberList);
-        return  json;
-
+        return json;
     }
 
     public List<Project> getAllProjects(String userId) {
-        List<String> privacyList = Arrays.asList("public","discoverable");
-        List<Project> projectList= projectRepository.findByPrivacyInOrCreator(privacyList,userId);
+        List<String> privacyList = Arrays.asList("public", "discoverable");
+        List<Project> projectList = projectRepository.findByPrivacyInOrCreator(privacyList, userId);
         return projectList;
     }
 
@@ -86,7 +86,7 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
-    public Project create(String userId, String userName,AddProjectDTO add) {
+    public Project create(String userId, String userName, AddProjectDTO add) {
         Project project = new Project();
         add.convertTo(project);
 //        Creator creator = new Creator();
@@ -97,8 +97,6 @@ public class ProjectService {
     }
 
 
-
-
     public void delete(String projectId) {
         projectRepository.deleteById(projectId);
     }
@@ -106,7 +104,7 @@ public class ProjectService {
 
     public Object uploadPicture(MultipartFile upload, String userId) {
         //这里获取的是项目的根路径，直接加上了static/imgupload/下就找到图片，找不到，就直接去电脑文件夹找
-        String filePath = ClassUtils.getDefaultClassLoader().getResource("").getPath() + "static/"+userId+"/projectPicture/";
+        String filePath = ClassUtils.getDefaultClassLoader().getResource("").getPath() + "static/" + userId + "/projectPicture/";
         try {
             return FileUtil.uploadFile(upload, filePath);
         } catch (Exception e) {
@@ -116,7 +114,7 @@ public class ProjectService {
 
 
     public Object deletePicture(String fileName, String userId) {
-        String filePath = ClassUtils.getDefaultClassLoader().getResource("").getPath() + "static/projectPicture/" + userId +"/"+ fileName;
+        String filePath = ClassUtils.getDefaultClassLoader().getResource("").getPath() + "static/projectPicture/" + userId + "/" + fileName;
         return FileUtil.deleteFile(filePath);
     }
 

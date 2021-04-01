@@ -2,19 +2,19 @@
   <div class="main">
     <el-col :xs="24" :sm="24" :md="{ span: 22, offset: 1 }" :lg="{ span: 18, offset: 3 }">
       <div class="main-card">
-        <el-row>
+        <el-row :gutter="20">
           <el-col :span="12">
             <step-card
               :cardInfo="{ btnType: 'Context Definition' }"
               :projectInfo="projectInfo"
-              style="height:450px"
+              style="height:450px;width:100%"
             ></step-card>
           </el-col>
           <el-col :span="12">
             <step-card
               :cardInfo="{ btnType: 'Resource Collection' }"
               :projectInfo="projectInfo"
-              style="height:450px"
+              style="height:450px;width:100%"
             ></step-card>
           </el-col>
         </el-row>
@@ -23,7 +23,7 @@
             <step-card
               :cardInfo="{ btnType: 'Simulation Construction' }"
               :projectInfo="projectInfo"
-              style="height:750px"
+              style="height:750px;width:100%"
             ></step-card>
           </el-col>
         </el-row>

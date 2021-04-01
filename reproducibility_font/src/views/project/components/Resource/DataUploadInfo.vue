@@ -152,25 +152,18 @@ export default {
       console.log(this.uploadFileForm.get('file'));
 
       let { data } = await post(`/dataContainer/uploadSingle`, this.uploadFileForm);
-
+      console.log(data);
       this.form.name = data.file_name;
-      this.form.type = param.file.type;
+      this.form.type = this.getSuffix(param.file.name);
       this.form.fileSize = this.renderSize(param.file.size);
 
       this.form.url = `http://221.226.60.2:8082/data?uid=${data.id}`;
       this.form.projectId = this.projectInfo.id;
     },
 
-    //data item保存到数据库
-    async submit() {
-      this.form.isDirect = true;
-      let data = await post(`/dataItems`, this.form);
-      console.log(data);
-      this.$notify({
-        title: 'Success',
-        message: 'You have upload the file successfully!',
-        type: 'success'
-      });
+    getSuffix(filename) {
+      let index = filename.lastIndexOf('.');
+      return filename.substr(index + 1);
     },
 
     renderSize(value) {
@@ -185,6 +178,21 @@ export default {
       //  保留的小数位数
       size = size.toFixed(2);
       return size + unitArr[index];
+    },
+
+    //data item保存到数据库
+    //上传数据直接保存到dataItems,即用户的资源可全部显示，之后选择所需的数据，之后保存选择的数据之后 保存到resource数据表里面去
+    async submit() {
+      this.form.isDirect = true;
+      let data = await post(`/dataItems`, this.form);
+      console.log(data);
+      this.$notify({
+        title: 'Success',
+        message: 'You have upload the file successfully!',
+        type: 'success'
+      });
+
+      this.$emit('uploadSuccess', true);
     }
   },
 

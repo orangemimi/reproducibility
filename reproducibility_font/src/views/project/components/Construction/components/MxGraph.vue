@@ -54,12 +54,12 @@
       <div v-show="modelDoubleClick" class="normalContaniner">
         <div>Node Info</div>
         <vue-scroll style="height: 630px; width: 100%">
-          <data-item-modelbar
+          <data-item-toolbar
             :cell="cell"
             ref="dataItem"
             @getInAndOut="getInAndOut"
             :key="dataItemModelbarKey"
-          ></data-item-modelbar>
+          ></data-item-toolbar>
         </vue-scroll>
       </div>
       <div v-show="dataClick" class="expandContaniner">
@@ -98,7 +98,7 @@ import FileSaver from 'file-saver';
 
 import allModels from './AllModels';
 import { get, post, patch } from '@/axios';
-import dataItemModelbar from './../../Construction/DataItemToolbar';
+import dataItemToolbar from './../../Construction/DataItemToolbar';
 import dataItemInfo from './../../Construction/DataItemInfo';
 
 import integrateTasks from './../../Construction/IntegrateTasks';
@@ -128,6 +128,9 @@ export default {
   props: {
     sendXml: {
       type: String
+    },
+    taskInfoInit: {
+      type: Object
     }
   },
 
@@ -135,7 +138,7 @@ export default {
     // nodeCard,
     // editCell,
     allModels,
-    dataItemModelbar,
+    dataItemToolbar,
     dataItemInfo,
     integrateTasks
   },
@@ -145,6 +148,15 @@ export default {
         if (val != '') {
           this.getXml = val;
           this.importGraph(this.getXml);
+        }
+      },
+      deep: true
+    },
+    taskInfoInit: {
+      handler(val) {
+        if (JSON.stringify(val) != '{}') {
+          console.log('initTak', val);
+          this.currentTask = val;
         }
       },
       deep: true
@@ -317,10 +329,8 @@ export default {
       // 监听双击事件
       this.graph.addListener(mxEvent.DOUBLE_CLICK, async (graph, evt) => {
         // DOUBLE_CLICK
-        let cell = evt.properties.cell;
-        if (!cell) {
-          return;
-        }
+        let cell = { doi: evt.properties.cell.doi, style: evt.properties.cell.style };
+
         let clickModelType = cell.style.includes('modelType');
         // let dataType = cell.style.includes('data');
         if (clickModelType) {
@@ -341,22 +351,27 @@ export default {
       // 监听单击事件
       //单击空白处 dialog隐藏
       this.graph.addListener(mxEvent.CLICK, (sender, evt) => {
-        let cell = evt.properties.cell;
-        if (!cell) {
-          return;
-        }
-        const clickModelType = cell.style.includes('modelType');
-        const dataType = cell.style.includes('data');
-        if (clickModelType) {
-          // 使用 mxGraph 事件中心，触发自定义事件
-          // this.cell = cell;
-          this.modelClick = true;
-          this.modelDoubleClick = this.dataClick = this.dataDoubleClick = false;
-        } else if (dataType) {
-          this.modelDoubleClick = this.modelClick = this.dataDoubleClick = false;
-          this.dataClick = true;
-          // console.log(cell);
-          this.dataNode = cell;
+        let isCell = Object.prototype.hasOwnProperty.call(evt.properties, 'cell');
+        if (isCell) {
+          let cell = evt.properties.cell;
+
+          const clickModelType = cell.style.includes('modelType'); //是否单机Model组件
+          const dataType = cell.style.includes('data'); //是否单击data组件
+
+          if (clickModelType) {
+            // 使用 mxGraph 事件中心，触发自定义事件
+            // this.cell = cell;
+            this.modelClick = true;
+            this.modelDoubleClick = this.dataClick = this.dataDoubleClick = false;
+          } else if (dataType) {
+            this.modelDoubleClick = this.modelClick = this.dataDoubleClick = false;
+            this.dataClick = true;
+            // console.log(cell);
+            this.dataNode = cell;
+          }
+        } else {
+          //单击空白处
+          this.cell = {};
         }
 
         // if (evt.properties.hasOwnProperty("cell")) {
@@ -774,8 +789,8 @@ export default {
         xml: xml,
         mxgraph: graphXml,
         // modelActions: modelActions,modelACTIONlIST
-        taskName: this.taskInfo.taskName,
-        taskDescription: this.taskInfo.taskDescription
+        taskName: this.currentTask.taskName,
+        taskDescription: this.currentTask.taskDescription
       };
       // console.log(postJson);
       let data = await patch(`/integrateTasks/${this.currentTask.id}`, postJson);
@@ -818,6 +833,7 @@ export default {
     },
 
     currentEventWithFile(val) {
+      console.log(val);
       // let dataItem = {
       //   name: val.name,
       //   value: val.value,
@@ -895,7 +911,7 @@ export default {
           nodeList.push(node);
 
           //GET MODEL INFOMATION
-          let data = await get(`/modelTask/ModelBehaviorOrdinary/${model.doi}`);
+          let data = await get(`/portal/modelBehavior/${model.doi}`);
           model.md5 = data.md5; //integrate task
 
           //get modelItemList2
@@ -920,18 +936,12 @@ export default {
                 type: 'input',
                 datasetItem: link.target.datasetItem
               };
-              // if (link.source.hasOwnProperty("datasetItem")) {
-              //   event.datasetItem = link.source.datasetItem;
-              // }
 
               eventList.push(event);
 
               if (link.source.value == undefined) {
                 return;
               }
-              // let dataItem={
-              //   name=
-              // }
             }
             if (link.source.id == model.id && link.target.style.includes('dataOutputType')) {
               let event = {
@@ -989,23 +999,21 @@ export default {
         dataCollection: dataItemList
       };
       console.log(method);
-      let data = await post(`/methods`, method);
-      console.log(data);
+      // let data = await post(`/methods`, method);
+      // console.log(data);
       //modelItem
     },
 
     generateXml() {
       let version = '1.0';
       let uid = this.generateGUID();
-      // let dataLinks = [];
-      let xml = '';
       let name = this.taskInfo.taskName;
 
-      xml += `<TaskConfiguration uid='${uid}' name='${name}' version='${version}'>`;
+      let xml = `<TaskConfiguration uid='${uid}' name='${name}' version='${version}'>`;
 
       xml += '<Models>';
 
-      //没有md5-->只有doi       xml += `<Model name='${model.name}' pid='${model.md5}' description='' doi='${model.doi}'/>`;
+      //没有md5-->只有doi  xml += `<Model name='${model.name}' pid='${model.md5}' description='' doi='${model.doi}'/>`;
       this.modelListInGraph.forEach(model => {
         xml += `<Model name='${model.name}' description='' pid='${model.md5}'/>`;
       });
@@ -1042,14 +1050,7 @@ export default {
 
         xml += '</Outputs></ModelAction>';
       });
-      xml += '</ModelActions>';
-
-      //data links标签
-      xml += '<DataLinks>';
-      this.linkEdgeList.forEach(item => {
-        xml += `<DataLink from='${item.source.eventId}'  to='${item.target.eventId}'  model='' config='' />`;
-      });
-      xml += '</DataLinks></TaskConfiguration>';
+      xml += '</ModelActions></TaskConfiguration>';
       // console.log(xml);
       return xml;
     },

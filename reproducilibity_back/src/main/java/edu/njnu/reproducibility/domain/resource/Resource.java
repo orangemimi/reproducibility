@@ -2,7 +2,7 @@ package edu.njnu.reproducibility.domain.resource;
 
 
 import edu.njnu.reproducibility.common.entity.BaseEntity;
-import edu.njnu.reproducibility.domain.resource.model.ModelItem;
+import edu.njnu.reproducibility.domain.*;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -21,8 +21,8 @@ public class Resource extends BaseEntity {
     String id;
     String userId;
     String projectId;
-    List<DataItem> dataItemCollection;
-    List<ModelItem> modelItemCollection;
-    List<DataItem> intermediateDataItemCollection;
+    List<String> dataItemCollection;//related dataitem ids
+    List<String> modelItemCollection;//related modelitem ids
+    List<String> intermediateDataItemCollection;//related 中间数据 ids
 
 }

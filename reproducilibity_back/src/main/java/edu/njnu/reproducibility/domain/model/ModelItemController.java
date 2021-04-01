@@ -1,10 +1,10 @@
-package edu.njnu.reproducibility.domain.resource.model;
+package edu.njnu.reproducibility.domain.model;
 
 
 import edu.njnu.reproducibility.annotation.JwtTokenParser;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
-import edu.njnu.reproducibility.domain.resource.model.dto.AddModelItemDTO;
+import edu.njnu.reproducibility.domain.model.dto.AddModelItemDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
