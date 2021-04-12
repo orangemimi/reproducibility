@@ -48,6 +48,7 @@ public class UserController {
         return ResultUtils.success(userService.updateByUserId(userId,update));
     }
 
+
     @RequestMapping (value = "/{email}/{password}", method = RequestMethod.PATCH)
     public JsonResult forgetPassword(@PathVariable String email,@PathVariable String password) {
         return ResultUtils.success(userService.forgetPassword(email,password));

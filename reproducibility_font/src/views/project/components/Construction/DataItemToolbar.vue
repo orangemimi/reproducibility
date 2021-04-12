@@ -11,10 +11,7 @@
               ref="inputItemList"
             >
               <el-card :title="modelInEvent.name">
-                <div
-                  v-show="modelInEvent.optional == 'False' || modelInEvent.optional == 'false'"
-                  class="event_option"
-                >
+                <div v-show="modelInEvent.optional == 'false'" class="event_option">
                   *
                 </div>
                 <div class="event_name">
@@ -112,9 +109,9 @@ export default {
       let output = [];
       stateList.forEach(state => {
         state.Event.forEach(event => {
-          if (event.type == 'response') {
+          if (event.type == 'input') {
             input.push(event);
-          } else if (event.type == 'noresponse') {
+          } else if (event.type == 'output') {
             output.push(event);
           }
         });
@@ -126,6 +123,9 @@ export default {
       this.$emit('getInAndOut', this.stateListInput, this.stateListOutput);
     }
   }
+  // created() {
+  //   this.$set(this.cell);
+  // }
 };
 </script>
 

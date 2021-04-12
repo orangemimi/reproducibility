@@ -35,8 +35,8 @@
 </template>
 
 <script>
-import { post } from '@/axios';
 import md5 from 'js-md5';
+import { saveUsers } from '@/api/request';
 export default {
   components: {},
 
@@ -96,7 +96,7 @@ export default {
             joinedProjects: [],
             createdProjects: []
           };
-          await post(`/users/register`, form);
+          await saveUsers(form);
           this.$notify({
             title: 'Success',
             message: 'Register successfully!',

@@ -53,6 +53,12 @@ public class ModelItemService {
         return modelItemList;
     }
 
+    public Object getModelsByProvider(String userId, String privacy, int currentPage, int pagesize) {
+        PageRequest pageable =  PageRequest.of(currentPage, pagesize);
+        Page<ModelItem> modelItemList = modelItemRepository.findAllByUploaderId(userId,pageable);
+        return modelItemList;
+    }
+
 //    public void del(String tid) {
 //        modelItemRepository.deleteByTid(tid);
 //    }

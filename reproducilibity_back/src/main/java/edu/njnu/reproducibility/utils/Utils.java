@@ -17,13 +17,32 @@ public class Utils {
         for (int j = 0; j < jsonStates.size(); j++) {
             String stateId =jsonStates.getJSONObject(j).getStr("id");
             String stateName =jsonStates.getJSONObject(j).getStr("name");
+            String stateDescription = jsonStates.getJSONObject(j).getStr("description");
             for (int i = 0; i < jsonStates.getJSONObject(j).getJSONArray("Event").size(); i++) {
                 JSONObject event = (JSONObject) jsonStates.getJSONObject(j).getJSONArray("Event").get(i);
                 event.put("eventId", UUID.randomUUID().toString());
 //                event.put("stateId", stateId);
                 event.put("stateName", stateName);
+                event.put("stateDescription",stateDescription);
+                event.put("stateId",stateId);
+
                 event.put("md5", md5);
                 event.put("doi", doi);
+
+                if(event.getStr("optional").equals("False") || event.getStr("optional").equals(false)){
+                    event.put("optional","false");
+                }
+                if(event.getStr("optional").equals("True") || event.getStr("optional").equals(true)){
+                    event.put("optional","true");
+                }
+
+                if(event.getStr("type").equals("response") ){
+                    event.put("type","input");
+                }
+
+                if(event.getStr("type").equals("noresponse") ){
+                    event.put("type","output");
+                }
 
                 if (event.containsKey("ResponseParameter")) {
                     String datasetReference = ((JSONObject) event.getJSONArray("ResponseParameter").get(0)).getStr("datasetReference");

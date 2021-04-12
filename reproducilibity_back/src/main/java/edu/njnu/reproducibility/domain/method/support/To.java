@@ -10,6 +10,7 @@ import lombok.Data;
  */
 @Data
 public class To {
+    String id;
     String type;
-    String idRef;
+    String reference;
 }

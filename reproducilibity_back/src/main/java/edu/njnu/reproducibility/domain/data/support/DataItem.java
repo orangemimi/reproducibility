@@ -18,7 +18,7 @@ public class DataItem extends BaseEntity {
     String id;
     String name;
     String alia;//别名
-    String type;//suffix
+    String suffix;//suffix
     String description;
     String url;
     String source;

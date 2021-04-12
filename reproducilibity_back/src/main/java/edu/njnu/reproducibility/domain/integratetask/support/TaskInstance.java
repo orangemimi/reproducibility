@@ -16,7 +16,7 @@ import java.util.Map;
  */
 @Data
 @Document(collection = "ModelInstance")
-public class ModelAction extends BaseEntity {
+public class TaskInstance extends BaseEntity {
     @Id
     String id;
     String name;//model name

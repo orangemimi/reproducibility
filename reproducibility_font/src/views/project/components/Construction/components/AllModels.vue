@@ -9,7 +9,7 @@
       <el-switch v-model="switchValue" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
     </div>
     <div v-show="switchValue" class="card-contain">
-      <vue-scroll :ops="ops" style="height: 480px">
+      <vue-scroll :ops="ops" style="height: 390px">
         <div v-for="(model, index) in publicModels" :key="index" ref="modelItemList">
           <div class="choose-model-contain">
             <model-card :modelFrom="model" @click.native="getModelInfo(model)"></model-card>
@@ -18,7 +18,7 @@
       </vue-scroll>
     </div>
     <div v-show="!switchValue" class="card-contain">
-      <vue-scroll :ops="ops" style="height: 480px">
+      <vue-scroll :ops="ops" style="height: 390px">
         <div v-for="(model, index) in personalModels" :key="index" ref="modelItemList">
           <div class="choose-model-contain">
             <model-card :modelFrom="model" @click.native="getModelInfo(model)"></model-card>
@@ -31,7 +31,7 @@
 
 <script>
 import modelCard from './ModelCard';
-import { get } from '@/axios';
+import { getModelsByPrivacy, getModelsByProvider } from '@/api/request';
 
 export default {
   components: { modelCard },
@@ -44,11 +44,13 @@ export default {
       sentModels: [], //需要发送的工具
       ops: {
         bar: {
-          background: '#808695'
+          background: '#808695',
+          keepShow: true
         }
       },
 
       publicModelFilter: { page: 0, pageSize: 8 },
+      personalModelFilter: { page: 0, pageSize: 8 },
 
       switchValue: true
     };
@@ -66,18 +68,27 @@ export default {
     },
 
     async getPublicModels() {
-      let { content } = await get(
-        `/modelItems/public/${this.publicModelFilter.page}/${this.publicModelFilter.pageSize}`
+      let { content } = await getModelsByPrivacy(
+        'public',
+        this.publicModelFilter.page,
+        this.publicModelFilter.pageSize
       );
+      // let { content } = await get(
+      //   `/modelItems/public/${this.publicModelFilter.page}/${this.publicModelFilter.pageSize}`
+      // );
 
       this.$set(this, 'publicModels', content);
-      this.$emit('getPublicModels', content);
+      this.$emit('getModels', content);
     },
 
     async getPersonalModels() {
-      let data = await get(`/model/findByProvider`);
+      let data = await getModelsByProvider(
+        this.personalModelFilter.page,
+        this.personalModelFilter.pageSize
+      );
+      // let data = await get(`/model/findByProvider`);
       this.$set(this, 'personalModels', data);
-      this.$emit('getPersonalModels', data);
+      this.$emit('getModels', data);
     },
 
     getModelInfo() {

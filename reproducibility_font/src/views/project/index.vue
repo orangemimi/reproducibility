@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { get } from '@/axios';
+import { getProjectById } from '@/api/request';
 import watchBtn from '_com/PageHeaderBtn/WatchBtn';
 import starBtn from '_com/PageHeaderBtn/StarBtn';
 import folkBtn from '_com/PageHeaderBtn/FolkBtn';
@@ -64,7 +64,7 @@ export default {
     },
 
     async getProjectInfo() {
-      let data = await get(`/projects/one/${this.projectId}`);
+      let data = await getProjectById(this.projectId);
       console.log(data);
       this.projectInfo = data;
     },

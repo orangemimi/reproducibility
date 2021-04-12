@@ -2,13 +2,10 @@ package edu.njnu.reproducibility.domain.integratetask;
 
 
 import edu.njnu.reproducibility.common.entity.BaseEntity;
+import edu.njnu.reproducibility.domain.integratetask.support.Action;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @Author Zhiyi
@@ -17,26 +14,20 @@ import java.util.Map;
  */
 @Data
 @Document(collection = "IntegratedTask")
-public class IntegrateModelTask extends BaseEntity {
+public class IntegrateTask extends BaseEntity {
     @Id
     String id;
-    String projectId;//project id
-
-    String userId;
-
-    String taskId;//tid--> mangerserver fanhui
-
     String taskName;//自己起的
     String taskDescription;
 
-    List<Map<String,String>> models;
-    List<String> modelActions;
+    String projectId;//project id
+    String creator;//creator
+
+//    String tid;//tid--> mangerserver fanhui
 
     String xml;
     String mxgraph;
+    Action action;
 
-    Boolean integrate;
-    Integer status;//Started: 1, Finished: 2, Inited: 0, Error: -1
-    Date lastRunTime;
-
+    String selectAction;
 }

@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { get, patch } from '@/axios';
+import { getResourcesById, updateResources, getDataItemsByJwtUserId } from '@/api/request';
 // import dataUpload from './DataUpload'; //dialogcontent
 import dataUploadInfo from './DataUploadInfo'; //dialogcontent
 export default {
@@ -125,7 +125,8 @@ export default {
 
     //get all the data
     async getDataCollection() {
-      let data = await get(`/dataItems`);
+      let data = await getDataItemsByJwtUserId();
+      // let data = await get(`/dataItems`);
       this.dataItemList = data;
 
       await this.getSelectedData();
@@ -133,7 +134,7 @@ export default {
 
     //get resources
     async getSelectedData() {
-      let data = await get(`/resources/${this.projectId}`);
+      let data = await getResourcesById(this.projectId);
       let dataSelected = data;
       this.multipleSelection = this.dataItemListDirect.filter(item =>
         dataSelected.some(selection => selection.id == item.id)
@@ -170,11 +171,14 @@ export default {
         this.multipleSelection.forEach(ele => {
           filter.push(ele.id);
         });
-        console.log(filter);
-        let data = await patch(`resources/data/${this.projectId}`, {
+        // console.log(filter);
+        await updateResources(this.projectId, {
           dataItemCollection: filter
         });
-        console.log(data);
+        // let data = await patch(`resources/data/${this.projectId}`, {
+        //   dataItemCollection: filter
+        // });
+        // console.log(data);
       }
     }
   },

@@ -14,5 +14,17 @@ window.mxDefaultToolbar = mxgraph.mxDefaultToolbar;
 window.mxConstants = mxgraph.mxConstants;
 window.mxUndoManager = mxgraph.mxUndoManager;
 window.mxCellOverlay = mxgraph.mxCellOverlay;
+window.mxImageExport = mxgraph.mxImageExport;
+window.mxXmlCanvas2D = mxgraph.mxXmlCanvas2D;
+window.mxConnectionConstraint = mxgraph.mxConnectionConstraint;
+window.mxObjectCodec = mxgraph.mxObjectCodec;
+window.mxCodec = mxgraph.mxCodec;
+window.mxShape = mxgraph.mxShape;
+window.mxEdgeHandler = mxgraph.mxEdgeHandler;
+window.mxVertexHandler = mxgraph.mxVertexHandler;
+window.mxCellEditor = mxgraph.mxCellEditor;
+window.mxGraphHandler = mxgraph.mxGraphHandler;
+window.mxPerimeter = mxgraph.mxPerimeter;
+window.mxCellState = mxgraph.mxCellState;
 
 export default mxgraph;

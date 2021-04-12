@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { get, post } from '@/axios';
+import { getUserInfoLike, saveNotices, saveEmails } from '@/api/request';
 export default {
   props: {
     projectInfo: {
@@ -42,7 +42,7 @@ export default {
       let form = new FormData();
       form.append('value', email);
 
-      let data = await get(`/users/like/${email}`);
+      let data = await getUserInfoLike(email);
       console.log(data);
       return data;
     },
@@ -58,10 +58,10 @@ export default {
 
     async sendEmail() {
       let json = { recipient: this.selectUser.email };
-      let data = await post(`/emails/invite`, json);
+      let data = await saveEmails(json);
       console.log(data);
       let notice = { recipientId: this.selectUser.userId };
-      let send = await post(`/notices/`, notice);
+      let send = await saveNotices(notice);
       console.log(send);
     }
   }

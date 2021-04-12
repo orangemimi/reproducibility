@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { get } from '@/axios';
+import { getAllProjects } from '@/api/request';
 import projectCard from './components/ProjectCard';
 import { mapState } from 'vuex';
 export default {
@@ -30,7 +30,7 @@ export default {
   },
 
   data() {
-    return { projectList: [] };
+    return { projectList: [], pageFilter: { page: 0, pageSize: 8 } };
   },
 
   methods: {
@@ -39,7 +39,7 @@ export default {
     },
 
     async getAllProjects() {
-      let data = await get(`/projects`);
+      let data = await getAllProjects(this.pageFilter.page, this.pageFilter.pageSize);
       this.projectList = data;
     },
 

@@ -8,8 +8,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.multipart.MultipartFile;
 
-/**
+ /**
  * @Author Zhiyi
  * @Date 2020/6/2  11:31
  * @Version 1.0.0
@@ -31,6 +32,9 @@ public interface ManagerServerFeign {
 
     @RequestMapping(value = "/GeoModeling/computableModel/refreshTaskRecord",method = RequestMethod.POST)
     JSONObject refresh(@RequestBody JSONObject refreshJson);
+
+//    @RequestMapping(value = "/GeoModeling/runTask",method = RequestMethod.POST)
+//    JSONObject runtask(MultipartFile file, String name);
 
     @Component
     class FeignServiceFallBack implements ManagerServerFeign {
@@ -54,6 +58,11 @@ public interface ManagerServerFeign {
         public JSONObject refresh(JSONObject refreshJson) {
             return null;
         }
+
+//        @Override
+//        public JSONObject runtask(MultipartFile file, String name) {
+//            return null;
+//        }
 
     }
 }

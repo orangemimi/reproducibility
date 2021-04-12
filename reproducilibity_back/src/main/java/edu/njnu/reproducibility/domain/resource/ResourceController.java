@@ -7,6 +7,7 @@ import edu.njnu.reproducibility.common.untils.ResultUtils;
 import edu.njnu.reproducibility.domain.resource.dto.AddResourceDTO;
 import edu.njnu.reproducibility.domain.resource.dto.UpdateResourceDataDTO;
 import edu.njnu.reproducibility.domain.resource.dto.UpdateResourceModelDTO;
+import edu.njnu.reproducibility.domain.resource.dto.UpdateResourceRelatedDataDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,6 +37,11 @@ public class ResourceController {
     @RequestMapping(value = "/data/{pid}", produces = {"application/json;charset=UTF-8"},method = RequestMethod.PATCH)
     public JsonResult updateResourceData(@PathVariable("pid") String pid,@RequestBody UpdateResourceDataDTO UpdateResourceDataDTO){
         return ResultUtils.success(resourceService.updateResourceData(pid, UpdateResourceDataDTO));
+    }
+
+    @RequestMapping(value = "/relatedData/{pid}", produces = {"application/json;charset=UTF-8"},method = RequestMethod.PATCH)
+    public JsonResult updateResourceRelatedData(@PathVariable("pid") String pid,@RequestBody UpdateResourceRelatedDataDTO UpdateResourceDataDTO){
+        return ResultUtils.success(resourceService.updateResourceRelatedData(pid, UpdateResourceDataDTO));
     }
 
     @RequestMapping(value = "/model/{pid}", produces = {"application/json;charset=UTF-8"},method = RequestMethod.PATCH)

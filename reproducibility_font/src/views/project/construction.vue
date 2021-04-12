@@ -23,7 +23,7 @@
             <step-card
               :cardInfo="{ btnType: 'Simulation Construction' }"
               :projectInfo="projectInfo"
-              style="height:750px;width:100%"
+              style="height:900px;width:100%"
             ></step-card>
           </el-col>
         </el-row>
@@ -43,7 +43,7 @@
 <script>
 import stepCard from './components/StepCard';
 import recordList from './components/RecordList';
-import { get } from '@/axios';
+import { getProjectAndUsers } from '@/api/request';
 export default {
   components: {
     stepCard,
@@ -64,7 +64,7 @@ export default {
     },
 
     async getProjectInfo() {
-      let data = await get(`/projects/user/${this.projectId}`);
+      let data = await getProjectAndUsers(this.projectId);
       console.log(data);
       this.projectInfo = data.project;
       this.creator = data.creator;

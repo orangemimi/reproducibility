@@ -1,0 +1,36 @@
+package edu.njnu.reproducibility.domain.integratetaskInstance;
+
+import edu.njnu.reproducibility.common.entity.BaseEntity;
+import edu.njnu.reproducibility.domain.integratetask.support.Action;
+import edu.njnu.reproducibility.domain.integratetaskInstance.support.*;
+import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @Author ：Zhiyi
+ * @Date ：2021/4/6 16:39
+ * @modified By：
+ * @version: 1.0.0
+ */
+@Data
+@Document(collection = "IntegratedTaskInstance")
+public class IntegrateTaskInstance extends BaseEntity {
+    @Id
+    String id;
+    String taskId;//integrated task id;
+    String projectId;
+    String operatorId;//operatorId id;
+
+    Action action;
+
+    //模型运行所需的参数 以及
+    Integer status; // 0代表未开始，-1代表运行失败，1代表运行成功, 2代表运行超时(不存在运行中状态，省略)
+    String tid;//managerServer Id;
+//    String ip;
+//    String port;
+
+}

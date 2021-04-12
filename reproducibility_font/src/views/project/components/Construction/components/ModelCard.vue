@@ -1,42 +1,40 @@
 <!-- card -->
 <template>
-  <div class>
-    <el-card class="cardBody">
-      <div class="card_avatar">
-        <el-tooltip placement="bottom" max-width="600">
-          <avatar
-            :username="item.name"
-            :size="38"
-            style="margin-bottom: 6px"
-            :rounded="false"
-            v-if="item.thumbnail == ''"
-          ></avatar>
-          <div class="thumbnailOuter" v-else>
-            <img :src="item.thumbnail" class="thumbnail" />
-          </div>
-          <div slot="content">
-            <div style="text-align: center">{{ item.description }}</div>
-            <!-- <div v-if="item.tags.length > 0">
+  <el-card class="cardBody">
+    <div class="card_avatar">
+      <el-tooltip placement="bottom" max-width="600">
+        <avatar
+          :username="item.name"
+          :size="38"
+          style="margin-bottom: 6px"
+          :rounded="false"
+          v-if="item.thumbnail == ''"
+        ></avatar>
+        <div class="thumbnailOuter" v-else>
+          <img :src="item.thumbnail" class="thumbnail" />
+        </div>
+        <div slot="content">
+          <div style="text-align: center">{{ item.description }}</div>
+          <!-- <div v-if="item.tags.length > 0">
                 <span>
                   <i>{{ item.tags.join('|') }}</i>
                 </span>
               </div> -->
-          </div>
-        </el-tooltip>
-      </div>
-      <div class="card_info">
-        <h4 :title="item.name" class="card_info_name">
-          {{ item.name }}
-        </h4>
-      </div>
-    </el-card>
-    <!-- 
+        </div>
+      </el-tooltip>
+    </div>
+    <div class="card_info">
+      <h4 :title="item.name" class="card_info_name">
+        {{ item.name }}
+      </h4>
+    </div>
+  </el-card>
+  <!-- 
     <div v-show="openTool" title="Tool preview" width="800" class="mask">
       <i class="el-icon-close maskBtn" title="Close the tool information"></i>
 
       <tool-preview :selectTool="item"></tool-preview>
     </div> -->
-  </div>
 </template>
 
 <script>
@@ -77,13 +75,14 @@ export default {
 </script>
 <style lang="scss" scoped>
 .cardBody {
+  box-shadow: $normalBoxShadow;
   /deep/ .el-card__body {
     padding: 5px;
   }
 
   background-color: ghostwhite;
   cursor: pointer;
-  height: 50px;
+  height: 42px;
   // width: 180px;
 
   .thumbnailOuter {

@@ -12,6 +12,7 @@ import edu.njnu.reproducibility.domain.data.support.DataItem;
 import edu.njnu.reproducibility.domain.resource.dto.AddResourceDTO;
 import edu.njnu.reproducibility.domain.resource.dto.UpdateResourceDataDTO;
 import edu.njnu.reproducibility.domain.resource.dto.UpdateResourceModelDTO;
+import edu.njnu.reproducibility.domain.resource.dto.UpdateResourceRelatedDataDTO;
 import edu.njnu.reproducibility.utils.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,6 +56,12 @@ public class ResourceService {
     public Resource updateResourceData(String pid, UpdateResourceDataDTO updateResourceDataDTO) {
         Resource resource =resourceRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
         updateResourceDataDTO.updateTo(resource);
+        return resourceRepository.save(resource);
+    }
+
+    public Resource updateResourceRelatedData(String pid, UpdateResourceRelatedDataDTO update) {
+        Resource resource =resourceRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
+        update.updateTo(resource);
         return resourceRepository.save(resource);
     }
 

@@ -10,6 +10,7 @@ import lombok.Data;
  */
 @Data
 public class From {
+    String id;//cell id
     String type;
-    String idRef;
+    String reference;
 }

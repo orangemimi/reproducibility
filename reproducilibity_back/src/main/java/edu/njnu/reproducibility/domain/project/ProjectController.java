@@ -33,9 +33,9 @@ public class ProjectController {
         return ResultUtils.success(projectService.getProjectAndUsers(projectId));
     }
 
-    @RequestMapping (value = "", method = RequestMethod.GET)
-    public JsonResult getAllProjects(@JwtTokenParser(key = "userId") String userId) {
-        return ResultUtils.success(projectService.getAllProjects(userId));
+    @RequestMapping (value = "/{currentPage}/{pagesize}", method = RequestMethod.GET)
+    public JsonResult getAllProjects(@JwtTokenParser(key = "userId") String userId, @PathVariable("currentPage") int currentPage, @PathVariable("pagesize") int pagesize) {
+        return ResultUtils.success(projectService.getAllProjects(userId,currentPage,pagesize));
     }
 
     @RequestMapping (value = "/createdProjects", method = RequestMethod.GET)

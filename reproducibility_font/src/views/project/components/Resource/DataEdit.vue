@@ -35,7 +35,8 @@
 </template>
 
 <script>
-import { post } from '@/axios';
+// import { post } from '@/axios';
+import { updateResources } from '@/api/request';
 import addImage from '_com/AddImage';
 import dataUpload from './DataUpload';
 export default {
@@ -83,7 +84,8 @@ export default {
 
     async submit() {
       this.form.isDirect = true;
-      let data = await post(`/resources`, this.form);
+      let data = await updateResources(this.form);
+
       console.log(data);
       this.$notify({
         title: 'Success',

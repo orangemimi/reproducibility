@@ -1,136 +1,274 @@
 import mxgraph from './index';
+import FileSaver from 'file-saver';
+// import _ from 'lodash';
 
 const {
-  mxGraph,
-  mxVertexHandler,
   mxConstants,
   mxCellState,
-  mxPerimeter,
   mxCellEditor,
-  mxGraphHandler,
   mxEvent,
-  mxEdgeHandler,
-  mxShape,
-  mxConnectionConstraint,
-  mxPoint,
-  mxEventObject,
+  mxRubberband,
+  mxUndoManager,
   mxCodec,
-  mxObjectCodec,
-  mxUtils,
-  mxImageExport,
-  mxXmlCanvas2D,
-  mxCodecRegistry,
+  mxUtils
 } = mxgraph;
 
-Object.assign(mxEvent, {
-  EDGE_START_MOVE: 'edgeStartMove',
-  VERTEX_START_MOVE: 'vertexStartMove',
-});
+function _setDefaultConfig(vueItem) {
+  //允许连线
+  vueItem.graph.setConnectable(true);
 
+  // 编辑时按回车键不换行，而是完成输入
+  vueItem.graph.setEnterStopsCellEditing(true);
 
+  // 可修改
+  vueItem.graph.setCellsEditable(true);
 
-export class Graph extends mxgraph {
-  static getStyleDict(cell) {
-    return _.compact(cell.getStyle().split(';'))
-      .reduce((acc, item) => {
-        const [key, value] = item.split('=');
-        acc[key] = value;
-        return acc;
-      }, {});
-  }
+  // 从工具栏拖动到目标细胞时细胞边界是否产生光圈
+  vueItem.graph.setDropEnabled(true);
 
-  static convertStyleToString(styleDict) {
-    const style = Object.entries(styleDict)
-      .map(([key, value]) => `${key}=${value}`)
-      .join(';')
-      .replace(/=undefined/g, '');
-    return `${style};`;
-  }
+  // 禁止游离线条
+  vueItem.graph.setAllowDanglingEdges(false);
+  vueItem.graph.setDisconnectOnMove(false);
+  vueItem.graph.setConnectableEdges(false);
 
-  static getCellPosition(cell) {
-    return _.pick(cell.getGeometry(), ['x', 'y']);
-  }
+  //设置线条弯曲程度
+  vueItem.graph.setCellsBendable(true);
 
-  constructor(container) {
-    super(container);
-    this._init();
-  }
+  // 禁止节点折叠
+  vueItem.graph.foldingEnabled = false;
 
-  _init() {
-    this._setDefaultConfig();
-    // this._configConstituent();
-    // this._putVertexStyle();
-    // this._setDefaultEdgeStyle();
-    // this._setAnchors();
-    this._configCustomEvent();
-    // this._configCoder();
-  }
+  // 文本包裹效果必须开启此配置
+  vueItem.graph.setHtmlLabels(true);
 
-  _setDefaultConfig() {
-    this.setConnectable(true);
-    mxEvent.disableContextMenu(this.container);
+  // 拖拽过程对齐线
+  vueItem.graph.graphHandler.guidesEnabled = true;
 
-    // 固定节点大小
-    this.setCellsResizable(false);
+  // 容器大小自适应
+  vueItem.graph.setResizeContainer(true);
 
-    // 编辑时按回车键不换行，而是完成输入
-    this.setEnterStopsCellEditing(false);
-    // 编辑时按 escape 后完成输入
-    mxCellEditor.prototype.escapeCancelsEditing = false;
-    // 失焦时完成输入
-    mxCellEditor.prototype.blurEnabled = true;
+  // 重复连接
+  vueItem.graph.setMultigraph(true);
 
-    // 禁止节点折叠
-    this.foldingEnabled = false;
-    // 文本包裹效果必须开启此配置
-    this.setHtmlLabels(true);
+  // Enables rubberband selection
+  new mxRubberband(vueItem.graph);
 
-    // 拖拽过程对齐线
-    mxGraphHandler.prototype.guidesEnabled = true;
+  vueItem.graph.popupMenuHandler.autoExpand = true;
 
-    // 禁止游离线条
-    this.setDisconnectOnMove(false);
-    this.setAllowDanglingEdges(false);
-    mxGraph.prototype.isCellMovable = cell => !cell.edge;
-
-    // 禁止调整线条弯曲度
-    this.setCellsBendable(true);
-
-    // 禁止从将label从线条上拖离
-    mxGraph.prototype.edgeLabelsMovable = false;
-  }
-
-  _configCustomEvent() {
-    //自定义单击事件
-    const graph = this;
-    const oldStart = mxEdgeHandler.prototype.start;
-    mxEdgeHandler.prototype.start = function start(...args) {
-      oldStart.apply(this, args);
-      graph.fireEvent(new mxEventObject(mxEvent.EDGE_START_MOVE,
-        'edge', this.state.cell,
-        'source', this.isSource,
-      ));
-    };
-
-
-    const oldCreatePreviewShape = mxGraphHandler.prototype.createPreviewShape;
-    mxGraphHandler.prototype.createPreviewShape = function createPreviewShape(...args) {
-      graph.fireEvent(new mxEventObject(mxEvent.VERTEX_START_MOVE));
-      return oldCreatePreviewShape.apply(this, args);
-    };
-
-  }
-  importModelXML(xmlTxt) {
-    //xml to json
-    this.getModel().beginUpdate();
-    try {
-      const doc = mxUtils.parseXml(xmlTxt);
-      const root = doc.documentElement;
-      const dec = new mxCodec(root.ownerDocument);
-      dec.decode(root, this.getModel());
-    } finally {
-      this.getModel().endUpdate();
-    }
-    this._restoreModel();
-  }
+  mxCellEditor.prototype.blurEnabled = true;
 }
+
+function _setDefaultEdgeStyle(vueItem) {
+  const style = vueItem.graph.getStylesheet().getDefaultEdgeStyle();
+  Object.assign(style, {
+    [mxConstants.STYLE_ROUNDED]: true, // 设置线条拐弯处为圆角
+    [mxConstants.STYLE_STROKEWIDTH]: '1',
+    [mxConstants.STYLE_STROKECOLOR]: '#333333',
+    [mxConstants.STYLE_EDGE]: mxConstants.EDGESTYLE_ORTHOGONAL,
+    [mxConstants.STYLE_FONTCOLOR]: '#333333',
+    [mxConstants.STYLE_LABEL_BACKGROUNDCOLOR]: '#ffa94d'
+  });
+
+  // 设置拖拽线的过程出现折线，默认为直线
+  vueItem.graph.connectionHandler.createEdgeState = () => {
+    const edge = vueItem.graph.createEdge();
+    return new mxCellState(vueItem.graph.view, edge, vueItem.graph.getCellStyle(edge));
+  };
+}
+
+function _initUndoManager(vueItem) {
+  vueItem.undoMng = new mxUndoManager();
+
+  let listen = (sender, evt) => {
+    vueItem.undoMng.undoableEditHappened(evt.getProperty('edit'));
+  };
+
+  vueItem.graph.getModel().addListener(mxEvent.UNDO, listen);
+  vueItem.graph.getView().addListener(mxEvent.UNDO, listen);
+}
+
+function _listenGraphEvent(vueItem) {
+  vueItem.graph.addListener(mxEvent.DOUBLE_CLICK, async (graph, evt) => {
+    // DOUBLE_CLICK
+    let cell = {
+      doi: evt.properties.cell.doi,
+      style: evt.properties.cell.style,
+      type: evt.properties.cell.type
+    };
+
+    let clickModelType = cell.type;
+    // let dataType = cell.style.includes('data');
+    if (clickModelType == 'model') {
+      vueItem.dataItemModelbarKey++;
+      // console.log(vueItem.dataItemModelbarKey);
+      await vueItem.$refs.dataItemBar.initSetTimeOut();
+      vueItem.modelDoubleClick = true;
+      vueItem.cell = JSON.parse(JSON.stringify(cell));
+      vueItem.dataDoubleClick = vueItem.dataClick = vueItem.modelClick = false;
+    }
+  });
+
+  // 监听单击事件
+  //单击空白处 dialog隐藏
+  vueItem.graph.addListener(mxEvent.CLICK, (sender, evt) => {
+    let isCell = Object.prototype.hasOwnProperty.call(evt.properties, 'cell');
+    if (isCell) {
+      let cell = evt.properties.cell;
+
+      const clickModelType = cell.style.includes('modelType'); //是否单机Model组件
+      const dataType = cell.style.includes('data'); //是否单击data组件
+
+      if (clickModelType) {
+        // 使用 mxGraph 事件中心，触发自定义事件
+        // vueItem.cell = cell;
+        vueItem.modelClick = true;
+        vueItem.modelDoubleClick = vueItem.dataClick = vueItem.dataDoubleClick = false;
+      } else if (dataType) {
+        vueItem.modelDoubleClick = vueItem.modelClick = vueItem.dataDoubleClick = false;
+        vueItem.dataClick = true;
+        // console.log(cell);
+        vueItem.dataNode = cell;
+      }
+    } else {
+      //单击空白处
+      vueItem.cell = {};
+    }
+  });
+
+  //增加连接线
+  vueItem.graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
+    const cell = evt.properties.cells[0];
+
+    if (cell.vertex) {
+      vueItem.$message.info('Add a node');
+    } else if (cell.edge) {
+      //判断是否是link to next dataitem
+      let linkCell = cell.target;
+      if (linkCell.style.includes('dataInputType')) {
+        vueItem.graph.getModel().beginUpdate();
+
+        linkCell.type = 'link';
+        let styleObj = {
+          dataOutputType: '',
+          fillColor: '#E6A23C',
+          strokeColor: '',
+          strokeWidth: '1.5',
+          shape: 'rectangle',
+          align: mxConstants.ALIGN_CENTER,
+          // verticalAlign: mxConstants.ALIGN_,
+          imageAlign: mxConstants.ALIGN_CENTER,
+          imageVerticalAlign: mxConstants.ALIGN_TOP
+        };
+        if (linkCell.optional == 'false' || linkCell.optional == 'False') {
+          styleObj.strokeColor = '#d13030';
+        } else {
+          styleObj.strokeColor = 'rgb(200, 200, 200)';
+        }
+
+        const style = Object.keys(styleObj)
+          .map(attr => `${attr}=${styleObj[attr]}`)
+          .join(';');
+        vueItem.graph.getModel().setStyle(linkCell, style);
+
+        vueItem.graph.getModel().endUpdate();
+      }
+      vueItem.$message.info('Add a line');
+    }
+  });
+
+  // 监听 mxGraph 事件
+  vueItem.mxGraphSelectionModel = vueItem.graph.getSelectionModel();
+  vueItem.mxGraphSelectionModel.addListener(mxEvent.CHANGE, vueItem.handleSelectionChange);
+}
+
+function _initGraph(vueItem) {
+  vueItem.graph.convertValueToString = cell => {
+    // 从value中获取显示的内容
+    return cell.name;
+  };
+}
+
+export function getGraphXml(vueItem) {
+  let encoder = new mxCodec();
+  let graphXml = encoder.encode(vueItem.graph.getModel());
+  let xml = mxUtils.getPrettyXml(graphXml);
+  return xml;
+}
+
+export function exportGraph(vueItem) {
+  let graphXml = getGraphXml(vueItem);
+  let xml = mxUtils.getPrettyXml(graphXml);
+  const blob = new Blob([xml], {
+    type: 'text/plain;charset=utf-8'
+  });
+  FileSaver.saveAs(blob, 'mxgraph.xml');
+}
+
+export function _getCells(vueItem) {
+  // vueItem.modelListInGraph = vueItem.dataOutputInGraph = vueItem.dataInputInGraph = vueItem.dataLinkInGraph = [];
+  let modelListInGraph = [];
+  let dataOutputInGraph = [];
+  let dataInputInGraph = [];
+  let dataLinkInGraph = [];
+  // let dataLineInputInGrapg = [];
+
+  Object.values(vueItem.graph.getModel().cells).forEach(cell => {
+    if (cell.style != undefined) {
+      if (cell.style.includes('modelType')) {
+        modelListInGraph.push(cell);
+      } else if (cell.style.includes('dataOutputType')) {
+        cell.type = 'output';
+        dataOutputInGraph.push(cell);
+      } else if (cell.style.includes('dataInputType')) {
+        cell.type = 'input';
+        dataInputInGraph.push(cell);
+      }
+    }
+  });
+
+  // console.log(vueItem.graph.getModel().cells);
+  let links = Object.values(vueItem.graph.getModel().cells).filter(cell =>
+    Object.prototype.hasOwnProperty.call(cell, 'edge')
+  );
+  vueItem.linkEdgeList = links;
+
+  vueItem.modelListInGraph = modelListInGraph;
+  vueItem.dataOutputInGraph = dataOutputInGraph;
+  vueItem.dataInputInGraph = dataInputInGraph;
+  vueItem.dataLinkInGraph = dataLinkInGraph;
+}
+
+// function importGraph(xmlTxt) {
+//   //xml to json
+//   this.graph.getModel().beginUpdate();
+//   try {
+//     const doc = mxUtils.parseXml(xmlTxt);
+//     const root = doc.documentElement;
+//     const dec = new mxCodec(root.ownerDocument);
+//     dec.decode(root, this.graph.getModel());
+//     this.getCells();
+//   } finally {
+//     this.graph.getModel().endUpdate();
+//   }
+//   this.restoreModel();
+// }
+
+// function restoreModel() {
+//   Object.values(this.graph.getModel().cells).forEach(cell => {
+//     if (cell.vertex && cell.data) {
+//       cell.data = JSON.parse(cell.data);
+//     }
+//   });
+// }
+
+const genGraph = vueItem => {
+  _setDefaultConfig(vueItem);
+  _initUndoManager(vueItem);
+  _setDefaultEdgeStyle(vueItem);
+  _listenGraphEvent(vueItem);
+  _initGraph(vueItem);
+  getGraphXml(vueItem);
+  // _getCells(vueItem);
+  // _configCustomEvent(vueItem);
+};
+
+export { genGraph };

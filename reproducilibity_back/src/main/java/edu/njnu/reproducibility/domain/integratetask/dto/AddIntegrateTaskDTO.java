@@ -2,7 +2,7 @@ package edu.njnu.reproducibility.domain.integratetask.dto;
 
 
 import edu.njnu.reproducibility.common.dto.ToDomainConverter;
-import edu.njnu.reproducibility.domain.integratetask.IntegrateModelTask;
+import edu.njnu.reproducibility.domain.integratetask.IntegrateTask;
 import lombok.Data;
 
 /**
@@ -12,19 +12,13 @@ import lombok.Data;
  */
 
 @Data
-public class AddIntegrateModelTaskDTO implements ToDomainConverter<IntegrateModelTask> {
+public class AddIntegrateTaskDTO implements ToDomainConverter<IntegrateTask> {
     String projectId;//project id
     String userName;
-    String userId;
+    String creator;
 
-//    String taskId;
     String taskName;
     String taskDescription;
 
-//    List<Map<String,String>> models;
 
-//    List<ModelAction> modelActions;
-
-//    String xml;
-//    String mxgraph;
 }

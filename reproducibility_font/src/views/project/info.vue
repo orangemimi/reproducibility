@@ -146,7 +146,7 @@
 </template>
 
 <script>
-import { get } from '@/axios';
+import { getProjectAndUsers } from '@/api/request';
 import Avatar from 'vue-avatar';
 import userCard from '_com/UserCard';
 import editInfoForm from './components/EditProjectInfo';
@@ -188,7 +188,7 @@ export default {
     },
 
     async getProjectInfo() {
-      let data = await get(`/projects/user/${this.projectId}`);
+      let data = await getProjectAndUsers(this.projectId);
       console.log(data);
       this.projectInfo = data.project;
       this.creator = data.creator;

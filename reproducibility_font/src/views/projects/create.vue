@@ -62,7 +62,13 @@
 
 <script>
 import addImage from '_com/AddImage';
-import { post, get, patch } from '@/axios';
+import { saveMethods } from '@/api/request';
+import {
+  saveResources,
+  saveProject,
+  updateUsersByJwtUserId,
+  getUserInfoByJwtUserId
+} from '@/api/request';
 export default {
   components: { addImage },
 
@@ -85,17 +91,15 @@ export default {
 
   methods: {
     async createProject() {
-      let data = await post(`/projects`, this.form);
+      let data = await saveProject(this.form);
 
-      let document = await post(`/methods`, { projectId: data.id, version: '1.0' });
-      console.log(document);
-
-      let resource = await post(`/resources`, { projectId: data.id });
-      console.log(resource);
+      await saveMethods({ projectId: data.id, version: '1.0' });
+      // console.log(document);
+      saveResources({ projectId: data.id });
 
       this.userInfo.createdProjects.push(data.id);
       let update = { createdProjects: this.userInfo.createdProjects };
-      await patch(`/users`, update);
+      await updateUsersByJwtUserId(update);
 
       this.$notify({
         title: 'Success',
@@ -106,7 +110,7 @@ export default {
 
     //为了获得创建的项目信息
     async getUserInfo() {
-      let data = await get(`/users`);
+      let data = await getUserInfoByJwtUserId();
       this.userInfo = data;
       console.log(data);
     },

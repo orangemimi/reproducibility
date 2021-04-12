@@ -31,8 +31,14 @@
       <el-divider class="eventDivider"></el-divider>
     </el-row>
     <el-row>
-      <div v-if="currentCell.type == 'noresponse'">
-        <el-button>DownLoad</el-button>
+      <div v-if="currentCell.type == 'output'">
+        <div v-if="currentCell.value != '' && currentCell.value != undefined">
+          <el-button>DownLoad</el-button>
+        </div>
+        <div v-else>Please run this task to get the output!</div>
+      </div>
+      <div v-else-if="currentCell.type == 'link'">
+        Link to the output
       </div>
       <div v-else>
         <div v-if="currentEvent.datasetItem.type == `internal`" class="uploadContent">
@@ -103,9 +109,9 @@
             ></el-option>
           </el-select>
         </div>
-        <div>
+        <!-- <div>
           <el-button size="small" type="success" round @click="submitResource">Submit</el-button>
-        </div>
+        </div> -->
       </div>
     </el-row>
   </div>
@@ -113,7 +119,10 @@
 
 <script>
 // import file from '@/components/dataTemplate/File';
-import { get, post } from '@/axios';
+import { get } from '@/axios';
+
+import { getResourcesById } from '@/api/request';
+
 export default {
   props: {
     cell: {
@@ -123,7 +132,7 @@ export default {
   watch: {
     cell: {
       handler(val) {
-        if (val != '') {
+        if (val != '' && val.doi != undefined) {
           this.doi = val.doi;
           this.currentCell = val;
           this.selectDataId = this.currentCell.fileId;
@@ -158,6 +167,10 @@ export default {
       }
     }
   },
+
+  // created() {
+  //   this.$set(this.cell);
+  // },
 
   data() {
     return {
@@ -195,6 +208,7 @@ export default {
       this.md5 = data.md5;
       this.modelIntroduction = data;
       this.stateList = data.convertMdlJson;
+      console.log('stateList', this.stateList);
 
       this.currentEvent = this.convertStateList();
       if (this.currentCell.value != undefined) {
@@ -230,103 +244,34 @@ export default {
     },
 
     async getResources() {
-      let data = await get(`/resources/${this.projectId}`);
+      let data = await getResourcesById(this.projectId);
       this.dataItemList = data; //id list
-
-      // await get(`/dataItems/`);
     },
 
-    changeSelectResource(id) {
+    async changeSelectResource(id) {
       this.selectDataId = id;
       let dataSelect = this.dataItemList.filter(e => e.id == id);
       this.selectDataItem = dataSelect[0];
       // this.selectDataId = this.selectDataItem.fileName;
 
       this.$forceUpdate();
+      await this.submitResource();
     },
 
     async submitResource() {
-      console.log(this.currentEvent);
+      // console.log(this.currentEvent);
 
-      let event = this.currentEvent;
-      if (
-        event.type == 'response' &&
-        Object.prototype.hasOwnProperty.call(event.datasetItem, 'UdxDeclaration') &&
-        event.datasetItem.UdxDeclaration[0].UdxNode != '' &&
-        !Object.prototype.hasOwnProperty.call(
-          event.datasetItem.UdxDeclaration[0].UdxNode[0].UdxNode[0],
-          'UdxNode'
-        )
-      ) {
-        let content = '';
-        let uploadFileForm = new FormData();
-
-        let udxNodeList = this.currentDatasetItem.UdxDeclaration[0].UdxNode[0].UdxNode;
-        console.log(udxNodeList);
-        udxNodeList.forEach(udx => {
-          if (Object.prototype.hasOwnProperty.call(udx, 'value')) {
-            content += `<XDO name="${udx.name}" kernelType="string" value="${udx.value}" />`;
-          }
-        });
-
-        if (content != '') {
-          content = '<Dataset> ' + content + ' </Dataset>';
-          let file = new File([content], event.name + '.xml', {
-            type: 'text/plain'
-          });
-          uploadFileForm.append('datafile', file); //http://111.229.14.128:8082/data
-
-          // this.createConfigFile();
-          let uploadedData = await this.submitUpload(uploadFileForm);
-          this.currentCell.fileName = uploadedData.name;
-          this.currentCell.value = uploadedData.url;
-          this.currentCell.fileId = uploadedData.id;
-
-          this.currentCell.datasetItem = this.currentDatasetItem;
-        }
-      } else {
-        this.currentCell.fileName = this.selectDataItem.name;
-        this.currentCell.fileId = this.selectDataItem.id;
-        this.currentCell.value = this.selectDataItem.url;
-
-        this.currentCell.datasetItem = this.currentDatasetItem;
-        if (this.selectDataItem != undefined) {
-          this.$message({
-            message: 'You have submit the file successfully',
-            type: 'success'
-          });
-        }
-      }
+      this.currentCell.fileName = this.selectDataItem.name;
+      this.currentCell.fileId = this.selectDataItem.id;
+      this.currentCell.value = this.selectDataItem.url;
+      this.currentCell.fileDescription = this.selectDataItem.description;
+      // console.log(this.currentCell);
+      this.currentCell.datasetItem = this.currentDatasetItem;
+      // this.currentCell.name = this.currentEvent.name;
+      this.currentCell.description = this.currentEvent.description;
 
       this.$emit('currentEventWithFile', this.currentCell);
-    },
-
-    //上传文件到服务器
-    async submitUpload(uploadFileForm) {
-      let uid = await post(`/dataContainer/uploadSingle`, uploadFileForm);
-
-      let url = `http://221.226.60.2:8082/data?uid=${uid}`;
-
-      let list = {
-        userId: this.userInfo.userId,
-        pid: this.projectId,
-        url: url,
-        name: uploadFileForm.get('datafile').name,
-        isDirect: false //if true -- 是直接上传的数据    --false是中间数据
-      };
-      console.log(list);
-
-      let data = await post(`/r/dataItems`, list);
-      if (data != undefined) {
-        this.$message({
-          message: 'You have submit the parameter successfully',
-          type: 'success'
-        });
-      }
-      return data;
-    },
-
-    async uploadResource() {}
+    }
   }
 };
 </script>
@@ -337,7 +282,7 @@ export default {
   height: 100%;
 
   .uploadContent {
-    height: 390px;
+    // height: 390px;
     width: 100%;
   }
 }

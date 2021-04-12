@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { get } from '@/axios';
+import { getAllIntegrateTasksByProjectId } from '@/api/request';
 export default {
   components: {},
   // props: {
@@ -62,7 +62,8 @@ export default {
       await this.getIntegrateTasks();
     },
     async getIntegrateTasks() {
-      let data = await get(`/integrateTasks/all/${this.projectId}`); //获得该项目的所有tasks
+      // let data = await get(`/integrateTasks/all/${this.projectId}`); //获得该项目的所有tasks
+      let data = await getAllIntegrateTasksByProjectId(this.projectId);
       if (data != null) {
         this.taskList = data;
       }

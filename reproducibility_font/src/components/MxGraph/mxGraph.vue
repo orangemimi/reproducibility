@@ -18,9 +18,7 @@
       <div class="mainContainer">
         <div class="toolbarTop">
           <!-- <el-button @click="saveGraph" type="text" size="mini">Output</el-button> -->
-          <el-button @click="exportGraph" type="text" size="mini"
-            >Export as XML</el-button
-          >
+          <el-button @click="exportGraph" type="text" size="mini">Export as XML</el-button>
           <!-- <input @change="readFile" ref="importInput" class="hide" type="file" />
           <el-button @click="importGraphFile" type="text" size="mini">Import mxGraph</el-button> -->
           <el-button
@@ -28,8 +26,9 @@
             type="text"
             size="mini"
             :disabled="selectionCells.length == 0"
-            >Delete</el-button
           >
+            Delete
+          </el-button>
           <el-button @click="undo" type="text" size="mini">Undo</el-button>
           <el-button @click="redo" type="text" size="mini">Redo</el-button>
           <!-- <el-button @click="exportPic" type="text" size="mini">导出图片</el-button> -->
@@ -43,12 +42,7 @@
         <!-- <edit-cell :visible="editCellVisible" @currentGraph="grapg"></edit-cell> -->
         <div>Edit the node</div>
         <div class="editCellForm">
-          <el-form
-            ref="cellForm"
-            :model="cellForm"
-            :rules="cellFormRules"
-            size="mini"
-          >
+          <el-form ref="cellForm" :model="cellForm" :rules="cellFormRules" size="mini">
             <el-form-item label="Node name" prop="name">
               <el-input v-model="cellForm.name"></el-input>
             </el-form-item>
@@ -56,18 +50,14 @@
         </div>
 
         <el-button @click="editCellVisible = false">Close the dialog</el-button>
-        <el-button type="primary" @click="submitCellForm('cellForm')"
-          >Submit</el-button
-        >
+        <el-button type="primary" @click="submitCellForm('cellForm')">Submit</el-button>
       </div>
 
       <div class="dialogs">
         <el-dialog :visible.sync="deleteCellsVisible" width="30%">
           <span>Are you sure to delete this node?</span>
           <span slot="footer" class="dialog-footer">
-            <el-checkbox v-model="checked" label="1"
-              >Ignore this tip in this action</el-checkbox
-            >
+            <el-checkbox v-model="checked" label="1">Ignore this tip in this action</el-checkbox>
             <el-button @click="deleteCellsVisible = false">Cancel</el-button>
             <el-button type="primary" @click="deleteCells">Confirm</el-button>
           </span>
@@ -78,11 +68,11 @@
 </template>
 
 <script>
-import { toolbarItems } from "./toolbar";
-import mxgraph from "./index";
-import nodeCard from "./components/nodeCard";
-import editCell from "./components/editCell";
-import FileSaver from "file-saver";
+import { toolbarItems } from './toolbar';
+import mxgraph from './index';
+import nodeCard from './components/nodeCard';
+import editCell from './components/editCell';
+import FileSaver from 'file-saver';
 
 const {
   mxGraph,
@@ -100,36 +90,36 @@ const {
   mxCellEditor,
   mxGraphView,
   mxCodec,
-  mxUndoManager,
+  mxUndoManager
 } = mxgraph;
 
 export default {
   props: {
     sendXml: {
-      type: String,
-    },
+      type: String
+    }
   },
   watch: {
     sendXml: {
       handler(val) {
-        if (val != "") {
+        if (val != '') {
           this.getXml = val;
           this.importGraph(this.getXml);
         }
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   components: { nodeCard, editCell },
   computed: {
-    toolbarItems: () => toolbarItems,
+    toolbarItems: () => toolbarItems
   },
   data() {
     return {
       contentHeight: 0,
       graph: null,
       editCellVisible: false,
-      graphXml: "",
+      graphXml: '',
       selectEdge: {},
       selectVertex: {},
       selectionCells: [],
@@ -138,18 +128,18 @@ export default {
       undoMng: null,
 
       cellForm: {
-        name: "",
+        name: ''
       },
       cellFormRules: {
         name: [
           {
             required: true,
-            message: "The name cannot be empty",
-            trigger: "blur",
-          },
-        ],
+            message: 'The name cannot be empty',
+            trigger: 'blur'
+          }
+        ]
       },
-      getXml: this.sendXml,
+      getXml: this.sendXml
     };
   },
   methods: {
@@ -162,7 +152,7 @@ export default {
     },
 
     initGraph() {
-      this.graph.convertValueToString = (cell) => {
+      this.graph.convertValueToString = cell => {
         // 从value中获取显示的内容
         return cell.title;
       };
@@ -204,10 +194,7 @@ export default {
 
       // 监听 mxGraph 事件
       const mxGraphSelectionModel = this.graph.getSelectionModel();
-      mxGraphSelectionModel.addListener(
-        mxEvent.CHANGE,
-        this.handleSelectionChange
-      );
+      mxGraphSelectionModel.addListener(mxEvent.CHANGE, this.handleSelectionChange);
     },
 
     initConnectStyle() {
@@ -261,21 +248,17 @@ export default {
       const style = this.graph.getStylesheet().getDefaultEdgeStyle();
       Object.assign(style, {
         [mxConstants.STYLE_ROUNDED]: true, // 设置线条拐弯处为圆角
-        [mxConstants.STYLE_STROKEWIDTH]: "1",
-        [mxConstants.STYLE_STROKECOLOR]: "#333333",
+        [mxConstants.STYLE_STROKEWIDTH]: '1',
+        [mxConstants.STYLE_STROKECOLOR]: '#333333',
         [mxConstants.STYLE_EDGE]: mxConstants.EDGESTYLE_ORTHOGONAL,
-        [mxConstants.STYLE_FONTCOLOR]: "#333333",
-        [mxConstants.STYLE_LABEL_BACKGROUNDCOLOR]: "#ffa94d",
+        [mxConstants.STYLE_FONTCOLOR]: '#333333',
+        [mxConstants.STYLE_LABEL_BACKGROUNDCOLOR]: '#ffa94d'
       });
 
       // 设置拖拽线的过程出现折线，默认为直线
       this.graph.connectionHandler.createEdgeState = () => {
         const edge = this.graph.createEdge();
-        return new mxCellState(
-          this.graph.view,
-          edge,
-          this.graph.getCellStyle(edge)
-        );
+        return new mxCellState(this.graph.view, edge, this.graph.getCellStyle(edge));
       };
     },
 
@@ -283,23 +266,14 @@ export default {
       const { width, height } = toolItem;
       const styleObj = toolItem.style;
       const style = Object.keys(styleObj)
-        .map((attr) => `${attr}=${styleObj[attr]}`)
-        .join(";");
+        .map(attr => `${attr}=${styleObj[attr]}`)
+        .join(';');
       const parent = this.graph.getDefaultParent();
 
       this.graph.getModel().beginUpdate();
 
       try {
-        let vertex = this.graph.insertVertex(
-          parent,
-          null,
-          null,
-          x,
-          y,
-          width,
-          height,
-          style
-        );
+        let vertex = this.graph.insertVertex(parent, null, null, x, y, width, height, style);
         vertex.title = toolItem.title;
         this.cellForm.name = toolItem.title; //form表单
       } finally {
@@ -323,24 +297,15 @@ export default {
           this.addCell(toolItem, x, y);
         };
         const createDragPreview = () => {
-          const elt = document.createElement("div");
+          const elt = document.createElement('div');
 
-          elt.style.border = "2px dotted black";
+          elt.style.border = '2px dotted black';
           elt.style.width = `${width}px`;
           elt.style.height = `${height}px`;
           return elt;
         };
 
-        mxUtils.makeDraggable(
-          dom,
-          this.graph,
-          dropHandler,
-          createDragPreview(),
-          0,
-          0,
-          false,
-          true
-        );
+        mxUtils.makeDraggable(dom, this.graph, dropHandler, createDragPreview(), 0, 0, false, true);
       });
     },
 
@@ -353,18 +318,18 @@ export default {
       this.getGraphXml();
       let xml = mxUtils.getPrettyXml(this.graphXml);
       const blob = new Blob([xml], {
-        type: "text/plain;charset=utf-8",
+        type: 'text/plain;charset=utf-8'
       });
-      FileSaver.saveAs(blob, "mxgraph.xml");
+      FileSaver.saveAs(blob, 'mxgraph.xml');
     },
 
     importGraphFile(evt) {
-      this.$refs["importInput"].click();
+      this.$refs['importInput'].click();
     },
     readFile(evt) {
       const file = evt.target.files[0];
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = e => {
         const txt = e.target.result;
         this.importGraph(txt);
       };
@@ -386,7 +351,7 @@ export default {
     },
 
     restoreModel() {
-      Object.values(this.graph.getModel().cells).forEach((cell) => {
+      Object.values(this.graph.getModel().cells).forEach(cell => {
         if (cell.vertex && cell.data) {
           cell.data = JSON.parse(cell.data);
         }
@@ -398,22 +363,22 @@ export default {
     },
 
     submitCellForm(form) {
-      this.$refs[form].validate((valid) => {
+      this.$refs[form].validate(valid => {
         if (valid) {
           this.graph.getModel().beginUpdate();
           let cell = this.graph.getSelectionCell();
           if (cell.title == this.cellForm.name) {
             this.$message({
-              message: "Name changed is as same as before",
-              type: "warning",
+              message: 'Name changed is as same as before',
+              type: 'warning'
             });
           } else {
             try {
               cell.title = this.cellForm.name;
               this.graph.refresh(cell); // 刷新cell
               this.$message({
-                message: "Refresh the node successfully!",
-                type: "success",
+                message: 'Refresh the node successfully!',
+                type: 'success'
               });
             } finally {
               this.graph.getModel().endUpdate();
@@ -443,7 +408,7 @@ export default {
       let cells = this.selectionCells;
       let tmpSet = new Set(this.selectionCells);
 
-      cells.forEach((cell) => {
+      cells.forEach(cell => {
         this.findDeleteCell(cell, tmpSet);
       });
       this.deleteCellsVisible = false;
@@ -454,7 +419,7 @@ export default {
     findDeleteCell(cell, deleteSet) {
       deleteSet.add(cell);
       if (cell.edges) {
-        cell.edges.forEach((tmpEdge) => {
+        cell.edges.forEach(tmpEdge => {
           if (tmpEdge.target !== cell) {
             deleteSet.add(tmpEdge.target);
             this.findDeleteCell(tmpEdge.target, deleteSet);
@@ -467,7 +432,7 @@ export default {
       this.undoMng = new mxUndoManager();
 
       let listen = (sender, evt) => {
-        this.undoMng.undoableEditHappened(evt.getProperty("edit"));
+        this.undoMng.undoableEditHappened(evt.getProperty('edit'));
       };
 
       this.graph.getModel().addListener(mxEvent.UNDO, listen);
@@ -480,7 +445,7 @@ export default {
         let undoIndex = this.undoMng.indexOfNextAdd - 1;
 
         if (this.undoMng.history[undoIndex]) {
-          cells = this.undoMng.history[undoIndex].changes.map((change) => {
+          cells = this.undoMng.history[undoIndex].changes.map(change => {
             if (change.child) {
               return change.child;
             } else {
@@ -494,7 +459,7 @@ export default {
     //撤销
     undo() {
       if (!this.undoMng) {
-        throw new Error("mxUndoManager 没有初始化");
+        throw new Error('mxUndoManager 没有初始化');
       }
       // console.info("后退的Cells", this.getUndoRedoCell());
       this.undoMng.undo();
@@ -502,11 +467,11 @@ export default {
     //重做
     redo() {
       if (!this.undoMng) {
-        throw new Error("mxUndoManager 没有初始化");
+        throw new Error('mxUndoManager 没有初始化');
       }
       this.undoMng.redo();
       // console.info("前进的Cells", this.getUndoRedoCell());
-    },
+    }
   },
   mounted() {
     this.initSize();
@@ -522,11 +487,11 @@ export default {
   },
   created() {
     this.initSize();
-  },
+  }
 };
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .customToolbarContainer {
   width: 100%;
   height: 100%;
@@ -571,8 +536,8 @@ export default {
       height: 100%;
       width: 100%;
       min-width: 1110px;
-      min-height: 650px;
-      background: rgb(251, 251, 251) url("./images/grid.gif") 0 0 repeat;
+      min-height: 850px;
+      background: rgb(251, 251, 251) url('./images/grid.gif') 0 0 repeat;
       border-radius: 4px;
     }
   }

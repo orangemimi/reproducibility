@@ -9,7 +9,7 @@ import lombok.Data;
 public class AddDataItemDTO implements ToDomainConverter<DataItem> {
     String name;
     String alia;//别名
-    String type;//suffix
+    String suffix;//suffix
     String description;
     String url;
     String source;

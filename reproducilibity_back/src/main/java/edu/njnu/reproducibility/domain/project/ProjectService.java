@@ -11,6 +11,8 @@ import edu.njnu.reproducibility.domain.user.User;
 import edu.njnu.reproducibility.domain.user.UserService;
 import edu.njnu.reproducibility.utils.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -66,9 +68,10 @@ public class ProjectService {
         return json;
     }
 
-    public List<Project> getAllProjects(String userId) {
+    public Page<Project> getAllProjects(String userId,int currentPage,int pagesize) {
+        PageRequest pageable =  PageRequest.of(currentPage, pagesize);
         List<String> privacyList = Arrays.asList("public", "discoverable");
-        List<Project> projectList = projectRepository.findByPrivacyInOrCreator(privacyList, userId);
+        Page<Project> projectList = projectRepository.findByPrivacyInOrCreator(privacyList, userId,pageable);
         return projectList;
     }
 
@@ -117,6 +120,7 @@ public class ProjectService {
         String filePath = ClassUtils.getDefaultClassLoader().getResource("").getPath() + "static/projectPicture/" + userId + "/" + fileName;
         return FileUtil.deleteFile(filePath);
     }
+
 
 
 }

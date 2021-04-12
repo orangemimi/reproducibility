@@ -30,6 +30,7 @@
 
 <script>
 import { get, post, patch } from '@/axios';
+import { getResourcesById, saveIntegrateTasks } from '@/api/request';
 import mxGraph from './components/MxGraph';
 import { mapState } from 'vuex';
 
@@ -162,7 +163,7 @@ export default {
     },
 
     chooseTool(toolInfo) {
-      console.log(toolInfo);
+      // console.log(toolInfo);
       if (toolInfo.toolName == 'Jupyter notebook') {
         this.jupyterModal = true;
         return;
@@ -173,7 +174,8 @@ export default {
     },
 
     async getDataItem() {
-      let dataItem = await get(`/resources/${this.projectInfo.id}`);
+      let dataItem = await getResourcesById(this.projectInfo.id);
+
       this.$set(this.selectedResources, 'dataItemList', dataItem);
 
       if (this.$route.params.isInherit) {
@@ -326,7 +328,8 @@ export default {
         ...this.taskInfo
       };
       // console.log(postJson);
-      let data = await post(`/integrateTasks`, postJson);
+      let data = await saveIntegrateTasks(postJson);
+      // let data = await post(`/integrateTasks`, postJson);
       this.currentTask = data;
       this.taskInfo = data;
       this.mxgraph = data.mxgraph;

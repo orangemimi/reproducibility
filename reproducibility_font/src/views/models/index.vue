@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import { get } from '@/axios';
+import { getAllModels } from '@/api/request';
 import serviceCard from '_com/common/ServiceCard';
 import createModel from './create';
 export default {
@@ -73,7 +73,7 @@ export default {
       data: [],
       is_extending: false,
       value: '',
-      dataFilter: {
+      pageFilter: {
         pageSize: 8,
         page: 0
       },
@@ -90,15 +90,16 @@ export default {
   },
   methods: {
     searchData() {
-      this.dataFilter.page = 0;
+      this.pageFilter.page = 0;
       this.getData();
     },
 
     async getData() {
-      let { content } = await get(
-        `/modelItems/${this.dataFilter.page}/${this.dataFilter.pageSize}`
-      );
-      console.log(content);
+      let { content } = await getAllModels(this.pageFilter.page, this.pageFilter.pageSize);
+      // let { content } = await get(
+      //   `/modelItems/${this.pageFilter.page}/${this.pageFilter.pageSize}`
+      // );
+      // console.log(content);
 
       if (content.length == 0) {
         this.is_extending = false;
@@ -110,7 +111,7 @@ export default {
     },
 
     extendData() {
-      this.dataFilter.page++;
+      this.pageFilter.page++;
       this.getData();
     },
 

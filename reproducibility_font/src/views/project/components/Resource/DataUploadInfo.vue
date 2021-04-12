@@ -1,6 +1,6 @@
 <!-- data upload information -->
 <template>
-  <div>
+  <div class="main">
     <!-- <el-button @click="test">get computa</el-button> -->
     <el-form ref="form" :model="form" label-width="100px">
       <el-form-item label="Description">
@@ -22,25 +22,7 @@
         ></add-image>
       </el-form-item>
     </el-form>
-    <div>
-      <!-- <el-upload
-        action
-        :auto-upload="true"
-        :file-list="fileList"
-        :show-file-list="true"
-        :on-change="onChange"
-        ref="upload"
-        :http-request="submitUpload"
-        :on-remove="handleRemove"
-        :on-success="onSuccess"
-      >
-        <i class="el-icon-upload"></i>
-        <div class="el-upload__text">
-          Drag a file here to upload or
-          <em>Click to upload</em>
-        </div>
-      </el-upload> -->
-
+    <div class="drag">
       <el-upload
         drag
         action
@@ -58,21 +40,20 @@
         </div>
       </el-upload>
     </div>
-    <div>
+    <div class="submit">
       <el-button @click="submit">Submit</el-button>
     </div>
   </div>
 </template>
 
 <script>
-import { post, del } from '@/axios';
+import { post } from '@/axios';
+import { deleteDataItemsById } from '@/api/request';
+import { saveDataItems } from '@/api/request';
 import addImage from '_com/AddImage';
-// import { mapState } from 'vuex';
-// import dataUpload from './DataUpload';
 export default {
   components: {
     addImage
-    //   dataUpload
   },
 
   props: {
@@ -86,8 +67,6 @@ export default {
       handler(val) {
         if (val != null) {
           this.projectId = val.id;
-          //   this.getDataCollection();
-          //   this.getAllRecords();
         }
       }
     }
@@ -125,12 +104,6 @@ export default {
       this.form.picture = val;
     },
 
-    //上传文件发生改变时
-    // onChange(file, fileList) {
-    //   this.file = file;
-    //   this.fileList = fileList;
-    // },
-
     handleRemove(file) {
       this.dataItemList = this.dataItemList.filter(item => {
         return item.name != file.name;
@@ -138,7 +111,8 @@ export default {
     },
 
     async remove(resource) {
-      await del(`/dataItems/${resource.id}`);
+      await deleteDataItemsById(resource.id);
+      // await del(`/dataItems/${resource.id}`);
       this.dataItemList.splice(
         this.dataItemList.findIndex(item => item.id === resource.id),
         1
@@ -154,10 +128,10 @@ export default {
       let { data } = await post(`/dataContainer/uploadSingle`, this.uploadFileForm);
       console.log(data);
       this.form.name = data.file_name;
-      this.form.type = this.getSuffix(param.file.name);
+      this.form.suffix = this.getSuffix(param.file.name);
       this.form.fileSize = this.renderSize(param.file.size);
 
-      this.form.url = `http://221.226.60.2:8082/data?uid=${data.id}`;
+      this.form.url = `http://221.226.60.2:8082/data/${data.id}`;
       this.form.projectId = this.projectInfo.id;
     },
 
@@ -184,8 +158,9 @@ export default {
     //上传数据直接保存到dataItems,即用户的资源可全部显示，之后选择所需的数据，之后保存选择的数据之后 保存到resource数据表里面去
     async submit() {
       this.form.isDirect = true;
-      let data = await post(`/dataItems`, this.form);
-      console.log(data);
+      await saveDataItems(this.form);
+      // let data = await post(`/dataItems`, this.form);
+      // console.log(data);
       this.$notify({
         title: 'Success',
         message: 'You have upload the file successfully!',
@@ -199,4 +174,24 @@ export default {
   mounted() {}
 };
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.main {
+  height: 100%;
+  width: 100%;
+  // position: relative;
+  .drag {
+    // margin-left: 20%;
+    /deep/ .el-icon-upload {
+      margin: 0;
+    }
+
+    /deep/ .el-upload-dragger {
+      width: calc(37vw);
+      height: 90px;
+    }
+  }
+  .submit {
+    margin-left: 88.5%;
+  }
+}
+</style>

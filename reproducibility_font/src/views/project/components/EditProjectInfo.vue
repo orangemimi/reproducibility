@@ -63,7 +63,7 @@
 
 <script>
 import addImage from '_com/AddImage';
-import { patch } from '@/axios';
+import { updateProject } from '@/api/request';
 export default {
   props: {
     projectInfo: {
@@ -105,7 +105,7 @@ export default {
   methods: {
     async submitEdit() {
       console.log(this.form);
-      let data = await patch(`/projects/${this.projectInfo.id}`, this.form);
+      let data = await updateProject(this.projectInfo.id, this.form);
       console.log(data);
 
       this.$emit('editProjectInfoResponse', true);
