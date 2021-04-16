@@ -4,13 +4,7 @@
     <el-row>
       <el-col :span="24">
         <!-- <el-input v-model="inputValue" placeholder="Search by email" size="medium"></el-input> -->
-        <el-autocomplete
-          v-model="inputValue"
-          :fetch-suggestions="querySearchAsync"
-          placeholder="Search by email"
-          :trigger-on-focus="false"
-          @select="handleSelect"
-        ></el-autocomplete>
+        <el-autocomplete v-model="inputValue" :fetch-suggestions="querySearchAsync" placeholder="Search by email" :trigger-on-focus="false" @select="handleSelect"></el-autocomplete>
       </el-col>
     </el-row>
     <div class="title"><el-button @click="sendEmail" type="primary">Send</el-button></div>
@@ -18,7 +12,7 @@
 </template>
 
 <script>
-import { getUserInfoLike, saveNotices, saveEmails } from '@/api/request';
+import { saveNotice, saveEmails, getUserByEmailLike } from '@/api/request';
 export default {
   props: {
     projectInfo: {
@@ -42,7 +36,7 @@ export default {
       let form = new FormData();
       form.append('value', email);
 
-      let data = await getUserInfoLike(email);
+      let data = await getUserByEmailLike(email);
       console.log(data);
       return data;
     },
@@ -61,7 +55,7 @@ export default {
       let data = await saveEmails(json);
       console.log(data);
       let notice = { recipientId: this.selectUser.userId };
-      let send = await saveNotices(notice);
+      let send = await saveNotice(notice);
       console.log(send);
     }
   }

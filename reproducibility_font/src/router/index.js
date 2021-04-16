@@ -74,7 +74,7 @@ export const constantRoutes = [
         },
         components: {
           header: () => import('_com/layout/MyHeader.vue'),
-          main: () => import('@/views/projects/create'),
+          main: () => import('@/views/new-project/index'),
           footer: () => import('_com/layout/MyFooter.vue')
         }
       },

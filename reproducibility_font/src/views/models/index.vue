@@ -18,12 +18,7 @@
             Collected by generous community of OpenGMS Team. 🎁
           </el-row>
           <el-row class="input-container">
-            <el-input
-              @keyup.enter.native="searchData"
-              v-model="value"
-              placeholder=""
-              prefix-icon="el-icon-search"
-            ></el-input>
+            <el-input @keyup.enter.native="searchData" v-model="value" placeholder="" prefix-icon="el-icon-search"></el-input>
           </el-row>
           <el-row class="search-note">
             Trending searches: Geodynamics,Geostatics,Hydrology,Coastal Vulnerability,Urban Noise
@@ -38,12 +33,7 @@
     </div>
     <div class="main">
       <div class="main-container">
-        <el-row
-          class="infinite-list"
-          v-infinite-scroll="extendData"
-          infinite-scroll-disabled="disabled"
-          style="overflow:auto"
-        >
+        <el-row class="infinite-list" v-infinite-scroll="extendData" infinite-scroll-disabled="disabled" style="overflow:auto">
           <el-col :span="4" v-for="(item, index) in data" :key="index">
             <serviceCard :item="item" type="model"></serviceCard>
           </el-col>
@@ -52,19 +42,14 @@
     </div>
 
     <!-- add model -->
-    <el-dialog
-      title="Add model in Reproducibilty"
-      :visible.sync="addModelDialogShow"
-      width="40%"
-      :close-on-click-modal="false"
-    >
+    <el-dialog title="Add model in Reproducibilty" :visible.sync="addModelDialogShow" width="40%" :close-on-click-modal="false">
       <create-model></create-model>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getAllModels } from '@/api/request';
+import { getAllModelItems } from '@/api/request';
 import serviceCard from '_com/common/ServiceCard';
 import createModel from './create';
 export default {
@@ -95,7 +80,7 @@ export default {
     },
 
     async getData() {
-      let { content } = await getAllModels(this.pageFilter.page, this.pageFilter.pageSize);
+      let { content } = await getAllModelItems(this.pageFilter.page, this.pageFilter.pageSize);
       // let { content } = await get(
       //   `/modelItems/${this.pageFilter.page}/${this.pageFilter.pageSize}`
       // );

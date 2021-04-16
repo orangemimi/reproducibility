@@ -1,7 +1,6 @@
 package edu.njnu.reproducibility.domain.integratetask;
 
 
-
 import edu.njnu.reproducibility.annotation.JwtTokenParser;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
@@ -29,36 +28,36 @@ public class IntegrateTaskController {
     IntegrateTaskService integrateTaskService;
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public JsonResult getTask(@PathVariable("id") String id, @JwtTokenParser(key="userId") String userId) {
+    public JsonResult getTask(@PathVariable("id") String id, @JwtTokenParser(key = "userId") String userId) {
         return ResultUtils.success(integrateTaskService.getModelTaskInfo(id));
     }
+
 
     @RequestMapping(value = "/all/{pid}", method = RequestMethod.GET)
     public JsonResult getAllTask(@PathVariable("pid") String pid) {
         return ResultUtils.success(integrateTaskService.getAllModelTaskInfo(pid));
     }
+
     //model action数据配置引发更新，其他的均可选另存为一个task，或更新
     @RequestMapping(value = "/{id}", produces = {"application/json;charset=UTF-8"}, method = RequestMethod.PATCH)
-    public JsonResult updateTask(@PathVariable("id") String id, @RequestBody UpdateIntegratedTaskDTO UpdateResourceDTO, @JwtTokenParser(key="userId") String userId) {
-        return ResultUtils.success(integrateTaskService.updateModelTaskInfo(id, UpdateResourceDTO,userId));
+    public JsonResult updateTask(@PathVariable("id") String id, @RequestBody UpdateIntegratedTaskDTO UpdateResourceDTO, @JwtTokenParser(key = "userId") String userId) {
+        return ResultUtils.success(integrateTaskService.updateModelTaskInfo(id, UpdateResourceDTO, userId));
     }
 
-    @RequestMapping(value = "/selectAction/{id}", produces = {"application/json;charset=UTF-8"}, method = RequestMethod.PATCH)
-    public JsonResult updateSelectAction(@PathVariable("id") String id, @RequestBody UpdateCurrentActionInTaskDTO UpdateResourceDTO, @JwtTokenParser(key="userId") String userId) {
-        return ResultUtils.success(integrateTaskService.updateSelectAction(id, UpdateResourceDTO,userId));
-    }
+
 
     @RequestMapping(value = "/cancleAction/{id}", produces = {"application/json;charset=UTF-8"}, method = RequestMethod.PATCH)
-    public JsonResult cancleSelectAction(@PathVariable("id") String id, @RequestBody UpdateCurrentActionInTaskDTO UpdateResourceDTO, @JwtTokenParser(key="userId") String userId) {
-        return ResultUtils.success(integrateTaskService.cancleSelectAction(id, UpdateResourceDTO,userId));
+    public JsonResult cancleSelectAction(@PathVariable("id") String id, @RequestBody UpdateCurrentActionInTaskDTO UpdateResourceDTO, @JwtTokenParser(key = "userId") String userId) {
+        return ResultUtils.success(integrateTaskService.cancleSelectAction(id, UpdateResourceDTO, userId));
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public JsonResult saveTask(@RequestBody AddIntegrateTaskDTO add, @JwtTokenParser(key="userId") String userId) {
-        return ResultUtils.success(integrateTaskService.saveModelTaskInfo(add,userId));
+    public JsonResult saveTask(@RequestBody AddIntegrateTaskDTO add, @JwtTokenParser(key = "userId") String userId) {
+        return ResultUtils.success(integrateTaskService.saveModelTaskInfo(add, userId));
     }
+
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-    public JsonResult deleteTask(@PathVariable("id") String id){
+    public JsonResult deleteTask(@PathVariable("id") String id) {
         integrateTaskService.deleteById(id);
         return ResultUtils.success();
     }
@@ -68,12 +67,11 @@ public class IntegrateTaskController {
                               @RequestParam("taskName") String taskName,
                               HttpServletRequest request) throws IOException, ServletException {
         HttpSession session = request.getSession();
-        if(session.getAttribute("userId")==null) {
+        if (session.getAttribute("userId") == null) {
             return ResultUtils.error(-1, "no login");
-        }
-        else {
+        } else {
             String username = session.getAttribute("userName").toString();
-            return ResultUtils.success(integrateTaskService.runTask(file, taskName,username));
+            return ResultUtils.success(integrateTaskService.runTask(file, taskName, username));
         }
     }
 }

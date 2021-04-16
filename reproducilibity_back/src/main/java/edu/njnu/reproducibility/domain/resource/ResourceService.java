@@ -1,7 +1,6 @@
 package edu.njnu.reproducibility.domain.resource;
 
 
-
 import cn.hutool.json.JSON;
 import cn.hutool.json.JSONObject;
 import edu.njnu.reproducibility.common.exception.MyException;
@@ -37,12 +36,17 @@ public class ResourceService {
 
     public JsonResult getResources(String userId) {
 //        List<Resource> resources =resourceRepository.findAllByProjectId(userId);
-        return  ResultUtils.success();
+        return ResultUtils.success();
     }
+
     public List<DataItem> getResourcesByProjectId(String projectId) {
-        Resource resources =resourceRepository.findByProjectId(projectId).orElseThrow(MyException::noObject);
-        List<DataItem> dataItemList =new ArrayList<>();
-        for(int i=0;i<resources.getDataItemCollection().size();i++){
+        Resource resources = resourceRepository.findByProjectId(projectId).orElseThrow(MyException::noObject);
+        List<DataItem> dataItemList = new ArrayList<>();
+        if (resources.getDataItemCollection()==null) {
+            return dataItemList;
+        }
+
+        for (int i = 0; i < resources.getDataItemCollection().size(); i++) {
             String dataId = resources.getDataItemCollection().get(i);
             DataItem dataItem = dataItemRepository.findById(dataId).orElseThrow(MyException::noObject);
             dataItemList.add(dataItem);
@@ -50,38 +54,38 @@ public class ResourceService {
 
 //        JSONObject jsonObject = new JSONObject();
 //        jsonObject.put()
-        return  dataItemList;
+        return dataItemList;
     }
 
     public Resource updateResourceData(String pid, UpdateResourceDataDTO updateResourceDataDTO) {
-        Resource resource =resourceRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
+        Resource resource = resourceRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
         updateResourceDataDTO.updateTo(resource);
         return resourceRepository.save(resource);
     }
 
     public Resource updateResourceRelatedData(String pid, UpdateResourceRelatedDataDTO update) {
-        Resource resource =resourceRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
+        Resource resource = resourceRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
         update.updateTo(resource);
         return resourceRepository.save(resource);
     }
 
     public Resource updateResourceModel(String pid, UpdateResourceModelDTO updateResourceModelDTO) {
-        Resource resource =resourceRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
+        Resource resource = resourceRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
         updateResourceModelDTO.updateTo(resource);
         return resourceRepository.save(resource);
     }
 
 
-    public Resource saveResources(AddResourceDTO add,String userId) {
+    public Resource saveResources(AddResourceDTO add, String userId) {
         Resource resource = new Resource();
         add.convertTo(resource);
         resource.setUserId(userId);
-        return  resourceRepository.insert(resource);
+        return resourceRepository.insert(resource);
     }
 
     public Object uploadPicture(MultipartFile upload, String userId) {
         //这里获取的是项目的根路径，直接加上了static/imgupload/下就找到图片，找不到，就直接去电脑文件夹找
-        String filePath = ClassUtils.getDefaultClassLoader().getResource("").getPath() +"static/"+userId+"/resourcePicture/";
+        String filePath = ClassUtils.getDefaultClassLoader().getResource("").getPath() + "static/" + userId + "/resourcePicture/";
         try {
             return FileUtil.uploadFile(upload, filePath);
         } catch (Exception e) {

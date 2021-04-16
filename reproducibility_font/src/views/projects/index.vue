@@ -39,17 +39,17 @@ export default {
     },
 
     async getAllProjects() {
-      let data = await getAllProjects(this.pageFilter.page, this.pageFilter.pageSize);
-      this.projectList = data;
+      let { content } = await getAllProjects(this.pageFilter.page, this.pageFilter.pageSize);
+      console.log(content);
+      this.projectList = content;
     },
 
     async judgeRole(project) {
-      console.log(this.userId);
       await this.$store.dispatch('permission/getRole', {
         project: project,
         userId: this.userId
       });
-      console.log(this.role);
+      console.log('projectInfo', project.id);
       this.$router.push({ path: `/project/${project.id}/info` });
     }
   },

@@ -21,12 +21,7 @@
           <el-button @click="exportGraph" type="text" size="mini">Export as XML</el-button>
           <!-- <input @change="readFile" ref="importInput" class="hide" type="file" />
           <el-button @click="importGraphFile" type="text" size="mini">Import mxGraph</el-button> -->
-          <el-button
-            @click="checked ? deleteCells() : deleteCellsConfirmDialog()"
-            type="text"
-            size="mini"
-            :disabled="selectionCells.length == 0"
-          >
+          <el-button @click="checked ? deleteCells() : deleteCellsConfirmDialog()" type="text" size="mini" :disabled="selectionCells.length == 0">
             Delete
           </el-button>
           <el-button @click="undo" type="text" size="mini">Undo</el-button>
@@ -74,24 +69,7 @@ import nodeCard from './components/nodeCard';
 import editCell from './components/editCell';
 import FileSaver from 'file-saver';
 
-const {
-  mxGraph,
-  mxOutline,
-  mxEvent,
-  mxCell,
-  mxGeometry,
-  mxUtils,
-  mxEventObject,
-  mxConnectionHandler,
-  mxGraphHandler,
-  mxRubberband,
-  mxConstants,
-  mxCellState,
-  mxCellEditor,
-  mxGraphView,
-  mxCodec,
-  mxUndoManager
-} = mxgraph;
+const { mxGraph, mxOutline, mxEvent, mxCell, mxGeometry, mxUtils, mxEventObject, mxConnectionHandler, mxGraphHandler, mxRubberband, mxConstants, mxCellState, mxCellEditor, mxGraphView, mxCodec, mxUndoManager } = mxgraph;
 
 export default {
   props: {
@@ -315,7 +293,7 @@ export default {
     },
 
     exportGraph() {
-      this.getGraphXml();
+      getGraphXml();
       let xml = mxUtils.getPrettyXml(this.graphXml);
       const blob = new Blob([xml], {
         type: 'text/plain;charset=utf-8'

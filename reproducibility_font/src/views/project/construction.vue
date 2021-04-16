@@ -4,33 +4,21 @@
       <div class="main-card">
         <el-row :gutter="20">
           <el-col :span="12">
-            <step-card
-              :cardInfo="{ btnType: 'Context Definition' }"
-              :projectInfo="projectInfo"
-              style="height:450px;width:100%"
-            ></step-card>
+            <step-card :cardInfo="{ btnType: 'Context Definition' }" style="height:450px;width:100%"></step-card>
           </el-col>
           <el-col :span="12">
-            <step-card
-              :cardInfo="{ btnType: 'Resource Collection' }"
-              :projectInfo="projectInfo"
-              style="height:450px;width:100%"
-            ></step-card>
+            <step-card :cardInfo="{ btnType: 'Resource Collection' }" style="height:450px;width:100%"></step-card>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
-            <step-card
-              :cardInfo="{ btnType: 'Simulation Construction' }"
-              :projectInfo="projectInfo"
-              style="height:900px;width:100%"
-            ></step-card>
+            <step-card :cardInfo="{ btnType: 'Simulation Scenario' }" style="height:900px;width:100%"></step-card>
           </el-col>
         </el-row>
       </div>
       <div class="record">
         <el-popover placement="top" width="460" trigger="click">
-          <div><record-list :projectInfo="projectInfo"></record-list></div>
+          <record-list></record-list>
           <el-button type="success" class="folder_collect" slot="reference" circle>
             <i class="el-icon-folder-opened"></i>
           </el-button>
@@ -41,8 +29,8 @@
 </template>
 
 <script>
-import stepCard from './components/StepCard';
-import recordList from './components/RecordList';
+import stepCard from '_com/StepCard';
+import recordList from '_com/RecordList';
 import { getProjectAndUsers } from '@/api/request';
 export default {
   components: {

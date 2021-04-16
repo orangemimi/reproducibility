@@ -4,6 +4,7 @@ import edu.njnu.reproducibility.annotation.JwtTokenParser;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
 import edu.njnu.reproducibility.domain.integratetaskInstance.dto.AddIntegrateTaskInstanceDTO;
+import edu.njnu.reproducibility.domain.integratetaskInstance.dto.UpdateIntegrateTaskInstanceDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +39,11 @@ public class IntegrateTaskInstanceController {
     @RequestMapping (value = "", method = RequestMethod.POST)
     public JsonResult create(@JwtTokenParser(key="userId") String userId, @RequestBody AddIntegrateTaskInstanceDTO add) {
         return ResultUtils.success(integrateTaskInstanceService.create(userId,add));
+    }
+
+    @RequestMapping(value = "/{id}", produces = {"application/json;charset=UTF-8"}, method = RequestMethod.PATCH)
+    public JsonResult update(@PathVariable("id") String id, @RequestBody UpdateIntegrateTaskInstanceDTO update, @JwtTokenParser(key = "userId") String userId) {
+        return ResultUtils.success(integrateTaskInstanceService.updateById(id, update, userId));
     }
 
 

@@ -33,4 +33,5 @@ public class AddModelItemDTO implements ToDomainConverter<ModelItem> {
     String thumbnail;
     List<String> tags;
     String uploaderId;
+    String md5;
 }

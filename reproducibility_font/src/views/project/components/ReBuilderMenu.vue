@@ -1,6 +1,6 @@
-<!-- Rebuilder Menu -->
+<!--  -->
 <template>
-  <div>re</div>
+  <div></div>
 </template>
 
 <script>

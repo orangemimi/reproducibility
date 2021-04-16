@@ -2,8 +2,6 @@ package edu.njnu.reproducibility.domain.context;
 
 
 import edu.njnu.reproducibility.common.exception.MyException;
-import edu.njnu.reproducibility.common.untils.JsonResult;
-import edu.njnu.reproducibility.common.untils.ResultUtils;
 import edu.njnu.reproducibility.domain.context.dto.AddContextDefinitionDTO;
 import edu.njnu.reproducibility.domain.context.dto.UpdateContextDefinitionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,21 +19,21 @@ public class ContextDefinitionService {
     @Autowired
     ContextDefinitionRepository contextDefinitionRepository;
 
-    public JsonResult saveContextDefinition(AddContextDefinitionDTO addContextDefinitionDTO,String userId) {
+    public ContextDefinition saveContextDefinition(AddContextDefinitionDTO addContextDefinitionDTO, String userId) {
         ContextDefinition contextDefinition = new ContextDefinition();
         contextDefinition.setUserId(userId);
         addContextDefinitionDTO.convertTo(contextDefinition);
-        return  ResultUtils.success(contextDefinitionRepository.insert(contextDefinition));
+        return  contextDefinitionRepository.insert(contextDefinition);
     }
 
-    public JsonResult getContextDefinition(String pid) {
-        Optional<ContextDefinition> contextDefinition = contextDefinitionRepository.findFirstByProjectId(pid);
-        return  ResultUtils.success(contextDefinition);
+    public Optional<ContextDefinition> getContextDefinition(String projectId) {
+        Optional<ContextDefinition> contextDefinition = contextDefinitionRepository.findFirstByProjectId(projectId);
+        return  contextDefinition;
     }
 
-    public JsonResult updateContextDefinition(String pid, UpdateContextDefinitionDTO updateContextDefinitionDTO) {
-        ContextDefinition contextDefinition = contextDefinitionRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
+    public ContextDefinition updateContextDefinition(String projectId, UpdateContextDefinitionDTO updateContextDefinitionDTO) {
+        ContextDefinition contextDefinition = contextDefinitionRepository.findFirstByProjectId(projectId).orElseThrow(MyException::noObject);
         updateContextDefinitionDTO.updateTo(contextDefinition);
-        return ResultUtils.success(contextDefinitionRepository.save(contextDefinition));
+        return contextDefinitionRepository.save(contextDefinition);
     }
 }
