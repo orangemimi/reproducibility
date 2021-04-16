@@ -86,6 +86,9 @@ export default {
 .main {
   position: relative;
   width: 100%;
+  .instances {
+    width: 100%;
+  }
   .page {
     position: absolute;
     bottom: 0;

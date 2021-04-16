@@ -35,6 +35,7 @@ import { getModelItemsByPrivacy, getModelItemsByProvider } from '@/api/request';
 
 export default {
   components: { modelCard },
+
   data() {
     return {
       projectId: this.$route.params.id,

@@ -159,7 +159,7 @@ export async function saveIntegrateTaskInstance(postJson) {
   return data;
 }
 
-export async function updateIntegrateTaskInstanceByTaskId(id, postJson) {
+export async function updateIntegrateTaskInstanceById(id, postJson) {
   let data = await patch(`/integrateTaskInstances/${id}`, postJson);
   if (data != null) {
     successNotification('update', 'integrateTaskInstances');
@@ -238,4 +238,10 @@ export async function saveRecord(form) {
 
 export async function getModelInfo(doi) {
   return await get(`/portal/modelBehavior/${doi}`);
+}
+
+//------------------------------------------dataService------------------------------------
+
+export async function getDataServices(currentPage, pagesize) {
+  return await get(`/dataServices/${currentPage}/${pagesize}`);
 }

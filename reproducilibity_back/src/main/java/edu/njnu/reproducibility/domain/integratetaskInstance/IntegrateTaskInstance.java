@@ -17,6 +17,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class IntegrateTaskInstance extends BaseEntity {
     @Id
     String id;
+    String name;//instance name;
     String taskId;//integrated task id;
     String projectId;
     String operatorId;//operatorId id;

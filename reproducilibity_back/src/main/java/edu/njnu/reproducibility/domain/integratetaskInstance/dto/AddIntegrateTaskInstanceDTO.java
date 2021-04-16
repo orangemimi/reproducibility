@@ -13,6 +13,7 @@ import lombok.Data;
  */
 @Data
 public class AddIntegrateTaskInstanceDTO implements ToDomainConverter<IntegrateTaskInstance> {
+    String name;//instance name;
     String taskId;//integrated task id;
     String operatorId;//operatorId id;
 

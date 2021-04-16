@@ -1,6 +1,6 @@
-export function generateAction(currentTask, models, dataInputInGraph, dataLinkInGraph, dataOutputInGraph, linkEdgeList, type) {
+export function generateAction(currentTaskId, models, dataInputInGraph, dataLinkInGraph, dataOutputInGraph, linkEdgeList, type) {
   let action = {
-    taskId: currentTask.id,
+    taskId: currentTaskId,
     modelItemList: [],
     dataItemList: [],
     parameterList: [],
@@ -26,6 +26,7 @@ export function generateAction(currentTask, models, dataInputInGraph, dataLinkIn
 function generateModelItemList(models, allInputList, dataOutputInGraph, linkEdgeList) {
   let modelList = [];
   //拼接集成模型中的models部分
+  debugger;
 
   models.forEach(model => {
     let modelItem = {

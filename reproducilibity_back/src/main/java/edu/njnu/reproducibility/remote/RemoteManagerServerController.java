@@ -92,6 +92,7 @@ public class RemoteManagerServerController {
 //        param.add("taskId", taskId);
 //        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(param);
 
+
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<JSONObject>  jsonObjectResponseEntity = restTemplate.getForEntity(urlStr, JSONObject.class);
         if (!jsonObjectResponseEntity.getStatusCode().is2xxSuccessful()) {

@@ -7,10 +7,15 @@
 
       <vue-scroll style="height: calc(86vh); width: 100%" :ops="ops">
         <el-collapse v-model="activeNames" class="collapse">
+          <el-collapse-item title="General" name="general">
+            <general-toolbar ref="generalBar"></general-toolbar>
+          </el-collapse-item>
           <el-collapse-item title="Models" name="models">
             <model-item-toolbar ref="modelBar" @getModels="getModels"></model-item-toolbar>
           </el-collapse-item>
-          <el-collapse-item title="Data Processing Methods" name="dataProcessings"></el-collapse-item>
+          <el-collapse-item title="Data Processing Methods" name="dataProcessings">
+            <data-processing-toolbar ref="dataProcessingBar" @getDataProcessings="getDataProcessings"></data-processing-toolbar>
+          </el-collapse-item>
           <el-collapse-item title="Related Datas" name="modelRelatedDatas">
             <div v-if="modelDoubleClick">
               <!-- <vue-scroll style="height: 400px; width: 100%"> -->
@@ -23,7 +28,7 @@
     </div>
     <div class="mainContainer">
       <div class="modelbarTop">
-        <el-button @click="generateAction" type="text" size="mini">Export as Picture</el-button>
+        <!-- <el-button @click="generateAction" type="text" size="mini">Export as Picture</el-button> -->
         <!-- <el-button @click="exportGraph" type="text" size="mini">Export as XML</el-button>
         <input @change="readFile" ref="importInput" class="hide" type="file" />
         <el-button @click="importGraphFile" type="text" size="mini">Import mxGraph</el-button> -->
@@ -52,7 +57,14 @@
     </div>
 
     <div class="rightBar">
-      <integrate-task-instances :currentTaskInit="currentTask" @showInstanceStatus="showInstanceStatus"></integrate-task-instances>
+      <div class="instances">
+        <div v-for="(item, index) in instanceList" :key="index">
+          <instance-card :instanceItem="item" @click.native="showInstanceStatus(item)"></instance-card>
+        </div>
+      </div>
+      <div class="page">
+        <el-pagination @current-change="handleCurrentChange" :current-page.sync="instancePageFilter.page" :page-size="instancePageFilter.pageSize" background layout="prev, pager, next" :total="instanceList.length + 1"></el-pagination>
+      </div>
     </div>
 
     <div class="dialogs">
@@ -81,7 +93,8 @@
 <script>
 import mxgraph from '_com/MxGraph/index';
 import { genGraph } from '_com/MxGraph/initMx';
-import { saveIntegrateTask, updateIntegrateTask, saveIntegrateTaskInstance, updateIntegrateTaskInstanceByTaskId, getScenarioByProjectId } from '@/api/request';
+import { saveIntegrateTask, updateIntegrateTask, saveIntegrateTaskInstance, updateIntegrateTaskInstanceById, getScenarioByProjectId, getAllIntegrateTaskInstancesByTaskId } from '@/api/request';
+import { generateAction } from './configuration';
 import { initSetTimeOut } from '@/utils/utils';
 import modelItemToolbar from '_com/MxGraphBars/ModelItemToolbar';
 import dataItemToolbar from '_com/MxGraphBars/DataItemToolbar';
@@ -89,8 +102,10 @@ import { get, post } from '@/axios';
 
 import dataCellInfo from '_com/DataCellInfo/Info';
 import integrateTasks from '_com/IntegrateTasks';
-import integrateTaskInstances from '_com/IntegrateTaskInstances/List';
+import instanceCard from '_com/Cards/InstanceCard';
 import { mapState } from 'vuex';
+import generalToolbar from '_com/MxGraphBars/GeneralToolbar';
+import dataProcessingToolbar from '_com/MxGraphBars/DataProcessingToolbar';
 
 const {
   // mxGraph,
@@ -112,7 +127,9 @@ export default {
     dataItemToolbar,
     dataCellInfo,
     integrateTasks,
-    integrateTaskInstances
+    instanceCard,
+    generalToolbar,
+    dataProcessingToolbar
   },
 
   watch: {
@@ -121,7 +138,8 @@ export default {
         if (JSON.stringify(val) != '{}') {
           this.currentTask = val;
           // await initSetTimeOut();
-          await this.init();
+          this.init();
+          await this.getAllIntegrateTaskInstances(0);
           this.graph.importGraph(val.mxgraph);
         }
       },
@@ -217,13 +235,20 @@ export default {
       isSelectTaskInConsruction: true,
 
       //collapse
-      activeNames: ['models'],
+      activeNames: ['general', 'models'],
 
       //dom
       domFlag: 0,
 
       //currentInstance;
-      currentTaskInstance: {}
+      currentTaskInstance: {},
+
+      //INSTANCE LIST
+      instancePageFilter: {
+        pageSize: 8,
+        page: 0
+      },
+      instanceList: []
     };
   },
 
@@ -252,6 +277,10 @@ export default {
       this.$set(this, 'modelItemList', val);
     },
 
+    getDataProcessings(val) {
+      console.log(val);
+    },
+
     //--------------初始化 bar的dataItem的内容--由 data-item-toolbar组件返回
     getInAndOut(input, output) {
       // this.state = val;
@@ -270,6 +299,7 @@ export default {
       this.container = this.$refs.container;
       this.createGraph();
       this.listenGraphEvent();
+      this.initLeftBar('generalBar');
       this.initLeftBar('modelBar');
       this.getScenario;
     },
@@ -383,7 +413,7 @@ export default {
       }
       if (type == 'link') {
         return {
-          fillColor: '#f58634',
+          fillColor: 'rgb(255, 220, 220)',
           fontColor: '#24292E',
           strokeColor: '',
           shape: 'parallelogram',
@@ -391,7 +421,7 @@ export default {
         };
       }
       return {
-        fillColor: '#f4d160',
+        fillColor: '#b9e6d3', //b9e6d3 f4d160
         fontColor: '#24292E',
         strokeColor: '',
         shape: 'parallelogram',
@@ -416,6 +446,10 @@ export default {
       } else if (panel == 'outputBar') {
         refType = 'dataItemBar';
         barRef = 'outputItemList';
+        barItemList = this.outputItemList;
+      } else {
+        refType = 'generalBar';
+        barRef = 'generalBar';
         barItemList = this.outputItemList;
       }
 
@@ -482,8 +516,6 @@ export default {
         50, //height
         styleObj
       );
-
-      console.log(styleObj);
       setTimeout(() => {
         this.graph.getModel().setStyle(vertex, styleObj);
       }, 1000);
@@ -702,7 +734,7 @@ export default {
       let graphXml = this.graph.getGraphXml();
 
       //model action
-      let action = this.generateAction();
+      let action = generateAction(this.currentTask.id, this.modelListInGraph, this.dataInputInGraph, this.dataLinkInGraph, this.dataOutputInGraph, this.linkEdgeList, 'task');
 
       let postJson = {
         xml: xml,
@@ -744,12 +776,12 @@ export default {
 
     async showInstanceStatus(item) {
       this.currentTaskInstance = item;
-      if (item.status == 1) {
-        this.getInstanceAction(item.action);
-        await this.saveIntegrateTaskInstance();
-      } else {
-        await this.getOutputs(item.tid);
-      }
+      // if (item.status == 1) {
+      //   this.getInstanceAction(item.action);
+      //   await saveIntegrateTaskInstance();
+      // } else {
+      await this.getOutputs(item.tid);
+      // }
     },
 
     getInstanceAction(action) {
@@ -775,7 +807,7 @@ export default {
       //get tid from manager server
       let tid = await post(`/managerServer/runtask`, formData);
 
-      await this.addTaskInstances(tid);
+      await this.addTaskInstance(tid);
 
       await this.getOutputs(tid);
 
@@ -851,8 +883,8 @@ export default {
       let style;
       if (status == 0) {
         style = {
-          fontColor: '#24292E',
-          fillColor: '#E1F3D8'
+          fontColor: '#f6f6f6',
+          fillColor: '#E6A23C'
         };
       }
       //finish
@@ -902,27 +934,25 @@ export default {
       await this.updateTaskInstances();
     },
 
-    async addTaskInstances(tid) {
+    async addTaskInstance(tid) {
       let postJson = {
+        name: this.currentTask.taskName + '-Instance',
         taskId: this.currentTask.id,
-        action: this.generateAction(),
+        action: generateAction(this.currentTask.id, this.modelListInGraph, this.dataInputInGraph, this.dataLinkInGraph, this.dataOutputInGraph, this.linkEdgeList, 'taskInstance'),
         status: 0,
         tid: tid
       };
-      console.log(postJson);
-      // console.log(postJson);
-      await saveIntegrateTaskInstance(postJson);
-      // await post(`/integrateTaskInstances`, postJson);
-      // console.log(data2);
+      let data = await saveIntegrateTaskInstance(postJson);
+      this.instanceList.push(data);
     },
 
     async updateTaskInstances() {
       let postJson = {
-        action: this.generateAction(),
+        action: generateAction(this.currentTask.id, this.modelListInGraph, this.dataInputInGraph, this.dataLinkInGraph, this.dataOutputInGraph, this.linkEdgeList, 'taskInstance'),
         status: 1
       };
       console.log(postJson, this.currentTaskInstance.id);
-      await updateIntegrateTaskInstanceByTaskId(this.currentTask.id, postJson);
+      await updateIntegrateTaskInstanceById(this.currentTaskInstance.id, postJson);
     },
 
     currentEventWithFile(val) {
@@ -1009,181 +1039,20 @@ export default {
       return uuid;
     },
 
-    generateAction() {
-      let action = {
-        taskId: this.currentTask.id,
-        modelItemList: [],
-        dataItemList: [],
-        parameterList: [],
-        conditionList: [],
-        dependencyList: []
-      };
+    //instance list
+    async getAllIntegrateTaskInstances(page) {
+      let data = await getAllIntegrateTaskInstancesByTaskId(this.currentTask.id, page, this.instancePageFilter.pageSize);
+      if (data == null) {
+        this.instanceList = [];
+        return;
+      }
+      this.instanceList = data.content;
+      this.instancePageFilter.page++;
+      // console.log('instances', data);
+    },
 
-      let modelList = [];
-      //拼接集成模型中的models部分
-      let models = this.modelListInGraph;
-      models.forEach(model => {
-        let modelItem = {
-          id: model.id,
-          // modelOid: model.doi,
-          reference: model.md5,
-          name: model.name,
-          description: model.description,
-          behavior: {}
-        };
-
-        //get same model input & output
-        let allInputList = [...this.dataInputInGraph, ...this.dataLinkInGraph];
-
-        let inputList = allInputList.filter(event => event.md5 == model.md5);
-        let outputList = this.dataOutputInGraph.filter(event => event.md5 == model.md5);
-
-        let stateIdList = [];
-        if (inputList.length != 0) {
-          inputList.forEach(input =>
-            stateIdList.push({
-              id: input.stateId,
-              name: input.stateName,
-              description: input.stateDescription
-            })
-          );
-        }
-        //获得所有的状态
-        let stateIdListNew = stateIdList.reduce((all, next) => (all.some(item => item.id == next.id) ? all : [...all, next]), []);
-
-        // let stateList = [];
-
-        stateIdListNew.forEach(state => {
-          let eventList = [];
-
-          let inputInState = inputList.filter(el => el.stateId == state.id);
-          let outputInState = outputList.filter(el => el.stateId == state.id);
-          inputInState.forEach(item => {
-            let inputData = {
-              id: item.id,
-              reference: item.eventId,
-              name: item.name,
-              description: item.description,
-              optional: item.optional,
-              type: item.type
-            };
-            if (item.type == 'input') {
-              inputData.dataRef = item.fileId;
-            } else if (item.type == 'link') {
-              // let link = this.linkEdgeList.filter(el => el.target.eventId == item.eventId);
-
-              let link = this.linkEdgeList.filter(link => link.target.id == item.id);
-              // inputData.link = link[0].source.eventId; //if type ==link, dataRef = 上一个output的
-              inputData.dataRef = link[0].source.fileId;
-            }
-
-            eventList.push(inputData);
-          });
-
-          outputInState.forEach(item => {
-            let output = {
-              id: item.id,
-              reference: item.eventId,
-              name: item.name,
-              description: item.description,
-              optional: item.optional,
-              type: item.type
-            };
-            if (Object.prototype.hasOwnProperty.call(item, 'fileId')) {
-              output.dataRef = item.fileId;
-            } else {
-              output.dataRef = '';
-            }
-            eventList.push(output);
-          });
-
-          state.eventList = eventList;
-        });
-
-        modelItem.behavior.stateList = stateIdListNew;
-        // this.$set(modelItem, 'stateList', stateList);
-        modelList.push(modelItem);
-      });
-
-      action.modelItemList = modelList;
-      //dataItemList
-      let inputList = this.dataInputInGraph.filter(event => Object.prototype.hasOwnProperty.call(event, 'value') && event.value != '' && event.value != undefined);
-      let outputList = this.dataOutputInGraph.filter(event => Object.prototype.hasOwnProperty.call(event, 'value') && event.value != '' && event.value != undefined);
-      let dataItemList = [];
-
-      inputList.forEach(item => {
-        let inputData = {
-          id: item.fileId,
-          name: item.fileName,
-          description: item.fileDescription,
-          value: item.value
-        };
-
-        dataItemList.push(inputData);
-      });
-
-      outputList.forEach(item => {
-        let output = {
-          id: item.fileId,
-          name: item.fileName,
-          description: item.description,
-          value: item.value //如果是task value =""/如果是instance value ="item.value"
-        };
-        dataItemList.push(output);
-      });
-
-      action.dataItemList = dataItemList;
-
-      let linkList = this.linkEdgeList;
-      let dependencyList = [];
-
-      linkList.forEach(edge => {
-        let dependency = {};
-        const beforeCell = edge.source;
-        const nextCell = edge.target;
-
-        let from, to;
-
-        if (beforeCell.type == 'output' || beforeCell.type == 'input' || beforeCell.type == 'link') {
-          from = {
-            type: 'data',
-            id: beforeCell.id,
-            reference: beforeCell.eventId
-          };
-        } else {
-          from = {
-            type: 'model',
-            id: beforeCell.id,
-            reference: beforeCell.md5
-          };
-        }
-
-        if (nextCell.type == 'output' || nextCell.type == 'input' || nextCell.type == 'link') {
-          to = {
-            type: 'data',
-            id: nextCell.id,
-            reference: nextCell.eventId
-          };
-        } else {
-          to = {
-            type: 'model',
-            id: nextCell.id,
-            reference: nextCell.md5
-          };
-        }
-
-        dependency = {
-          id: edge.id,
-          name: `${from.type}: ${beforeCell.name} to ${to.type}: ${nextCell.name} denpendency`,
-          from: from,
-          to: to
-        };
-
-        dependencyList.push(dependency);
-      });
-
-      action.dependencyList = dependencyList;
-      return action;
+    async handleCurrentChange(val) {
+      await this.getAllIntegrateTaskInstances(val++);
     }
   },
 
@@ -1280,6 +1149,13 @@ export default {
     padding: 0 5px;
     box-shadow: 0px 0px 5px rgb(207, 207, 207);
     background-color: rgba(243, 243, 243, 0.9);
+    .instances {
+      width: 100%;
+    }
+    .page {
+      position: absolute;
+      bottom: 0;
+    }
   }
 
   .mainContainer {
