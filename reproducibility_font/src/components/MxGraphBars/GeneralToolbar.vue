@@ -1,8 +1,7 @@
 <!-- general bar -->
 <template>
   <div class="main">
-    <div v-for="(item, index) in generalToolbar" :key="index" ref="general">
-      <!-- {{ item.icon }} -->
+    <div v-for="(item, index) in generalList" :key="index" ref="general">
       <div class="tool">
         <img :src="item.icon" :alt="item['name']" class="image" />
         <div class="name">{{ item['name'] }}</div>
@@ -12,14 +11,14 @@
 </template>
 
 <script>
-import { generalToolbar } from './toolbar';
+import { generalList } from './toolbar';
 export default {
   components: {},
 
   watch: {},
 
   computed: {
-    generalToolbar: () => generalToolbar // general toolbar
+    generalList: () => generalList // general toolbar
   },
 
   data() {

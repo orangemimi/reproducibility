@@ -11,6 +11,6 @@ import java.util.Optional;
  * @Version 1.0.0
  */
 public interface RecordRepository extends MongoRepository<Record,String> {
-    Optional<Record> findFirstById(String id);
+    Optional<Record> findById(String id);
     List<Record> findAllByProjectId(String projectId);
 }

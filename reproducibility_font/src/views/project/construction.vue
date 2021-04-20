@@ -17,12 +17,19 @@
         </el-row>
       </div>
       <div class="record">
-        <el-popover placement="top" width="460" trigger="click">
+        <div class="block">
+          <el-timeline>
+            <el-timeline-item v-for="(activity, index) in activities" :key="index" :icon="activity.icon" :type="activity.type" :color="activity.color" :size="activity.size" :timestamp="activity.timestamp">
+              {{ activity.content }}
+            </el-timeline-item>
+          </el-timeline>
+        </div>
+        <!-- <el-popover placement="top" width="460" trigger="click">
           <record-list></record-list>
           <el-button type="success" class="folder_collect" slot="reference" circle>
             <i class="el-icon-folder-opened"></i>
           </el-button>
-        </el-popover>
+        </el-popover> -->
       </div>
     </el-col>
   </div>
@@ -30,17 +37,40 @@
 
 <script>
 import stepCard from '_com/StepCard';
-import recordList from '_com/RecordList';
+// import recordList from '_com/RecordList';
 import { getProjectAndUsers } from '@/api/request';
 export default {
   components: {
-    stepCard,
-    recordList
+    stepCard
+    // recordList
   },
   data() {
     return {
       projectId: this.$route.params.id,
-      projectInfo: {}
+      projectInfo: {},
+      activities: [
+        {
+          content: 'Context Definition',
+          timestamp: '2018-04-12 20:46',
+          size: 'large',
+          type: 'primary',
+          icon: 'el-icon-more'
+        },
+        {
+          content: 'Resource Collection',
+          timestamp: '2018-04-03 20:46',
+          color: '#0bbd87'
+        },
+        {
+          content: 'Simulation Scenario',
+          timestamp: '2018-04-03 20:46',
+          size: 'large'
+        },
+        {
+          content: 'Expected Results',
+          timestamp: '2018-04-03 20:46'
+        }
+      ]
       // cardInfos: [{ btnType: 'Context Definition' }, { btnType: 'Resource Collection' }]
     };
   },

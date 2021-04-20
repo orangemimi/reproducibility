@@ -60,17 +60,12 @@ export default {
   methods: {
     async getPublicModels() {
       let { content } = await getModelItemsByPrivacy('public', this.publicModelFilter.page, this.publicModelFilter.pageSize);
-      // let { content } = await get(
-      //   `/modelItems/public/${this.publicModelFilter.page}/${this.publicModelFilter.pageSize}`
-      // );
-
       this.$set(this, 'publicModels', content);
       this.$emit('getModels', content);
     },
 
     async getPersonalModels() {
       let data = await getModelItemsByProvider(this.personalModelFilter.page, this.personalModelFilter.pageSize);
-      // let data = await get(`/model/findByProvider`);
       this.$set(this, 'personalModels', data);
       this.$emit('getModels', data);
     },

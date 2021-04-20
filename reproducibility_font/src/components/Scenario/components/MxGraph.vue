@@ -18,9 +18,7 @@
           </el-collapse-item>
           <el-collapse-item title="Related Datas" name="modelRelatedDatas">
             <div v-if="modelDoubleClick">
-              <!-- <vue-scroll style="height: 400px; width: 100%"> -->
               <data-item-toolbar :cell="cell" ref="dataItemBar" @getInAndOut="getInAndOut"></data-item-toolbar>
-              <!-- </vue-scroll> -->
             </div>
           </el-collapse-item>
         </el-collapse>
@@ -93,25 +91,24 @@
 <script>
 import mxgraph from '_com/MxGraph/index';
 import { genGraph } from '_com/MxGraph/initMx';
-import { saveIntegrateTask, updateIntegrateTask, saveIntegrateTaskInstance, updateIntegrateTaskInstanceById, getScenarioByProjectId, getAllIntegrateTaskInstancesByTaskId } from '@/api/request';
-import { generateAction } from './configuration';
+import { saveDataItem, saveIntegrateTask, updateIntegrateTask, saveIntegrateTaskInstance, updateIntegrateTaskInstanceById, getScenarioByProjectId, getAllIntegrateTaskInstancesByTaskId, runtask, checkTaskStatus } from '@/api/request';
+import { generateAction, generateXml, differCellStyle, getCellStyle } from './configuration';
 import { initSetTimeOut } from '@/utils/utils';
-import modelItemToolbar from '_com/MxGraphBars/ModelItemToolbar';
-import dataItemToolbar from '_com/MxGraphBars/DataItemToolbar';
-import { get, post } from '@/axios';
 
 import dataCellInfo from '_com/DataCellInfo/Info';
 import integrateTasks from '_com/IntegrateTasks';
 import instanceCard from '_com/Cards/InstanceCard';
-import { mapState } from 'vuex';
+
+import modelItemToolbar from '_com/MxGraphBars/ModelItemToolbar';
+import dataItemToolbar from '_com/MxGraphBars/DataItemToolbar';
 import generalToolbar from '_com/MxGraphBars/GeneralToolbar';
 import dataProcessingToolbar from '_com/MxGraphBars/DataProcessingToolbar';
+import { generalList } from '_com/MxGraphBars/toolbar';
 
 const {
   // mxGraph,
   mxEvent,
   mxUtils,
-  mxConstants,
   mxCodec
 } = mxgraph;
 
@@ -148,10 +145,7 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      userId: state => state.user.userId,
-      userName: state => state.user.name
-    })
+    generalList: () => generalList // general toolbar
   },
 
   data() {
@@ -253,20 +247,6 @@ export default {
   },
 
   methods: {
-    importGraph(xmlTxt) {
-      //xml to json
-      this.graph.getModel().beginUpdate();
-      try {
-        const doc = mxUtils.parseXml(xmlTxt);
-        const root = doc.documentElement;
-        const dec = new mxCodec(root.ownerDocument);
-        dec.decode(root, this.graph.getModel());
-        this.getCells();
-      } finally {
-        this.graph.getModel().endUpdate();
-      }
-      this.graph.restoreModel();
-    },
     setAsSelectTaskInConstruction() {
       this.isSelectTaskInConsruction = !this.isSelectTaskInConsruction;
       console.log('!!!');
@@ -301,7 +281,7 @@ export default {
       this.listenGraphEvent();
       this.initLeftBar('generalBar');
       this.initLeftBar('modelBar');
-      this.getScenario;
+      this.getScenario();
     },
     async getScenario() {
       let data = await getScenarioByProjectId(this.projectId);
@@ -321,9 +301,7 @@ export default {
       this.graph.addListener(mxEvent.DOUBLE_CLICK, async (graph, evt) => {
         // DOUBLE_CLICK
         let cell = evt.properties.cell;
-
         let clickModelType = cell.type;
-        console.log(cell);
         if (clickModelType == 'model') {
           this.modelDoubleClick = true;
           this.domFlag++;
@@ -378,7 +356,7 @@ export default {
             try {
               linkCell.type = 'link';
 
-              let style = this.getCellStyle(this.differCellStyle(linkCell.type), linkCell);
+              let style = getCellStyle(differCellStyle(linkCell.type), linkCell);
 
               this.graph.getModel().setStyle(linkCell, style);
             } finally {
@@ -393,47 +371,11 @@ export default {
       this.mxGraphSelectionModel.addListener(mxEvent.CHANGE, this.handleSelectionChange);
     },
 
-    differCellStyle(type) {
-      if (type == 'modelBar') {
-        return {
-          fontColor: '#f6f6f6',
-          fillColor: '#07689f',
-          strokeColor: '',
-          shape: 'rectangle'
-        };
-      }
-      if (type == 'inputBar') {
-        return {
-          fillColor: '#fff8f8',
-          fontColor: '#24292E',
-          strokeColor: '',
-          shape: 'parallelogram',
-          fixedSize: 1
-        };
-      }
-      if (type == 'link') {
-        return {
-          fillColor: 'rgb(255, 220, 220)',
-          fontColor: '#24292E',
-          strokeColor: '',
-          shape: 'parallelogram',
-          fixedSize: 1
-        };
-      }
-      return {
-        fillColor: '#b9e6d3', //b9e6d3 f4d160
-        fontColor: '#24292E',
-        strokeColor: '',
-        shape: 'parallelogram',
-        fixedSize: 1
-      };
-    },
-
     initLeftBar(panel) {
       let refType;
       let barRef; //对应各个Bar组件中的ref
       let barItemList = [];
-      let styleIn = this.differCellStyle(panel);
+      let styleIn = differCellStyle(panel);
 
       if (panel == 'modelBar') {
         refType = 'modelBar';
@@ -449,8 +391,8 @@ export default {
         barItemList = this.outputItemList;
       } else {
         refType = 'generalBar';
-        barRef = 'generalBar';
-        barItemList = this.outputItemList;
+        barRef = 'general';
+        barItemList = this.generalList;
       }
 
       const domArray = this.$refs[refType].$refs[barRef];
@@ -462,7 +404,7 @@ export default {
       domArray.forEach((dom, domIndex) => {
         const dragItem = barItemList[domIndex];
 
-        let cellStyle = this.getCellStyle(styleIn, dragItem);
+        let cellStyle = getCellStyle(styleIn, dragItem);
 
         const dropHandler = (graph, evt, cell, x, y) => {
           this.addCell(dragItem, x, y, panel, cellStyle);
@@ -478,29 +420,6 @@ export default {
 
         mxUtils.makeDraggable(dom, this.graph, dropHandler, createDragPreview(), 0, 0, false, true);
       });
-    },
-
-    getCellStyle(styleIn, cell) {
-      // console.log(item);
-      let styleObj = {
-        ...styleIn,
-        strokeWidth: '1.5',
-        align: mxConstants.ALIGN_CENTER,
-        // verticalAlign: mxConstants.ALIGN_,
-        imageAlign: mxConstants.ALIGN_CENTER,
-        imageVerticalAlign: mxConstants.ALIGN_TOP
-      };
-
-      if (cell.optional == 'false' && (cell.type == 'input' || cell.type == 'link')) {
-        styleObj.strokeColor = '#d13030';
-      }
-
-      //转换成cell中的style格式
-      const style = Object.keys(styleObj)
-        .map(attr => `${attr}=${styleObj[attr]}`)
-        .join(';');
-
-      return style;
     },
 
     addCell(item, x, y, type, styleObj) {
@@ -592,8 +511,6 @@ export default {
       this.dataOutputInGraph = dataOutputInGraph;
       this.dataInputInGraph = dataInputInGraph;
       this.dataLinkInGraph = dataLinkInGraph;
-
-      console.log(this.modelListInGraph, this.dataOutputInGraph, this.dataInputInGraph, this.dataLinkInGraph);
     },
 
     closeDialog(val) {
@@ -728,7 +645,7 @@ export default {
       this.getCells();
 
       //王梓欢配置文件
-      let xml = this.generateXml();
+      let xml = generateXml(this.currentTask.taskName, this.modelListInGraph, this.dataInputInGraph, this.dataLinkInGraph, this.dataOutputInGraph, this.linkEdgeList);
 
       //mxgraph xml文件
       let graphXml = this.graph.getGraphXml();
@@ -797,7 +714,7 @@ export default {
 
     async runGraph() {
       this.getCells();
-      let xml = this.generateXml();
+      let xml = generateXml(this.currentTask.taskName, this.modelListInGraph, this.dataInputInGraph, this.dataLinkInGraph, this.dataOutputInGraph, this.linkEdgeList);
       let file = new File([xml], this.currentTask.taskName + '.xml', {
         type: 'text/xml'
       });
@@ -805,7 +722,7 @@ export default {
       formData.append('file', file);
 
       //get tid from manager server
-      let tid = await post(`/managerServer/runtask`, formData);
+      let tid = await runtask(formData);
 
       await this.addTaskInstance(tid);
 
@@ -825,7 +742,7 @@ export default {
 
           return;
         } else {
-          let data = await get(`/managerServer/checkTaskStatus/${tid}`);
+          let data = await checkTaskStatus(tid);
           this.record = data;
           this.changeCellColor(data);
         }
@@ -904,7 +821,7 @@ export default {
         style.shape = 'parallelogram';
         style.fixedSize = 1;
       }
-      let styleIn = this.getCellStyle(style, item);
+      let styleIn = getCellStyle(style, item);
       this.graph.getModel().setStyle(item, styleIn);
     },
 
@@ -925,7 +842,7 @@ export default {
           isDirect: false //--false是中间数据
         };
 
-        let data = await post(`/dataItems`, dataJson);
+        let data = await saveDataItem(dataJson);
         eventCell.fileId = data.id;
         eventCell.value = data.url;
         eventCell.fileName = data.name;
@@ -971,72 +888,6 @@ export default {
       } finally {
         this.graph.getModel().endUpdate();
       }
-    },
-
-    generateXml() {
-      let version = '1.0';
-      let uid = this.generateGUID();
-      let name = this.currentTask.taskName;
-
-      let xml = `<TaskConfiguration uid='${uid}' name='${name}' version='${version}'>`;
-
-      xml += '<Models>';
-
-      //没有md5-->只有doi  xml += `<Model name='${model.name}' pid='${model.md5}' description='' doi='${model.doi}'/>`;
-      this.modelListInGraph.forEach(model => {
-        xml += `<Model name='${model.name}' description='' pid='${model.md5}'/>`;
-      });
-      xml += `</Models>`;
-
-      //modelAction标签
-      xml += `<ModelActions>`;
-
-      this.modelListInGraph.forEach(model => {
-        xml += `<ModelAction id='${model.id}' name = '${model.name}' description = ''
-        model='${model.md5}' iterationNum='${model.iterationNum}'>`;
-
-        let list = [...this.dataInputInGraph, ...this.dataLinkInGraph];
-        let inputList = list.filter(event => event.md5 == model.md5);
-        let outputList = this.dataOutputInGraph.filter(event => event.md5 == model.md5);
-
-        xml += `<Inputs>`;
-        inputList.forEach(item => {
-          xml += `<DataConfiguration id='${item.eventId}' state='${item.stateName}' event='${item.name}'>`;
-
-          if (item.type == 'input') {
-            xml += `<Data value='${item.value}' type="url"/>`;
-          } else if (item.type == 'link') {
-            let link = this.linkEdgeList.filter(el => el.target.eventId == item.eventId);
-            xml += `<Data link='${link[0].source.eventId}' type="link"/>`;
-          }
-          xml += `</DataConfiguration>`;
-        });
-
-        xml += `</Inputs>`;
-        xml += `<Outputs>`;
-
-        outputList.forEach(item => {
-          xml += `<DataConfiguration id='${item.eventId}' state='${item.stateName}' event='${item.name}' />`;
-        });
-
-        xml += '</Outputs></ModelAction>';
-      });
-      xml += '</ModelActions></TaskConfiguration>';
-      console.log(xml);
-      return xml;
-    },
-
-    generateGUID() {
-      let s = [];
-      let hexDigits = '0123456789abcdef';
-      for (let i = 0; i < 36; i++) {
-        s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
-      }
-      s[14] = '4'; // bits 12-15 of the time_hi_and_version field to 0010
-      s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1); // bits 6-7 of the clock_seq_hi_and_reserved to 01
-      s[8] = s[13] = s[18] = s[23] = '-';
-      let uuid = s.join('');
-      return uuid;
     },
 
     //instance list

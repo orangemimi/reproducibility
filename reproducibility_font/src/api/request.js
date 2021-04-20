@@ -245,3 +245,21 @@ export async function getModelInfo(doi) {
 export async function getDataServices(currentPage, pagesize) {
   return await get(`/dataServices/${currentPage}/${pagesize}`);
 }
+
+//------------------------------------------manager server------------------------------------
+export async function runtask(formData) {
+  return await post(`/managerServer/runtask`, formData);
+}
+
+export async function checkTaskStatus(tid) {
+  return await get(`/managerServer/checkTaskStatus/${tid}`);
+}
+
+//------------------------------------------completion------------------------------------
+export async function savePerformance(form) {
+  return await post(`/performances`, form);
+}
+
+export async function updatePerformanceById(id) {
+  return await get(`/performances/${id}`);
+}

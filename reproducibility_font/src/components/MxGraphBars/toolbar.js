@@ -3,7 +3,7 @@ import mxgraph from '_com/MxGraph/index';
 const { mxConstants } = mxgraph;
 const rhombus = require('./icon/lingxing.png');
 
-export const generalToolbar = [
+export const generalList = [
   {
     icon: rhombus,
     name: 'Condition',

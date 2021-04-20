@@ -46,7 +46,7 @@
 
 <script>
 import addImage from '_com/AddImage';
-import { saveMethod, saveScenario, saveResource, saveContext, saveProject, getUserByJwtUserId, updateUserByJwtUserId } from '@/api/request';
+import { saveMethod, saveScenario, saveResource, saveContext, saveProject, getUserByJwtUserId, updateUserByJwtUserId, savePerformance } from '@/api/request';
 export default {
   components: { addImage },
 
@@ -77,8 +77,19 @@ export default {
       await saveResource({ projectId: data.id });
       await saveContext({ projectId: data.id });
 
-      this.userInfo.createdProjects.push(data.id);
+      let completionJson = {
+        completion: {
+          context: { content: 'Context Definition', degree: '0%' },
+          resource: { content: 'Resource Collection', degree: '0%' },
+          scenario: { content: 'Simulation Scenario', degree: '0%' },
+          result: { content: 'Excepted Results', degree: '0%' }
+        },
+        projectId: data.id
+      };
 
+      await savePerformance(completionJson);
+
+      this.userInfo.createdProjects.push(data.id);
       await updateUserByJwtUserId({ createdProjects: this.userInfo.createdProjects });
     },
 

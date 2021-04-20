@@ -25,7 +25,7 @@ public class RecordService {
     RecordRepository recordRepository;
 
     public Optional<Record>  getModelTaskInfo(String id) {
-        Optional<Record> record = recordRepository.findFirstById(id);
+        Optional<Record> record = recordRepository.findById(id);
         return record;
     }
 

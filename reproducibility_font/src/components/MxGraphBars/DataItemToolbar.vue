@@ -98,7 +98,6 @@ export default {
       });
       this.stateListInput = input;
       this.stateListOutput = output;
-      console.log('dataitemtoolbar', this.stateListInput, this.stateListOutput);
       await initSetTimeOut();
       this.$emit('getInAndOut', this.stateListInput, this.stateListOutput);
     }

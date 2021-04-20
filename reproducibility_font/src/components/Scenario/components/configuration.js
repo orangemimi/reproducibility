@@ -1,3 +1,10 @@
+import mxgraph from '_com/MxGraph/index';
+// import Shapes from './Shapes';
+// import { init } from 'echarts';
+// import _ from 'lodash';
+
+const { mxConstants } = mxgraph;
+
 export function generateAction(currentTaskId, models, dataInputInGraph, dataLinkInGraph, dataOutputInGraph, linkEdgeList, type) {
   let action = {
     taskId: currentTaskId,
@@ -192,4 +199,136 @@ function generateDependencyList(linkEdgeList) {
 
     dependencyList.push(dependency);
   });
+}
+
+export function generateXml(taskName, modelListInGraph, dataInputInGraph, dataLinkInGraph, dataOutputInGraph, linkEdgeList) {
+  let version = '1.0';
+  let uid = generateGUID();
+  let name = taskName;
+
+  let xml = `<TaskConfiguration uid='${uid}' name='${name}' version='${version}'>`;
+
+  xml += '<Models>';
+
+  //没有md5-->只有doi  xml += `<Model name='${model.name}' pid='${model.md5}' description='' doi='${model.doi}'/>`;
+  modelListInGraph.forEach(model => {
+    xml += `<Model name='${model.name}' description='' pid='${model.md5}'/>`;
+  });
+  xml += `</Models>`;
+
+  //modelAction标签
+  xml += `<ModelActions>`;
+
+  modelListInGraph.forEach(model => {
+    xml += `<ModelAction id='${model.id}' name = '${model.name}' description = ''
+    model='${model.md5}' iterationNum='${model.iterationNum}'>`;
+
+    let list = [...dataInputInGraph, ...dataLinkInGraph];
+    let inputList = list.filter(event => event.md5 == model.md5);
+    let outputList = dataOutputInGraph.filter(event => event.md5 == model.md5);
+
+    xml += `<Inputs>`;
+    inputList.forEach(item => {
+      xml += `<DataConfiguration id='${item.eventId}' state='${item.stateName}' event='${item.name}'>`;
+
+      if (item.type == 'input') {
+        xml += `<Data value='${item.value}' type="url"/>`;
+      } else if (item.type == 'link') {
+        let link = linkEdgeList.filter(el => el.target.eventId == item.eventId);
+        xml += `<Data link='${link[0].source.eventId}' type="link"/>`;
+      }
+      xml += `</DataConfiguration>`;
+    });
+
+    xml += `</Inputs>`;
+    xml += `<Outputs>`;
+
+    outputList.forEach(item => {
+      xml += `<DataConfiguration id='${item.eventId}' state='${item.stateName}' event='${item.name}' />`;
+    });
+
+    xml += '</Outputs></ModelAction>';
+  });
+  xml += '</ModelActions></TaskConfiguration>';
+  console.log(xml);
+  return xml;
+}
+
+function generateGUID() {
+  let s = [];
+  let hexDigits = '0123456789abcdef';
+  for (let i = 0; i < 36; i++) {
+    s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+  }
+  s[14] = '4'; // bits 12-15 of the time_hi_and_version field to 0010
+  s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1); // bits 6-7 of the clock_seq_hi_and_reserved to 01
+  s[8] = s[13] = s[18] = s[23] = '-';
+  let uuid = s.join('');
+  return uuid;
+}
+
+export function differCellStyle(type) {
+  if (type == 'modelBar') {
+    return {
+      fontColor: '#f6f6f6',
+      fillColor: '#07689f',
+      strokeColor: '',
+      shape: 'rectangle'
+    };
+  }
+  if (type == 'inputBar') {
+    return {
+      fillColor: '#fff8f8',
+      fontColor: '#24292E',
+      strokeColor: '',
+      shape: 'parallelogram',
+      fixedSize: 1
+    };
+  }
+  if (type == 'link') {
+    return {
+      fillColor: 'rgb(255, 220, 220)',
+      fontColor: '#24292E',
+      strokeColor: '',
+      shape: 'parallelogram',
+      fixedSize: 1
+    };
+  }
+  if (type == 'outputBar') {
+    return {
+      fillColor: '#b9e6d3', //b9e6d3 f4d160
+      fontColor: '#24292E',
+      strokeColor: '',
+      shape: 'parallelogram'
+    };
+  }
+  return {
+    fillColor: '#b9e6d3', //b9e6d3 f4d160
+    fontColor: '#24292E',
+    strokeColor: '',
+    shape: 'rhombus'
+  };
+}
+
+export function getCellStyle(styleIn, cell) {
+  // console.log(item);
+  let styleObj = {
+    ...styleIn,
+    strokeWidth: '1.5',
+    align: mxConstants.ALIGN_CENTER,
+    // verticalAlign: mxConstants.ALIGN_,
+    imageAlign: mxConstants.ALIGN_CENTER,
+    imageVerticalAlign: mxConstants.ALIGN_TOP
+  };
+
+  if (cell.optional == 'false' && (cell.type == 'input' || cell.type == 'link')) {
+    styleObj.strokeColor = '#d13030';
+  }
+
+  //转换成cell中的style格式
+  const style = Object.keys(styleObj)
+    .map(attr => `${attr}=${styleObj[attr]}`)
+    .join(';');
+
+  return style;
 }
