@@ -4,9 +4,7 @@ import edu.njnu.reproducibility.annotation.JwtTokenParser;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
 import edu.njnu.reproducibility.domain.performance.dto.AddPerformanceDTO;
-import edu.njnu.reproducibility.domain.performance.dto.UpdatePerformanceDTO;
-import edu.njnu.reproducibility.domain.record.RecordService;
-import edu.njnu.reproducibility.domain.record.dto.AddRecordDTO;
+import edu.njnu.reproducibility.domain.performance.dto.UpdatePerformanceContextDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,9 +36,9 @@ public class PerformanceController {
         return  ResultUtils.success(performanceService.savePerformance(add,userId));
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
-    public JsonResult updatePerformance(@PathVariable("id") String id,@RequestBody UpdatePerformanceDTO update, @JwtTokenParser(key="userId") String userId) {
-        return  ResultUtils.success(performanceService.updatePerformance(id,update,userId));
+    @RequestMapping(value = "/{type}/{projectId}", method = RequestMethod.PATCH)
+    public JsonResult updatePerformanceContext(@PathVariable("type") String type,@PathVariable("projectId") String projectId, @RequestBody Content update, @JwtTokenParser(key="userId") String userId) {
+        return  ResultUtils.success(performanceService.updatePerformance(type,projectId,update,userId));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

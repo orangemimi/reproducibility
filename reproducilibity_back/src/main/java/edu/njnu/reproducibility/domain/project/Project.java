@@ -36,6 +36,7 @@ public class Project extends BaseEntity {
     Integer starCount;
     Integer watchCount;
     Integer folkCount;
+    String citation;
 
     //fork detail
     Boolean isForking; //是否从别的项目Fork出来

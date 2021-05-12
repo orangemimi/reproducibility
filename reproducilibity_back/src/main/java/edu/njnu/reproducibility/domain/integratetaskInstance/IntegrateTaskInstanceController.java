@@ -27,7 +27,7 @@ public class IntegrateTaskInstanceController {
 
     @RequestMapping (value = "/{taskId}/{currentPage}/{pagesize}", method = RequestMethod.GET)
     public JsonResult getByTaskId(@PathVariable("taskId") String taskId,@JwtTokenParser(key="userId") String userId,@PathVariable("currentPage") int currentPage, @PathVariable("pagesize") int pagesize) {
-        return ResultUtils.success(integrateTaskInstanceService.getAllByTaskId(taskId,currentPage,pagesize));
+        return ResultUtils.success(integrateTaskInstanceService.getAllByTaskId(taskId,userId,currentPage,pagesize));
     }
 
     @RequestMapping (value = "/user/{currentPage}/{pagesize}", method = RequestMethod.GET)

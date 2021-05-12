@@ -12,9 +12,8 @@ import java.util.Date;
  */
 @Data
 public class Completion {
-    String type;//different
-    String content;
-    String degree;
-    Date updateTime;
-
+    Content context;
+    Content resource;
+    Content scenario;
+    Content results;
 }

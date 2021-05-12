@@ -10,7 +10,7 @@ import lombok.Data;
  */
 @Data
 public class Member {
-    String id;
+    String memberId;//member的userId
 //    String name;
     String role;
 }

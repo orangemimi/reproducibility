@@ -11,8 +11,14 @@ import java.util.Date;
  * @version: 1.0.0
  */
 @Data
-public class Content {
+public class Content{
+//    String type;//different
     String content;
     String degree;
+
+    //style
+    String type;
+    String icon;
+//    String color;
     Date updateTime;
 }

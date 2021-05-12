@@ -71,9 +71,9 @@ public class IntegrateTaskService {
         return integrateTaskRepository.save(integrateTask);
     }
 
-    public IntegrateTask cancleSelectAction(String id, UpdateCurrentActionInTaskDTO update, String userId) {
+    public IntegrateTask changeSelectInstance(String id, String instanceId, String userId) {
         IntegrateTask integrateTask = integrateTaskRepository.findFirstById(id).orElseThrow(MyException::noObject);
-        update.updateTo(integrateTask);
+        integrateTask.setSelectInstanceId(instanceId);
         return integrateTaskRepository.save(integrateTask);
     }
 

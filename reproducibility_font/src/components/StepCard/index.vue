@@ -21,15 +21,17 @@
 <script>
 import ContextContent from '_com/Context';
 import ScenarioContent from '_com/Scenario/Scenario';
+import ReScenarioContent from '_com/Scenario/reScenario';
 import ResourceContent from '_com/Resource';
-// import ResultContent from "./ResultContent";
+import ResultContent from '_com/Result/Result';
 // import AnalysisContent from "./AnalysisContent";
 export default {
   components: {
     ContextContent,
     ScenarioContent,
-    ResourceContent
-    // ResultContent,
+    ResourceContent,
+    ReScenarioContent,
+    ResultContent
     // AnalysisContent,
   },
   props: {
@@ -64,12 +66,17 @@ export default {
             vueType = 'ScenarioContent';
           }
           break;
+        case 'Reproducible Simulation Scenario':
+          {
+            vueType = 'ReScenarioContent';
+          }
+          break;
         case 'Resource Collection':
           {
             vueType = 'ResourceContent';
           }
           break;
-        case 'Result Analysis':
+        case 'Expected Result':
           {
             vueType = 'ResultContent';
           }

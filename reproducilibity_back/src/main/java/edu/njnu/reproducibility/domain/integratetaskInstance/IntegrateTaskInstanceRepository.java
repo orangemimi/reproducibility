@@ -15,5 +15,5 @@ import java.util.Optional;
 public interface IntegrateTaskInstanceRepository extends MongoRepository<IntegrateTaskInstance,String> {
     Optional<IntegrateTaskInstance> findById(String id);
     Page<IntegrateTaskInstance> findAllByOperatorId(String operatorId, PageRequest pageable);
-    Page<IntegrateTaskInstance> findAllByTaskId(String taskId, PageRequest pageable);
+    Page<IntegrateTaskInstance> findAllByTaskIdAndOperatorId(String taskId,String operator, PageRequest pageable);
 }

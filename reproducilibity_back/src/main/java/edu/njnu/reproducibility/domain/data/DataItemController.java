@@ -31,6 +31,12 @@ public class DataItemController {
         return ResultUtils.success(dataItemService.getAll(userId)) ;
     }
 
+
+    @RequestMapping(value = "/creator/{projectId}",method = RequestMethod.GET)
+    public JsonResult getResourcesByCreatorId( @JwtTokenParser(key="userId") String userId,@PathVariable("projectId") String projectId) {
+        return ResultUtils.success(dataItemService.getByCreatorId(userId,projectId));
+    }
+
     //更新部分字段
     @RequestMapping(value = "/{id}", produces = {"application/json;charset=UTF-8"},method = RequestMethod.PATCH)
     public JsonResult update(@PathVariable("id") String id,@RequestBody UpdateDataItemDTO updateDataItemDTO){

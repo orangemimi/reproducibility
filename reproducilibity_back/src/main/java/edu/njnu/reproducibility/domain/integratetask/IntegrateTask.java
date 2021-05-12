@@ -29,5 +29,5 @@ public class IntegrateTask extends BaseEntity {
     String mxgraph;
     Action action;
 
-    String selectAction;
+    String selectInstanceId;
 }

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
  * @Version 1.0.0
  */
 @RestController
-@RequestMapping(value = "/contextDefinition")
+@RequestMapping(value = "/context")
 public class ContextDefinitionController {
     @Autowired
     ContextDefinitionService contextDefinitionService;

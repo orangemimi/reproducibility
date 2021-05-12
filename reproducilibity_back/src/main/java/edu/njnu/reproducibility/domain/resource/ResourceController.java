@@ -29,6 +29,7 @@ public class ResourceController {
         return ResultUtils.success(resourceService.getResources(userId));
     }
 
+
     @RequestMapping(value = "/{projectId}",method = RequestMethod.GET)
     public JsonResult getResourcesByProjectId(@PathVariable("projectId") String projectId) {
         return ResultUtils.success(resourceService.getResourcesByProjectId(projectId));

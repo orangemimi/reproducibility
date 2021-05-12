@@ -45,10 +45,9 @@ public class IntegrateTaskController {
     }
 
 
-
-    @RequestMapping(value = "/cancleAction/{id}", produces = {"application/json;charset=UTF-8"}, method = RequestMethod.PATCH)
-    public JsonResult cancleSelectAction(@PathVariable("id") String id, @RequestBody UpdateCurrentActionInTaskDTO UpdateResourceDTO, @JwtTokenParser(key = "userId") String userId) {
-        return ResultUtils.success(integrateTaskService.cancleSelectAction(id, UpdateResourceDTO, userId));
+    @RequestMapping(value = "/changeSelectInstance/{id}/{instanceId}", produces = {"application/json;charset=UTF-8"}, method = RequestMethod.PATCH)
+    public JsonResult changeSelectInstance(@PathVariable("id") String id, @PathVariable("instanceId") String instanceId, @JwtTokenParser(key = "userId") String userId) {
+        return ResultUtils.success(integrateTaskService.changeSelectInstance(id, instanceId, userId));
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

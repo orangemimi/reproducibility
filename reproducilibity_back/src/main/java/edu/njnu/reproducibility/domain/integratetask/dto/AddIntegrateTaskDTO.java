@@ -21,6 +21,6 @@ public class AddIntegrateTaskDTO implements ToDomainConverter<IntegrateTask> {
     String taskDescription;
 
     String mxgraph;
-
+    String selectInstanceId;
 
 }

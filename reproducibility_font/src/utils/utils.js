@@ -8,6 +8,24 @@ export function initSetTimeOut() {
   });
 }
 
+export const dateFormat = (date, format) => {
+  let dateObj = new Date(Date.parse(date));
+  let fmt = format || 'yyyy-MM-dd hh:mm:ss';
+  //author: meizz
+  var o = {
+    'M+': dateObj.getMonth() + 1, //月份
+    'd+': dateObj.getDate(), //日
+    'h+': dateObj.getHours(), //小时
+    'm+': dateObj.getMinutes(), //分
+    's+': dateObj.getSeconds(), //秒
+    'q+': Math.floor((dateObj.getMonth() + 3) / 3), //季度
+    S: dateObj.getMilliseconds() //毫秒
+  };
+  if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (dateObj.getFullYear() + '').substr(4 - RegExp.$1.length));
+  for (var k in o) if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length));
+  return fmt;
+};
+
 export const getParams = url => {
   const keyValueArr = url.split('?')[1].split('&');
   let paramObj = {};
@@ -115,6 +133,13 @@ export const hasKey = (obj, key) => {
   }
 };
 
+export function hasProperty(obj, prop) {
+  if (Object.prototype.hasOwnProperty.call(obj, prop) && obj[prop] != null && obj[prop] != undefined && obj[prop] != '') {
+    return true;
+  }
+  return false;
+}
+
 /**
  * @param {*} obj1 对象
  * @param {*} obj2 对象
@@ -126,22 +151,4 @@ export const objEqual = (obj1, obj2) => {
   if (keysArr1.length !== keysArr2.length) return false;
   else if (keysArr1.length === 0 && keysArr2.length === 0) return true;
   /* eslint-disable-next-line */ else return !keysArr1.some(key => obj1[key] != obj2[key]);
-};
-
-export const dateFormat = (date, format) => {
-  let dateObj = new Date(date);
-  let fmt = format || 'yyyy-MM-dd hh:mm:ss';
-  //author: meizz
-  var o = {
-    'M+': dateObj.getMonth() + 1, //月份
-    'd+': dateObj.getDate(), //日
-    'h+': dateObj.getHours(), //小时
-    'm+': dateObj.getMinutes(), //分
-    's+': dateObj.getSeconds(), //秒
-    'q+': Math.floor((dateObj.getMonth() + 3) / 3), //季度
-    S: dateObj.getMilliseconds() //毫秒
-  };
-  if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (dateObj.getFullYear() + '').substr(4 - RegExp.$1.length));
-  for (var k in o) if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length));
-  return fmt;
 };

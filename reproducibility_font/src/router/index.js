@@ -53,6 +53,19 @@ export const constantRoutes = [
           footer: () => import('_com/layout/MyFooter.vue')
         }
       },
+
+      {
+        path: '/user',
+        name: 'UserInfo',
+        meta: {
+          title: 'User Info'
+        },
+        components: {
+          header: () => import('_com/layout/MyHeader.vue'),
+          main: () => import('@/views/user'),
+          footer: () => import('_com/layout/MyFooter.vue')
+        }
+      },
       {
         path: '/projects',
         name: 'Projects',
@@ -98,7 +111,7 @@ export const constantRoutes = [
             component: () => import('@/views/project/info'),
             meta: {
               requireAuth: true,
-              roles: ['builder', 'visitor'] // or you can only set roles in sub nav
+              roles: ['builder', 'rebuilder_explorer', 'rebuilder_operator', 'visitor'] // or you can only set roles in sub nav
             }
           },
           {
@@ -107,7 +120,25 @@ export const constantRoutes = [
             component: () => import('@/views/project/construction'),
             meta: {
               requireAuth: true,
+              roles: ['builder', 'rebuilder_explorer', 'rebuilder_operator'] // or you can only set roles in sub nav
+            }
+          },
+          {
+            path: 'contributor',
+            name: 'Contributor',
+            component: () => import('@/views/project/contributor'),
+            meta: {
+              requireAuth: true,
               roles: ['builder'] // or you can only set roles in sub nav
+            }
+          },
+          {
+            path: 'reproduction',
+            name: 'Reproduction',
+            component: () => import('@/views/project/reproduction'),
+            meta: {
+              requireAuth: true,
+              roles: ['builder', 'rebuilder_explorer', 'rebuilder_operator'] // or you can only set roles in sub nav
             }
           }
         ]

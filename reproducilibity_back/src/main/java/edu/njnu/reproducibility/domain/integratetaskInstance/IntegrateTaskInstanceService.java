@@ -25,9 +25,9 @@ public class IntegrateTaskInstanceService {
     }
 
 
-    public Page<IntegrateTaskInstance>  getAllByTaskId(String taskId, int currentPage, int pagesize ) {
+    public Page<IntegrateTaskInstance>  getAllByTaskId(String taskId, String userId,int currentPage, int pagesize ) {
         PageRequest pageable =  PageRequest.of(currentPage, pagesize);
-        Page<IntegrateTaskInstance> actionList= integrateTaskInstanceRepository.findAllByTaskId(taskId,pageable);
+        Page<IntegrateTaskInstance> actionList= integrateTaskInstanceRepository.findAllByTaskIdAndOperatorId(taskId,userId,pageable);
         return actionList;
     }
 

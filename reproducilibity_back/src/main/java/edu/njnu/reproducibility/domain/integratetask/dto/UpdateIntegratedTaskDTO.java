@@ -20,5 +20,6 @@ public class UpdateIntegratedTaskDTO implements ToDomainConverter<IntegrateTask>
     String mxgraph;
 
     Action action;
+    String selectInstanceId;
 
 }

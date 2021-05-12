@@ -17,6 +17,7 @@ import java.util.Optional;
 public interface NoticeRepository extends MongoRepository<Notice, String> {
     Optional<Notice> findById(String id);
     List<Notice> findAllByRecipientId(String recipientId);
+    List<Notice> findAllBySenderId(String senderId);
     Optional<Notice> findByIdAndRecipientId(String recipentId,String recipientId);
 
 }

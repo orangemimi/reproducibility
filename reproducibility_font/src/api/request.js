@@ -10,11 +10,30 @@ export async function getUserByJwtUserId() {
   return await get(`/users`);
 }
 
+export async function getUserProjectInfo() {
+  return await get(`/users/projects`);
+}
+
 export async function updateUserByJwtUserId(form) {
   let data = await patch(`/users`, form);
   if (data != null) {
     successNotification('update', 'user');
   }
+  return data;
+}
+
+export async function updateUserJoinedProjects(form) {
+  let data = await patch(`/users`, form);
+  // if (data != null) {
+  //   successNotification('update', 'user');
+  // }
+  return data;
+}
+export async function updateUserCreatedProjects(form) {
+  let data = await patch(`/users`, form);
+  // if (data != null) {
+  //   successNotification('update', 'user');
+  // }
   return data;
 }
 
@@ -50,6 +69,14 @@ export async function updateProject(projectId, form) {
   return data;
 }
 
+export async function updateProjectMembers(projectId, form) {
+  let data = await patch(`/projects/members/${projectId}`, form);
+  if (data != null) {
+    successNotification('update', 'project');
+  }
+  return data;
+}
+
 export async function saveProject(form) {
   let data = await post(`/projects`, form);
   if (data != null) {
@@ -60,20 +87,24 @@ export async function saveProject(form) {
 
 //---------------------------------------------------contextDefinition------------------------------------------
 
-export async function updateContexByProjectId(projectId) {
-  return await get(`/contextDefinition/${projectId}`);
-}
+// export async function updateContexByProjectId(projectId) {
+//   return await get(`/context/${projectId}`);
+// }
 
 export async function saveContext(form) {
-  return await post(`/contextDefinition`, form);
+  return await post(`/context`, form);
 }
 
-export async function updateContextByProjectId(projectId, form) {
-  let data = await patch(`/contextDefinition/data/${projectId}`, form);
+export async function updateContexByProjectId(projectId, form) {
+  let data = await patch(`/context/${projectId}`, form);
   if (data != null) {
     successNotification('update', 'context definition');
   }
   return data;
+}
+
+export async function getContextByProjectId(projectId) {
+  return await get(`/context/${projectId}`);
 }
 
 //---------------------------------------------------resources------------------------------------------
@@ -112,6 +143,10 @@ export async function getDataItemsByJwtUserId() {
   return await get(`/dataItems`);
 }
 
+export async function getDataItemByCreatorId(projectId) {
+  return await get(`/dataItems/creator/${projectId}`);
+}
+
 //----------------------------------------------integrate tasks------------------------------------------
 
 export async function getAllIntegrateTasksByProjectId(projectId) {
@@ -138,6 +173,12 @@ export async function updateIntegrateTask(taskId, postJson) {
   return data;
 }
 
+export async function updateIntegrateTaskInstance(taskId, instanceId) {
+  let data = await patch(`/integrateTasks/changeSelectInstance/${taskId}/${instanceId}`);
+
+  return data;
+}
+
 //--------------------------------------integrateTaskInstances--------------------------------------------
 
 export async function getAllIntegrateTaskInstancesByTaskId(taskId, currentPage, pagesize) {
@@ -145,7 +186,6 @@ export async function getAllIntegrateTaskInstancesByTaskId(taskId, currentPage, 
 }
 
 export async function getIntegrateTaskInstanceById(id) {
-  console.log(id);
   let data = await get(`/integrateTaskInstances/one/${id}`);
 
   return data;
@@ -212,7 +252,21 @@ export async function updateScenarioByProjectId(projectId, postJson) {
 //------------------------------------------notices------------------------------------
 
 export async function saveNotice(form) {
-  return await post(`/notices`, form);
+  console.log(form);
+  let data = await post(`/notices`, form);
+  console.log(data);
+  return data;
+}
+
+export async function getNoticesByRecipientId() {
+  return await get(`/notices/recipient`);
+}
+export async function getNoticesBySenderId() {
+  return await get(`/notices/sender`);
+}
+
+export async function changeNoticeState(id, state) {
+  return await patch(`/notices/${id}/${state}`);
 }
 
 //------------------------------------------emails------------------------------------
@@ -260,6 +314,10 @@ export async function savePerformance(form) {
   return await post(`/performances`, form);
 }
 
-export async function updatePerformanceById(id) {
-  return await get(`/performances/${id}`);
+export async function updatePerformanceById(type, id, form) {
+  return await patch(`/performances/${type}/${id}`, form); //type==context/resource/scenario/results
+}
+
+export async function getPerformanceByProjectId(projectId) {
+  return await get(`/performances/project/${projectId}`);
 }

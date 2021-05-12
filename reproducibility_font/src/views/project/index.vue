@@ -6,7 +6,7 @@
         <el-col class="breadcrumb" :span="12">
           <el-breadcrumb separator="/">
             <el-breadcrumb-item class="name">
-              {{ name }}
+              {{ creator.name }}
             </el-breadcrumb-item>
             <el-breadcrumb-item>{{ projectInfo.name }}</el-breadcrumb-item>
           </el-breadcrumb>
@@ -21,7 +21,7 @@
       <div class="menu">
         <!-- {{ role }} -->
         <builder-menu v-if="role == 'builder'" @toRouterType="toRouterType"></builder-menu>
-        <re-builder-menu v-else></re-builder-menu>
+        <re-builder-menu v-else @toRouterType="toRouterType"></re-builder-menu>
       </div>
     </div>
     <div class="page-content"><router-view class="scroll-item"></router-view></div>
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { getProjectById } from '@/api/request';
+import { getProjectAndUsers } from '@/api/request';
 import watchBtn from '_com/PageHeaderBtn/WatchBtn';
 import starBtn from '_com/PageHeaderBtn/StarBtn';
 import folkBtn from '_com/PageHeaderBtn/FolkBtn';
@@ -53,7 +53,9 @@ export default {
   data() {
     return {
       projectId: this.$route.params.id,
-      projectInfo: {}
+      projectInfo: {},
+      creator: {},
+      members: []
     };
   },
 
@@ -64,9 +66,13 @@ export default {
     },
 
     async getProjectInfo() {
-      let data = await getProjectById(this.projectId);
-      console.log(data);
-      this.projectInfo = data;
+      // let data = await getProjectById(this.projectId);
+
+      let data = await getProjectAndUsers(this.projectId);
+
+      this.projectInfo = data.project;
+      this.creator = data.creator;
+      this.members = data.members;
     },
 
     async judgeRole(project) {

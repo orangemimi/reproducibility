@@ -1,14 +1,31 @@
 <!--  -->
 <template>
   <div class="main">
-    <div class="instances">
-      <div v-for="(item, index) in instanceList" :key="index">
-        <instance-card :instanceItem="item" @click.native="showConfiguration(item)"></instance-card>
+    555
+    <el-row>
+      <el-card shadow="hover" class="box-card">
+        <i class="el-icon-plus" />
+      </el-card>
+    </el-row>
+    <el-row>
+      <div class="instances">
+        <div v-for="(item, index) in instanceList" :key="index">
+          <instance-card :instanceItem="item" @click.native="showConfiguration(item)"></instance-card>
+        </div>
       </div>
-    </div>
-    <div class="page">
-      <el-pagination @current-change="handleCurrentChange" :current-page.sync="pageFilter.page" :page-size="pageFilter.pageSize" background layout="prev, pager, next" :total="instanceList.length + 1"></el-pagination>
-    </div>
+    </el-row>
+    <el-row>
+      <div class="page">
+        <el-pagination
+          @current-change="handleCurrentChange"
+          :current-page.sync="pageFilter.page"
+          :page-size="pageFilter.pageSize"
+          background
+          layout="prev, pager, next"
+          :total="instanceList.length + 1"
+        ></el-pagination>
+      </div>
+    </el-row>
   </div>
 </template>
 

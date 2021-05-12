@@ -2,12 +2,15 @@ package edu.njnu.reproducibility.domain.project;
 
 
 import cn.hutool.core.lang.UUID;
+import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import com.google.common.collect.Lists;
 import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.domain.project.dto.AddProjectDTO;
 import edu.njnu.reproducibility.domain.project.dto.UpdateProjectDTO;
+import edu.njnu.reproducibility.domain.project.dto.UpdateProjectMembersDTO;
 import edu.njnu.reproducibility.domain.user.User;
+import edu.njnu.reproducibility.domain.user.UserRepository;
 import edu.njnu.reproducibility.domain.user.UserService;
 import edu.njnu.reproducibility.utils.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static edu.njnu.reproducibility.utils.Utils.addProjectRole;
 
 /**
  * @Author ：Zhiyi
@@ -35,6 +40,7 @@ public class ProjectService {
 
     @Autowired
     UserService userService;
+
 
     public Project get(String projectId) {
         return projectRepository.findById(projectId).orElse(null);
@@ -56,7 +62,7 @@ public class ProjectService {
         json.put("creator", creatorJson);
         if (!(memberIdList == null || memberIdList.size() == 0)) {
             for (int i = 0; i < memberIdList.size(); i++) {
-                User member = userService.getUserInfoById(memberIdList.get(i).getId());
+                User member = userService.getUserInfoById(memberIdList.get(i).getMemberId());
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("id", member.getUserId());
                 jsonObject.put("name", member.getName());
@@ -68,15 +74,24 @@ public class ProjectService {
         return json;
     }
 
-    public Page<Project> getAllProjects(String userId,int currentPage,int pagesize) {
-        PageRequest pageable =  PageRequest.of(currentPage, pagesize);
+    public JSONArray getAllProjects(String userId, int currentPage, int pagesize) {
+        PageRequest pageable = PageRequest.of(currentPage, pagesize);
         List<String> privacyList = Arrays.asList("public", "discoverable");
-        Page<Project> projectList = projectRepository.findByPrivacyInOrCreator(privacyList, userId,pageable);
-        return projectList;
+      User user=  userService.getUserInfoById(userId);
+        Page<Project> projectList = projectRepository.findByPrivacyInOrCreator(privacyList, userId, pageable);
+        return addProjectRole(projectList,user);
     }
 
-    public Object getCreatedProjectsByUser(String userId) {
-        return "";
+    public Project updateMembers(String userId, String projectId, Member update) {
+        Project project = projectRepository.findByIdAndCreator(projectId, userId).orElseThrow(MyException::noObject);
+        project.getMembers().add(update);
+
+
+        User user = userService.getUserInfoById(update.getMemberId());
+        user.getJoinedProjects().add(project.getId());
+        userService.update(user);
+
+        return projectRepository.save(project);
     }
 
     public Object getJoinedProjectsByUser(String userId) {
@@ -96,6 +111,12 @@ public class ProjectService {
 //        creator.setName(userName);
 //        creator.setId(userId);
         project.setCreator(userId);
+
+        User user = userService.getUserInfoById(userId);
+        user.getCreatedProjects().add(project.getId());
+
+        userService.update(user);
+
         return projectRepository.insert(project);
     }
 
@@ -120,7 +141,6 @@ public class ProjectService {
         String filePath = ClassUtils.getDefaultClassLoader().getResource("").getPath() + "static/projectPicture/" + userId + "/" + fileName;
         return FileUtil.deleteFile(filePath);
     }
-
 
 
 }

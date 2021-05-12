@@ -33,7 +33,7 @@ export function generateAction(currentTaskId, models, dataInputInGraph, dataLink
 function generateModelItemList(models, allInputList, dataOutputInGraph, linkEdgeList) {
   let modelList = [];
   //拼接集成模型中的models部分
-  debugger;
+  // debugger;
 
   models.forEach(model => {
     let modelItem = {

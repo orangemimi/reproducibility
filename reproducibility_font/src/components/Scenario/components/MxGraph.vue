@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <div class="leftBar">
+    <div class="leftBar" v-if="role == 'builder'">
       <el-input placeholder="Search model/tool" size="mini" class="search_input">
         <el-button slot="append" icon="el-icon-search"></el-button>
       </el-input>
@@ -42,8 +42,8 @@
         <el-button @click="runGraph" size="mini">Run Task</el-button>
 
         <transition name="fade" mode="out-in">
-          <div class="bell" @click="setAsSelectTaskInConstruction()">
-            <i :class="[isSelectTaskInConsruction ? 'el-icon-bell' : 'el-icon-message-solid']"></i>
+          <div class="bell" @click="setAsSelectTaskInConstruction">
+            <i :class="isSelectTaskInConsruction ? 'el-icon-message-solid' : ' el-icon-bell'"></i>
           </div>
         </transition>
 
@@ -56,12 +56,26 @@
 
     <div class="rightBar">
       <div class="instances">
-        <div v-for="(item, index) in instanceList" :key="index">
-          <instance-card :instanceItem="item" @click.native="showInstanceStatus(item)"></instance-card>
-        </div>
+        <el-row class="add_ins">
+          <el-card shadow="hover" class="box-card">
+            <i class="el-icon-plus" />
+          </el-card>
+        </el-row>
+        <el-row>
+          <div v-for="(item, index) in instanceList" :key="index">
+            <instance-card :instanceItem="item" :taskItem="currentTask" @showInstanceStatus="showInstanceStatus"></instance-card>
+          </div>
+        </el-row>
       </div>
       <div class="page">
-        <el-pagination @current-change="handleCurrentChange" :current-page.sync="instancePageFilter.page" :page-size="instancePageFilter.pageSize" background layout="prev, pager, next" :total="instanceList.length + 1"></el-pagination>
+        <el-pagination
+          @current-change="handleCurrentChange"
+          :current-page.sync="instancePageFilter.page"
+          :page-size="instancePageFilter.pageSize"
+          background
+          layout="prev, pager, next"
+          :total="instanceList.length + 1"
+        ></el-pagination>
       </div>
     </div>
 
@@ -89,11 +103,24 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import mxgraph from '_com/MxGraph/index';
 import { genGraph } from '_com/MxGraph/initMx';
-import { saveDataItem, saveIntegrateTask, updateIntegrateTask, saveIntegrateTaskInstance, updateIntegrateTaskInstanceById, getScenarioByProjectId, getAllIntegrateTaskInstancesByTaskId, runtask, checkTaskStatus } from '@/api/request';
+import {
+  saveDataItem,
+  saveIntegrateTask,
+  updateIntegrateTask,
+  saveIntegrateTaskInstance,
+  updateIntegrateTaskInstanceById,
+  getScenarioByProjectId,
+  getAllIntegrateTaskInstancesByTaskId,
+  runtask,
+  checkTaskStatus,
+  updatePerformanceById,
+  updateScenarioByProjectId
+} from '@/api/request';
 import { generateAction, generateXml, differCellStyle, getCellStyle } from './configuration';
-import { initSetTimeOut } from '@/utils/utils';
+import { initSetTimeOut, hasProperty } from '@/utils/utils';
 
 import dataCellInfo from '_com/DataCellInfo/Info';
 import integrateTasks from '_com/IntegrateTasks';
@@ -133,8 +160,10 @@ export default {
     taskInfoInit: {
       async handler(val) {
         if (JSON.stringify(val) != '{}') {
+          await initSetTimeOut();
+          // debugger;
           this.currentTask = val;
-          // await initSetTimeOut();
+
           this.init();
           await this.getAllIntegrateTaskInstances(0);
           this.graph.importGraph(val.mxgraph);
@@ -145,7 +174,10 @@ export default {
   },
 
   computed: {
-    generalList: () => generalList // general toolbar
+    generalList: () => generalList, // general toolbar
+    ...mapState({
+      role: state => state.permission.role
+    })
   },
 
   data() {
@@ -243,17 +275,27 @@ export default {
         page: 0
       },
       instanceList: []
+      // selectInstanceId:''
     };
   },
 
   methods: {
-    setAsSelectTaskInConstruction() {
+    async setAsSelectTaskInConstruction() {
       this.isSelectTaskInConsruction = !this.isSelectTaskInConsruction;
-      console.log('!!!');
+      let taskId = '';
+      //已经取消了选择的Task
+      if (this.isSelectTaskInConsruction) {
+        taskId = '';
+      } else {
+        taskId = this.currentTask.id;
+      }
+
+      await updateScenarioByProjectId(this.projectId, { selectTaskId: taskId });
+      // console.log('!!!');
     },
     //--------------初始化 bar的modelItem的内容--由 AllModels组件返回
     getModels(val) {
-      console.log('modelitm', val);
+      // console.log('modelitm', val);
       this.$set(this, 'modelItemList', val);
     },
 
@@ -283,12 +325,13 @@ export default {
       this.initLeftBar('modelBar');
       this.getScenario();
     },
+
     async getScenario() {
       let data = await getScenarioByProjectId(this.projectId);
-      console.log(data.selectTaskId, this.currentTask.id);
+      // console.log(data.selectTaskId, this.currentTask.id);
       let flag = data.selectTaskId == this.currentTask.id;
       this.$set(this, 'isSelectTaskInConsruction', flag);
-      console.log(this.isSelectTaskInConsruction);
+      // console.log(this.isSelectTaskInConsruction);
     },
 
     // Creates the graph inside the given container
@@ -347,7 +390,7 @@ export default {
       this.graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
         const cell = evt.properties.cells[0];
         if (cell.vertex) {
-          this.$message.info('Add a node');
+          // this.$message.info('Add a node');
         } else if (cell.edge) {
           //判断是否是link to next dataitem
           let linkCell = cell.target;
@@ -513,6 +556,20 @@ export default {
       this.dataLinkInGraph = dataLinkInGraph;
     },
 
+    judgeInputList() {
+      let dataInputInGraph = this.dataInputInGraph;
+      dataInputInGraph.forEach(input => {
+        if (!hasProperty(input, 'value')) {
+          this.$notify.error({
+            title: 'Error',
+            message: 'You have not bind the data'
+          });
+          return false;
+        }
+      });
+      return true;
+    },
+
     closeDialog(val) {
       this.editCellVisible = val;
     },
@@ -661,9 +718,11 @@ export default {
         taskDescription: this.currentTask.taskDescription,
         action: action
       };
-      // console.log(postJson);
 
       await updateIntegrateTask(this.currentTask.id, postJson);
+      let content = { content: 'Simulation Scenario', degree: '100%', type: 'success', icon: 'el-icon-sunny' };
+
+      await updatePerformanceById('context', this.projectId, content);
       // await patch(`/integrateTasks/${this.currentTask.id}`, postJson);
       // console.log(data);
     },
@@ -691,14 +750,9 @@ export default {
       // this._restoreModel();
     },
 
-    async showInstanceStatus(item) {
-      this.currentTaskInstance = item;
-      // if (item.status == 1) {
-      //   this.getInstanceAction(item.action);
-      //   await saveIntegrateTaskInstance();
-      // } else {
-      await this.getOutputs(item.tid);
-      // }
+    async showInstanceStatus(value) {
+      this.currentTaskInstance = value;
+      await this.getOutputs(value.tid);
     },
 
     getInstanceAction(action) {
@@ -714,6 +768,12 @@ export default {
 
     async runGraph() {
       this.getCells();
+
+      //是否有input中有空 无法run
+      if (!this.judgeInputList()) {
+        return;
+      }
+
       let xml = generateXml(this.currentTask.taskName, this.modelListInGraph, this.dataInputInGraph, this.dataLinkInGraph, this.dataOutputInGraph, this.linkEdgeList);
       let file = new File([xml], this.currentTask.taskName + '.xml', {
         type: 'text/xml'
@@ -827,7 +887,7 @@ export default {
 
     async putOutputToCell() {
       let actionResponse = this.record.taskInfo.modelActionList.completed;
-      console.log(this.dataOutputInGraph);
+      // console.log(this.dataOutputInGraph);
       this.dataOutputInGraph.forEach(async eventCell => {
         let outputActionList = actionResponse.filter(response => eventCell.linkModelCellId == response.id);
         let outputValueJson = outputActionList[0].outputData.outputs.filter(out => out.dataId == eventCell.eventId && out.state == eventCell.stateName);
@@ -868,7 +928,7 @@ export default {
         action: generateAction(this.currentTask.id, this.modelListInGraph, this.dataInputInGraph, this.dataLinkInGraph, this.dataOutputInGraph, this.linkEdgeList, 'taskInstance'),
         status: 1
       };
-      console.log(postJson, this.currentTaskInstance.id);
+      // console.log(postJson, this.currentTaskInstance.id);
       await updateIntegrateTaskInstanceById(this.currentTaskInstance.id, postJson);
     },
 
@@ -897,7 +957,9 @@ export default {
         this.instanceList = [];
         return;
       }
+
       this.instanceList = data.content;
+
       this.instancePageFilter.page++;
       // console.log('instances', data);
     },
@@ -1002,6 +1064,17 @@ export default {
     background-color: rgba(243, 243, 243, 0.9);
     .instances {
       width: 100%;
+      .add_ins {
+        font-size: 30px;
+        margin-bottom: 10px;
+        text-align: center;
+        /deep/.el-card {
+          background-color: rgba($color: #ffffff, $alpha: 0.8);
+        }
+      }
+      .add_ins:hover {
+        cursor: pointer;
+      }
     }
     .page {
       position: absolute;

@@ -46,7 +46,7 @@
 
 <script>
 import addImage from '_com/AddImage';
-import { saveMethod, saveScenario, saveResource, saveContext, saveProject, getUserByJwtUserId, updateUserByJwtUserId, savePerformance } from '@/api/request';
+import { saveMethod, saveScenario, saveResource, saveContext, saveProject, getUserProjectInfo, updateUserByJwtUserId, savePerformance } from '@/api/request';
 export default {
   components: { addImage },
 
@@ -71,6 +71,8 @@ export default {
     async createProject() {
       let data = await saveProject(this.form);
 
+      // await updateUserCreatedProjects(data.id);
+
       await saveMethod({ projectId: data.id, version: '1.0' });
 
       await saveScenario({ projectId: data.id });
@@ -79,10 +81,10 @@ export default {
 
       let completionJson = {
         completion: {
-          context: { content: 'Context Definition', degree: '0%' },
-          resource: { content: 'Resource Collection', degree: '0%' },
-          scenario: { content: 'Simulation Scenario', degree: '0%' },
-          result: { content: 'Excepted Results', degree: '0%' }
+          context: { content: 'Context Definition', degree: '0%', type: 'warning', icon: 'el-icon-edit' },
+          resource: { content: 'Resource Collection', degree: '0%', type: 'warning', icon: 'el-icon-folder' },
+          scenario: { content: 'Simulation Scenario', degree: '0%', type: 'warning', icon: 'el-icon-sunny' },
+          results: { content: 'Excepted Results', degree: '0%', type: 'warning', icon: 'el-icon-document' }
         },
         projectId: data.id
       };
@@ -95,7 +97,7 @@ export default {
 
     //为了获得创建的项目信息
     async getUserInfo() {
-      let data = await getUserByJwtUserId();
+      let data = await getUserProjectInfo();
       this.userInfo = data;
       console.log(data);
     },

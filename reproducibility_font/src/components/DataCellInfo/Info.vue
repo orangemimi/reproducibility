@@ -68,16 +68,22 @@
             </div>
             <div v-else>
               <!-- {{ dataItemList }} -->
-              <el-select v-model="selectDataId" clearable placeholder="Please select data" class="uploadContent" @change="changeSelectResource">
+              <el-select v-if="role == 'builder'" v-model="selectDataId" clearable placeholder="Please select data" class="uploadContent" @change="changeSelectResource">
                 <el-option v-for="(item, dataIndex) in dataItemList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
               </el-select>
+              <div v-else>
+                <el-button>{{ selectDataItem.name }}</el-button>
+              </div>
             </div>
           </vue-scroll>
         </div>
         <div v-else>
-          <el-select v-model="selectDataId" clearable placeholder="Please select data" class="uploadContent" @change="changeSelectResource">
+          <el-select v-if="role == 'builder'" v-model="selectDataId" clearable placeholder="Please select data" class="uploadContent" @change="changeSelectResource">
             <el-option v-for="(item, dataIndex) in dataItemList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
           </el-select>
+          <div v-else>
+            <el-button>{{ selectDataItem.name }}</el-button>
+          </div>
         </div>
         <!-- <div>
           <el-button size="small" type="success" round @click="submitResource">Submit</el-button>
@@ -88,6 +94,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import { getResourcesById } from '@/api/request';
 
 export default {
@@ -104,6 +111,11 @@ export default {
           this.currentEvent = val;
           console.log(this.currentEvent);
           this.selectDataId = this.currentEvent.fileId;
+          this.selectDataItem = {
+            id: this.currentEvent.fileId,
+            name: this.currentEvent.fileName,
+            url: this.currentEvent.value
+          };
           this.init();
         }
       },
@@ -117,15 +129,6 @@ export default {
       let datasetItem = this.currentEvent.datasetItem;
       if (Object.prototype.hasOwnProperty.call(datasetItem, 'UdxDeclaration')) {
         if (datasetItem.UdxDeclaration[0].UdxNode != '') {
-          // if (
-          //   Object.prototype.hasOwnProperty.call(
-          //     datasetItem.UdxDeclaration[0].UdxNode[0].UdxNode[0],
-          //     'UdxNode'
-          //   )
-          // ) {
-          //   return;
-          // }
-          // if (datasetItem.UdxDeclaration[0].UdxNode[0].UdxNode[0].hasOwnProperty('UdxNode')) {
           return false;
         } else {
           let udxNode = datasetItem.UdxDeclaration[0].UdxNode;
@@ -134,7 +137,10 @@ export default {
       } else {
         return false;
       }
-    }
+    },
+    ...mapState({
+      role: state => state.permission.role
+    })
   },
 
   data() {
@@ -161,11 +167,11 @@ export default {
 
     async getResources() {
       let data = await getResourcesById(this.projectId);
+      console.log('resource', data);
       this.dataItemList = data; //id list
     },
 
     async changeSelectResource(id) {
-      console.log(id);
       this.selectDataId = id;
       let dataSelect = this.dataItemList.filter(e => e.id == id);
       this.selectDataItem = dataSelect[0];

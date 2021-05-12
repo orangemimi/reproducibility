@@ -2,6 +2,7 @@ package edu.njnu.reproducibility.domain.performance.dto;
 
 import edu.njnu.reproducibility.common.dto.ToDomainConverter;
 import edu.njnu.reproducibility.domain.performance.Completion;
+import edu.njnu.reproducibility.domain.performance.Content;
 import edu.njnu.reproducibility.domain.performance.Performance;
 import lombok.Data;
 
@@ -12,7 +13,7 @@ import lombok.Data;
  * @version: 1.0.0
  */
 @Data
-public class UpdatePerformanceDTO implements ToDomainConverter<Performance> {
-    Completion completion;//百分比
+public class UpdatePerformanceContextDTO implements ToDomainConverter<Content> {
+    Content context;
 
 }

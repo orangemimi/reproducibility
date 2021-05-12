@@ -28,5 +28,5 @@ public class Notice extends BaseEntity {
     String senderId;
     String type;    //notice|reply|apply
     JSONObject content;
-    String state;   //read|unread
+    String state;   //read|unread|approve|refuse
 }

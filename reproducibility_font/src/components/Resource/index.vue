@@ -2,11 +2,20 @@
   <div class="main">
     <div class="row-style">
       <!-- <div class="table"> -->
-      <el-table ref="multipleTable" :data="dataItemListDirect" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange" max-height="350" :row-style="{ height: '0' }" :cell-style="{ padding: '4px' }">
+      <el-table
+        ref="multipleTable"
+        :data="dataItemListDirect"
+        tooltip-effect="dark"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+        max-height="350"
+        :row-style="{ height: '0' }"
+        :cell-style="{ padding: '4px' }"
+      >
         <template slot="empty">
           Please upload a file
         </template>
-        <el-table-column type="selection" width="50"></el-table-column>
+        <el-table-column type="selection" width="50" v-if="role == 'builder'"></el-table-column>
         <el-table-column label="Name" show-overflow-tooltip>
           <template #default="scope">{{ scope.row.name }}</template>
         </el-table-column>
@@ -22,7 +31,7 @@
       </el-table>
       <!-- </div> -->
     </div>
-    <div class="btnList">
+    <div class="btnList" v-if="role == 'builder'">
       <div class="btn">
         <el-button size="mini" @click="uploadDataDialogShow = true">
           Upload
@@ -39,9 +48,11 @@
 </template>
 
 <script>
-import { getDataItemsByJwtUserId, getResourcesById, updateResource } from '@/api/request';
+import { getDataItemsByJwtUserId, getResourcesById, updateResource, updatePerformanceById, getDataItemByCreatorId } from '@/api/request';
 // import dataUpload from './DataUpload'; //dialogcontent
 import dataUploadInfo from './DataUploadInfo'; //dialogcontent
+import { mapState } from 'vuex';
+
 export default {
   components: {
     // dataUpload,
@@ -53,6 +64,7 @@ export default {
     return {
       uploadDataDialogShow: false, //upload data dialog
       dataItemList: [],
+      dataItemListFromResource: [],
       projectId: this.$route.params.id,
       modelItemList: [],
       checkAll: false,
@@ -65,12 +77,21 @@ export default {
   },
   computed: {
     dataItemListDirect() {
-      if (this.dataItemList.length != 0 || this.dataItemList != null || this.dataItemList != undefined) {
-        return this.dataItemList.filter(item => item.isDirect == true);
-      } else {
-        return [];
+      if (this.role == 'builder') {
+        if (this.dataItemList.length != 0 || this.dataItemList != null || this.dataItemList != undefined) {
+          return this.dataItemList.filter(item => item.isDirect == true);
+        } else {
+          return [];
+        }
       }
-    }
+      if (this.role == 'rebuilder_operator') {
+        return this.dataItemListFromResource;
+      }
+      return [];
+    },
+    ...mapState({
+      role: state => state.permission.role
+    })
   },
 
   methods: {
@@ -90,14 +111,15 @@ export default {
       let data = await getDataItemsByJwtUserId();
       // let data = await get(`/dataItems`);
       this.dataItemList = data;
-
       await this.getSelectedData();
     },
 
     //get resources
     async getSelectedData() {
       let data = await getResourcesById(this.projectId);
+      console.log('resource', data);
       let dataSelected = data;
+
       this.multipleSelection = this.dataItemListDirect.filter(item => dataSelected.some(selection => selection.id == item.id));
       this.toggleSelection(this.multipleSelection);
     },
@@ -116,6 +138,14 @@ export default {
     //selection change
     handleSelectionChange(val) {
       this.multipleSelection = val;
+      // console.log(val);
+    },
+
+    async getDataAsOperator() {
+      let data = await getDataItemByCreatorId(this.projectId);
+      this.dataItemListFromResource = data;
+      this.$refs.multipleTable.toggleAllSelection();
+      // console.log('DATA', data);
     },
 
     //submit
@@ -126,24 +156,31 @@ export default {
           message: 'You have not select any data!',
           type: 'warning'
         });
-      } else {
-        let filter = [];
-        this.multipleSelection.forEach(ele => {
-          filter.push(ele.id);
-        });
-        // console.log(filter);
-        await updateResource(this.projectId, {
-          dataItemCollection: filter
-        });
-        // let data = await patch(`resources/data/${this.projectId}`, {
-        //   dataItemCollection: filter
-        // });
-        // console.log(data);
+        return;
       }
+
+      //用id重组一个新数组
+      let filter = [];
+      this.multipleSelection.forEach(ele => {
+        filter.push(ele.id);
+      });
+      await updateResource(this.projectId, {
+        dataItemCollection: filter
+      });
+
+      let content = { content: 'Resource Collection', degree: '100%', type: 'success', icon: 'el-icon-folder' };
+
+      await updatePerformanceById('resource', this.projectId, content);
     }
   },
   async mounted() {
-    await this.getDataCollection();
+    console.log('rolw', this.role);
+    if (this.role == 'builder') {
+      await this.getDataCollection();
+    }
+    if (this.role == 'rebuilder_operator') {
+      await this.getDataAsOperator();
+    }
   }
 };
 </script>

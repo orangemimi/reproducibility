@@ -5,6 +5,8 @@ import edu.njnu.reproducibility.annotation.JwtTokenParser;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
 import edu.njnu.reproducibility.domain.user.dto.AddUserDTO;
+import edu.njnu.reproducibility.domain.user.dto.UpdateCreatedProjectsDTO;
+import edu.njnu.reproducibility.domain.user.dto.UpdateJoinedProjectsDTO;
 import edu.njnu.reproducibility.domain.user.dto.UpdateUserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +27,12 @@ public class UserController {
 
     @RequestMapping (value = "", method = RequestMethod.GET)
     public JsonResult getUserInfo(@JwtTokenParser(key="userId") String userId)  {
-        return ResultUtils.success(userService.getUserInfo(userId));
+        return ResultUtils.success(userService.getUserInfoById(userId));
+    }
+
+    @RequestMapping (value = "/projects", method = RequestMethod.GET)
+    public JsonResult getUserProjectInfo(@JwtTokenParser(key="userId") String userId)  {
+        return ResultUtils.success(userService.getUserProjectInfo(userId));
     }
 
     @RequestMapping (value = "/like/{email}", method = RequestMethod.GET)
@@ -46,6 +53,14 @@ public class UserController {
     @RequestMapping (value = "", method = RequestMethod.PATCH)
     public JsonResult update( @JwtTokenParser(key="userId") String userId, @RequestBody UpdateUserDTO update) {
         return ResultUtils.success(userService.updateByUserId(userId,update));
+    }
+    @RequestMapping (value = "/join", method = RequestMethod.PATCH)
+    public JsonResult updateJoinedProjects( @JwtTokenParser(key="userId") String userId, @RequestBody  String update) {
+        return ResultUtils.success(userService.updateJoinedProjects(userId,update));
+    }
+    @RequestMapping (value = "/create", method = RequestMethod.PATCH)
+    public JsonResult updateCreatedProjects(@JwtTokenParser(key="userId") String userId, @RequestBody String update) {
+        return ResultUtils.success(userService.updateCreatedProjects(userId,update));
     }
 
 

@@ -4,7 +4,7 @@
     <div>projects</div>
     <el-row :gutter="20">
       <el-col :span="4" v-for="(project, index) in projectList" :key="index">
-        <div @click="judgeRole(project)" class="project-card">
+        <div class="project-card">
           <project-card :project="project"></project-card>
         </div>
       </el-col>
@@ -14,6 +14,7 @@
 
 <script>
 import { getAllProjects } from '@/api/request';
+// import { oneOf } from '@/utils/utils';
 import projectCard from './components/ProjectCard';
 import { mapState } from 'vuex';
 export default {
@@ -30,27 +31,23 @@ export default {
   },
 
   data() {
-    return { projectList: [], pageFilter: { page: 0, pageSize: 8 } };
+    return { projectList: [], pageFilter: { page: 0, pageSize: 8 }, userProjectsInfo: {} };
   },
 
   methods: {
     async init() {
+      // await this.getUserProjets();
       await this.getAllProjects();
     },
 
-    async getAllProjects() {
-      let { content } = await getAllProjects(this.pageFilter.page, this.pageFilter.pageSize);
-      console.log(content);
-      this.projectList = content;
-    },
+    // async getUserProjets() {
+    //   this.userProjectsInfo = await getUserProjectInfo();
+    // },
 
-    async judgeRole(project) {
-      await this.$store.dispatch('permission/getRole', {
-        project: project,
-        userId: this.userId
-      });
-      console.log('projectInfo', project.id);
-      this.$router.push({ path: `/project/${project.id}/info` });
+    async getAllProjects() {
+      this.projectList = await getAllProjects(this.pageFilter.page, this.pageFilter.pageSize);
+      // console.log('content', content);
+      // this.projectList = content;
     }
   },
 

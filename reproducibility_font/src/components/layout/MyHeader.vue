@@ -21,15 +21,9 @@
 
       <el-col v-else class="user" :span="1" :offset="9">
         <el-dropdown placement="bottom-start" @command="handleCommond">
-          <avatar
-            :username="
-              user.avatar != 'undefined' && user.avatar != 'null' && user.avatar != undefined
-                ? user.avatar
-                : user.name
-            "
-            :size="40"
-            style="margin-top: 10px"
-          ></avatar>
+          <div @click="toUserPage">
+            <avatar :username="user.avatar != 'undefined' && user.avatar != 'null' && user.avatar != undefined ? user.avatar : user.name" :size="40" style="margin-top: 10px"></avatar>
+          </div>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="logout">logout</el-dropdown-item>
           </el-dropdown-menu>
@@ -52,6 +46,7 @@ export default {
   },
   methods: {
     ...mapActions({ handleLogOut: 'user/handleLogOut' }),
+
     handleSelect(key) {
       switch (key) {
         case '1':
@@ -96,6 +91,12 @@ export default {
     login() {
       this.$router.push({
         name: 'Login'
+      });
+    },
+
+    toUserPage() {
+      this.$router.push({
+        name: 'UserInfo'
       });
     }
   },

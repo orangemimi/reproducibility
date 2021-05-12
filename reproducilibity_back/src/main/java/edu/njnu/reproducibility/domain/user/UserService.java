@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static edu.njnu.reproducibility.utils.Utils.filterUserInfo;
+import static edu.njnu.reproducibility.utils.Utils.filterUserInfoProjects;
 
 /**
  * @Author ：Zhiyi
@@ -51,6 +52,20 @@ public class UserService {
         return userRepository.save(userFromDB);
     }
 
+    public User updateJoinedProjects(String userId, String update) {
+        User userFromDB = userRepository.findByUserId(userId).orElseThrow(MyException::noObject);
+        userFromDB.getJoinedProjects().add(update);
+//        update.updateTo(userFromDB);
+        return userRepository.save(userFromDB);
+    }
+
+    public User updateCreatedProjects(String userId, String update) {
+        User userFromDB = userRepository.findByUserId(userId).orElseThrow(MyException::noObject);
+        userFromDB.getCreatedProjects().add(update);
+//        update.updateTo(userFromDB);
+        return userRepository.save(userFromDB);
+    }
+
     public JSONObject login(String email, String password) {
         User userFromDB = userRepository.findByEmail(email).orElseThrow(MyException::noObject);
         if (userFromDB.getPassword().equals(password)) {
@@ -79,16 +94,21 @@ public class UserService {
         return userRepository.save(userFromDB);
     }
 
-    public User getUserInfo(String userId) {
+        //JUST GET THE PROJECTS INFO
+    public JSONObject getUserProjectInfo(String userId) {
         User userFromDB = userRepository.findByUserId(userId).orElseThrow(MyException::noObject);
-        return userFromDB;
+        return filterUserInfoProjects(userFromDB);
     }
 
     public User getUserInfoById(String userId) {
         User userFromDB = userRepository.findByUserId(userId).orElseThrow(MyException::noObject);
         return userFromDB;
-
     }
+
+    public User update(User user){
+        return userRepository.save(user);
+    }
+
 
 
 }

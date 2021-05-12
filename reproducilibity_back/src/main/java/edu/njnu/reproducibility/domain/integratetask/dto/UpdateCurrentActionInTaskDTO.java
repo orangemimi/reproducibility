@@ -12,5 +12,5 @@ import lombok.Data;
  */
 @Data
 public class UpdateCurrentActionInTaskDTO implements ToDomainConverter<IntegrateTask> {
-    String selectAction;
+    String selectInstanceId;
 }

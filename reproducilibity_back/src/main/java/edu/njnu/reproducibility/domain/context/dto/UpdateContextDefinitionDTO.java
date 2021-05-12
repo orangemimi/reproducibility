@@ -15,9 +15,10 @@ import java.util.List;
 public class UpdateContextDefinitionDTO implements ToDomainConverter<ContextDefinition> {
     List<String> themes;
     String purpose;
-    String object;//sumulation object
+    String objects;//sumulation object
     String methods;
+    String temporalScale;
+    String spatialScale;
     String boundary;
-    String scale;
     String discussion;
 }

@@ -23,18 +23,18 @@
       </div>
     </div>
     <div class="customToolbarContainer" v-show="!isNewTaskContainerShow">
-      <mx-graph :taskInfoInit="taskInfo"></mx-graph>
+      <mx-graph :taskInfoInit="taskInfoInit"></mx-graph>
     </div>
   </div>
 </template>
 
 <script>
 import { getScenarioByProjectId, updateScenarioByProjectId, saveIntegrateTask, getIntegrateTaskByTaskId } from '@/api/request';
-import { successNotification } from '@/utils/notification';
 import mxGraph from './components/MxGraph';
 import { mapState } from 'vuex';
 
 import integrateTasks from '_com/IntegrateTasks';
+// import { initSetTimeOut } from '@/utils/utils';
 
 export default {
   components: {
@@ -54,6 +54,7 @@ export default {
       scenario: {},
       isNewTaskContainerShow: true,
       taskInfo: {},
+      taskInfoInit: {},
       taskList: [],
       mxgraph: '' //task selected mxgraph
     };
@@ -72,8 +73,7 @@ export default {
         return;
       }
 
-      this.taskInfo = await getIntegrateTaskByTaskId(data.selectTaskId);
-
+      this.taskInfoInit = await getIntegrateTaskByTaskId(data.selectTaskId);
       this.isNewTaskContainerShow = false;
     },
 
@@ -84,21 +84,17 @@ export default {
         ...this.taskInfo
       };
       let data = await saveIntegrateTask(postJson);
-
-      let update = await updateScenarioByProjectId(this.projectId, { selectTaskId: data.id });
-      if (update != '') {
-        successNotification('upload', 'scenario');
-      }
-
-      this.taskInfo = data;
+      console.log('scenario', data);
+      this.taskInfoInit = data;
+      await updateScenarioByProjectId(this.projectId, { selectTaskId: data.id });
 
       this.isNewTaskContainerShow = false;
+      // await initSetTimeOut();
     },
 
     selectTask(val) {
       //选择task之后的回调
-      this.taskInfo = val;
-
+      this.taskInfoInit = val;
       this.isNewTaskContainerShow = false;
     }
   },

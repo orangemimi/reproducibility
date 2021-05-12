@@ -1,8 +1,9 @@
+<!--reproduction-->
 <template>
   <div class="main">
     <el-col :xs="24" :sm="24" :md="{ span: 22, offset: 1 }" :lg="{ span: 18, offset: 3 }">
       <div class="main-card">
-        <el-row :gutter="20">
+        <!-- <el-row :gutter="20">
           <el-col :span="12">
             <step-card :cardInfo="{ btnType: 'Context Definition' }" style="height:450px;width:100%"></step-card>
           </el-col>
@@ -12,41 +13,40 @@
         </el-row>
         <el-row>
           <el-col :span="24">
-            <step-card :cardInfo="{ btnType: 'Expected Result' }" style="height:500px;width:100%"></step-card>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
             <step-card :cardInfo="{ btnType: 'Simulation Scenario' }" style="height:900px;width:100%"></step-card>
           </el-col>
-        </el-row>
-      </div>
-      <div class="record">
-        <div class="block">
-          <el-timeline>
-            <el-timeline-item :icon="completion.context.icon" :type="completion.context.type" size="large" :timestamp="dateFormat(completion.context.updateTime)">
-              {{ completion.context.content }}
-            </el-timeline-item>
+        </el-row> -->
 
-            <el-timeline-item :icon="completion.resource.icon" :type="completion.resource.type" size="large" :timestamp="dateFormat(completion.resource.updateTime)">
-              {{ completion.resource.content }}
-            </el-timeline-item>
-
-            <el-timeline-item :icon="completion.scenario.icon" :type="completion.scenario.type" size="large" :timestamp="dateFormat(completion.scenario.updateTime)">
-              {{ completion.scenario.content }}
-            </el-timeline-item>
-
-            <el-timeline-item :icon="completion.results.icon" :type="completion.results.type" size="large" :timestamp="dateFormat(completion.results.updateTime)">
-              {{ completion.results.content }}
-            </el-timeline-item>
-          </el-timeline>
-        </div>
-        <!-- <el-popover placement="top" width="460" trigger="click">
-          <record-list></record-list>
-          <el-button type="success" class="folder_collect" slot="reference" circle>
-            <i class="el-icon-folder-opened"></i>
-          </el-button>
-        </el-popover> -->
+        <el-timeline>
+          <el-timeline-item timestamp="2018/4/12" placement="top">
+            <el-row>
+              <el-col :span="12">
+                <step-card :cardInfo="{ btnType: 'Context Definition' }" style="height:450px;width:100%"></step-card>
+              </el-col>
+            </el-row>
+          </el-timeline-item>
+          <el-timeline-item timestamp="2018/4/3" placement="top">
+            <el-row>
+              <el-col :span="12">
+                <step-card :cardInfo="{ btnType: 'Resource Collection' }" style="height:450px;width:100%"></step-card>
+              </el-col>
+            </el-row>
+          </el-timeline-item>
+          <el-timeline-item timestamp="2018/4/3" placement="top">
+            <el-row>
+              <el-col :span="12">
+                <step-card :cardInfo="{ btnType: 'Expected Results' }" style="height:450px;width:100%"></step-card>
+              </el-col>
+            </el-row>
+          </el-timeline-item>
+          <el-timeline-item timestamp="2018/4/2" placement="top">
+            <el-row>
+              <el-col :span="24">
+                <step-card :cardInfo="{ btnType: 'Reproducible Simulation Scenario' }" style="height:900px;width:100%"></step-card>
+              </el-col>
+            </el-row>
+          </el-timeline-item>
+        </el-timeline>
       </div>
     </el-col>
   </div>
@@ -71,7 +71,6 @@ export default {
       resource: {},
       scenario: {},
       results: {}
-      // cardInfos: [{ btnType: 'Context Definition' }, { btnType: 'Resource Collection' }]
     };
   },
 

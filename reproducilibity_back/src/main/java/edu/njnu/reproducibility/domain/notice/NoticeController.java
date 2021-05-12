@@ -31,9 +31,14 @@ public class NoticeController {
     }
 
 
-    @RequestMapping (value = "/", method = RequestMethod.GET)
-    public JsonResult getAllNotice(@JwtTokenParser(key = "userId") String userId) {
-        return ResultUtils.success(noticeService.getAllNotice(userId));
+    @RequestMapping (value = "/recipient", method = RequestMethod.GET)
+    public JsonResult getAllNoticeByRecipient(@JwtTokenParser(key = "userId") String userId) {
+        return ResultUtils.success(noticeService.getAllNoticeByRecipient(userId));
+    }
+
+    @RequestMapping (value = "/sender", method = RequestMethod.GET)
+    public JsonResult getAllNoticeBySender(@JwtTokenParser(key = "userId") String userId) {
+        return ResultUtils.success(noticeService.getAllNoticeBySender(userId));
     }
 
 
@@ -42,10 +47,10 @@ public class NoticeController {
         return ResultUtils.success(noticeService.save(userId,add));
     }
 
-    @RequestMapping (value = "/{noticeId}", method = RequestMethod.PATCH)
-    public JsonResult readNotice(@PathVariable("noticeId") String noticeId,
+    @RequestMapping (value = "/{noticeId}/{state}", method = RequestMethod.PATCH)
+    public JsonResult changeNoticeState(@PathVariable("noticeId") String noticeId,@PathVariable("state") String state,
                              @JwtTokenParser(key="userId") String userId) {
-        return ResultUtils.success(noticeService.readNotice(noticeId,userId));
+        return ResultUtils.success(noticeService.changeNoticeState(noticeId,state,userId));
     }
 
     @RequestMapping (value = "/{noticeId}", method = RequestMethod.DELETE)

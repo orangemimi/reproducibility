@@ -31,13 +31,9 @@ public class NoticeService {
     @Autowired
     NoticeRepository noticeRepository;
 
-    public Object readNotice(String noticeId, String recipientId) {
-        UpdateNoticeDTO update = new UpdateNoticeDTO();
-        update.setState("read");
-
+    public Object changeNoticeState(String noticeId, String  state, String recipientId) {
         Notice notice = noticeRepository.findByIdAndRecipientId(noticeId, recipientId).orElseThrow(MyException::noObject);
-        update.updateTo(notice);
-
+        notice.setState(state);
         return noticeRepository.save(notice);
     }
 
@@ -47,6 +43,7 @@ public class NoticeService {
 //        Creator creator = new Creator();
 //        creator.setName(userName);
 //        creator.setId(userId);
+//        notice.setSenderId(userId);
         notice.setState("unread");
         notice.setSenderId(userId);
         return noticeRepository.insert(notice);
@@ -56,9 +53,12 @@ public class NoticeService {
         noticeRepository.deleteById(noiceId);
     }
 
-    public List<Notice> getAllNotice(String receipantId) {
+    public List<Notice> getAllNoticeByRecipient(String receipantId) {
         return noticeRepository.findAllByRecipientId(receipantId);
+    }
 
+    public List<Notice> getAllNoticeBySender(String senderId) {
+        return noticeRepository.findAllBySenderId(senderId);
     }
 
     public Notice get(String noticeId) {

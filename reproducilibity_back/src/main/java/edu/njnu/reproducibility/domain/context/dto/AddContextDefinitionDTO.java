@@ -18,9 +18,10 @@ public class AddContextDefinitionDTO implements ToDomainConverter<ContextDefinit
 
     List<String> themes;
     String purpose;
-    String object;//sumulation object
+    String objects;//sumulation object
     String methods;
+    String temporalScale;
+    String spatialScale;
     String boundary;
-    String scale;
     String discussion;
 }
