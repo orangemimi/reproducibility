@@ -37,6 +37,14 @@ export const constantRoutes = [
     component: () => import('@/views/register')
   },
   {
+    path: '/tree',
+    name: 'Tree',
+    meta: {
+      title: 'Tree'
+    },
+    component: () => import('_com/TreeDescription/TreeComp')
+  },
+  {
     path: '/',
     redirect: '/home',
     component: () => import('_com/layout/NormalLayout.vue'),

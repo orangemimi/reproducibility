@@ -174,7 +174,6 @@ export default {
     }
   },
   async mounted() {
-    console.log('rolw', this.role);
     if (this.role == 'builder') {
       await this.getDataCollection();
     }

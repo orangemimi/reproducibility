@@ -117,6 +117,10 @@ export async function saveResource(form) {
   return await post(`/resources`, form);
 }
 
+export async function uploadResourcePicture(form) {
+  return await post(`/resources/picture`, form);
+}
+
 export async function updateResource(projectId, form) {
   let data = await patch(`/resources/data/${projectId}`, form);
   if (data != null) {

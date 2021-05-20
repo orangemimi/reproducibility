@@ -40,6 +40,7 @@
         <!-- 保存现有的画布 均为update-->
         <el-button @click="updateGraph" type="warning" size="mini">Save Task</el-button>
         <el-button @click="runGraph" size="mini">Run Task</el-button>
+        <el-button @click="compareResult" size="mini">Compare Result</el-button>
 
         <transition name="fade" mode="out-in">
           <div class="bell" @click="setAsSelectTaskInConstruction">
@@ -98,6 +99,15 @@
         </span>
       </el-dialog>
     </div>
+
+    <div class="dialogs">
+      <el-dialog :visible.sync="comparisonDialogShow" width="80%" title="Comparison">
+        <div style="height:500px">
+          <!-- Configuration -->
+          <comparison />
+        </div>
+      </el-dialog>
+    </div>
   </div>
   <!-- </div> -->
 </template>
@@ -131,6 +141,7 @@ import dataItemToolbar from '_com/MxGraphBars/DataItemToolbar';
 import generalToolbar from '_com/MxGraphBars/GeneralToolbar';
 import dataProcessingToolbar from '_com/MxGraphBars/DataProcessingToolbar';
 import { generalList } from '_com/MxGraphBars/toolbar';
+import comparison from './Comparison';
 
 const {
   // mxGraph,
@@ -153,7 +164,8 @@ export default {
     integrateTasks,
     instanceCard,
     generalToolbar,
-    dataProcessingToolbar
+    dataProcessingToolbar,
+    comparison
   },
 
   watch: {
@@ -274,12 +286,17 @@ export default {
         pageSize: 8,
         page: 0
       },
-      instanceList: []
+      instanceList: [],
+
+      comparisonDialogShow: false
       // selectInstanceId:''
     };
   },
 
   methods: {
+    compareResult() {
+      this.comparisonDialogShow = true;
+    },
     async setAsSelectTaskInConstruction() {
       this.isSelectTaskInConsruction = !this.isSelectTaskInConsruction;
       let taskId = '';
@@ -977,12 +994,13 @@ export default {
 .main {
   width: 100%;
   height: 100%;
-  display: flex;
-  position: relative;
+  // display: flex;
+  // position: relative;
 
   .leftBar {
-    position: relative;
+    // position: relative;
     width: 300px;
+    float: left;
     // padding-right: 10px;
     .search_input {
       padding: 0 10px 5px 0;
@@ -1054,39 +1072,12 @@ export default {
     }
   }
 
-  .rightBar {
-    position: relative;
-    right: 0;
-    width: 200px;
-    margin-left: 5px;
-    padding: 0 5px;
-    box-shadow: 0px 0px 5px rgb(207, 207, 207);
-    background-color: rgba(243, 243, 243, 0.9);
-    .instances {
-      width: 100%;
-      .add_ins {
-        font-size: 30px;
-        margin-bottom: 10px;
-        text-align: center;
-        /deep/.el-card {
-          background-color: rgba($color: #ffffff, $alpha: 0.8);
-        }
-      }
-      .add_ins:hover {
-        cursor: pointer;
-      }
-    }
-    .page {
-      position: absolute;
-      bottom: 0;
-    }
-  }
-
   .mainContainer {
-    position: relative;
+    float: left;
+    // position: relative;
     // top: 0;
     // left: 300px;
-    width: calc(100% - 500px);
+    width: calc(100% - 505px);
     height: 100%;
     .modelbarTop {
       background: rgb(251, 251, 251);
@@ -1124,6 +1115,35 @@ export default {
       min-height: 800px;
       background: rgb(251, 251, 251) url('./../../../assets/images/mxgraph/point.gif') 0 0 repeat;
       border-radius: 4px;
+    }
+  }
+
+  .rightBar {
+    // position: relative;
+    float: left;
+    // right: 0;
+    width: 200px;
+    margin-left: 5px;
+    padding: 0 5px;
+    box-shadow: 0px 0px 5px rgb(207, 207, 207);
+    background-color: rgba(243, 243, 243, 0.9);
+    .instances {
+      width: 100%;
+      .add_ins {
+        font-size: 30px;
+        margin-bottom: 10px;
+        text-align: center;
+        /deep/.el-card {
+          background-color: rgba($color: #ffffff, $alpha: 0.8);
+        }
+      }
+      .add_ins:hover {
+        cursor: pointer;
+      }
+    }
+    .page {
+      position: absolute;
+      bottom: 0;
     }
   }
 

@@ -3,17 +3,11 @@
   <div class="information">
     <el-col :xs="24" :sm="24" :md="{ span: 22, offset: 1 }" :lg="{ span: 18, offset: 3 }">
       <div class="info-card">
-        <div class="info-card-bottom">
+        <div class="content">
           <div class="des">
             <strong>Description:</strong>
             <div class="content">
               {{ projectInfo.description }}
-            </div>
-          </div>
-          <div class="intro">
-            <strong>Introduction:</strong>
-            <div class="content">
-              {{ projectInfo.introduction }}
             </div>
           </div>
         </div>
@@ -46,15 +40,12 @@ export default {
     return {
       projectId: this.$route.params.id,
       projectInfo: {},
-      creator: {},
-      members: [],
+
       ops: {
         bar: {
           background: '#808695'
         }
-      },
-      editProjectInfoDialogShow: false,
-      addParticipantDialogShow: false
+      }
     };
   },
 
@@ -110,93 +101,11 @@ export default {
     min-height: calc(100vh - 242px);
     padding: 20px 32px;
 
-    .info-card-bottom {
+    .content {
       width: 100%;
       margin-top: 10px;
       word-wrap: break-word;
       word-break: normal;
-
-      .des {
-        margin-bottom: 5px;
-        .content {
-          margin-top: 5px;
-          height: 100px;
-          border: 1px dotted $btnBorder;
-        }
-      }
-      .intro {
-        margin-bottom: 5px;
-        .content {
-          margin-top: 5px;
-          height: 200px;
-          border: 1px dotted $btnBorder;
-        }
-      }
-    }
-  }
-
-  .info-card-right {
-    background-color: white;
-    min-height: calc(100vh - 242px);
-    padding: 20px 32px;
-    .participants {
-      .info {
-        height: 32px;
-        line-height: 32px;
-        margin-bottom: 5px;
-        .title {
-          float: left;
-          font-weight: 800;
-        }
-        .add-participant {
-          float: right;
-          .el-button {
-            background-color: $contain2Background;
-            color: $normalFontColor;
-            font-weight: 400;
-            font-family: inherit;
-          }
-          .el-button:hover {
-            color: $normalFontColor;
-            border-color: $btnBorder;
-            background-color: $btnHoverBg;
-          }
-        }
-      }
-      .content {
-        .scroll {
-        }
-      }
-    }
-
-    .citation {
-      .info {
-        margin-bottom: 5px;
-
-        .title {
-          float: left;
-          font-weight: 800;
-        }
-        .edit {
-          float: right;
-          .el-button {
-            background-color: $contain2Background;
-            color: $normalFontColor;
-            font-weight: 400;
-            font-family: inherit;
-          }
-          .el-button:hover {
-            color: $normalFontColor;
-            border-color: $btnBorder;
-            background-color: $btnHoverBg;
-          }
-        }
-      }
-
-      .content {
-        margin-top: 5px;
-        height: 200px;
-      }
     }
   }
 }

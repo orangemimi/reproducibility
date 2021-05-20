@@ -2,9 +2,57 @@
 <template>
   <div class="main">
     <!-- <el-button @click="test">get computa</el-button> -->
-    <el-form ref="form" :model="form" label-width="100px">
+    <!-- {{ form.url }} -->
+    <div class="drag" v-if="form.url == ''">
+      <el-upload drag action :auto-upload="true" :show-file-list="false" ref="upload" :http-request="submitUpload" :on-remove="handleRemove">
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">
+          Drag a file here to upload or
+          <em>Click to upload</em>
+        </div>
+      </el-upload>
+    </div>
+    <div v-else class="select_data">
+      <div class="select-data select-data-line">
+        <div class="data-name">{{ form.name }}</div>
+        <i class="el-icon-close" @click="remove"></i>
+      </div>
+    </div>
+
+    <el-form class="resource" ref="form" :model="form" label-width="100px">
+      <el-form-item label="Name">
+        <el-input v-model="form.name"></el-input>
+      </el-form-item>
+
       <el-form-item label="Description">
         <el-input v-model="form.description"></el-input>
+      </el-form-item>
+
+      <el-form-item label="Source" class="source">
+        <el-button icon="el-icon-circle-plus-outline" @click="addChildDialogShow = true"></el-button>
+
+        <div class="tree">
+          <vue-tree-list
+            @click="onClick"
+            @change-name="onChangeName"
+            @delete-node="onDel"
+            @add-node="onAddNode"
+            @drop="drop"
+            @drop-before="dropBefore"
+            @drop-after="dropAfter"
+            :model="data"
+            default-tree-node-name="new node"
+            default-leaf-node-name="new leaf"
+            v-bind:default-expanded="false"
+          >
+            <template v-slot:leafNameDisplay="slotProps" class="content">
+              <div class="name">
+                {{ slotProps.model.name }}
+              </div>
+              <div class="value">{{ slotProps.model.value }}</div>
+            </template>
+          </vue-tree-list>
+        </div>
       </el-form-item>
 
       <el-form-item label="Privacy">
@@ -19,28 +67,28 @@
         <add-image @uploadImgResponse="uploadImgResponse" :uploadPath="'resources/picture'"></add-image>
       </el-form-item>
     </el-form>
-    <div class="drag">
-      <el-upload drag action :auto-upload="true" :file-list="fileList" :show-file-list="true" ref="upload" :http-request="submitUpload" :on-remove="handleRemove">
-        <i class="el-icon-upload"></i>
-        <div class="el-upload__text">
-          Drag a file here to upload or
-          <em>Click to upload</em>
-        </div>
-      </el-upload>
-    </div>
+
     <div class="submit">
       <el-button @click="submit">Submit</el-button>
     </div>
+
+    <el-dialog :visible.sync="addChildDialogShow" width="50%" title="Configuration">
+      <add-child-value @getChildForm="getChildForm" />
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { post } from '@/axios';
-import { saveDataItem, deleteDataItemById } from '@/api/request';
+import { saveDataItem } from '@/api/request';
 import addImage from '_com/AddImage';
+import { VueTreeList, Tree, TreeNode, addChildValue } from '_com/TreeDescription';
+
 export default {
   components: {
-    addImage
+    addImage,
+    VueTreeList,
+    addChildValue
   },
 
   data() {
@@ -54,7 +102,8 @@ export default {
         privacy: 'discoverable',
         source: '',
         thumbnail: '',
-        isDirect: ''
+        isDirect: '',
+        url: ''
       },
 
       uploadFileForm: new FormData(), //上传文件的form
@@ -66,7 +115,24 @@ export default {
           background: '#808695'
         }
       },
-      nodeInfo: this.nodeInformation
+      nodeInfo: this.nodeInformation,
+
+      //tree
+      data: new Tree([
+        {
+          name: 'Agent',
+          value: '',
+          id: 1,
+          pid: 0
+        },
+        {
+          name: 'Activity',
+          value: '',
+          id: 3,
+          pid: 0
+        }
+      ]),
+      addChildDialogShow: false
     };
   },
 
@@ -81,20 +147,26 @@ export default {
       });
     },
 
-    async remove(resource) {
-      await deleteDataItemById(resource.id);
+    async remove() {
       // await del(`/dataItems/${resource.id}`);
-      this.dataItemList.splice(
-        this.dataItemList.findIndex(item => item.id === resource.id),
-        1
-      );
+      this.form = {
+        alia: '',
+        name: '',
+        type: '',
+        description: '',
+        privacy: 'discoverable',
+        source: '',
+        thumbnail: '',
+        isDirect: '',
+        url: ''
+      };
     },
 
     //上传文件到服务器
     async submitUpload(param) {
       this.uploadFileForm = new FormData();
       this.uploadFileForm.append('file', param.file);
-      console.log(this.uploadFileForm.get('file'));
+      // console.log(this.uploadFileForm.get('file'));
 
       let { data } = await post(`/dataContainer/uploadSingle`, this.uploadFileForm);
       console.log(data);
@@ -104,6 +176,7 @@ export default {
 
       this.form.url = `http://221.226.60.2:8082/data/${data.id}`;
       this.form.projectId = this.projectId;
+      this.$forceUpdate();
     },
 
     getSuffix(filename) {
@@ -139,6 +212,17 @@ export default {
       });
 
       this.$emit('uploadSuccess', true);
+    },
+
+    //tree
+
+    addNode() {
+      var node = new TreeNode({ name: 'new node', isLeaf: false });
+      if (!this.data.children) this.data.children = [];
+      this.data.addChildren(node);
+    },
+    onDel(node) {
+      node.remove();
     }
   },
 
@@ -151,7 +235,7 @@ export default {
   width: 100%;
   // position: relative;
   .drag {
-    // margin-left: 20%;
+    margin-bottom: 20px;
     /deep/ .el-icon-upload {
       margin: 0;
     }
@@ -159,6 +243,67 @@ export default {
     /deep/ .el-upload-dragger {
       width: calc(37vw);
       height: 90px;
+    }
+  }
+  .select_data {
+    .select-data-line {
+      margin: 15px 0 0 0;
+      line-height: 30px;
+      .el-button {
+        width: 138px;
+      }
+    }
+    .select-data {
+      background-color: #f0f9eb;
+      display: inline-block;
+      height: 32px;
+      padding: 0 10px;
+
+      font-size: 12px;
+      color: #67c23a;
+      border: 1px solid #e1f3d8;
+      border-radius: 4px;
+      box-sizing: border-box;
+      white-space: nowrap;
+
+      .data-name {
+        float: left;
+        width: 200px;
+        font-weight: 600;
+        font-size: 16px;
+        // padding-left: 5px;
+      }
+    }
+
+    .select-data:hover {
+      // width: 250px;
+      cursor: pointer;
+      transition: all 0.2s ease-out;
+      color: #60a83c;
+      background-color: #c8f3d3;
+    }
+  }
+
+  .resource {
+    .source {
+      /deep/ .el-form-item__content {
+        line-height: 20px;
+      }
+      .tree {
+        border: 1px solid #eee;
+        .content {
+          // line-height: 40px;
+          // height: 20px;
+          .name {
+            width: 100px;
+            float: left;
+          }
+          .value {
+            // width: 100px;
+            float: left;
+          }
+        }
+      }
     }
   }
   .submit {
