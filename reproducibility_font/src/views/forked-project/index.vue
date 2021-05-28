@@ -8,7 +8,7 @@
             <el-breadcrumb-item class="name">
               {{ creator.name }}
             </el-breadcrumb-item>
-            <el-breadcrumb-item class="project">{{ projectInfo.name }}</el-breadcrumb-item>
+            <el-breadcrumb-item>{{ projectInfo.name }}</el-breadcrumb-item>
           </el-breadcrumb>
         </el-col>
         <el-col class="info-btn" :span="12">
@@ -128,26 +128,22 @@ export default {
   padding: 16px 32px 0 32px;
 
   .nav {
+    height: 32px;
+    line-height: 32px;
     .breadcrumb {
       padding: 5px 0;
       /deep/ .el-breadcrumb__inner {
-        font-size: 18px;
+        font-size: 22px;
         font-weight: 550;
-        line-height: 22px;
         color: $blueEmplasisFont;
       }
       .name {
-        font-weight: 400;
-      }
-      .project {
-        width: 600px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        /deep/ .el-breadcrumb__inner {
+          font-weight: 400;
+        }
       }
     }
     .info-btn {
-      line-height: 32px;
       float: right;
       .watch {
         float: right;
@@ -164,9 +160,7 @@ export default {
     }
   }
   .menu {
-    clear: both;
-    // height: 32px;
-    line-height: 72px;
+    height: 72px;
   }
 }
 </style>

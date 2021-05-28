@@ -27,4 +27,13 @@ public class AddProjectDTO implements ToDomainConverter<Project> {
 //    List<String> members;
     Integer level=0;
     String citation;
+
+
+    Integer starCount;
+    Integer watchCount;
+    Integer folkCount;
+
+    //fork detail
+    String forkingProjectId;
+    List<String> forkedProjectIdList;
 }

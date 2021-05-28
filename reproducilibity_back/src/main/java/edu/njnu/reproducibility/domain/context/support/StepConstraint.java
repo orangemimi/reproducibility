@@ -1,4 +1,4 @@
-package edu.njnu.reproducibility.domain.resource.spatialTemporalInfo;
+package edu.njnu.reproducibility.domain.context.support;
 
 import lombok.Data;
 
@@ -9,7 +9,7 @@ import lombok.Data;
  * @version: 1.0.0
  */
 @Data
-public class StepConstraint {
+public class  StepConstraint {
     String name;//T
     String value;//[20,80]
     String unit;//day

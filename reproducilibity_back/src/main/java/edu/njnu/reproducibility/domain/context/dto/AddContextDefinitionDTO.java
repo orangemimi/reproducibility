@@ -2,6 +2,8 @@ package edu.njnu.reproducibility.domain.context.dto;
 
 import edu.njnu.reproducibility.common.dto.ToDomainConverter;
 import edu.njnu.reproducibility.domain.context.ContextDefinition;
+import edu.njnu.reproducibility.domain.context.SpatialInfo;
+import edu.njnu.reproducibility.domain.context.TemporalInfo;
 import lombok.Data;
 
 import java.util.List;
@@ -20,8 +22,8 @@ public class AddContextDefinitionDTO implements ToDomainConverter<ContextDefinit
     String purpose;
     String objects;//sumulation object
     String methods;
-    String temporalScale;
-    String spatialScale;
+    List<TemporalInfo> temporalInfoList;
+    List<SpatialInfo> spatialInfoList;
     String boundary;
     String discussion;
 }

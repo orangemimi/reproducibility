@@ -1,4 +1,4 @@
-package edu.njnu.reproducibility.domain.resource.spatialTemporalInfo;
+package edu.njnu.reproducibility.domain.context.support;
 
 import lombok.Data;
 
@@ -10,6 +10,6 @@ import lombok.Data;
  */
 @Data
 public class SpatialReference {
-    String gengeral;
+    String general;
     String wkt;
 }

@@ -6,6 +6,8 @@ import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import com.google.common.collect.Lists;
 import edu.njnu.reproducibility.common.exception.MyException;
+import edu.njnu.reproducibility.domain.context.ContextDefinition;
+import edu.njnu.reproducibility.domain.context.ContextDefinitionService;
 import edu.njnu.reproducibility.domain.project.dto.AddProjectDTO;
 import edu.njnu.reproducibility.domain.project.dto.UpdateProjectDTO;
 import edu.njnu.reproducibility.domain.project.dto.UpdateProjectMembersDTO;
@@ -13,6 +15,7 @@ import edu.njnu.reproducibility.domain.user.User;
 import edu.njnu.reproducibility.domain.user.UserRepository;
 import edu.njnu.reproducibility.domain.user.UserService;
 import edu.njnu.reproducibility.utils.FileUtil;
+import org.apache.tomcat.util.descriptor.web.ContextService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,6 +43,9 @@ public class ProjectService {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    ContextDefinitionService contextDefinitionService;
 
 
     public Project get(String projectId) {
@@ -77,9 +83,9 @@ public class ProjectService {
     public JSONArray getAllProjects(String userId, int currentPage, int pagesize) {
         PageRequest pageable = PageRequest.of(currentPage, pagesize);
         List<String> privacyList = Arrays.asList("public", "discoverable");
-      User user=  userService.getUserInfoById(userId);
+        User user = userService.getUserInfoById(userId);
         Page<Project> projectList = projectRepository.findByPrivacyInOrCreator(privacyList, userId, pageable);
-        return addProjectRole(projectList,user);
+        return addProjectRole(projectList, user);
     }
 
     public Project updateMembers(String userId, String projectId, Member update) {
@@ -117,6 +123,32 @@ public class ProjectService {
 
         userService.update(user);
 
+        return projectRepository.insert(project);
+    }
+
+    public Project fork(String userId, String userName, AddProjectDTO add) {
+        String forkedProjectId =add.getForkingProjectId();
+
+        Project project = new Project();
+        add.convertTo(project);
+        project.setCreator(userId);
+
+                //update user
+        User user = userService.getUserInfoById(userId);
+        user.getForkedProjects().add(project.getId());
+        userService.update(user);
+        //update forked project
+        Project projectForked = projectRepository.findById(forkedProjectId).orElse(null);
+        List<String> forkedProjectIdList= new ArrayList<>();
+        forkedProjectIdList.add(project.getId());
+        projectForked.setForkedProjectIdList(forkedProjectIdList);
+        projectRepository.save(projectForked);
+
+//        ContextDefinition contextDefinition = contextDefinitionService.getContextDefinition(forkedProjectId);
+
+
+
+        //add a new project
         return projectRepository.insert(project);
     }
 

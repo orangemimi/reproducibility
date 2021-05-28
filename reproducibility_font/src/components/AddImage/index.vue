@@ -1,15 +1,7 @@
 <!--  -->
 <template>
   <div class="upload-container">
-    <el-upload
-      ref="upload"
-      list-type="picture-card"
-      :on-change="onChange"
-      :http-request="submitUpload"
-      :file-list="fileList"
-      action
-      :auto-upload="true"
-    >
+    <el-upload ref="upload" list-type="picture-card" :on-change="onChange" :http-request="submitUpload" :file-list="fileList" action :auto-upload="true">
       <i slot="default" class="el-icon-plus"></i>
 
       <div slot="file" slot-scope="{ file }">

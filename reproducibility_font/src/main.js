@@ -1,23 +1,26 @@
 import Vue from 'vue';
+// import { createApp } from 'vue'
 import App from './App.vue';
 import router from '@/router';
 
 import ElementUI from 'element-ui';
 import store from '@/store';
 import 'element-ui/lib/theme-chalk/index.css';
+import enLocale from '../node_modules/element-ui/lib/locale/lang/en'; //英文
+
 import { errorHandler } from '@/lib/error';
 import mavonEditor from 'mavon-editor';
 import 'mavon-editor/dist/css/index.css';
 
 import './assets/iconfont/iconfont.css';
 import '@/router/permission'; // permission control
-// import "./assets/variable.scss";
-
-// 滚轮样式
 import vuescroll from 'vuescroll';
 
+// import Descriptions from '_com/Description/index.js';
+
 Vue.config.productionTip = false;
-Vue.use(ElementUI);
+Vue.use(ElementUI, { locale: enLocale });
+// Vue.use(ElementPlus, { enLocale });
 Vue.use(mavonEditor);
 Vue.use(vuescroll);
 
@@ -28,3 +31,13 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount('#app');
+
+// const app = createApp(App)
+// app.use(mavonEditor),
+// app.use(ElementUI, { locale: enLocale });
+// app.use(mavonEditor);
+// app.use(vuescroll);
+// app.use(ElDescriptions);
+// app.use(router);
+// app.use(store);
+// app.mount('#app')

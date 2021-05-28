@@ -63,6 +63,11 @@ public class UserController {
         return ResultUtils.success(userService.updateCreatedProjects(userId,update));
     }
 
+    @RequestMapping (value = "/folk", method = RequestMethod.PATCH)
+    public JsonResult updateFolkedProjects(@JwtTokenParser(key="userId") String userId, @RequestBody String update) {
+        return ResultUtils.success(userService.updateFolkedProjects(userId,update));
+    }
+
 
     @RequestMapping (value = "/{email}/{password}", method = RequestMethod.PATCH)
     public JsonResult forgetPassword(@PathVariable String email,@PathVariable String password) {

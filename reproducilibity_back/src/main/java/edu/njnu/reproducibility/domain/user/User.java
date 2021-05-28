@@ -53,4 +53,5 @@ public class User extends BaseEntity {
      */
     List<String> joinedProjects;
     List<String> createdProjects;
+    List<String> forkedProjects;
 }

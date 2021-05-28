@@ -85,6 +85,14 @@ export async function saveProject(form) {
   return data;
 }
 
+export async function forkProject(form) {
+  let data = await post(`/projects/fork`, form);
+  // if (data != null) {
+  //   successNotification('create', 'project');
+  // }
+  return data;
+}
+
 //---------------------------------------------------contextDefinition------------------------------------------
 
 // export async function updateContexByProjectId(projectId) {

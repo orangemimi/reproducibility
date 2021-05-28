@@ -101,6 +101,7 @@ export default {
       this.userInfo = data;
       console.log(data);
     },
+
     uploadImgResponse(val) {
       this.form.picture = val;
     }

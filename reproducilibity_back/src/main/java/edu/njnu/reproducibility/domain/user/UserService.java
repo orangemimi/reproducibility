@@ -66,6 +66,15 @@ public class UserService {
         return userRepository.save(userFromDB);
     }
 
+    public User updateFolkedProjects(String userId, String update) {
+        User userFromDB = userRepository.findByUserId(userId).orElseThrow(MyException::noObject);
+        userFromDB.getForkedProjects().add(update);
+//        update.updateTo(userFromDB);
+        return userRepository.save(userFromDB);
+    }
+
+
+
     public JSONObject login(String email, String password) {
         User userFromDB = userRepository.findByEmail(email).orElseThrow(MyException::noObject);
         if (userFromDB.getPassword().equals(password)) {

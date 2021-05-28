@@ -1,12 +1,12 @@
 <!--  -->
 <template>
   <div class="btn">
-    <div class="btn-left">
+    <el-button class="btn-left" :disabled="isDisable">
       <div>
         <i class="el-icon-edit"></i>
         Folk
       </div>
-    </div>
+    </el-button>
     <div class="btn-right">
       <div>
         {{ count }}
@@ -20,16 +20,33 @@ export default {
   props: {
     count: {
       type: Number
+    },
+    isDisable: {
+      type: Boolean
     }
   },
   components: {},
 
-  watch: {},
+  // watch: {
+  //   isDisable: {
+  //     // handler(val) {
+  //     //   if (val) {
+  //     deep: true, // 深度监听
+  //     immediate: true, // 监听到后，立即执行 handler方法
+  //     handler(val) {
+  //       // if (newVal && newVal !== oldVal) {
+  //       this.$set(this, 'isDisable2', val);
+
+  //       // }
+  //     }
+  //     // deep: true
+  //   }
+  // },
 
   computed: {},
 
   data() {
-    return {};
+    return { isDisable2: this.isDisable };
   },
 
   methods: {},
@@ -48,7 +65,14 @@ export default {
   box-shadow: $btnShadow;
   transition: 0.2s cubic-bezier(0.3, 0, 0.5, 1);
 
-  .btn-left {
+  // .btn-left {
+  /deep/.el-button {
+    line-height: 32px;
+    font-size: 12px;
+    font-weight: 550;
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
     width: 80px;
     float: left;
     border: 1px solid $btnBorder;
@@ -56,7 +80,8 @@ export default {
     background-color: $contain2Background;
     transition-property: color, background-color, border-color;
   }
-  .btn-left:hover {
+  // }
+  /deep/.el-button:hover {
     cursor: pointer;
     background-color: $btnHoverBg;
   }

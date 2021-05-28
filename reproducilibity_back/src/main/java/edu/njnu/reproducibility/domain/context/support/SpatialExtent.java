@@ -1,4 +1,4 @@
-package edu.njnu.reproducibility.domain.resource.spatialTemporalInfo;
+package edu.njnu.reproducibility.domain.context.support;
 
 import lombok.Data;
 

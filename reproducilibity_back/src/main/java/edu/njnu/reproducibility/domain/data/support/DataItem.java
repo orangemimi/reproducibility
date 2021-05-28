@@ -1,7 +1,7 @@
 package edu.njnu.reproducibility.domain.data.support;
 
 import edu.njnu.reproducibility.common.entity.BaseEntity;
-import edu.njnu.reproducibility.domain.resource.spatialTemporalInfo.SpatioTemporalInfo;
+//import edu.njnu.reproducibility.domain.context.support.SpatioTemporalInfo;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -23,7 +23,7 @@ public class DataItem extends BaseEntity {
     String url;
     String source;
     Boolean isDirect; //false--中间处理数据 //true--直接上传数据
-    SpatioTemporalInfo spatioTemporalInfo;
+//    SpatioTemporalInfo spatioTemporalInfo;
 
 //    String projectId;
     String uploaderId;

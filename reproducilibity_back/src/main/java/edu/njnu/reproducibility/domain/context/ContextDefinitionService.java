@@ -26,8 +26,8 @@ public class ContextDefinitionService {
         return  contextDefinitionRepository.insert(contextDefinition);
     }
 
-    public Optional<ContextDefinition> getContextDefinition(String projectId) {
-        Optional<ContextDefinition> contextDefinition = contextDefinitionRepository.findFirstByProjectId(projectId);
+    public ContextDefinition getContextDefinition(String projectId) {
+        ContextDefinition contextDefinition = contextDefinitionRepository.findFirstByProjectId(projectId).orElseThrow(MyException::noObject);
         return  contextDefinition;
     }
 

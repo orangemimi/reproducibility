@@ -73,7 +73,7 @@ const actions = {
 
   getRole({ commit }, { project, userId }) {
     return new Promise(resolve => {
-      debugger;
+      // debugger;
       if (project.creator == userId) {
         commit('SET_ROLE', 'builder');
       } else if (project.members != null && project.members.some(member => member.memberId == userId)) {

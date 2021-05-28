@@ -63,6 +63,11 @@ public class ProjectController {
         return ResultUtils.success(projectService.create(userId, name, add));
     }
 
+    @RequestMapping(value = "/fork", method = RequestMethod.POST)
+    public JsonResult folk(@JwtTokenParser(key = "userId") String userId, @JwtTokenParser(key = "name") String name, @RequestBody AddProjectDTO add) {
+        return ResultUtils.success(projectService.fork(userId, name, add));
+    }
+
     @RequestMapping(value = "/{projectId}", method = RequestMethod.DELETE)
     public JsonResult delete(@PathVariable("projectId") String projectId) {
         projectService.delete(projectId);

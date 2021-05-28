@@ -77,6 +77,7 @@ export default {
       let notice = { recipientId: this.project.creator, type: 'apply', content: { type: 'joinProject', role: 'rebuilder_operator', projectId: this.project.id } };
       await saveNotice(notice);
     },
+
     async judgeRole(project) {
       console.log(this.role);
       await this.$store.dispatch('permission/getRole', {

@@ -40,15 +40,19 @@ export default {
       await this.getAllProjects();
     },
 
-    // async getUserProjets() {
-    //   this.userProjectsInfo = await getUserProjectInfo();
-    // },
-
     async getAllProjects() {
       this.projectList = await getAllProjects(this.pageFilter.page, this.pageFilter.pageSize);
-      // console.log('content', content);
-      // this.projectList = content;
+      // this.projectList.forEach(async project => {
+      //   this.judgeRole(project);
+      // });
     }
+
+    // async judgeRole(project) {
+    //   await this.$store.dispatch('permission/getRole', {
+    //     project: project,
+    //     userId: this.userId
+    //   });
+    // }
   },
 
   mounted() {

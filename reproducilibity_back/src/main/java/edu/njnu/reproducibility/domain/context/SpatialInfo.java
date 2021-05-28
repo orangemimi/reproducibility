@@ -1,6 +1,10 @@
-package edu.njnu.reproducibility.domain.resource.spatialTemporalInfo;
+package edu.njnu.reproducibility.domain.context;
 
 
+import edu.njnu.reproducibility.domain.context.support.ResolutionConstraint;
+import edu.njnu.reproducibility.domain.context.support.Scale;
+import edu.njnu.reproducibility.domain.context.support.SpatialExtent;
+import edu.njnu.reproducibility.domain.context.support.SpatialReference;
 import lombok.Data;
 
 import java.util.List;
@@ -15,7 +19,7 @@ import java.util.List;
 public class SpatialInfo {
     Boolean enable;
     String spatialDimension;//2/3 维度
-    Scale scale;//尺度
+    Scale spatialScale;//尺度
     SpatialReference spatialReference;//空间参考系
     List<ResolutionConstraint> resolutionConstraintList;
     List<SpatialExtent> spatialExtentList;

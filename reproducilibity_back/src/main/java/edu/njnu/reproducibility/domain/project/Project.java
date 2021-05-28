@@ -39,11 +39,11 @@ public class Project extends BaseEntity {
     String citation;
 
     //fork detail
-    Boolean isForking; //是否从别的项目Fork出来
-    String forkingProject;
+//    Boolean isForking; //是否从别的项目Fork出来
+    String forkingProjectId;
 
-    Boolean isForked;//是否被别的项目Fork
-    List<String> forkedProjectList;
+//    Boolean isForked;//是否被别的项目Fork
+    List<String> forkedProjectIdList;
 
     //不管是否被Fork 始终是一个Project 以ProjectId为标识
 

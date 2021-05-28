@@ -1,4 +1,4 @@
-package edu.njnu.reproducibility.domain.resource.spatialTemporalInfo;
+package edu.njnu.reproducibility.domain.context.support;
 
 import lombok.Data;
 
@@ -9,9 +9,10 @@ import lombok.Data;
  * @version: 1.0.0
  */
 @Data
-public class TimeExent {
+public class TemporalExtent {
     String name;
     String type;
-    String value;
+    String from;
+    String to;
     String unit;//second/hour/day/mouth/year
 }
