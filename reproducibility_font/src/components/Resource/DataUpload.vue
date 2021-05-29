@@ -62,7 +62,7 @@ export default {
     // async getDataItem() {
     //   let dataItem = await get(`/dataItems/${this.projectId}`);
     //   this.dataItemList = dataItem.filter(item => {
-    //     return item.isDirect == true;
+    //     return item.userUpload == true;
     //   });
     // },
     // download() {
@@ -96,7 +96,7 @@ export default {
     //     pid: this.projectId,
     //     url: `http://221.226.60.2:8082/data?uid=${uid}`,
     //     name: this.file.name,
-    //     isDirect: true, //if true -- 是直接上传的数据    --false是中间数据
+    //     userUpload: true, //if true -- 是直接上传的数据    --false是中间数据
     //     stepBindId: this.stepInfo.stepId,
     //     stepBindName: this.stepInfo.name
     //   };

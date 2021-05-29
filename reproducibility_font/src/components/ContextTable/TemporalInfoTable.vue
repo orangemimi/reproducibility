@@ -1,32 +1,31 @@
 <!--  -->
 <template>
   <div>
-    {{ temporalInfoForm }}
     <table border="1" class="gridtable">
       <tr>
         <td class="title">Temporal Scale</td>
-        <td class="content" :colspan="6">{{ temporalInfoForm.temporalScale.type }}</td>
+        <td class="content" :colspan="6">{{ temporalInfo.temporalScale.type }}</td>
       </tr>
       <tr>
         <td class="title">Temporal Reference</td>
-        <td class="content" :colspan="6">{{ temporalInfoForm.temporalReference.value }}</td>
+        <td class="content" :colspan="6">{{ temporalInfo.temporalReference.value }}</td>
       </tr>
 
       <tr>
-        <td class="title" :rowspan="temporalInfoForm.temporalExtentList.length + 2">Temporal Extents</td>
+        <td class="title" :rowspan="temporalInfo.temporalExtentList.length + 2">Temporal Extents</td>
       </tr>
       <tr>
         <td :colspan="3">From</td>
         <td :colspan="3">To</td>
       </tr>
 
-      <tr v-for="(item, index) in temporalInfoForm.temporalExtentList" :key="index">
-        <td class="content" :colspan="3">{{ item.from }}</td>
-        <td class="content" :colspan="3">{{ item.to }}</td>
+      <tr v-for="(extent, indexExtent) in temporalInfo.temporalExtentList" :key="indexExtent + 'extent'">
+        <td class="content" :colspan="3">{{ extent.from }}</td>
+        <td class="content" :colspan="3">{{ extent.to }}</td>
       </tr>
 
       <tr>
-        <td class="title" :rowspan="temporalInfoForm.stepConstraintList.length + 2">Step Constraint</td>
+        <td class="title" :rowspan="temporalInfo.stepConstraintList.length + 2">Step Constraint</td>
       </tr>
       <tr>
         <td :colspan="2">Name</td>
@@ -34,7 +33,7 @@
         <td :colspan="2">Unit</td>
       </tr>
 
-      <tr v-for="(item, index) in temporalInfoForm.stepConstraintList" :key="index">
+      <tr v-for="(item, index) in temporalInfo.stepConstraintList" :key="index">
         <td class="content" :colspan="2">{{ item.name }}</td>
         <td class="content" :colspan="2">{{ item.value }}</td>
         <td class="content" :colspan="2">{{ item.unit }}</td>
@@ -52,15 +51,32 @@ export default {
   },
   components: {},
 
-  watch: {},
+  watch: {
+    temporalInfoForm: {
+      handler(val) {
+        // this.temporalInfo = val;
+
+        this.show(val);
+      },
+      // 深度观察监听
+      deep: true,
+      immediate: true
+    }
+  },
 
   computed: {},
 
   data() {
-    return { temporalInfo: this.temporalInfoForm };
+    return { temporalInfo: {} };
   },
 
-  methods: {},
+  methods: {
+    show(val) {
+      this.$set(this, 'temporalInfo', val);
+      console.log('11111', this.temporalInfo);
+      this.$forceUpdate();
+    }
+  },
 
   mounted() {}
 };

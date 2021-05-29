@@ -434,15 +434,15 @@ export default {
         //upload
         let dataJson = {
           name: content.fileName,
-          url: content.value,
+          address: content.value,
           suffix: content.suffix,
           description: '',
-          isDirect: false //--false是中间数据
+          userUpload: false //--false是中间数据
         };
 
         let data = await saveDataItem(dataJson);
         eventCell.fileId = data.id;
-        eventCell.value = data.url;
+        eventCell.value = data.address;
         eventCell.fileName = data.name;
       });
 

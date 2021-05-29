@@ -787,10 +787,10 @@ export default {
     async saveRelatedDataItemToResource(response) {
       let dataJson = {
         name: response.name,
-        url: response.value,
+        address: response.value,
         suffix: response.suffix,
         description: '',
-        isDirect: false //--false是中间数据
+        userUpload: false //--false是中间数据
       };
       let data = await post(`/r/dataItems`, dataJson);
       if (data != undefined) {

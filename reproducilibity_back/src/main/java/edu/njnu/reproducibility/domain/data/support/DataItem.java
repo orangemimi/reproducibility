@@ -5,6 +5,9 @@ import edu.njnu.reproducibility.common.entity.BaseEntity;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.ArrayList;
 
 /**
  * @Author Zhiyi
@@ -20,9 +23,11 @@ public class DataItem extends BaseEntity {
     String alia;//别名
     String suffix;//suffix
     String description;
-    String url;
+
+//    String url;
+    String address;//原始url
     String source;
-    Boolean isDirect; //false--中间处理数据 //true--直接上传数据
+    Boolean userUpload; //false--中间处理数据 //true--直接上传数据
 //    SpatioTemporalInfo spatioTemporalInfo;
 
 //    String projectId;
@@ -32,17 +37,18 @@ public class DataItem extends BaseEntity {
     String thumbnail; //缩略图地址
 
 
-//    @Id
-//    String id;
-//    String userId;
-//    String projectId;
-//
-//    String name;//dataitem name
-//    String url;//dataitem url-->数据容器
-//    Boolean isDirect;//false--中间处理数据 //true--直接上传数据
-//    List<String> toModelInstanceList; //作为输入数据的使用过的instance
-//    String fromModelInstance;//作为输出数据使用过的instance
-//    String stepBindId;//stepBind
-//    String stepBindName;//stepBind
-//    List<String> stepInherit;//数据在哪些步骤中使用的
+    //数据在数据容器中的链接 url？
+//  String address;
+
+    Boolean folder;
+
+//    private Boolean userUpload;
+
+    //存储父资源的 uuid
+    String parent;
+    ArrayList<DataItem> children;
+
+
+
+
 }

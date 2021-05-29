@@ -20,7 +20,7 @@
       <tr>
         <td class="title" :rowspan="spatialInfoForm.spatialExtentList.length + 1">Spatio Extents</td>
       </tr>
-      <tr v-for="(item, index) in spatialInfoForm.spatialExtentList" :key="index">
+      <tr v-for="(item, index) in spatialInfoForm.spatialExtentList" :key="index + 'item'">
         <td class="content" :colspan="3">{{ item.value }}</td>
       </tr>
       <tr>

@@ -1,40 +1,42 @@
 <!-- user page -->
 <template>
   <div class="user">
-    <div>User Page</div>
-    <div>
-      get notice from other
+    <div class="menu">
+      <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
+        <el-menu-item index="1">
+          <i class="el-icon-location"></i>
+          <template #title>Home</template>
+        </el-menu-item>
+        <el-menu-item index="2">
+          <i class="el-icon-menu"></i>
+          <template #title>Resources</template>
+        </el-menu-item>
+        <el-menu-item index="3">
+          <i class="el-icon-document"></i>
+          <template #title>Models</template>
+        </el-menu-item>
+        <el-menu-item index="4">
+          <i class="el-icon-setting"></i>
+          <template #title>Account</template>
+        </el-menu-item>
+        <el-menu-item index="4">
+          <i class="el-icon-setting"></i>
+          <template #title>Message</template>
+        </el-menu-item>
+        <el-menu-item index="4">
+          <i class="el-icon-setting"></i>
+          <template #title>Feedback</template>
+        </el-menu-item>
+      </el-menu>
     </div>
-    <div v-for="(item, index) in recipientNoticeList" :key="index" class="recipient">
-      <!-- {{ recipientNoticeList }} -->
-      <!-- <el-col :span="22" :offset="1"> -->
-      <div v-if="item.state == 'unread'">
-        <recipient-card :noticeItem="item"></recipient-card>
-      </div>
-      <div v-if="item.state == 'read'">
-        <recipient-card :noticeItem="item"></recipient-card>
-      </div>
-      <div v-if="item.state == 'approve'">
-        <recipient-card :noticeItem="item"></recipient-card>
-      </div>
-      <div v-if="item.state == 'disapprove'">
-        <recipient-card :noticeItem="item"></recipient-card>
-      </div>
-      <!-- </el-col> -->
-    </div>
-    notice from myself
-    <div>{{ senderNoticeList }}</div>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
 import { getNoticesByRecipientId, getNoticesBySenderId } from '@/api/request';
-import recipientCard from '_com/Cards/RecipientCard';
 export default {
-  components: {
-    recipientCard
-  },
+  components: {},
   watch: {},
 
   computed: {
@@ -67,9 +69,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 .user {
-  padding: 0 20px; // for col
-  .recipient {
-    width: 100%;
+  // padding: 0 20px; // for col
+  height: 100%;
+  .menu {
+    width: 200px;
+    height: 100%;
+    background-color: rgba($color: #ffffff, $alpha: 1);
   }
 }
 </style>

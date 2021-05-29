@@ -186,7 +186,7 @@ export default {
 
       this.currentEvent.fileName = this.selectDataItem.name;
       this.currentEvent.fileId = this.selectDataItem.id;
-      this.currentEvent.value = this.selectDataItem.url;
+      this.currentEvent.value = this.selectDataItem.address;
       this.currentEvent.fileDescription = this.selectDataItem.description;
       // console.log(this. currentEvent);
       this.currentEvent.datasetItem = this.currentDatasetItem;

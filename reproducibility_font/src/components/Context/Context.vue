@@ -73,8 +73,9 @@
               </el-select>
             </template>
           </el-input>
+          <el-button @click="addSpatialExtent" size="mini" class="append">Add Extents</el-button>
 
-          <div v-for="(d, index) in addTemporalConstraintCount" :key="index">
+          <div v-for="(d, index) in addSpatialExtentCount" :key="index">
             <el-input v-model="spatialExtentList[index + 1].value" placeholder="Please enter the content." class="prepend">
               <template #append>
                 <el-select v-model="spatialExtentList[index + 1].type" placeholder="Select the Unit" style="width:140px">
@@ -83,7 +84,6 @@
               </template>
             </el-input>
           </div>
-          <el-button @click="addTemporalConstraint" size="mini" class="append">Add Extents</el-button>
         </el-form-item>
 
         <el-form-item label="Resolution Constraint">
@@ -187,6 +187,7 @@ import { mapState } from 'vuex';
 import timeExtentHorizontal from '_com/TimeExtent/TimeExtentHorizontal';
 import temporalInfoTable from '_com/ContextTable/TemporalInfoTable';
 import spatialInfoTable from '_com/ContextTable/SpatialInfoTable';
+import { hasProperty } from '@/utils/utils';
 
 // import timeExtentVertical from '_com/TimeExtent/TimeExtentVertical';
 
@@ -239,8 +240,7 @@ export default {
         spatialExtentList: '',
         resolutionConstraintList: [
           { name: 'x', value: '', unit: '' },
-          { name: 'y', value: '', unit: '' },
-          { name: 'z', value: '', unit: '' }
+          { name: 'y', value: '', unit: '' }
         ]
       },
 
@@ -267,9 +267,11 @@ export default {
         }
       ],
       spatialReferenceOptions: ['projected', 'geographic', 'specific', 'all'],
+      temporalExtentList: [],
       temporalUnitList: ['second', 'hour', 'day', 'month', 'year'],
       temporalReferenceList: ['GMT', 'UTC', 'UNIX'],
       addTemporalCount: [],
+      addSpatialExtentCount: [],
       addTemporalConstraintCount: [],
       otherTemplateReferenceVisible: false,
       stepConstraintList: [{ value: '', unit: '' }],
@@ -309,6 +311,7 @@ export default {
       console.log(data);
       this.spatialInfoForm = data.spatialInfoList[0];
       this.temporalInfoForm = data.temporalInfoList[0];
+      this.temporalExtentList = data.temporalInfoList[0].temporalExtentList[0];
       this.$forceUpdate();
     },
     async submitContext() {
@@ -346,8 +349,13 @@ export default {
       });
     },
     addTags() {
+      console.log('5555555555555555');
       let tag = this.themeTag;
+      if (!hasProperty(this.contextForm, 'themes') || this.contextForm.themes == null) {
+        this.contextForm.themes = [];
+      }
       if (tag != '') {
+        this.contextForm.themes = [];
         this.contextForm.themes.push(tag);
       }
       this.tagInputVisible = false;
@@ -371,10 +379,14 @@ export default {
       this.contextForm.temporalInfoList = [];
       this.contextForm.temporalInfoList.push(this.temporalInfoForm);
 
-      console.log(this.contextForm);
+      // console.log(this.contextForm);
     },
     addTemporalExtents() {
       this.addTemporalCount.push({});
+    },
+    addSpatialExtent() {
+      this.addSpatialExtentCount.push({});
+      this.spatialExtentList.push({ value: '', unit: '' });
     },
     addTemporalConstraint() {
       this.addTemporalConstraintCount.push({});
@@ -386,7 +398,7 @@ export default {
         from: val[0],
         to: val[1]
       };
-      this.temporalInfoForm.temporalExtentList.push(time);
+      this.temporalExtentList.push(time);
     },
     //设置表格行的样式
     // eslint-disable-next-line no-unused-vars

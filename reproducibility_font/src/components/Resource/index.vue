@@ -79,7 +79,7 @@ export default {
     dataItemListDirect() {
       if (this.role == 'builder') {
         if (this.dataItemList.length != 0 || this.dataItemList != null || this.dataItemList != undefined) {
-          return this.dataItemList.filter(item => item.isDirect == true);
+          return this.dataItemList.filter(item => item.userUpload == true);
         } else {
           return [];
         }
@@ -103,7 +103,7 @@ export default {
     },
 
     downloadDataResource(data) {
-      window.open(data.url);
+      window.open(data.address);
     },
 
     //get all the data

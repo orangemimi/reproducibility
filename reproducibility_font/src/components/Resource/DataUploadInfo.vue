@@ -1,24 +1,6 @@
 <!-- data upload information -->
 <template>
   <div class="main">
-    <!-- <el-button @click="test">get computa</el-button> -->
-    <!-- {{ form.url }} -->
-    <div class="drag" v-if="form.url == ''">
-      <el-upload drag action :auto-upload="true" :show-file-list="false" ref="upload" :http-request="submitUpload" :on-remove="handleRemove">
-        <i class="el-icon-upload"></i>
-        <div class="el-upload__text">
-          Drag a file here to upload or
-          <em>Click to upload</em>
-        </div>
-      </el-upload>
-    </div>
-    <div v-else class="select_data">
-      <div class="select-data select-data-line">
-        <div class="data-name">{{ form.name }}</div>
-        <i class="el-icon-close" @click="remove"></i>
-      </div>
-    </div>
-
     <el-form class="resource" ref="form" :model="form" label-width="100px">
       <el-form-item label="Name">
         <el-input v-model="form.name"></el-input>
@@ -29,22 +11,10 @@
       </el-form-item>
 
       <el-form-item label="Source" class="source">
-        <el-button icon="el-icon-circle-plus-outline" @click="addChildDialogShow = true"></el-button>
+        <el-button icon="el-icon-circle-plus-outline" @click="addNode"></el-button>
 
         <div class="tree">
-          <vue-tree-list
-            @click="onClick"
-            @change-name="onChangeName"
-            @delete-node="onDel"
-            @add-node="onAddNode"
-            @drop="drop"
-            @drop-before="dropBefore"
-            @drop-after="dropAfter"
-            :model="data"
-            default-tree-node-name="new node"
-            default-leaf-node-name="new leaf"
-            v-bind:default-expanded="false"
-          >
+          <vue-tree-list @click="onClick" @delete-node="onDel" :model="data" default-tree-node-name="new node" default-leaf-node-name="new leaf" v-bind:default-expanded="false">
             <template v-slot:leafNameDisplay="slotProps" class="content">
               <div class="name">
                 {{ slotProps.model.name }}
@@ -66,15 +36,40 @@
       <el-form-item label="Image">
         <add-image @uploadImgResponse="uploadImgResponse" :uploadPath="'resources/picture'"></add-image>
       </el-form-item>
+
+      <el-form-item class="file">
+        <el-tabs v-model="activeName" type="card" size="mini">
+          <el-tab-pane label="Upload File" name="file" style="height:140px">
+            <div class="drag" v-if="form.address == ''">
+              <el-upload drag action :auto-upload="true" :show-file-list="false" ref="upload" :http-request="submitUpload" :on-remove="handleRemove">
+                <i class="el-icon-upload"></i>
+                <div class="el-upload__text">
+                  Drag a file here to upload or
+                  <em>Click to upload</em>
+                </div>
+              </el-upload>
+            </div>
+            <div v-else class="select_data">
+              <div class="select-data select-data-line">
+                <div class="data-name">{{ form.name }}</div>
+                <i class="el-icon-close" @click="remove"></i>
+              </div>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="Input Url" name="address" style="height:140px">
+            <el-input></el-input>
+          </el-tab-pane>
+        </el-tabs>
+      </el-form-item>
     </el-form>
 
     <div class="submit">
       <el-button @click="submit">Submit</el-button>
     </div>
 
-    <el-dialog :visible.sync="addChildDialogShow" width="50%" title="Configuration">
+    <!-- <el-dialog :visible.sync="addChildDialogShow" width="50%" title="Configuration">
       <add-child-value @getChildForm="getChildForm" />
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
@@ -82,13 +77,13 @@
 import { post } from '@/axios';
 import { saveDataItem } from '@/api/request';
 import addImage from '_com/AddImage';
-import { VueTreeList, Tree, TreeNode, addChildValue } from '_com/TreeDescription';
+import { VueTreeList, Tree, TreeNode } from '_com/TreeDescription';
 
 export default {
   components: {
     addImage,
-    VueTreeList,
-    addChildValue
+    VueTreeList
+    // addChildValue
   },
 
   data() {
@@ -102,8 +97,8 @@ export default {
         privacy: 'discoverable',
         source: '',
         thumbnail: '',
-        isDirect: '',
-        url: ''
+        userUpload: '',
+        address: ''
       },
 
       uploadFileForm: new FormData(), //上传文件的form
@@ -132,7 +127,8 @@ export default {
           pid: 0
         }
       ]),
-      addChildDialogShow: false
+      // addChildDialogShow: false
+      activeName: 'file'
     };
   },
 
@@ -157,8 +153,8 @@ export default {
         privacy: 'discoverable',
         source: '',
         thumbnail: '',
-        isDirect: '',
-        url: ''
+        userUpload: '',
+        address: ''
       };
     },
 
@@ -174,7 +170,7 @@ export default {
       this.form.suffix = this.getSuffix(param.file.name);
       this.form.fileSize = this.renderSize(param.file.size);
 
-      this.form.url = `http://221.226.60.2:8082/data/${data.id}`;
+      this.form.address = `http://221.226.60.2:8082/data/${data.id}`;
       this.form.projectId = this.projectId;
       this.$forceUpdate();
     },
@@ -201,7 +197,7 @@ export default {
     //data item保存到数据库
     //上传数据直接保存到dataItems,即用户的资源可全部显示，之后选择所需的数据，之后保存选择的数据之后 保存到resource数据表里面去
     async submit() {
-      this.form.isDirect = true;
+      this.form.userUpload = true;
       await saveDataItem(this.form);
       // let data = await post(`/dataItems`, this.form);
       // console.log(data);
@@ -223,6 +219,10 @@ export default {
     },
     onDel(node) {
       node.remove();
+    },
+    onClick(params) {
+      // eslint-disable-next-line no-console
+      console.log(params);
     }
   },
 
@@ -234,17 +234,26 @@ export default {
   height: 100%;
   width: 100%;
   // position: relative;
-  .drag {
-    margin-bottom: 20px;
-    /deep/ .el-icon-upload {
-      margin: 0;
+  .file {
+    /deep/.el-tabs__item {
+      padding: 0 10px;
+      height: 20px;
+      line-height: 20px;
+      font-size: 12px;
     }
+    .drag {
+      margin-bottom: 20px;
+      /deep/ .el-icon-upload {
+        margin: 0;
+      }
 
-    /deep/ .el-upload-dragger {
-      width: calc(37vw);
-      height: 90px;
+      /deep/ .el-upload-dragger {
+        width: calc(30vw);
+        height: 120px;
+      }
     }
   }
+
   .select_data {
     .select-data-line {
       margin: 15px 0 0 0;

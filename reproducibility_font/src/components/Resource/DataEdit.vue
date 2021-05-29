@@ -69,7 +69,7 @@ export default {
         privacy: 'discoverable',
         source: '',
         thumbnail: '',
-        isDirect: ''
+        userUpload: ''
       }
     };
   },
@@ -80,7 +80,7 @@ export default {
     },
 
     async submit() {
-      this.form.isDirect = true;
+      this.form.userUpload = true;
       let data = await updateRequest(this.form);
 
       console.log(data);
