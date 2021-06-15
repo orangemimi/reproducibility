@@ -19,5 +19,6 @@ public class Scenario extends BaseEntity {
     String userId;
     String projectId;
     String selectTaskId;
+    String type;//notebook or integrateTask
 
 }

@@ -178,7 +178,7 @@ export default {
 
           this.init();
           await this.getAllIntegrateTaskInstances(0);
-          this.graph.importGraph(val.mxgraph);
+          this.graph.importGraph(val.note);
         }
       },
       deep: true
@@ -729,7 +729,7 @@ export default {
 
       let postJson = {
         xml: xml,
-        mxgraph: graphXml,
+        note: graphXml,
         // modelActions: modelActions,modelACTIONlIST
         taskName: this.currentTask.taskName,
         taskDescription: this.currentTask.taskDescription,
@@ -747,8 +747,8 @@ export default {
     selectTask(val) {
       this.currentTask = val;
       // this.taskInfo = val;
-      let mxgraph = val.mxgraph;
-      this.importModelXML(mxgraph);
+      let note = val.note;
+      this.importModelXML(note);
       this.isNewTaskContainerShow = false;
       // console.log(val);
     },

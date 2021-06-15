@@ -22,7 +22,7 @@
 import ContextContent from '_com/Context/Context';
 import ScenarioContent from '_com/Scenario/Scenario';
 // import ReScenarioContent from '_com/Scenario/reScenario';
-import ResourceContent from '_com/Resource';
+import ResourceContent from '_com/Resource/Resource';
 import ResultContent from '_com/Result/Result';
 // import AnalysisContent from "./AnalysisContent";
 export default {

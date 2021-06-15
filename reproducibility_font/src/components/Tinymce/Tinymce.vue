@@ -1,9 +1,11 @@
 <template>
   <div :class="{ fullscreen: fullscreen }" class="tinymce-container" :style="{ width: containerWidth }">
     <textarea :id="tinymceId" class="tinymce-textarea" />
-    <!-- <div class="editor-custom-btn-container">
-      <customOperation color="#1890ff" class="editor-upload-btn" @successCBK="imageSuccessCBK" />
-    </div>-->
+
+    <div class="editor-custom-btn-container">
+      <el-button size="mini" @click="saveNote">Save</el-button>
+      <!-- <customOperation color="#1890ff" class="editor-upload-btn" @successCBK="imageSuccessCBK" /> -->
+    </div>
   </div>
 </template>
 
@@ -12,9 +14,11 @@
  * docs:
  * https://panjiachen.github.io/vue-element-admin-site/feature/component/rich-editor.html#tinymce
  */
+import { mapState } from 'vuex';
 import plugins from './plugins';
 import toolbar from './toolbar';
 import load from './dynamicLoadScript';
+import { uploadResourcePicture } from '@/api/request';
 
 // why use this cdn, detail see https://github.com/PanJiaChen/tinymce-all-in-one
 const tinymceCDN = 'https://cdn.jsdelivr.net/npm/tinymce-all-in-one@4.9.3/tinymce.min.js';
@@ -54,6 +58,7 @@ export default {
       default: 'auto'
     }
   },
+
   data() {
     return {
       hasChange: false,
@@ -76,7 +81,11 @@ export default {
         return `${width}px`;
       }
       return width;
-    }
+    },
+    ...mapState({
+      userId: state => state.user.userId,
+      userName: state => state.user.name
+    })
   },
   watch: {
     value(val) {
@@ -123,7 +132,7 @@ export default {
         plugins: plugins,
         end_container_on_empty_block: true,
         powerpaste_word_import: 'clean',
-        code_dialog_height: 450,
+        code_dialog_height: 600,
         code_dialog_width: 1000,
         advlist_bullet_styles: 'square',
         advlist_number_styles: 'default',
@@ -148,7 +157,7 @@ export default {
         },
         images_upload_url: `http://${window.location.host}/r/resources/picture`, //上传路径
 
-        images_upload_handler: (blobInfo, success, failure) => {
+        images_upload_handler: async (blobInfo, success, failure) => {
           if (blobInfo.blob().size > self.maxSize) {
             failure('The size of picture > 4M');
           }
@@ -156,20 +165,24 @@ export default {
           let formData = new FormData();
           // 服务端接收文件的参数名，文件数据，文件名
           formData.append('pictureFile', blobInfo.blob(), blobInfo.filename());
-          this.axios({
-            method: 'POST',
-            // 上传地址
-            url: '/resources/picture',
-            data: formData
-          })
-            .then(res => {
-              console.log(res.data.data);
-              // 返回de图片的地址
-              success(res.data.data);
-            })
-            .catch(() => {
-              failure('上传失败');
-            });
+          let fileName = await uploadResourcePicture(formData);
+          let url = `http://${window.location.host}/r/${this.userId}/resourcePicture/${fileName}`;
+          // console.log(url);
+          success(url);
+          // this.axios({
+          //   method: 'POST',
+          //   // 上传地址
+          //   url: '/resources/picture',
+          //   data: formData
+          // })
+          //   .then(res => {
+          //     console.log(res.data.data);
+          //     // 返回de图片的地址
+          //     success(res.data.data);
+          //   })
+          //   .catch(() => {
+          //     failure('上传失败');
+          //   });
         }
       });
     },
@@ -189,6 +202,12 @@ export default {
     getContent() {
       return window.tinymce.get(this.tinymceId).getContent();
     },
+
+    saveNote() {
+      let content = window.tinymce.get(this.tinymceId).getContent();
+      this.$emit('saveNote', content);
+    },
+
     imageSuccessCBK(arr) {
       const _this = this;
       arr.forEach(v => {

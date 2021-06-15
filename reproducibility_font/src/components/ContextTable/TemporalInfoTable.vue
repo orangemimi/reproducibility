@@ -86,26 +86,21 @@ table.gridtable {
   font-family: verdana, arial, sans-serif;
   font-size: 11px;
   color: #333333;
-  border-width: 1px;
-  border-color: #666666;
+  border: 1px solid #dcdfe6;
   border-collapse: collapse;
   line-height: 15px;
   th {
     border-width: 1px;
     padding: 8px;
-    border-style: solid;
-    border-color: #c7c7c7;
-    background-color: #dedede;
   }
   td {
     border-width: 1px;
     padding: 8px;
-    border-style: solid;
-    border-color: #c7c7c7;
-    background-color: #ffffff;
   }
   .title {
     width: 150px;
+    color: $fontColorGrayNormal;
+    font-style: italic;
   }
   .content {
     width: calc(20vw);

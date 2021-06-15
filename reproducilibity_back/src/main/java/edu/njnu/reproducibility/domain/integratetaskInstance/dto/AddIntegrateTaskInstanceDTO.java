@@ -17,13 +17,16 @@ public class AddIntegrateTaskInstanceDTO implements ToDomainConverter<IntegrateT
     String taskId;//integrated task id;
     String operatorId;//operatorId id;
 
+    //integrate task relate
     Action action;
-
     //模型运行所需的参数 以及
-    Integer status; // 0代表未开始，-1代表运行失败，1代表运行成功, 2代表运行超时(不存在运行中状态，省略)
+    Integer status; //1表示已update； 0未曾全部update
+    // 0代表未开始，-1代表运行失败，1代表运行成功, 2代表运行超时(不存在运行中状态，省略)
     String tid;//managerServer Id;
-//    String ip;
-//    String port;
+
+    //note task relate
+//    String content;
+
 
 
 }

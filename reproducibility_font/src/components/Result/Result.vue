@@ -1,22 +1,21 @@
-<!-- result content -->
+<!--  -->
 <template>
   <div>
-    <el-button type="success" size="mini" @click="addNode">Add</el-button>
-    <vue-tree-list @delete-node="onDel" :model="data" default-tree-node-name="new node" default-leaf-node-name="new leaf" v-bind:default-expanded="false">
-      <template v-slot:leafNameDisplay="slotProps">
-        <div class="name">{{ slotProps.model.name }}</div>
-        <div class="value">{{ slotProps.model.value }}</div>
-      </template>
-    </vue-tree-list>
+    <el-table :data="tableData" style="width: 100%;margin-bottom: 20px;" row-key="id" border default-expand-all :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
+      <el-table-column prop="name" label="Key" sortable width="180"></el-table-column>
+      <el-table-column prop="value" label="Value" sortable width="180"></el-table-column>
+
+      <el-table-column label="Action">
+        <el-button size="mini" @click="edit(scope.$index, scope.row)">Edit</el-button>
+        <el-button size="mini" @click="addItem(scope.$index, scope.row)">Add Item</el-button>
+      </el-table-column>
+    </el-table>
   </div>
 </template>
 
 <script>
-import { VueTreeList, Tree, TreeNode } from '_com/TreeDescription';
 export default {
-  components: {
-    VueTreeList
-  },
+  components: {},
 
   watch: {},
 
@@ -24,12 +23,24 @@ export default {
 
   data() {
     return {
-      data: new Tree([
+      tableData: [
         {
           name: 'Entity',
           value: '',
           id: 0,
-          pid: 0
+          pid: 0,
+          children: [
+            {
+              name: 'Result Item',
+              value: '',
+              id: 4,
+              pid: 10,
+              children: [
+                { name: 'Dimension', value: '', id: 4, pid: 10 },
+                { name: 'Form', value: '', id: 4, pid: 10 }
+              ]
+            }
+          ]
         },
         {
           name: 'Agent',
@@ -43,20 +54,16 @@ export default {
           id: 3,
           pid: 0
         }
-      ])
+      ]
     };
   },
 
   methods: {
-    //tree
-
-    addNode() {
-      var node = new TreeNode({ name: 'new node', isLeaf: false });
-      if (!this.data.children) this.data.children = [];
-      this.data.addChildren(node);
+    edit(index, row) {
+      console.log(index, row);
     },
-    onDel(node) {
-      node.remove();
+    addItem(index, row) {
+      console.log(index, row);
     }
   },
 

@@ -13,4 +13,5 @@ import lombok.Data;
 @Data
 public class UpdateScenarioDTO implements ToDomainConverter<Scenario> {
     String selectTaskId;
+    String type;
 }

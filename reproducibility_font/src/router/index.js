@@ -66,13 +66,36 @@ export const constantRoutes = [
         path: '/user',
         name: 'UserInfo',
         meta: {
-          title: 'User Info'
+          title: 'User Info',
+          requireAuth: true
         },
         components: {
           header: () => import('_com/layout/MyHeader.vue'),
           main: () => import('@/views/user'),
           footer: () => import('_com/layout/MyFooter.vue')
-        }
+        },
+        children: [
+          {
+            path: 'home',
+            name: 'UserHome',
+            component: () => import('@/views/user/components/Home')
+          },
+          {
+            path: 'resource',
+            name: 'UserResource',
+            component: () => import('@/views/user/components/Resource')
+          },
+          {
+            path: 'model',
+            name: 'UserModel',
+            component: () => import('@/views/user/components/Model')
+          },
+          {
+            path: 'account',
+            name: 'UserAccount',
+            component: () => import('@/views/user/components/Account')
+          }
+        ]
       },
       {
         path: '/projects',

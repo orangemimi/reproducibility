@@ -146,6 +146,9 @@ export async function saveDataItem(form) {
   }
   return data;
 }
+export async function updateDataItemById(id, form) {
+  return await patch(`/dataItems/${id}`, form);
+}
 
 export async function deleteDataItemById(id) {
   await del(`/dataItems/${id}`);
@@ -157,6 +160,14 @@ export async function getDataItemsByJwtUserId() {
 
 export async function getDataItemByCreatorId(projectId) {
   return await get(`/dataItems/creator/${projectId}`);
+}
+
+//-----------------------------------------------dataContainer---------------------------------------------
+
+export async function postDataContainer(form) {
+  // debugger;
+  let { data } = await post(`/dataContainer/uploadSingle`, form);
+  return data;
 }
 
 //----------------------------------------------integrate tasks------------------------------------------
@@ -213,6 +224,14 @@ export async function saveIntegrateTaskInstance(postJson) {
 
 export async function updateIntegrateTaskInstanceById(id, postJson) {
   let data = await patch(`/integrateTaskInstances/${id}`, postJson);
+  if (data != null) {
+    successNotification('update', 'integrateTaskInstances');
+  }
+  return data;
+}
+
+export async function updateNoteTaskInstanceById(id, postJson) {
+  let data = await patch(`/integrateTaskInstances/note/${id}`, postJson);
   if (data != null) {
     successNotification('update', 'integrateTaskInstances');
   }

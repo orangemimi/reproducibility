@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <div class="mainContainerMask" v-show="isNewTaskContainerShow">
+    <div class="mainContainerMask" v-show="isNewTaskShow">
       <div class="taskInfoForm">
         <el-form ref="taskInfoForm" :model="taskInfo" label-width="180px">
           <el-form-item label="Task Name">
@@ -8,6 +8,11 @@
           </el-form-item>
           <el-form-item label="Task Description">
             <el-input v-model="taskInfo.taskDescription"></el-input>
+          </el-form-item>
+          <el-form-item label="Task Type">
+            <el-select v-model="taskInfo.type" placeholder="Please select">
+              <el-option v-for="item in typeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
           </el-form-item>
         </el-form>
       </div>
@@ -22,8 +27,11 @@
         </div>
       </div>
     </div>
-    <div class="customToolbarContainer" v-show="!isNewTaskContainerShow">
+    <div class="customToolbarContainer" v-show="isIntegrateTaskShow">
       <mx-graph :taskInfoInit="taskInfoInit"></mx-graph>
+    </div>
+    <div class="customToolbarContainer" v-show="isNoteTaskShow">
+      <comparison-task :taskInfoInit="taskInfoInit"></comparison-task>
     </div>
   </div>
 </template>
@@ -32,14 +40,15 @@
 import { getScenarioByProjectId, updateScenarioByProjectId, saveIntegrateTask, getIntegrateTaskByTaskId } from '@/api/request';
 import mxGraph from './components/MxGraph';
 import { mapState } from 'vuex';
-
 import integrateTasks from '_com/IntegrateTasks';
+import comparisonTask from './components/Comparison.vue';
 // import { initSetTimeOut } from '@/utils/utils';
 
 export default {
   components: {
     mxGraph,
-    integrateTasks
+    integrateTasks,
+    comparisonTask
   },
 
   computed: {
@@ -52,11 +61,17 @@ export default {
     return {
       projectId: this.$route.params.id,
       scenario: {},
-      isNewTaskContainerShow: true,
-      taskInfo: {},
+      isNewTaskShow: true,
+      isIntegrateTaskShow: false,
+      isNoteTaskShow: false,
+      taskInfo: { type: 'integrateTask' },
       taskInfoInit: {},
       taskList: [],
-      mxgraph: '' //task selected mxgraph
+      content: '', //task selected mxgraph
+      typeOptions: [
+        { label: 'Integrate Task', value: 'integrateTask' },
+        { label: 'Notebook', value: 'notebook' }
+      ]
     };
   },
 
@@ -69,33 +84,47 @@ export default {
     async getScenario() {
       let data = await getScenarioByProjectId(this.projectId);
       if (data == null || data.selectTaskId == '' || data.selectTaskId == null) {
-        this.isNewTaskContainerShow = true;
+        this.isNewTaskShow = true;
         return;
+      } else {
+        if (data.type == 'integrateTask') {
+          this.isNoteTaskShow = this.isNewTaskShow = false;
+          this.isIntegrateTaskShow = true;
+          this.taskInfoInit = await getIntegrateTaskByTaskId(data.selectTaskId);
+        }
+        if (data.type == 'notebook') {
+          this.isIntegrateTaskShow = this.isNewTaskShow = false;
+          this.isNoteTaskShow = true;
+          this.taskInfoInit = await getIntegrateTaskByTaskId(data.selectTaskId);
+        }
       }
-
-      this.taskInfoInit = await getIntegrateTaskByTaskId(data.selectTaskId);
-      this.isNewTaskContainerShow = false;
     },
 
     async createNewTask() {
+      // let noteType = '';
+      this.isNewTaskShow = false;
       let postJson = {
         projectId: this.projectId,
-        mxgraph: '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/></root></mxGraphModel>',
+        content: '',
         ...this.taskInfo
       };
+      if (this.taskInfo.type == 'integrateTask') {
+        postJson.content = '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/></root></mxGraphModel>';
+        this.isIntegrateTaskShow = true;
+      }
+      if (this.taskInfo.type == 'notebook') {
+        this.isNoteTaskShow = true;
+      }
       let data = await saveIntegrateTask(postJson);
-      console.log('scenario', data);
       this.taskInfoInit = data;
-      await updateScenarioByProjectId(this.projectId, { selectTaskId: data.id });
-
-      this.isNewTaskContainerShow = false;
+      await updateScenarioByProjectId(this.projectId, { selectTaskId: data.id, type: this.taskInfo.type });
       // await initSetTimeOut();
     },
 
     selectTask(val) {
       //选择task之后的回调
       this.taskInfoInit = val;
-      this.isNewTaskContainerShow = false;
+      this.isIntegrateTaskShow = false;
     }
   },
 

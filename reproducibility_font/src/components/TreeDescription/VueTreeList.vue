@@ -123,6 +123,7 @@
       </el-form>
       <el-button @click="editModelSubmit">Submit</el-button>
     </el-dialog>
+
     <el-dialog :visible.sync="addChildDialogShow" width="50%" title="Configuration">
       <add-child-value @getChildForm="getChildForm" :initForm="model" />
     </el-dialog>
@@ -513,5 +514,9 @@ export default {
     // width: 100px;
     float: left;
   }
+}
+.vtl-node-content {
+  // color: $fontColorGrayNormal;
+  font-style: italic;
 }
 </style>

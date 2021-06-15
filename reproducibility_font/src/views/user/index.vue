@@ -1,8 +1,8 @@
 <!-- user page -->
 <template>
   <div class="user">
-    <div class="menu">
-      <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
+    <div class="menu_left">
+      <el-menu default-active="1" class="el-menu-vertical-demo" @select="handleSelect">
         <el-menu-item index="1">
           <i class="el-icon-location"></i>
           <template #title>Home</template>
@@ -19,15 +19,18 @@
           <i class="el-icon-setting"></i>
           <template #title>Account</template>
         </el-menu-item>
-        <el-menu-item index="4">
+        <el-menu-item index="5">
           <i class="el-icon-setting"></i>
           <template #title>Message</template>
         </el-menu-item>
-        <el-menu-item index="4">
+        <el-menu-item index="6">
           <i class="el-icon-setting"></i>
           <template #title>Feedback</template>
         </el-menu-item>
       </el-menu>
+    </div>
+    <div class="content">
+      <router-view class="scroll-item"></router-view>
     </div>
   </div>
 </template>
@@ -59,6 +62,39 @@ export default {
       // this.userInfo = await getUserByJwtUserId();
       this.recipientNoticeList = await getNoticesByRecipientId();
       this.senderNoticeList = await getNoticesBySenderId();
+    },
+    handleSelect(key) {
+      switch (key) {
+        case '1':
+          {
+            this.$router.push({
+              name: 'UserHome'
+            });
+          }
+          break;
+        case '2':
+          {
+            this.$router.push({
+              name: 'UserResource'
+            });
+          }
+          break;
+        case '3':
+          {
+            this.$router.push({
+              name: 'UserModel'
+            });
+          }
+          break;
+        case '4':
+          {
+            //TOD
+            this.$router.push({
+              name: 'UserAccount'
+            });
+          }
+          break;
+      }
     }
   },
 
@@ -71,10 +107,15 @@ export default {
 .user {
   // padding: 0 20px; // for col
   height: 100%;
-  .menu {
+  .menu_left {
     width: 200px;
     height: 100%;
+    float: left;
     background-color: rgba($color: #ffffff, $alpha: 1);
+  }
+  .content {
+    width: 100%;
+    height: 100%;
   }
 }
 </style>

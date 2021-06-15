@@ -1,15 +1,31 @@
 <template>
-  <div>
+  <div class="main_content">
     <el-col :span="22" :offset="1">
-      <tinymce ref="editor" v-model="toolInfo.content" :height="300" />
+      <!-- <el-col :span="12"> -->
+      {{ taskInfoInit }}
+      <tinymce ref="editor" v-model="taskInfoInit.content" @saveNote="saveNote" :height="600" />
+
+      <!-- </el-col> -->
+      <!-- <el-col :span="12">
+        <div class="preview">
+          <span>Preview</span>
+          <div class="content" v-html="taskInfoInit.content" :height="600" />
+        </div>
+      </el-col> -->
       <!-- <Button type="success" @click="createTool('toolInfo')" class="create">Create</Button> -->
     </el-col>
   </div>
 </template>
 <script>
-import { uploadResourcePicture } from '@/api/request';
-import tinymce from '_com/Tinymce';
+// import { uploadResourcePicture } from '@/api/request';
+import tinymce from '_com/Tinymce/Tinymce';
 export default {
+  props: {
+    taskInfoInit: {
+      type: Object
+    }
+  },
+
   components: {
     tinymce
   },
@@ -57,33 +73,62 @@ export default {
           let formData = new FormData();
           formData.append('pictureFile', file);
 
-          let fileName = await uploadResourcePicture(formData);
-          let url = `http://${window.location.host}/r/${this.userId}/projectPicture/${fileName}`;
-          console.log(url);
-          this.toolInfo.toolImg = url;
-          this.image = e.target.result;
-          this.$('#choosePicture').val('');
-          //   this.axios
-          //     .post('/resources/picture', formData)
-          //     .then(res => {
-          //       if (res.data != 'Fail') {
-          //         this.toolInfo.toolImg = res.data;
-          //         // this.selectedTool.toolImg = res.data;
-          //         this.image = e.target.result;
-          //         $('#choosePicture').val('');
-          //       } else {
-          //         this.$Message.error('upload picture Fail!');
-          //       }
-          //     })
-          //     .catch();
+          // let fileName = await uploadResourcePicture(formData);
+
+          // this.toolInfo.toolImg = url;
+          // this.image = e.target.result;
+          // this.$('#choosePicture').val('');
+          this.axios
+            .post('/resources/picture', formData)
+            .then(res => {
+              if (res.data != 'Fail') {
+                let url = `http://${window.location.host}/r/${this.userId}/projectPicture/${res.data}`;
+                console.log(url);
+                this.toolInfo.toolImg = url;
+                // this.selectedTool.toolImg = res.data;
+                this.image = e.target.result;
+                // eslint-disable-next-line no-undef
+                // $('#choosePicture').val('');
+              } else {
+                this.$Message.error('upload picture Fail!');
+              }
+            })
+            .catch();
         };
       }
     }
   },
-  props: {
-    toolInfoDetail: {
-      type: Object
-    }
+  updated() {
+    // eslint-disable-next-line no-undef
+    $('.content')
+      .find('code')
+      .css('background-color', 'rgb(187, 76, 76)');
   }
 };
 </script>
+<style lang="scss" scoped>
+.main_content {
+  // /deep/ pre {
+  //   background-color: #f5f2f0;
+  //   padding: 1em;
+  //   margin: 0.5em 0;
+  //   overflow: auto;
+  //   width: calc(34vw);
+  // }
+  // /deep/ code {
+  //   font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace; //coding family
+  //   direction: ltr;
+  //   text-align: left;
+  //   line-height: 1.5;
+  //   font-size: 14px;
+  // }
+  // .preview {
+  //   border: 0 solid #c5c5c5;
+  //   background-color: #fff;
+  //   border-width: 1px;
+  //   min-height: 737px;
+  //   margin: 0 2px;
+  //   // width: 100%;
+  // }
+}
+</style>

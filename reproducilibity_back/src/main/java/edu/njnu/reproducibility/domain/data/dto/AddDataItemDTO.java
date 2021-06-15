@@ -36,5 +36,4 @@ public class AddDataItemDTO implements ToDomainConverter<DataItem> {
 
     //存储父资源的 uuid
     String parent;
-    ArrayList<DataItem> children;
 }

@@ -26,6 +26,7 @@ public class DataItem extends BaseEntity {
 
 //    String url;
     String address;//原始url
+
     String source;
     Boolean userUpload; //false--中间处理数据 //true--直接上传数据
 //    SpatioTemporalInfo spatioTemporalInfo;
@@ -37,13 +38,8 @@ public class DataItem extends BaseEntity {
     String thumbnail; //缩略图地址
 
 
-    //数据在数据容器中的链接 url？
-//  String address;
-
-    Boolean folder;
-
-//    private Boolean userUpload;
-
+    Boolean folder;//是否是文件夹
+//    Boolean hasChildren;
     //存储父资源的 uuid
     String parent;
     ArrayList<DataItem> children;

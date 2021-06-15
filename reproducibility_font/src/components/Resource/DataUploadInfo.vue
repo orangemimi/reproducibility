@@ -95,6 +95,7 @@ export default {
         type: '',
         description: '',
         privacy: 'discoverable',
+        folder: false,
         source: '',
         thumbnail: '',
         userUpload: '',
@@ -165,7 +166,7 @@ export default {
       // console.log(this.uploadFileForm.get('file'));
 
       let { data } = await post(`/dataContainer/uploadSingle`, this.uploadFileForm);
-      console.log(data);
+
       this.form.name = data.file_name;
       this.form.suffix = this.getSuffix(param.file.name);
       this.form.fileSize = this.renderSize(param.file.size);

@@ -36,6 +36,58 @@ export const getParams = url => {
   return paramObj;
 };
 
+export const getTime = () => {
+  let date = new Date();
+  var Y = date.getFullYear();
+  var M = date.getMonth() + 1;
+  M = M < 10 ? '0' + M : M; // 不够两位补充0
+  var D = date.getDate();
+  D = D < 10 ? '0' + D : D;
+  var H = date.getHours();
+  H = H < 10 ? '0' + H : H;
+  var Mi = date.getMinutes();
+  Mi = Mi < 10 ? '0' + Mi : Mi;
+  var S = date.getSeconds();
+  S = S < 10 ? '0' + S : S;
+  return Y + '-' + M + '-' + D + ' ' + H + ':' + Mi + ':' + S;
+};
+
+export const getUuid = () => {
+  var s = [];
+  var hexDigits = '0123456789abcdef';
+  for (var i = 0; i < 36; i++) {
+    s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+  }
+  s[14] = '4'; // bits 12-15 of the time_hi_and_version field to 0010
+  s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1); // bits 6-7 of the clock_seq_hi_and_reserved to 01
+  s[8] = s[13] = s[18] = s[23] = '-';
+
+  var uuid = s.join('');
+  return uuid;
+};
+// export const getCurrentTime=()=>{
+//   return Date()
+// }
+
+export const getSuffix = filename => {
+  let index = filename.lastIndexOf('.');
+  return filename.substr(index + 1);
+};
+
+export const renderSize = value => {
+  if (null == value || value == '') {
+    return '0 Bytes';
+  }
+  var unitArr = new Array('Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
+  var index = 0,
+    srcsize = parseFloat(value);
+  index = Math.floor(Math.log(srcsize) / Math.log(1024));
+  var size = srcsize / Math.pow(1024, index);
+  //  保留的小数位数
+  size = size.toFixed(2);
+  return size + unitArr[index];
+};
+
 /**
  * @param {Array} arr1
  * @param {Array} arr2

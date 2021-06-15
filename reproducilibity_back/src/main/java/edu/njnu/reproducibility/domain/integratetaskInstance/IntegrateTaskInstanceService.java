@@ -3,6 +3,7 @@ package edu.njnu.reproducibility.domain.integratetaskInstance;
 import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.domain.integratetaskInstance.dto.AddIntegrateTaskInstanceDTO;
 import edu.njnu.reproducibility.domain.integratetaskInstance.dto.UpdateIntegrateTaskInstanceDTO;
+import edu.njnu.reproducibility.domain.integratetaskInstance.dto.UpdateNoteTaskInstanceDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -49,6 +50,12 @@ public class IntegrateTaskInstanceService {
     }
 
     public Object updateById(String id, UpdateIntegrateTaskInstanceDTO update, String userId) {
+        IntegrateTaskInstance integrateTaskInstance = integrateTaskInstanceRepository.findById(id).orElseThrow(MyException::noObject);
+        update.updateTo(integrateTaskInstance);
+        return integrateTaskInstanceRepository.save(integrateTaskInstance);
+    }
+
+    public Object updateByNoteId(String id, UpdateNoteTaskInstanceDTO update, String userId) {
         IntegrateTaskInstance integrateTaskInstance = integrateTaskInstanceRepository.findById(id).orElseThrow(MyException::noObject);
         update.updateTo(integrateTaskInstance);
         return integrateTaskInstanceRepository.save(integrateTaskInstance);

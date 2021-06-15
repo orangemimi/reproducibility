@@ -69,7 +69,24 @@ import nodeCard from './components/nodeCard';
 import editCell from './components/editCell';
 import FileSaver from 'file-saver';
 
-const { mxGraph, mxOutline, mxEvent, mxCell, mxGeometry, mxUtils, mxEventObject, mxConnectionHandler, mxGraphHandler, mxRubberband, mxConstants, mxCellState, mxCellEditor, mxGraphView, mxCodec, mxUndoManager } = mxgraph;
+const {
+  mxGraph,
+  mxOutline,
+  mxEvent,
+  mxCell,
+  mxGeometry,
+  mxUtils,
+  mxEventObject,
+  mxConnectionHandler,
+  mxGraphHandler,
+  mxRubberband,
+  mxConstants,
+  mxCellState,
+  mxCellEditor,
+  mxGraphView,
+  mxCodec,
+  mxUndoManager
+} = mxgraph;
 
 export default {
   props: {

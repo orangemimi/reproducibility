@@ -17,7 +17,7 @@ public class UpdateIntegratedTaskDTO implements ToDomainConverter<IntegrateTask>
     String taskDescription;
 
     String xml;
-    String mxgraph;
+    String content;
 
     Action action;
     String selectInstanceId;

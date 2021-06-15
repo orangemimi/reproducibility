@@ -1,42 +1,48 @@
 <template>
   <div class="main">
     <!-- {{ contextForm }} -->
-    <vue-scroll style="height: calc(40vh) " :ops="ops">
+    <vue-scroll style="height: calc(42vh) " :ops="ops">
       <el-form ref="contextForm" :model="contextForm" label-width="110px" @submit.native.prevent size="mini">
-        <el-form-item label="Theme">
-          <el-input v-if="tagInputVisible" v-model="themeTag" ref="tagInput" @keyup.enter.native="addTags" @blur="addTags" style="width: 300px"></el-input>
-          <el-button v-else @click="showTagInput" type="text" size="small">+ New Tag</el-button>
-          <div v-if="contextForm != null">
-            <el-tag :key="tagIndex" v-for="(tag, tagIndex) in contextForm.themes" closable :disable-transitions="false" @close="delTags(tag)" style="margin: 0 2px">
-              {{ tag }}
-            </el-tag>
-          </div>
-        </el-form-item>
-        <el-form-item label="Purpose">
-          <el-input v-model="contextForm.purpose" placeholder="Please enter the content."></el-input>
-        </el-form-item>
-        <el-form-item label="Object">
-          <el-input v-model="contextForm.objects" placeholder="Please enter the content."></el-input>
-        </el-form-item>
-        <el-form-item label="Spatio scale">
-          <el-button @click="addSpatialInfodialogVisible = true" size="mini">Edit</el-button>
-          <spatial-info-table :spatialInfoForm="spatialInfoForm"></spatial-info-table>
-        </el-form-item>
+        <el-row>
+          <el-col span="12">
+            <el-form-item label="Theme">
+              <el-input v-if="tagInputVisible" v-model="themeTag" ref="tagInput" @keyup.enter.native="addTags" @blur="addTags" style="width: 300px"></el-input>
+              <el-button v-else @click="showTagInput" type="text" size="small">+ New Tag</el-button>
+              <div v-if="contextForm != null">
+                <el-tag :key="tagIndex" v-for="(tag, tagIndex) in contextForm.themes" closable :disable-transitions="false" @close="delTags(tag)" style="margin: 0 2px">
+                  {{ tag }}
+                </el-tag>
+              </div>
+            </el-form-item>
+            <el-form-item label="Purpose">
+              <el-input v-model="contextForm.purpose" placeholder="Please enter the content."></el-input>
+            </el-form-item>
+            <el-form-item label="Object">
+              <el-input v-model="contextForm.objects" placeholder="Please enter the content."></el-input>
+            </el-form-item>
+            <el-form-item label="Spatio scale">
+              <el-button @click="addSpatialInfodialogVisible = true" size="mini" class="spatioEdit">Edit</el-button>
+              <spatial-info-table :spatialInfoForm="spatialInfoForm"></spatial-info-table>
+            </el-form-item>
+          </el-col>
 
-        <el-form-item label="Temporal scale">
-          <el-button @click="addTemporalInfodialogVisible = true" size="mini">Edit</el-button>
-          <!-- {{ temporalInfoForm }} -->
-          <temporal-info-table :temporalInfoForm="temporalInfoForm"></temporal-info-table>
-        </el-form-item>
-        <el-form-item label="Method">
-          <el-input v-model="contextForm.methods" placeholder="Please enter the content."></el-input>
-        </el-form-item>
-        <el-form-item label="Discussion">
-          <el-input v-model="contextForm.discussion" placeholder="Please enter the content."></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="submitContext">Submit</el-button>
-        </el-form-item>
+          <el-col span="12">
+            <el-form-item label="Temporal scale">
+              <el-button @click="addTemporalInfodialogVisible = true" size="mini" class="temporalEdit">Edit</el-button>
+              <!-- {{ temporalInfoForm }} -->
+              <temporal-info-table :temporalInfoForm="temporalInfoForm"></temporal-info-table>
+            </el-form-item>
+            <el-form-item label="Method">
+              <el-input v-model="contextForm.methods" placeholder="Please enter the content."></el-input>
+            </el-form-item>
+            <el-form-item label="Discussion">
+              <el-input v-model="contextForm.discussion" placeholder="Please enter the content."></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="submitContext">Submit</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
     </vue-scroll>
 
@@ -237,7 +243,7 @@ export default {
           type: '',
           description: ''
         },
-        spatialExtentList: '',
+        spatialExtentList: [],
         resolutionConstraintList: [
           { name: 'x', value: '', unit: '' },
           { name: 'y', value: '', unit: '' }
@@ -418,6 +424,17 @@ export default {
 .main {
   margin: 0 20px;
   height: 100%;
+  .spatioEdit {
+    position: absolute;
+    left: -60px;
+    top: 30px;
+  }
+  .temporalEdit {
+    position: absolute;
+    left: -60px;
+    top: 30px;
+  }
+
   .spatialDialog {
     .spatialForm {
       .prepend {
