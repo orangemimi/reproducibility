@@ -1,11 +1,11 @@
-package edu.njnu.reproducibility.domain.data;
+package edu.njnu.reproducibility.domain.file;
 
 
 import edu.njnu.reproducibility.annotation.JwtTokenParser;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
-import edu.njnu.reproducibility.domain.data.dto.AddDataItemDTO;
-import edu.njnu.reproducibility.domain.data.dto.UpdateDataItemDTO;
+import edu.njnu.reproducibility.domain.file.dto.AddDataItemDTO;
+import edu.njnu.reproducibility.domain.file.dto.UpdateFileItemDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.*;
  */
 @CrossOrigin(origins = "*",allowCredentials = "true")
 @RestController
-@RequestMapping("/dataItems")
-public class DataItemController {
+@RequestMapping("/fileItems")
+public class FileItemController {
     @Autowired
-    DataItemService dataItemService;
+    FileItemService fileItemService;
 
 //    @RequestMapping(value = "/steps/{stepId}",method = RequestMethod.GET)
 //    public JsonResult getDataItemBystep(@PathVariable("stepId") String stepId) {
@@ -28,28 +28,28 @@ public class DataItemController {
 
     @RequestMapping(value = "",method = RequestMethod.GET)
     public JsonResult getAll(@JwtTokenParser(key="userId") String userId) {
-        return ResultUtils.success(dataItemService.getAll(userId)) ;
+        return ResultUtils.success(fileItemService.getAll(userId)) ;
     }
 
 
     @RequestMapping(value = "/creator/{projectId}",method = RequestMethod.GET)
     public JsonResult getResourcesByCreatorId( @JwtTokenParser(key="userId") String userId,@PathVariable("projectId") String projectId) {
-        return ResultUtils.success(dataItemService.getByCreatorId(userId,projectId));
+        return ResultUtils.success(fileItemService.getByCreatorId(userId,projectId));
     }
 
     //更新部分字段
     @RequestMapping(value = "/{id}", produces = {"application/json;charset=UTF-8"},method = RequestMethod.PATCH)
-    public JsonResult update(@PathVariable("id") String id,@RequestBody UpdateDataItemDTO updateDataItemDTO){
-        return dataItemService.update(id,updateDataItemDTO);
+    public JsonResult update(@PathVariable("id") String id,@RequestBody UpdateFileItemDTO updateFileItemDTO){
+        return fileItemService.update(id, updateFileItemDTO);
     }
 
     @RequestMapping(value = "",method = RequestMethod.POST)
     public JsonResult save(@RequestBody AddDataItemDTO add,@JwtTokenParser(key="userId") String userId){
-        return dataItemService.save(add,userId);
+        return fileItemService.save(add,userId);
     }
 
     @RequestMapping(value = "/{id}",method = RequestMethod.DELETE)
     public void delete(@PathVariable("id") String id){
-        dataItemService.del(id);
+        fileItemService.del(id);
     }
 }

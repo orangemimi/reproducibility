@@ -1,13 +1,11 @@
 package edu.njnu.reproducibility.domain.resource;
 
 
-import cn.hutool.json.JSON;
-import cn.hutool.json.JSONObject;
 import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
-import edu.njnu.reproducibility.domain.data.DataItemRepository;
-import edu.njnu.reproducibility.domain.data.support.DataItem;
+import edu.njnu.reproducibility.domain.file.FileItemRepository;
+import edu.njnu.reproducibility.domain.file.FileItem;
 import edu.njnu.reproducibility.domain.resource.dto.AddResourceDTO;
 import edu.njnu.reproducibility.domain.resource.dto.UpdateResourceDataDTO;
 import edu.njnu.reproducibility.domain.resource.dto.UpdateResourceModelDTO;
@@ -32,29 +30,29 @@ public class ResourceService {
     private ResourceRepository resourceRepository;
 
     @Autowired
-    DataItemRepository dataItemRepository;
+    FileItemRepository fileItemRepository;
 
     public JsonResult getResources(String userId) {
 //        List<Resource> resources =resourceRepository.findAllByProjectId(userId);
         return ResultUtils.success();
     }
 
-    public List<DataItem> getResourcesByProjectId(String projectId) {
+    public List<FileItem> getResourcesByProjectId(String projectId) {
         Resource resources = resourceRepository.findByProjectId(projectId).orElseThrow(MyException::noObject);
-        List<DataItem> dataItemList = new ArrayList<>();
-        if (resources.getDataItemCollection()==null) {
-            return dataItemList;
+        List<FileItem> fileItemList = new ArrayList<>();
+        if (resources.getResourceItemCollection()==null) {
+            return fileItemList;
         }
 
-        for (int i = 0; i < resources.getDataItemCollection().size(); i++) {
-            String dataId = resources.getDataItemCollection().get(i);
-            DataItem dataItem = dataItemRepository.findById(dataId).orElseThrow(MyException::noObject);
-            dataItemList.add(dataItem);
+        for (int i = 0; i < resources.getResourceItemCollection().size(); i++) {
+            String dataId = resources.getResourceItemCollection().get(i);
+            FileItem fileItem = fileItemRepository.findById(dataId).orElseThrow(MyException::noObject);
+            fileItemList.add(fileItem);
         }
 
 //        JSONObject jsonObject = new JSONObject();
 //        jsonObject.put()
-        return dataItemList;
+        return fileItemList;
     }
 
     public Resource updateResourceData(String pid, UpdateResourceDataDTO updateResourceDataDTO) {

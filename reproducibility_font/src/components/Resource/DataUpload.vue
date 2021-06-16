@@ -60,7 +60,7 @@ export default {
 
   methods: {
     // async getDataItem() {
-    //   let dataItem = await get(`/dataItems/${this.projectId}`);
+    //   let dataItem = await get(`/fileItems/${this.projectId}`);
     //   this.dataItemList = dataItem.filter(item => {
     //     return item.userUpload == true;
     //   });
@@ -80,7 +80,7 @@ export default {
     //   });
     // },
     // async remove(resource) {
-    //   await del(`/dataItems/${resource.id}`);
+    //   await del(`/fileItems/${resource.id}`);
     //   this.dataItemList.splice(
     //     this.dataItemList.findIndex(item => item.id === resource.id),
     //     1
@@ -100,7 +100,7 @@ export default {
     //     stepBindId: this.stepInfo.stepId,
     //     stepBindName: this.stepInfo.name
     //   };
-    //   let data = await post(`/dataItems`, list);
+    //   let data = await post(`/fileItems`, list);
     //   this.dataItemList.push(data);
     // }
   },

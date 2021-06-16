@@ -145,7 +145,7 @@ export default {
     },
 
     async remove() {
-      // await del(`/dataItems/${resource.id}`);
+      // await del(`/fileItems/${resource.id}`);
       this.form = {
         alia: '',
         name: '',
@@ -200,7 +200,7 @@ export default {
     async submit() {
       this.form.userUpload = true;
       await saveDataItem(this.form);
-      // let data = await post(`/dataItems`, this.form);
+      // let data = await post(`/fileItems`, this.form);
       // console.log(data);
       this.$notify({
         title: 'Success',

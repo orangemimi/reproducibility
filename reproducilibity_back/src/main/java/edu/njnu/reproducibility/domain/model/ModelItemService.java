@@ -40,7 +40,7 @@ public class ModelItemService {
     public JsonResult save(AddModelItemDTO add, String id) {
         ModelItem modelItem = new ModelItem();
         add.convertTo(modelItem);
-        modelItem.setUploaderId(id);
+        modelItem.setUserId(id);
         JSONObject data = remotePortalService.getModelInfo(add.getDoi());
         modelItem.setMd5(data.getStr("md5"));
 
@@ -51,7 +51,7 @@ public class ModelItemService {
     public Page<ModelItem> getAll(String userId, int currentPage, int pagesize) {
 //        PageRequest pageable =  PageRequest.of(currentPage, pagesize, Sort.Direction.DESC);
         PageRequest pageable = PageRequest.of(currentPage, pagesize);
-        Page<ModelItem> modelItemList = modelItemRepository.findAllByUploaderIdOrPrivacy(userId, "public", pageable);
+        Page<ModelItem> modelItemList = modelItemRepository.findAllByUserIdOrPrivacy(userId, "public", pageable);
         return modelItemList;
     }
 
@@ -63,7 +63,7 @@ public class ModelItemService {
 
     public Object getModelsByProvider(String userId, String privacy, int currentPage, int pagesize) {
         PageRequest pageable = PageRequest.of(currentPage, pagesize);
-        Page<ModelItem> modelItemList = modelItemRepository.findAllByUploaderId(userId, pageable);
+        Page<ModelItem> modelItemList = modelItemRepository.findAllByUserId(userId, pageable);
         return modelItemList;
     }
 

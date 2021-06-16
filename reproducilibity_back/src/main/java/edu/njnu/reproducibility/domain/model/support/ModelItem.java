@@ -26,6 +26,6 @@ public class ModelItem {
     String privacy;
     String thumbnail;
     List<String> tags;
-    String uploaderId;
+    String userId;//creator Id
     String md5;
 }

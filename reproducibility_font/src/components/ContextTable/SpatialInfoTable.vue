@@ -1,40 +1,40 @@
 <!--  -->
 <template>
   <table border="1" class="gridtable">
-    <tr>
+    <tr v-show="spatialInfoForm.spatialDimension != ''">
       <td class="title">Spatio Dimension</td>
       <td class="content" :colspan="3">
         {{ spatialInfoForm.spatialDimension }}
         <span v-show="spatialInfoForm.spatialDimension != ''">Dimension</span>
       </td>
     </tr>
-    <tr>
+    <tr v-show="spatialInfoForm.spatialScale.type != ''">
       <td class="title">Spatio Scale</td>
       <td class="content" :colspan="3">{{ spatialInfoForm.spatialScale.type }}</td>
     </tr>
-    <tr>
+    <tr v-show="spatialInfoForm.spatialReference.wkt != ''">
       <td class="title">Spatio Reference</td>
-      <td class="content" :colspan="3">{{ spatialInfoForm.spatialReference.value }}</td>
+      <td class="content" :colspan="3">{{ spatialInfoForm.spatialReference.wkt }}</td>
     </tr>
-    <tr>
-      <td class="title" :rowspan="spatialInfoForm.spatialExtentList.length == 0 ? 1 : spatialInfoForm.spatialExtentList.length + 1">Spatio Extents</td>
+    <tr v-show="spatialInfoForm.spatialExtentList.length != 0">
+      <td class="title" :rowspan="spatialInfoForm.spatialExtentList.length + 1">Spatio Extents</td>
     </tr>
 
     <!-- <tr v-if="spatialInfoForm.spatialExtentList.length == 0">
       <td class="content" :colspan="3"></td>
     </tr> -->
-    <tr v-for="(item, index) in spatialInfoForm.spatialExtentList" :key="index + 'item'">
+    <tr v-show="spatialInfoForm.spatialExtentList.length != 0" v-for="(item, index) in spatialInfoForm.spatialExtentList" :key="index + 'item'">
       <td class="content" :colspan="3">{{ item.value }}</td>
     </tr>
-    <tr>
+    <tr v-show="spatialInfoForm.resolutionConstraintList.length != 0">
       <td class="title" :rowspan="spatialInfoForm.resolutionConstraintList.length + 2">Resolution Constraint</td>
     </tr>
-    <tr>
+    <tr v-show="spatialInfoForm.resolutionConstraintList.length != 0">
       <td>Name</td>
       <td>Value</td>
       <td>Unit</td>
     </tr>
-    <tr v-for="(item, index) in spatialInfoForm.resolutionConstraintList" :key="index">
+    <tr v-show="spatialInfoForm.resolutionConstraintList.length != 0" v-for="(item, index) in spatialInfoForm.resolutionConstraintList" :key="index">
       <td class="content">{{ item.name }}</td>
       <td class="content">{{ item.value }}</td>
       <td class="content">{{ item.unit }}</td>

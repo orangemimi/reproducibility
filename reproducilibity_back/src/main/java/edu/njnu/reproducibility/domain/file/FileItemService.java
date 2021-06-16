@@ -1,13 +1,11 @@
-package edu.njnu.reproducibility.domain.data;
+package edu.njnu.reproducibility.domain.file;
 
 
-import cn.hutool.json.JSONObject;
 import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
-import edu.njnu.reproducibility.domain.data.dto.AddDataItemDTO;
-import edu.njnu.reproducibility.domain.data.dto.UpdateDataItemDTO;
-import edu.njnu.reproducibility.domain.data.support.DataItem;
+import edu.njnu.reproducibility.domain.file.dto.AddDataItemDTO;
+import edu.njnu.reproducibility.domain.file.dto.UpdateFileItemDTO;
 import edu.njnu.reproducibility.domain.project.Member;
 import edu.njnu.reproducibility.domain.project.Project;
 import edu.njnu.reproducibility.domain.project.ProjectService;
@@ -15,7 +13,6 @@ import edu.njnu.reproducibility.domain.resource.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,9 +24,9 @@ import java.util.Optional;
  * @Version 1.0.0
  */
 @Service
-public class DataItemService {
+public class FileItemService {
     @Autowired
-    private DataItemRepository dataItemRepository;
+    private FileItemRepository fileItemRepository;
     //    public JsonResult getDataItemBystep(String stepId) {
 //        List<DataItem> dataItemList=dataItemRepository.findAllByStepBindId(stepId).orElseThrow(MyException::noObject);
 //        return ResultUtils.success(dataItemList);
@@ -40,48 +37,48 @@ public class DataItemService {
     @Autowired
     ResourceService resourceService;
 
-    public List<DataItem> getAll(String userId) {
-        List<DataItem> dataItemList = dataItemRepository.findAllByUploaderId(userId);
-        return dataItemList;
+    public List<FileItem> getAll(String userId) {
+        List<FileItem> fileItemList = fileItemRepository.findAllByUploaderId(userId);
+        return fileItemList;
     }
 
 
-    public List<DataItem> getByCreatorId(String userId, String projectId) {
+    public List<FileItem> getByCreatorId(String userId, String projectId) {
         Optional<Project> project = Optional.ofNullable(projectService.get(projectId));
 
         List<Member> memberList = project.get().getMembers();
-        List<DataItem> dataItemList=new ArrayList<>();
+        List<FileItem> fileItemList =new ArrayList<>();
         for(Member member:memberList){
             //如果是其中一个的化
             if(member.getMemberId().equals(userId)){
-                dataItemList = resourceService.getResourcesByProjectId(projectId);
+                fileItemList = resourceService.getResourcesByProjectId(projectId);
             }
         }
 
-        return dataItemList;
+        return fileItemList;
     }
 
-    public JsonResult update(String id, UpdateDataItemDTO updateDataItemDTO) {
-        DataItem dataItem = dataItemRepository.findById(id).orElseThrow(MyException::noObject);
-        updateDataItemDTO.updateTo(dataItem);
-        return ResultUtils.success(dataItemRepository.save(dataItem));
+    public JsonResult update(String id, UpdateFileItemDTO updateFileItemDTO) {
+        FileItem fileItem = fileItemRepository.findById(id).orElseThrow(MyException::noObject);
+        updateFileItemDTO.updateTo(fileItem);
+        return ResultUtils.success(fileItemRepository.save(fileItem));
     }
 
     public JsonResult save(AddDataItemDTO add, String userId) {
-        DataItem dataItem = new DataItem();
-        add.convertTo(dataItem);
-        dataItem.setUploaderId(userId);
+        FileItem fileItem = new FileItem();
+        add.convertTo(fileItem);
+        fileItem.setUploaderId(userId);
 
-        return ResultUtils.success(dataItemRepository.insert(dataItem));
+        return ResultUtils.success(fileItemRepository.insert(fileItem));
     }
 
     public void del(String id) {
-        dataItemRepository.deleteById(id);
+        fileItemRepository.deleteById(id);
     }
 
-    public DataItem getById(String id) {
-        DataItem dataItem = dataItemRepository.findById(id).orElseThrow(MyException::noObject);
-        return dataItem;
+    public FileItem getById(String id) {
+        FileItem fileItem = fileItemRepository.findById(id).orElseThrow(MyException::noObject);
+        return fileItem;
     }
 
 

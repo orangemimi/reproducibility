@@ -21,7 +21,7 @@ public class Resource extends BaseEntity {
     String id;
     String userId;
     String projectId;
-    List<String> dataItemCollection;//related dataitem ids
+    List<String> resourceItemCollection;//related dataitem ids
     List<String> modelItemCollection;//related modelitem ids
     List<String> relatedDataItemCollection;//related 中间数据 ids
 

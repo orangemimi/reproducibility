@@ -12,9 +12,9 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  * @version:     1.0.0
  */
 public interface ModelItemRepository extends MongoRepository<ModelItem,String> {
-    Page<ModelItem> findAllByUploaderIdOrPrivacy(String userId, String privacy,Pageable pageable);
+    Page<ModelItem> findAllByUserIdOrPrivacy(String userId, String privacy,Pageable pageable);
     Page<ModelItem> findAllByPrivacy( String privacy,Pageable pageable);
-    Page<ModelItem> findAllByUploaderId(String userId,Pageable pageable);
+    Page<ModelItem> findAllByUserId(String userId,Pageable pageable);
 //    void deleteByTid(String tid);
 //    Optional<List<ModelItem>> findAllBy
 }

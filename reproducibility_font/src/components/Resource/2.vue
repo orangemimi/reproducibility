@@ -130,7 +130,7 @@ export default {
     //get all the data
     async getDataCollection() {
       let data = await getDataItemsByJwtUserId();
-      // let data = await get(`/dataItems`);
+      // let data = await get(`/fileItems`);
       this.dataItemList = data;
       this.dataItemListDirect = this.getDataItemListDirect();
 

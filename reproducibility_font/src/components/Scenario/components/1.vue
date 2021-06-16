@@ -792,7 +792,7 @@ export default {
         description: '',
         userUpload: false //--false是中间数据
       };
-      let data = await post(`/r/dataItems`, dataJson);
+      let data = await post(`/r/fileItems`, dataJson);
       if (data != undefined) {
         this.$message({
           message: 'You have submit the related data resource successfully',

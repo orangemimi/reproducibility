@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div class="btnList" v-if="role == 'builder'">
-      <div v-if="!isAddFolder">
+      <div>
         <div class="btn">
           <el-upload action :auto-upload="true" :show-file-list="false" ref="upload" :http-request="submitUpload">
             <el-button size="mini">
@@ -10,16 +10,8 @@
             </el-button>
           </el-upload>
         </div>
-        <div class="btn"><el-button size="mini" @click="submitBtn">Submit</el-button></div>
-        <div class="btn"><el-button size="mini" @click="addFolderShow">Add folder</el-button></div>
-      </div>
-      <div v-else>
-        <el-input v-model="folderName">
-          <template #suffix>
-            <i class="el-input__icon el-icon-check" @click="uploadFolder"></i>
-            <i class="el-input__icon el-icon-close" @click="closeAddFolder"></i>
-          </template>
-        </el-input>
+        <!-- <div class="btn"><el-button size="mini" @click="submitBtn">Add Item</el-button></div> -->
+        <div class="btn"><el-button size="mini" @click="addData">Add Item</el-button></div>
       </div>
     </div>
     <div class="row-style">
@@ -28,13 +20,9 @@
         :data="dataItemListDirect"
         tooltip-effect="dark"
         style="width: 100%"
-        @selection-change="handleSelectionChange"
-        @select="selectRow"
         max-height="350"
         :row-style="{ height: '0' }"
         :cell-style="{ padding: '4px' }"
-        row-key="id"
-        :tree-props="{ children: 'children' }"
         border
         default-expand-all
         @current-change="handleCurrentChange"
@@ -128,7 +116,7 @@ export default {
     //get all the data
     async getDataCollection() {
       let data = await getDataItemsByJwtUserId();
-      // let data = await get(`/dataItems`);
+      // let data = await get(`/fileItems`);
       this.dataItemList = data;
       this.dataItemListDirect = this.getDataItemListDirect();
 

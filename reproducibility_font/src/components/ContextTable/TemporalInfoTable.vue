@@ -2,38 +2,38 @@
 <template>
   <div>
     <table border="1" class="gridtable">
-      <tr>
+      <tr v-show="temporalInfo.temporalScale.type != ''">
         <td class="title">Temporal Scale</td>
         <td class="content" :colspan="6">{{ temporalInfo.temporalScale.type }}</td>
       </tr>
-      <tr>
+      <tr v-show="temporalInfo.temporalReference.value != ''">
         <td class="title">Temporal Reference</td>
         <td class="content" :colspan="6">{{ temporalInfo.temporalReference.value }}</td>
       </tr>
 
-      <tr>
+      <tr v-show="temporalInfo.temporalExtentList.length != 0">
         <td class="title" :rowspan="temporalInfo.temporalExtentList.length + 2">Temporal Extents</td>
       </tr>
-      <tr>
+      <tr v-show="temporalInfo.temporalExtentList.length != 0">
         <td :colspan="3">From</td>
         <td :colspan="3">To</td>
       </tr>
 
-      <tr v-for="(extent, indexExtent) in temporalInfo.temporalExtentList" :key="indexExtent + 'extent'">
+      <tr v-show="temporalInfo.temporalExtentList.length != 0" v-for="(extent, indexExtent) in temporalInfo.temporalExtentList" :key="indexExtent + 'extent'">
         <td class="content" :colspan="3">{{ extent.from }}</td>
         <td class="content" :colspan="3">{{ extent.to }}</td>
       </tr>
 
-      <tr>
+      <tr v-show="temporalInfo.stepConstraintList.length != 0">
         <td class="title" :rowspan="temporalInfo.stepConstraintList.length + 2">Step Constraint</td>
       </tr>
-      <tr>
+      <tr v-show="temporalInfo.stepConstraintList.length != 0">
         <td :colspan="2">Name</td>
         <td :colspan="2">Value</td>
         <td :colspan="2">Unit</td>
       </tr>
 
-      <tr v-for="(item, index) in temporalInfo.stepConstraintList" :key="index">
+      <tr v-show="temporalInfo.stepConstraintList.length != 0" v-for="(item, index) in temporalInfo.stepConstraintList" :key="index">
         <td class="content" :colspan="2">{{ item.name }}</td>
         <td class="content" :colspan="2">{{ item.value }}</td>
         <td class="content" :colspan="2">{{ item.unit }}</td>

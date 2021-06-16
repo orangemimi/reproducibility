@@ -1,14 +1,12 @@
-package edu.njnu.reproducibility.domain.data.dto;
+package edu.njnu.reproducibility.domain.file.dto;
 
 import edu.njnu.reproducibility.common.dto.ToDomainConverter;
-import edu.njnu.reproducibility.domain.data.support.DataItem;
+import edu.njnu.reproducibility.domain.file.FileItem;
 //import edu.njnu.reproducibility.domain.context.support.SpatioTemporalInfo;
 import lombok.Data;
 
-import java.util.ArrayList;
-
 @Data
-public class AddDataItemDTO implements ToDomainConverter<DataItem> {
+public class AddDataItemDTO implements ToDomainConverter<FileItem> {
     String name;
     String alia;//别名
     String suffix;//suffix

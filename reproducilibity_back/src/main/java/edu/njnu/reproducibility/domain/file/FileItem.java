@@ -1,11 +1,10 @@
-package edu.njnu.reproducibility.domain.data.support;
+package edu.njnu.reproducibility.domain.file;
 
 import edu.njnu.reproducibility.common.entity.BaseEntity;
 //import edu.njnu.reproducibility.domain.context.support.SpatioTemporalInfo;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.ArrayList;
 
@@ -16,7 +15,7 @@ import java.util.ArrayList;
  */
 @Data
 @Document(collection = "DataItems")
-public class DataItem extends BaseEntity {
+public class FileItem extends BaseEntity {
     @Id
     String id;
     String name;
@@ -42,7 +41,7 @@ public class DataItem extends BaseEntity {
 //    Boolean hasChildren;
     //存储父资源的 uuid
     String parent;
-    ArrayList<DataItem> children;
+    ArrayList<FileItem> children;
 
 
 

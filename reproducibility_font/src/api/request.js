@@ -140,26 +140,26 @@ export async function updateResource(projectId, form) {
 //-----------------------------------------------dataitems---------------------------------------------
 
 export async function saveDataItem(form) {
-  let data = await post(`/dataItems`, form);
+  let data = await post(`/fileItems`, form);
   if (data != null) {
     successNotification('save', 'data items');
   }
   return data;
 }
 export async function updateDataItemById(id, form) {
-  return await patch(`/dataItems/${id}`, form);
+  return await patch(`/fileItems/${id}`, form);
 }
 
 export async function deleteDataItemById(id) {
-  await del(`/dataItems/${id}`);
+  await del(`/fileItems/${id}`);
 }
 
 export async function getDataItemsByJwtUserId() {
-  return await get(`/dataItems`);
+  return await get(`/fileItems`);
 }
 
 export async function getDataItemByCreatorId(projectId) {
-  return await get(`/dataItems/creator/${projectId}`);
+  return await get(`/fileItems/creator/${projectId}`);
 }
 
 //-----------------------------------------------dataContainer---------------------------------------------

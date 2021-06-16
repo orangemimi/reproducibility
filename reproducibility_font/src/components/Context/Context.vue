@@ -1,10 +1,9 @@
 <template>
   <div class="main">
-    <!-- {{ contextForm }} -->
     <vue-scroll style="height: calc(42vh) " :ops="ops">
-      <el-form ref="contextForm" :model="contextForm" label-width="110px" @submit.native.prevent size="mini">
-        <el-row>
-          <el-col span="12">
+      <el-form ref="contextForm" :model="contextForm" @submit.native.prevent size="mini" label="top" style="margin:0 10px">
+        <el-row :gutter="20">
+          <el-col :span="12">
             <el-form-item label="Theme">
               <el-input v-if="tagInputVisible" v-model="themeTag" ref="tagInput" @keyup.enter.native="addTags" @blur="addTags" style="width: 300px"></el-input>
               <el-button v-else @click="showTagInput" type="text" size="small">+ New Tag</el-button>
@@ -15,28 +14,28 @@
               </div>
             </el-form-item>
             <el-form-item label="Purpose">
-              <el-input v-model="contextForm.purpose" placeholder="Please enter the content."></el-input>
+              <el-input v-model="contextForm.purpose" placeholder="Please enter the content." type="textarea" maxlength="50" show-word-limit></el-input>
             </el-form-item>
-            <el-form-item label="Object">
+            <!-- <el-form-item label="Object">
               <el-input v-model="contextForm.objects" placeholder="Please enter the content."></el-input>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="Spatio scale">
               <el-button @click="addSpatialInfodialogVisible = true" size="mini" class="spatioEdit">Edit</el-button>
               <spatial-info-table :spatialInfoForm="spatialInfoForm"></spatial-info-table>
             </el-form-item>
           </el-col>
 
-          <el-col span="12">
+          <el-col :span="12" style="margin-top:50px">
             <el-form-item label="Temporal scale">
               <el-button @click="addTemporalInfodialogVisible = true" size="mini" class="temporalEdit">Edit</el-button>
               <!-- {{ temporalInfoForm }} -->
               <temporal-info-table :temporalInfoForm="temporalInfoForm"></temporal-info-table>
             </el-form-item>
-            <el-form-item label="Method">
+            <!-- <el-form-item label="Method">
               <el-input v-model="contextForm.methods" placeholder="Please enter the content."></el-input>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="Discussion">
-              <el-input v-model="contextForm.discussion" placeholder="Please enter the content."></el-input>
+              <el-input v-model="contextForm.discussion" placeholder="Please enter the content." type="textarea" maxlength="50" show-word-limit></el-input>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="submitContext">Submit</el-button>
@@ -94,6 +93,7 @@
 
         <el-form-item label="Resolution Constraint">
           <template>
+            <el-button size="mini" @click="addSpatialConstraint" style="position: absolute;left: -60px; top: 30px;">Add</el-button>
             <el-table
               :data="spatialInfoForm.resolutionConstraintList"
               border
@@ -103,14 +103,23 @@
               :header-row-style="{ height: '40px' }"
               :header-cell-style="{ padding: '0px' }"
             >
-              <el-table-column prop="name" label="name" width="60"></el-table-column>
-              <el-table-column prop="value" label="value" width="200">
+              <el-table-column prop="name" label="name" width="150">
+                <template #default="scope">
+                  <el-input v-model="scope.row.name"></el-input>
+                </template>
+              </el-table-column>
+              <el-table-column prop="value" label="value" width="150">
                 <template #default="scope">
                   <el-input v-model="scope.row.value"></el-input>
                 </template>
               </el-table-column>
               <el-table-column prop="unit" label="unit">
                 <template #default="scope"><el-input v-model="scope.row.unit"></el-input></template>
+              </el-table-column>
+              <el-table-column label="edit" width="100">
+                <template #default="scope">
+                  <el-button size="mini" @click="deleteConstraint(scope)">Delete</el-button>
+                </template>
               </el-table-column>
             </el-table>
           </template>
@@ -244,10 +253,7 @@ export default {
           description: ''
         },
         spatialExtentList: [],
-        resolutionConstraintList: [
-          { name: 'x', value: '', unit: '' },
-          { name: 'y', value: '', unit: '' }
-        ]
+        resolutionConstraintList: []
       },
 
       temporalInfoForm: {
@@ -413,6 +419,15 @@ export default {
     },
     otherTemplateReference() {
       this.otherTemplateReferenceVisible = true;
+    },
+    addSpatialConstraint() {
+      this.spatialInfoForm.resolutionConstraintList.push({ name: '', value: '', unit: '' });
+    },
+
+    deleteConstraint(row) {
+      console.log(row.$index);
+      console.log(this.spatialInfoForm.resolutionConstraintList);
+      this.spatialInfoForm.resolutionConstraintList.splice(row.$index);
     }
   },
   created() {
@@ -422,18 +437,18 @@ export default {
 </script>
 <style lang="scss" scoped>
 .main {
-  margin: 0 20px;
+  margin: 0 10px;
   height: 100%;
-  .spatioEdit {
-    position: absolute;
-    left: -60px;
-    top: 30px;
-  }
-  .temporalEdit {
-    position: absolute;
-    left: -60px;
-    top: 30px;
-  }
+  // .spatioEdit {
+  //   position: absolute;
+  //   left: -60px;
+  //   top: 30px;
+  // }
+  // .temporalEdit {
+  //   position: absolute;
+  //   left: -60px;
+  //   top: 30px;
+  // }
 
   .spatialDialog {
     .spatialForm {

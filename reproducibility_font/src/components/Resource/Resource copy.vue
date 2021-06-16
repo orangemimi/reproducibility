@@ -3,23 +3,6 @@
     <div class="btnList" v-if="role == 'builder'">
       <div v-if="!isAddFolder">
         <div class="btn">
-          <!-- <el-button size="mini" @click="uploadDataDialogShow = true">
-            Upload
-          </el-button> -->
-          <!-- <el-upload
-            class="upload-demo"
-            action="https://jsonplaceholder.typicode.com/posts/"
-            :on-preview="handlePreview"
-            :on-remove="handleRemove"
-            :before-remove="beforeRemove"
-            multiple
-            :limit="3"
-            :on-exceed="handleExceed"
-            :file-list="fileList"
-          >
-            <el-button size="small" type="primary">点击上传</el-button>
-          </el-upload> -->
-
           <el-upload action :auto-upload="true" :show-file-list="false" ref="upload" :http-request="submitUpload">
             <el-button size="mini">
               <i class="el-icon-upload"></i>
@@ -60,11 +43,7 @@
         <template slot="empty">
           Please upload a file
         </template>
-        <el-table-column type="selection" width="50" v-if="role == 'builder'">
-          <template slot-scope="scope">
-            <el-checkbox v-model="scope.row.checked" :label="scope.row.name" :key="scope.row.id" @change="handleCheckAllChange(scope)"></el-checkbox>
-          </template>
-        </el-table-column>
+        <el-table-column type="selection" width="50" v-if="role == 'builder'"></el-table-column>
 
         <el-table-column label="Name" show-overflow-tooltip>
           <template #default="scope">
@@ -73,16 +52,16 @@
             <span v-show="scope.row.folder == false">.{{ scope.row.suffix }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Type" show-overflow-tooltip>
+        <el-table-column label="Type" show-overflow-tooltip width="70">
           <template #default="scope">
             <span v-show="scope.row.folder == true">Folder</span>
             <span v-show="scope.row.folder == false">File</span>
           </template>
         </el-table-column>
-        <el-table-column label="File size" width="100">
+        <el-table-column label="File size" width="80">
           <template #default="scope">{{ scope.row.fileSize }}</template>
         </el-table-column>
-        <el-table-column label="Upload time" width="180" show-overflow-tooltip>
+        <el-table-column label="Upload time" width="160" show-overflow-tooltip>
           <template #default="scope">{{ scope.row.createTime }}</template>
         </el-table-column>
       </el-table>
@@ -96,7 +75,7 @@
 </template>
 
 <script>
-import { getDataItemsByJwtUserId, getResourcesById, updateResource, updatePerformanceById, getDataItemByCreatorId, saveDataItem, updateDataItemById, postDataContainer } from '@/api/request';
+import { getDataItemsByJwtUserId, updateResource, updatePerformanceById, getDataItemByCreatorId, saveDataItem, updateDataItemById, postDataContainer } from '@/api/request';
 // import dataUpload from './DataUpload'; //dialogcontent
 import dataUploadInfo from './DataUploadInfo'; //dialogcontent
 import { getUuid, getSuffix, renderSize, getTime } from '@/utils/utils';
@@ -152,6 +131,7 @@ export default {
       // let data = await get(`/fileItems`);
       this.dataItemList = data;
       this.dataItemListDirect = this.getDataItemListDirect();
+
       await this.getSelectedData();
     },
 
@@ -169,25 +149,18 @@ export default {
       return [];
     },
 
-    //get resources
-    async getSelectedData() {
-      let data = await getResourcesById(this.projectId);
-
-      let dataSelected = data;
-
-      this.multipleSelection = this.dataItemListDirect.filter(item => dataSelected.some(selection => selection.id == item.id));
-      this.toggleSelection(this.multipleSelection);
-    },
-
     //init table selection
     toggleSelection(rows) {
       if (rows) {
-        rows.forEach(row => {
-          this.$refs.multipleTable.toggleRowSelection(row);
+        this.$nextTick(() => {
+          rows.forEach(row => {
+            this.$refs.multipleTable.toggleRowSelection(row);
+          });
         });
       } else {
         this.$refs.multipleTable.clearSelection();
       }
+      this.$forceUpdate();
     },
 
     //selection change
@@ -197,98 +170,31 @@ export default {
     },
 
     selectRow(selection, row) {
-      console.log('multi', this.multipleSelection);
-      console.log(selection, row);
-      let val = selection[0];
-      if (val.folder && val.children.length != 0 && val.children != null) {
-        this.multipleSelection.push(val.children);
-      }
-      console.log('selection', this.multipleSelection);
-    },
-
-    handleCheckAllChange(scope) {
-      // 查找父级函数
-      console.log(scope.row);
-      // 如果有子项，则子项的选框选择跟当前一致
-      if (scope.row.children) {
-        this.handleCheckAll(scope.row, scope.row.checked);
-      }
-      // 查找父级选框
-      this.getParent(this.tableData, scope.row.id).forEach(item => {
-        // 判断父级是否有子元素
-        console.log(item);
-        if (!item.children) {
-          item.checked = scope.row.checked;
-        } else {
-          var num = 0;
-          item.children.forEach(item => {
-            // 判断子元素的checked是否为true, 并记录选中的数量
-            if (item.checked === true) {
-              num += 1;
-            }
+      let val = row;
+      // this.multipleSelection.push(row);
+      if (selection.some(el => el == row)) {
+        if (val.folder && val.children.length != 0 && val.children != null) {
+          val.children.forEach(child => {
+            this.multipleSelection.push(child);
           });
-          // 判断子元素的checked 是否全部 为true(true是选中) 如果是全部选中，那么将父元素的checked状态改成true，否则为false
-          if (num === item.children.length) {
-            item.checked = true;
-          } else {
-            item.checked = false;
-          }
         }
-      });
-
-      // 是否所有子项都已经勾选
-      if (this.isCheckAllEv(this.tableData) === true) {
-        this.checkPageAll = true;
       } else {
-        this.checkPageAll = false;
+        if (val.folder && val.children.length != 0 && val.children != null) {
+          val.children.forEach(child => {
+            this.multipleSelection.splice(item => item.id == child.id);
+          });
+        }
       }
-    },
-    // 将子元素的状态 改成和父元素的状态一样
-    handleCheckAll(row, checked) {
-      row.checked = checked;
-      if (row.children) {
-        let that = this;
-        row.children.forEach((element, i) => {
-          that.handleCheckAll(row.children[i], checked);
-        });
-      }
-    },
 
-    // 查找父级函数
-    getParent(data2, nodeId2) {
-      var arrRes = [];
-      if (data2.length === 0) {
-        if (nodeId2) {
-          arrRes.push(data2);
-        }
-        return arrRes;
-      }
-      let rev = (data, nodeId) => {
-        for (var i = 0, length = data.length; i < length; i++) {
-          let node = data[i];
-          if (nodeId === data[i].id) {
-            arrRes.push(node);
-            rev(data2, node.p_id);
-            break;
-          } else {
-            if (node.children) {
-              rev(node.children, nodeId);
-            }
-          }
-        }
-        return arrRes;
-      };
-      arrRes = rev(data2, nodeId2);
-      return arrRes;
+      console.log('selection', this.multipleSelection);
+      this.toggleSelection(this.multipleSelection);
     },
-    //get select
 
     handleCurrentChange(row) {
       this.currentRow = row;
     },
     cancleCurrentRow() {
       this.currentRow = '';
-      console.log('currnetrow', this.currentRow);
     },
 
     async getDataAsOperator() {
@@ -384,7 +290,7 @@ export default {
     },
 
     collapseClass(params) {
-      return params.folder === true ? 'el-icon-phone' : 'el-icon-delete';
+      return params.folder === true ? 'el-icon-folder' : 'el-icon-document';
     }
   },
   async mounted() {
