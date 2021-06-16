@@ -1,11 +1,12 @@
-package edu.njnu.reproducibility.domain.resource;
+package edu.njnu.reproducibility.domain.dataItem;
 
 
 import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
-import edu.njnu.reproducibility.domain.file.FileItemRepository;
 import edu.njnu.reproducibility.domain.file.FileItem;
+import edu.njnu.reproducibility.domain.file.FileItemRepository;
+import edu.njnu.reproducibility.domain.resource.Resource;
 import edu.njnu.reproducibility.domain.resource.dto.AddResourceDTO;
 import edu.njnu.reproducibility.domain.resource.dto.UpdateResourceDataDTO;
 import edu.njnu.reproducibility.domain.resource.dto.UpdateResourceModelDTO;
@@ -25,9 +26,9 @@ import java.util.List;
  * @Version 1.0.0
  */
 @Service
-public class ResourceService {
+public class DataItemService {
     @Autowired
-    private ResourceRepository resourceRepository;
+    private DataItemRepository dataItemRepository;
 
     @Autowired
     FileItemRepository fileItemRepository;
@@ -38,7 +39,7 @@ public class ResourceService {
     }
 
     public List<FileItem> getResourcesByProjectId(String projectId) {
-        Resource resources = resourceRepository.findByProjectId(projectId).orElseThrow(MyException::noObject);
+        Resource resources = dataItemRepository.findByProjectId(projectId).orElseThrow(MyException::noObject);
         List<FileItem> fileItemList = new ArrayList<>();
         if (resources.getDataItemCollection()==null) {
             return fileItemList;
@@ -56,21 +57,21 @@ public class ResourceService {
     }
 
     public Resource updateResourceData(String pid, UpdateResourceDataDTO updateResourceDataDTO) {
-        Resource resource = resourceRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
+        Resource resource = dataItemRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
         updateResourceDataDTO.updateTo(resource);
-        return resourceRepository.save(resource);
+        return dataItemRepository.save(resource);
     }
 
     public Resource updateResourceRelatedData(String pid, UpdateResourceRelatedDataDTO update) {
-        Resource resource = resourceRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
+        Resource resource = dataItemRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
         update.updateTo(resource);
-        return resourceRepository.save(resource);
+        return dataItemRepository.save(resource);
     }
 
     public Resource updateResourceModel(String pid, UpdateResourceModelDTO updateResourceModelDTO) {
-        Resource resource = resourceRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
+        Resource resource = dataItemRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
         updateResourceModelDTO.updateTo(resource);
-        return resourceRepository.save(resource);
+        return dataItemRepository.save(resource);
     }
 
 
@@ -78,7 +79,7 @@ public class ResourceService {
         Resource resource = new Resource();
         add.convertTo(resource);
         resource.setUserId(userId);
-        return resourceRepository.insert(resource);
+        return dataItemRepository.insert(resource);
     }
 
     public Object uploadPicture(MultipartFile upload, String userId) {

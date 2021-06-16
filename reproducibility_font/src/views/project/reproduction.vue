@@ -105,7 +105,7 @@
 <script>
 // import stepCard from '_com/StepCard';
 // import recordList from '_com/RecordList';
-import { getProjectAndUsers, getPerformanceByProjectId, getContextByProjectId, getDataItemByCreatorId } from '@/api/request';
+import { getProjectAndUsers, getPerformanceByProjectId, getContextByProjectId, getFileItemByCreatorId } from '@/api/request';
 import { dateFormat } from '@/utils/utils';
 
 import ReScenarioContent from '_com/Scenario/reScenario';
@@ -165,7 +165,7 @@ export default {
     },
 
     async getDataAsOperator() {
-      let data = await getDataItemByCreatorId(this.projectId);
+      let data = await getFileItemByCreatorId(this.projectId);
       this.dataItemListFromResource = data;
       this.$refs.multipleTable.toggleAllSelection();
       // console.log('DATA', data);

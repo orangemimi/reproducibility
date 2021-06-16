@@ -1,6 +1,6 @@
-package edu.njnu.reproducibility.domain.resourceItem.parameterSupport;
+package edu.njnu.reproducibility.domain.dataItem.support;
 
-import edu.njnu.reproducibility.domain.resourceItem.ParameterResource;
+import edu.njnu.reproducibility.domain.dataItem.ParameterData;
 import lombok.Data;
 
 /**
@@ -11,7 +11,7 @@ import lombok.Data;
  * @Version 1.0.0
  */
 @Data
-public class SliderParameter  extends ParameterResource {
+public class SliderParameter  extends ParameterData {
     public String max;
     public String min;
     public String step;

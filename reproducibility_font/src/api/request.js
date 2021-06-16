@@ -146,19 +146,19 @@ export async function saveDataItem(form) {
   }
   return data;
 }
-export async function updateDataItemById(id, form) {
+export async function updateFileItemById(id, form) {
   return await patch(`/fileItems/${id}`, form);
 }
 
-export async function deleteDataItemById(id) {
+export async function deleteFileItemById(id) {
   await del(`/fileItems/${id}`);
 }
 
-export async function getDataItemsByJwtUserId() {
+export async function getFileItemsByJwtUserId() {
   return await get(`/fileItems`);
 }
 
-export async function getDataItemByCreatorId(projectId) {
+export async function getFileItemByCreatorId(projectId) {
   return await get(`/fileItems/creator/${projectId}`);
 }
 

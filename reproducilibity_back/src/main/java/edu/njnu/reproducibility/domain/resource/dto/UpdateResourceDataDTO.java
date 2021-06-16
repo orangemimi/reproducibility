@@ -13,5 +13,5 @@ import java.util.List;
  */
 @Data
 public class UpdateResourceDataDTO implements ToDomainConverter<Resource> {
-    List<String> resourceItemCollection;
+    List<String> dataItemCollection;
 }

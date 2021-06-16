@@ -1,6 +1,6 @@
-package edu.njnu.reproducibility.domain.resourceItem.parameterSupport;
+package edu.njnu.reproducibility.domain.dataItem.support;
 
-import edu.njnu.reproducibility.domain.resourceItem.ParameterResource;
+import edu.njnu.reproducibility.domain.dataItem.ParameterData;
 import lombok.Data;
 
 import java.util.Map;
@@ -13,7 +13,7 @@ import java.util.Map;
  * @Version 1.0.0
  */
 @Data
-public class SelectParameter  extends ParameterResource {
+public class SelectParameter  extends ParameterData {
     public Map<String,String> keyValue;
     public String defaultValue;
 }

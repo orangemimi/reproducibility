@@ -77,7 +77,7 @@
 </template>
 
 <script>
-import { getDataItemsByJwtUserId, getResourcesById, updateResource, updatePerformanceById, getDataItemByCreatorId, saveDataItem, updateDataItemById, postDataContainer } from '@/api/request';
+import { getFileItemsByJwtUserId, getResourcesById, updateResource, updatePerformanceById, getFileItemByCreatorId, saveDataItem, updateFileItemById, postDataContainer } from '@/api/request';
 // import dataUpload from './DataUpload'; //dialogcontent
 import dataUploadInfo from './DataUploadInfo'; //dialogcontent
 import { getUuid, getSuffix, renderSize, getTime } from '@/utils/utils';
@@ -129,7 +129,7 @@ export default {
 
     //get all the data
     async getDataCollection() {
-      let data = await getDataItemsByJwtUserId();
+      let data = await getFileItemsByJwtUserId();
       // let data = await get(`/fileItems`);
       this.dataItemList = data;
       this.dataItemListDirect = this.getDataItemListDirect();
@@ -288,7 +288,7 @@ export default {
     },
 
     async getDataAsOperator() {
-      let data = await getDataItemByCreatorId(this.projectId);
+      let data = await getFileItemByCreatorId(this.projectId);
       this.dataItemListFromResource = data;
       this.$refs.multipleTable.toggleAllSelection();
       // console.log('DATA', data);
@@ -377,7 +377,7 @@ export default {
           parentData.children = [];
         }
         parentData.children.push(form);
-        await updateDataItemById(parentData.id, parentData);
+        await updateFileItemById(parentData.id, parentData);
       }
     },
 

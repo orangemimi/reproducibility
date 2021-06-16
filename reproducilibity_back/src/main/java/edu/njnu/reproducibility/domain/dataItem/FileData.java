@@ -1,4 +1,4 @@
-package edu.njnu.reproducibility.domain.resourceItem;
+package edu.njnu.reproducibility.domain.dataItem;
 
 import lombok.Data;
 
@@ -9,6 +9,6 @@ import lombok.Data;
  * @version: 1.0.0
  */
 @Data
-public class FileResource extends ResourceItem{
+public class FileData extends DataItem {
     public String url;//fileitem url
 }

@@ -196,7 +196,7 @@ export default {
     },
 
     //data item保存到数据库
-    //上传数据直接保存到dataItems,即用户的资源可全部显示，之后选择所需的数据，之后保存选择的数据之后 保存到resource数据表里面去
+    //上传数据直接保存到fileItems,即用户的资源可全部显示，之后选择所需的数据，之后保存选择的数据之后 保存到resource数据表里面去
     async submit() {
       this.form.userUpload = true;
       await saveDataItem(this.form);
