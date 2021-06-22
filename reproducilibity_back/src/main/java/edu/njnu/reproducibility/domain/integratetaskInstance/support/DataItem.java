@@ -14,6 +14,6 @@ public class DataItem {
     String name;
     String description;
     String reference;
-    String key;//linked event id
-    String value;
+//    String key;//linked event id
+//    String value;
 }

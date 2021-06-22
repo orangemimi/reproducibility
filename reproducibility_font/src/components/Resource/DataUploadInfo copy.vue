@@ -1,7 +1,7 @@
 <!-- data upload information -->
 <template>
   <div class="main">
-    <el-form class="resource" ref="form" :model="form" label-width="100px" size="mini">
+    <el-form class="resource" ref="form" :model="form" label-width="100px">
       <el-form-item label="Name">
         <el-input v-model="form.name"></el-input>
       </el-form-item>
@@ -10,11 +10,7 @@
         <el-input v-model="form.description"></el-input>
       </el-form-item>
 
-      <el-form-item label="Keywords">
-        <el-input v-model="form.keywords"></el-input>
-      </el-form-item>
-
-      <!-- <el-form-item label="Source" class="source">
+      <el-form-item label="Source" class="source">
         <el-button icon="el-icon-circle-plus-outline" @click="addNode"></el-button>
 
         <div class="tree">
@@ -27,23 +23,24 @@
             </template>
           </vue-tree-list>
         </div>
-      </el-form-item> -->
+      </el-form-item>
 
-      <el-form-item label="State">
-        <el-radio-group v-model="form.state">
-          <el-radio label="Public">Public</el-radio>
-          <el-radio label="Private">Private</el-radio>
+      <el-form-item label="Privacy">
+        <el-radio-group v-model="form.privacy">
+          <el-radio label="public">Public</el-radio>
+          <el-radio label="discoverable">Discoverable</el-radio>
+          <el-radio label="private">Private</el-radio>
         </el-radio-group>
       </el-form-item>
 
-      <!-- <el-form-item label="Restriction">
-       
-      </el-form-item> -->
+      <el-form-item label="Image">
+        <add-image @uploadImgResponse="uploadImgResponse" :uploadPath="'resources/picture'"></add-image>
+      </el-form-item>
 
-      <el-form-item class="file" label="Data">
-        <el-tabs v-model="activeName" type="border-card" size="mini">
-          <el-tab-pane label="Upload File" name="file" style="height:300px">
-            <div class="drag" v-if="form.format == 'file'">
+      <el-form-item class="file">
+        <el-tabs v-model="activeName" type="card" size="mini">
+          <el-tab-pane label="Upload File" name="file" style="height:140px">
+            <div class="drag" v-if="form.address == ''">
               <el-upload drag action :auto-upload="true" :show-file-list="false" ref="upload" :http-request="submitUpload" :on-remove="handleRemove">
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">
@@ -58,72 +55,11 @@
                 <i class="el-icon-close" @click="remove"></i>
               </div>
             </div>
-            <div>
-              <spatial-info-table :spatialInfoForm="spatialInfoForm"></spatial-info-table>
-            </div>
-            <div>
-              <temporal-info-table :temporalInfoForm="temporalInfoForm"></temporal-info-table>
-            </div>
           </el-tab-pane>
-          <el-tab-pane label="Parameter" name="parameter" style="height:200px">
-            <el-radio-group v-model="form.type">
-              <el-radio label="Input"></el-radio>
-              <el-radio label="Date"></el-radio>
-            </el-radio-group>
-
-            <div v-if="form.type == 'Input'"><el-input v-model="form.value"></el-input></div>
-            <div v-else><el-date-picker v-model="value1" type="date" placeholder="Select the date"></el-date-picker></div>
-            <el-form ref="formRestriction" :model="form" label-width="100px" size="mini">
-              <el-form-item label="Type">
-                <el-radio-group v-model="form.restriction.type" v-for="(item, index) in typeEnums" :key="index">
-                  <el-radio :label="item"></el-radio>
-                </el-radio-group>
-              </el-form-item>
-              <el-form-item label="Decimal">
-                <el-input v-model="form.restriction.decimal"></el-input>
-              </el-form-item>
-              <!-- <el-form-item v-model="form.restriction.content"></el-form-item> -->
-              <el-form-item label="Unit">
-                {{ form.restriction.unit }}
-                <el-button size="mini" @click="drawer = true">Add Unit</el-button>
-              </el-form-item>
-            </el-form>
-          </el-tab-pane>
-          <el-tab-pane label="Shared File" name="sharedFile" style="height:140px">
-            <el-input v-model="form.value"></el-input>
-
-            <div>
-              <spatial-info-table :spatialInfoForm="spatialInfoForm"></spatial-info-table>
-            </div>
-            <div>
-              <temporal-info-table :temporalInfoForm="temporalInfoForm"></temporal-info-table>
-            </div>
+          <el-tab-pane label="Input Url" name="address" style="height:140px">
+            <el-input></el-input>
           </el-tab-pane>
         </el-tabs>
-      </el-form-item>
-
-      <el-form-item label="Version">
-        <el-input v-model="form.version"></el-input>
-      </el-form-item>
-      <el-form-item label="Reference">
-        <el-input v-model="form.agentAttribute.reference"></el-input>
-      </el-form-item>
-
-      <el-form-item label="Organization">
-        <!-- <el-input v-model="form.agentAttribute.organization">
-          <el-button slot="append" icon="el-icon-search" @click="addDescription">Add description</el-button>
-        </el-input> -->
-
-        <div class="tree">
-          <vue-tree-list @click="onClick" @delete-node="onDel" :model="treeData" default-tree-node-name="new node" default-leaf-node-name="new leaf" v-bind:default-expanded="false">
-            <template v-slot:leafNameDisplay="slotProps" class="content">
-              <div class="name">
-                {{ slotProps.model.name }}
-              </div>
-              <div class="value">{{ slotProps.model.value }}</div>
-            </template>
-          </vue-tree-list>
-        </div>
       </el-form-item>
     </el-form>
 
@@ -131,26 +67,22 @@
       <el-button @click="submit">Submit</el-button>
     </div>
 
-    <unit-drawer :drawer="drawer" @selectUnit="selectUnit" @closeDrawer="closeDrawer"></unit-drawer>
+    <!-- <el-dialog :visible.sync="addChildDialogShow" width="50%" title="Configuration">
+      <add-child-value @getChildForm="getChildForm" />
+    </el-dialog> -->
   </div>
 </template>
 
 <script>
 import { post } from '@/axios';
 import { saveFileItem } from '@/api/request';
-// import addImage from '_com/AddImage';
+import addImage from '_com/AddImage';
 import { VueTreeList, Tree, TreeNode } from '_com/TreeDescription';
-import temporalInfoTable from '_com/ContextTable/TemporalInfoTable';
-import spatialInfoTable from '_com/ContextTable/SpatialInfoTable';
-import unitDrawer from '_com/UnitDrawer/UnitDrawer';
 
 export default {
   components: {
-    // addImage,
-    VueTreeList,
-    temporalInfoTable,
-    spatialInfoTable,
-    unitDrawer
+    addImage,
+    VueTreeList
     // addChildValue
   },
 
@@ -160,42 +92,15 @@ export default {
       form: {
         alia: '',
         name: '',
-        type: 'Input',
+        type: '',
         description: '',
         privacy: 'discoverable',
         folder: false,
-        agentAttribute: {
-          organization: '',
-          reference: ''
-        },
-        activityAttribute: {
-          relatedActivity: {
-            name: '',
-            description: ''
-          },
-          relatedResource: {
-            name: '',
-            description: ''
-          },
-          relationshipLink: {
-            description: ''
-          }
-        },
+        source: '',
         thumbnail: '',
         userUpload: '',
-        address: '',
-        state: 'Public',
-        version: '1.0',
-        format: 'file',
-        restriction: {
-          type: '',
-          decimal: '',
-          content: '',
-          unit: ''
-        }
+        address: ''
       },
-
-      typeEnums: ['String', 'Number', 'Date'],
 
       uploadFileForm: new FormData(), //上传文件的form
       fileList: [], //el-upload上传的文件列表,
@@ -209,47 +114,22 @@ export default {
       nodeInfo: this.nodeInformation,
 
       //tree
-      treeData: new Tree([
+      data: new Tree([
         {
-          name: 'Name',
-          value: 'Description',
+          name: 'Agent',
+          value: '',
           id: 1,
+          pid: 0
+        },
+        {
+          name: 'Activity',
+          value: '',
+          id: 3,
           pid: 0
         }
       ]),
       // addChildDialogShow: false
-      activeName: 'file',
-      spatialInfoForm: {
-        enable: false,
-        spatialReference: {
-          general: '',
-          wkt: ''
-        },
-        spatialDimension: '',
-        spatialScale: {
-          type: '',
-          description: ''
-        },
-        spatialExtentList: [],
-        resolutionConstraintList: []
-      },
-
-      temporalInfoForm: {
-        enable: false,
-        temporalScale: {
-          type: '',
-          description: ''
-        },
-        temporalReference: {
-          value: ''
-        },
-        temporalExtentList: [],
-        stepConstraintList: []
-      },
-
-      //unit drawer
-      showUnitDrawer: false,
-      drawer: false
+      activeName: 'file'
     };
   },
 
@@ -319,7 +199,6 @@ export default {
     //上传数据直接保存到fileItems,即用户的资源可全部显示，之后选择所需的数据，之后保存选择的数据之后 保存到resource数据表里面去
     async submit() {
       this.form.userUpload = true;
-      this.form.organizaiton = this.treeData;
       await saveFileItem(this.form);
       // let data = await post(`/fileItems`, this.form);
       // console.log(data);
@@ -345,13 +224,6 @@ export default {
     onClick(params) {
       // eslint-disable-next-line no-console
       console.log(params);
-    },
-
-    closeDrawer() {
-      this.drawer = false;
-    },
-    selectUnit(val) {
-      this.form.restriction.unit = val.name;
     }
   },
 
@@ -362,7 +234,6 @@ export default {
 .main {
   height: 100%;
   width: 100%;
-
   // position: relative;
   .file {
     /deep/.el-tabs__item {

@@ -3,7 +3,7 @@
     <div class="btnList" v-if="role == 'builder'">
       <div>
         <div class="btn">
-          <el-upload action :auto-upload="true" :show-file-list="false" ref="upload" :http-request="submitUpload">
+          <el-upload action :auto-upload="true" :show-data-list="false" ref="upload" :http-request="submitUpload">
             <el-button size="mini">
               <i class="el-icon-upload"></i>
               Upload
@@ -24,14 +24,37 @@
         :row-style="{ height: '0' }"
         :cell-style="{ padding: '4px' }"
         border
-        default-expand-all
-        @current-change="handleCurrentChange"
-        highlight-current-row
+        type="expand"
       >
         <template slot="empty">
-          Please upload a file
+          Please upload a data
         </template>
-        <el-table-column type="selection" width="50" v-if="role == 'builder'"></el-table-column>
+        <template #default="scope">
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="Name">
+              <span>{{ scope.row.name }}</span>
+            </el-form-item>
+            <el-form-item label="Description">
+              <span>{{ scope.row.description }}</span>
+            </el-form-item>
+            <el-form-item label="keywords">
+              <span>{{ scope.row.keywords }}</span>
+            </el-form-item>
+            <el-form-item label="Duty">
+              <span>{{ scope.row.duty }}</span>
+            </el-form-item>
+            <el-form-item label="Format">
+              <span>{{ scope.row.format }}</span>
+            </el-form-item>
+            <el-form-item label="Spatial Info">
+              <span>{{ scope.row.spatialInfo }}</span>
+            </el-form-item>
+            <el-form-item label="Temporal Info">
+              <span>{{ scope.row.temporalInfo }}</span>
+            </el-form-item>
+          </el-form>
+        </template>
+        <!-- <el-table-column type="selection" width="50" v-if="role == 'builder'"></el-table-column> -->
 
         <el-table-column label="Name" show-overflow-tooltip>
           <template #default="scope">
@@ -43,11 +66,11 @@
         <el-table-column label="Type" show-overflow-tooltip width="70">
           <template #default="scope">
             <span v-show="scope.row.folder == true">Folder</span>
-            <span v-show="scope.row.folder == false">File</span>
+            <span v-show="scope.row.folder == false">Data</span>
           </template>
         </el-table-column>
-        <el-table-column label="File size" width="80">
-          <template #default="scope">{{ scope.row.fileSize }}</template>
+        <el-table-column label="Data size" width="80">
+          <template #default="scope">{{ scope.row.dataSize }}</template>
         </el-table-column>
         <el-table-column label="Upload time" width="160" show-overflow-tooltip>
           <template #default="scope">{{ scope.row.createTime }}</template>
@@ -56,14 +79,14 @@
     </div>
 
     <!-- upload data -->
-    <el-dialog title="Upload data" :visible.sync="uploadDataDialogShow" width="40%" :close-on-click-modal="false">
+    <el-dialog title="Upload data" :visible.sync="uploadDataDialogShow" width="40%" :close-on-click-modal="false" :append-to-body="true">
       <data-upload-info @uploadSuccess="uploadSuccess"></data-upload-info>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getFileItemsByJwtUserId, updateResource, updatePerformanceById, getFileItemByCreatorId, saveDataItem, updateFileItemById, postDataContainer } from '@/api/request';
+import { getDataItemsByProjectId, updateResource, updatePerformanceById, saveDataItem, updateDataItemById, postDataContainer } from '@/api/request';
 // import dataUpload from './DataUpload'; //dialogcontent
 import dataUploadInfo from './DataUploadInfo'; //dialogcontent
 import { getUuid, getSuffix, renderSize, getTime } from '@/utils/utils';
@@ -92,7 +115,8 @@ export default {
       isAddFolder: false,
       folderName: '',
       currentRow: '',
-      dataItemListDirect: []
+      dataItemListDirect: [],
+      drawer: false
     };
   },
   computed: {
@@ -102,6 +126,10 @@ export default {
   },
 
   methods: {
+    //add data dialog show
+    addData() {
+      this.uploadDataDialogShow = true;
+    },
     //close the dialog
     uploadSuccess(val) {
       if (val) {
@@ -115,8 +143,8 @@ export default {
 
     //get all the data
     async getDataCollection() {
-      let data = await getFileItemsByJwtUserId();
-      // let data = await get(`/fileItems`);
+      let data = await getDataItemsByProjectId(this.projectId);
+      // let data = await get(`/dataItems`);
       this.dataItemList = data;
       this.dataItemListDirect = this.getDataItemListDirect();
 
@@ -186,7 +214,7 @@ export default {
     },
 
     async getDataAsOperator() {
-      let data = await getFileItemByCreatorId(this.projectId);
+      let data = await getDataItemsByProjectId(this.projectId);
       this.dataItemListFromResource = data;
       this.$refs.multipleTable.toggleAllSelection();
       // console.log('DATA', data);
@@ -241,14 +269,14 @@ export default {
 
     //上传文件到服务器
     async submitUpload(param) {
-      let uploadFileForm = new FormData();
-      uploadFileForm.append('file', param.file);
-      let data = await postDataContainer(uploadFileForm);
+      let uploadDataForm = new FormData();
+      uploadDataForm.append('data', param.data);
+      let data = await postDataContainer(uploadDataForm);
 
       let form = {
-        name: data.file_name,
-        suffix: getSuffix(param.file.name),
-        fileSize: renderSize(param.file.size),
+        name: data.data_name,
+        suffix: getSuffix(param.data.name),
+        dataSize: renderSize(param.data.size),
         address: `http://221.226.60.2:8082/data/${data.id}`,
         projectId: this.projectId,
         userUpload: true,
@@ -273,7 +301,7 @@ export default {
           parentData.children = [];
         }
         parentData.children.push(form);
-        await updateFileItemById(parentData.id, parentData);
+        await updateDataItemById(parentData.id, parentData);
       }
     },
 
@@ -319,6 +347,13 @@ export default {
   .el-table__body tr.current-row > td {
     background-color: #69a8ea !important;
     color: #fff;
+  }
+
+  .drawer {
+    /deep/.el-drawer__body {
+      height: 0;
+      // height:0 overflow;flex:1
+    }
   }
 }
 </style>

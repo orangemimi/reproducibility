@@ -1,4 +1,4 @@
-package edu.njnu.reproducibility.domain.dataItem.restrictionSupport;
+package edu.njnu.reproducibility.domain.dataItemCollection.restrictionSupport;
 
 /**
  * @Author ：Zhiyi

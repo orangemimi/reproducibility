@@ -117,7 +117,7 @@ import { mapState } from 'vuex';
 import mxgraph from '_com/MxGraph/index';
 import { genGraph } from '_com/MxGraph/initMx';
 import {
-  saveDataItem,
+  saveFileItem,
   saveIntegrateTask,
   updateIntegrateTask,
   saveIntegrateTaskInstance,
@@ -919,7 +919,7 @@ export default {
           userUpload: false //--false是中间数据
         };
 
-        let data = await saveDataItem(dataJson);
+        let data = await saveFileItem(dataJson);
         eventCell.fileId = data.id;
         eventCell.value = data.address;
         eventCell.fileName = data.name;

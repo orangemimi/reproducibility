@@ -1,13 +1,13 @@
-package edu.njnu.reproducibility.domain.dataItem;
+package edu.njnu.reproducibility.domain.dataItemCollection;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import edu.njnu.reproducibility.domain.dataItem.support.*;
+import edu.njnu.reproducibility.domain.dataItemCollection.support.*;
 import lombok.Data;
 
 /**
  * @Author ：Zhiyi
- * @Date ：2021/6/15 22:26
+ * @Date ：2021/6/15 22:25
  * @modified By：
  * @version: 1.0.0
  */
@@ -19,9 +19,8 @@ import lombok.Data;
         @JsonSubTypes.Type(value = SelectParameter.class, name = "select_parameter"),
         @JsonSubTypes.Type(value = TableParameter.class, name = "table_parameter"),
 })
-public class ParameterData extends DataItem {
-    public String name;
+public class ParameterDataCollection extends DataItemCollection {
+//    public String name;
     public String type;//
-//    public String tooltip; default value
-    public String value;
+//    public String value;
 }

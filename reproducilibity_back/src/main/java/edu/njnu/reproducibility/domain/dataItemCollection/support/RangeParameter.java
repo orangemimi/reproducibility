@@ -1,6 +1,6 @@
-package edu.njnu.reproducibility.domain.dataItem.support;
+package edu.njnu.reproducibility.domain.dataItemCollection.support;
 
-import edu.njnu.reproducibility.domain.dataItem.ParameterData;
+import edu.njnu.reproducibility.domain.dataItemCollection.ParameterDataCollection;
 import lombok.Data;
 
 /**
@@ -11,7 +11,7 @@ import lombok.Data;
  * @Version 1.0.0
  */
 @Data
-public class RangeParameter extends ParameterData {
+public class RangeParameter extends ParameterDataCollection {
     public String from;
     public String to;
     public String defaultValue;

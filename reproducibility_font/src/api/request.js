@@ -139,10 +139,10 @@ export async function updateResource(projectId, form) {
 
 //-----------------------------------------------dataitems---------------------------------------------
 
-export async function saveDataItem(form) {
+export async function saveFileItem(form) {
   let data = await post(`/fileItems`, form);
   if (data != null) {
-    successNotification('save', 'data items');
+    successNotification('save', 'file items');
   }
   return data;
 }
@@ -161,6 +161,35 @@ export async function getFileItemsByJwtUserId() {
 export async function getFileItemByCreatorId(projectId) {
   return await get(`/fileItems/creator/${projectId}`);
 }
+
+//-----------------------------------------------dataitems---------------------------------------------
+
+export async function saveDataItem(form) {
+  let data = await post(`/dataItems`, form);
+  if (data != null) {
+    successNotification('save', 'data items');
+  }
+  return data;
+}
+export async function updateDataItemById(id, form) {
+  return await patch(`/dataItems/${id}`, form);
+}
+
+export async function deleteDataItemById(id) {
+  await del(`/dataItems/${id}`);
+}
+
+export async function getDataItemsByJwtUserId() {
+  return await get(`/dataItems`);
+}
+
+export async function getDataItemsByProjectId(projectId) {
+  return await get(`/dataItems/${projectId}`);
+}
+
+// export async function getDataItemsByProjectId(projectId) {
+//   return await get(`/dataItems/creator/${projectId}`);
+// }
 
 //-----------------------------------------------dataContainer---------------------------------------------
 
@@ -323,6 +352,10 @@ export async function saveRecord(form) {
 
 export async function getModelInfo(doi) {
   return await get(`/portal/modelBehavior/${doi}`);
+}
+
+export async function getAllUnitsFromPoral(currentPage, pagesize) {
+  return await get(`/portal/getUnitList/${currentPage}/${pagesize}`);
 }
 
 //------------------------------------------dataService------------------------------------

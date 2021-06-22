@@ -1,4 +1,4 @@
-package edu.njnu.reproducibility.domain.dataItem.activityAttribute;
+package edu.njnu.reproducibility.domain.dataItemCollection.activityAttribute;
 
 import lombok.Data;
 
@@ -13,5 +13,5 @@ public class ActivityAttribute {
     String id;
     RelatedActivity relatedActivity;
     RelatedResource relatedResource;
-    Relationship relationship;
+    RelationshipLink relationshipLink;
 }

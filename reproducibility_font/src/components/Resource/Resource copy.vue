@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import { getFileItemsByJwtUserId, updateResource, updatePerformanceById, getFileItemByCreatorId, saveDataItem, updateFileItemById, postDataContainer } from '@/api/request';
+import { getFileItemsByJwtUserId, updateResource, updatePerformanceById, getFileItemByCreatorId, saveFileItem, updateFileItemById, postDataContainer } from '@/api/request';
 // import dataUpload from './DataUpload'; //dialogcontent
 import dataUploadInfo from './DataUploadInfo'; //dialogcontent
 import { getUuid, getSuffix, renderSize, getTime } from '@/utils/utils';
@@ -274,7 +274,7 @@ export default {
 
     async saveResource(form) {
       if (this.currentRow == '') {
-        let data = await saveDataItem(form);
+        let data = await saveFileItem(form);
         this.dataItemList.push(data);
       } else {
         form.parent = this.currentRow.id;

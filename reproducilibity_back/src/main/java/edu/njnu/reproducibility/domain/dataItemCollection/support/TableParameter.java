@@ -1,6 +1,6 @@
-package edu.njnu.reproducibility.domain.dataItem.support;
+package edu.njnu.reproducibility.domain.dataItemCollection.support;
 
-import edu.njnu.reproducibility.domain.dataItem.ParameterData;
+import edu.njnu.reproducibility.domain.dataItemCollection.ParameterDataCollection;
 import lombok.Data;
 
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
  * @Version 1.0.0
  */
 @Data
-public class TableParameter extends ParameterData {
+public class TableParameter extends ParameterDataCollection {
     public String defaultValue;
     public List<String> fields;
 }

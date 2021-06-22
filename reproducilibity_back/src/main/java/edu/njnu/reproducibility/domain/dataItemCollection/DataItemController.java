@@ -1,10 +1,12 @@
-package edu.njnu.reproducibility.domain.dataItem;
+package edu.njnu.reproducibility.domain.dataItemCollection;
 
 
 import edu.njnu.reproducibility.annotation.JwtTokenParser;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
-import edu.njnu.reproducibility.domain.resource.dto.AddResourceDTO;
+import edu.njnu.reproducibility.domain.dataItemCollection.dto.AddDataItemDTO;
+import edu.njnu.reproducibility.domain.dataItemCollection.dto.UpdateDataItemDTO;
+import edu.njnu.reproducibility.domain.file.dto.AddFileItemDTO;
 import edu.njnu.reproducibility.domain.resource.dto.UpdateResourceDataDTO;
 import edu.njnu.reproducibility.domain.resource.dto.UpdateResourceModelDTO;
 import edu.njnu.reproducibility.domain.resource.dto.UpdateResourceRelatedDataDTO;
@@ -19,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @CrossOrigin(origins = "*",allowCredentials = "true")
 @RestController
-@RequestMapping("/resourceItems")
+@RequestMapping("/dataItems")
 public class DataItemController {
     @Autowired
     DataItemService dataItemService;
@@ -36,22 +38,22 @@ public class DataItemController {
     }
 
     @RequestMapping(value = "/data/{pid}", produces = {"application/json;charset=UTF-8"},method = RequestMethod.PATCH)
-    public JsonResult updateResourceData(@PathVariable("pid") String pid,@RequestBody UpdateResourceDataDTO UpdateResourceDataDTO){
-        return ResultUtils.success(dataItemService.updateResourceData(pid, UpdateResourceDataDTO));
+    public JsonResult updateResourceData(@PathVariable("pid") String pid,@RequestBody UpdateDataItemDTO update){
+        return ResultUtils.success(dataItemService.updateResourceData(pid, update));
     }
-
-    @RequestMapping(value = "/relatedData/{pid}", produces = {"application/json;charset=UTF-8"},method = RequestMethod.PATCH)
-    public JsonResult updateResourceRelatedData(@PathVariable("pid") String pid,@RequestBody UpdateResourceRelatedDataDTO UpdateResourceDataDTO){
-        return ResultUtils.success(dataItemService.updateResourceRelatedData(pid, UpdateResourceDataDTO));
-    }
-
-    @RequestMapping(value = "/model/{pid}", produces = {"application/json;charset=UTF-8"},method = RequestMethod.PATCH)
-    public JsonResult updateResourceModel(@PathVariable("pid") String pid,@RequestBody UpdateResourceModelDTO UpdateResourceModelDTO){
-        return ResultUtils.success(dataItemService.updateResourceModel(pid, UpdateResourceModelDTO));
-    }
+//
+//    @RequestMapping(value = "/relatedData/{pid}", produces = {"application/json;charset=UTF-8"},method = RequestMethod.PATCH)
+//    public JsonResult updateResourceRelatedData(@PathVariable("pid") String pid,@RequestBody UpdateResourceRelatedDataDTO UpdateResourceDataDTO){
+//        return ResultUtils.success(dataItemService.updateResourceRelatedData(pid, UpdateResourceDataDTO));
+//    }
+//
+//    @RequestMapping(value = "/model/{pid}", produces = {"application/json;charset=UTF-8"},method = RequestMethod.PATCH)
+//    public JsonResult updateResourceModel(@PathVariable("pid") String pid,@RequestBody UpdateResourceModelDTO UpdateResourceModelDTO){
+//        return ResultUtils.success(dataItemService.updateResourceModel(pid, UpdateResourceModelDTO));
+//    }
 
     @RequestMapping(value = "",method = RequestMethod.POST)
-    public JsonResult saveResources(@RequestBody AddResourceDTO add, @JwtTokenParser(key="userId") String userId){
+    public JsonResult saveResources(@RequestBody AddDataItemDTO add, @JwtTokenParser(key="userId") String userId){
         return ResultUtils.success(dataItemService.saveResources(add,userId));
     }
 

@@ -4,7 +4,7 @@ package edu.njnu.reproducibility.domain.file;
 import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
-import edu.njnu.reproducibility.domain.file.dto.AddDataItemDTO;
+import edu.njnu.reproducibility.domain.file.dto.AddFileItemDTO;
 import edu.njnu.reproducibility.domain.file.dto.UpdateFileItemDTO;
 import edu.njnu.reproducibility.domain.project.Member;
 import edu.njnu.reproducibility.domain.project.Project;
@@ -64,7 +64,7 @@ public class FileItemService {
         return ResultUtils.success(fileItemRepository.save(fileItem));
     }
 
-    public JsonResult save(AddDataItemDTO add, String userId) {
+    public JsonResult save(AddFileItemDTO add, String userId) {
         FileItem fileItem = new FileItem();
         add.convertTo(fileItem);
         fileItem.setUploaderId(userId);

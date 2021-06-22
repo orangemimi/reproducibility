@@ -1,4 +1,4 @@
-package edu.njnu.reproducibility.domain.dataItem.activityAttribute;
+package edu.njnu.reproducibility.domain.dataItemCollection.activityAttribute;
 
 import lombok.Data;
 
@@ -9,6 +9,6 @@ import lombok.Data;
  * @version: 1.0.0
  */
 @Data
-public class Relationship {
+public class RelationshipLink {
     String description;
 }

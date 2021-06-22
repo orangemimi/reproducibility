@@ -2,17 +2,20 @@
 <template>
   <div>
     <table border="1" class="gridtable">
-      <tr v-show="temporalInfo.temporalScale.type != ''">
+      <tr>
         <td class="title">Temporal Scale</td>
-        <td class="content" :colspan="6">{{ temporalInfo.temporalScale.type }}</td>
+        <td class="content" :colspan="6" v-if="temporalInfo.temporalScale.type != ''">{{ temporalInfo.temporalScale.type }}</td>
+        <td class="content" :colspan="6" v-else>Undefined</td>
       </tr>
-      <tr v-show="temporalInfo.temporalReference.value != ''">
+      <tr>
         <td class="title">Temporal Reference</td>
-        <td class="content" :colspan="6">{{ temporalInfo.temporalReference.value }}</td>
+        <td class="content" :colspan="6" v-if="temporalInfo.temporalReference.value != ''">{{ temporalInfo.temporalReference.value }}</td>
+        <td class="content" :colspan="6" v-else>Undefined</td>
       </tr>
 
-      <tr v-show="temporalInfo.temporalExtentList.length != 0">
-        <td class="title" :rowspan="temporalInfo.temporalExtentList.length + 2">Temporal Extents</td>
+      <tr>
+        <td class="title" :rowspan="temporalInfo.temporalExtentList.length + 1">Temporal Extents</td>
+        <td class="content" :colspan="6" v-if="temporalInfo.temporalExtentList.length == 0">Undefined</td>
       </tr>
       <tr v-show="temporalInfo.temporalExtentList.length != 0">
         <td :colspan="3">From</td>
@@ -24,8 +27,9 @@
         <td class="content" :colspan="3">{{ extent.to }}</td>
       </tr>
 
-      <tr v-show="temporalInfo.stepConstraintList.length != 0">
+      <tr>
         <td class="title" :rowspan="temporalInfo.stepConstraintList.length + 2">Step Constraint</td>
+        <td class="content" :colspan="6" v-if="temporalInfo.stepConstraintList.length == 0">Undefined</td>
       </tr>
       <tr v-show="temporalInfo.stepConstraintList.length != 0">
         <td :colspan="2">Name</td>

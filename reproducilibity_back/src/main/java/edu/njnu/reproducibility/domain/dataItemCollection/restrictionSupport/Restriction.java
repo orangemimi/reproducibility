@@ -1,5 +1,6 @@
-package edu.njnu.reproducibility.domain.dataItem.restrictionSupport;
+package edu.njnu.reproducibility.domain.dataItemCollection.restrictionSupport;
 
+import com.sun.org.apache.xml.internal.security.Init;
 import lombok.Data;
 
 /**
@@ -13,4 +14,5 @@ public class Restriction {
     TypeEnums type;
     String decimal;
     ContentEnums content;
+    Unit unit;
 }

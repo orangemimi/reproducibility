@@ -39,4 +39,9 @@ public class RemotePortalController {
     JsonResult getModel(@PathVariable(value = "id") String id){
         return ResultUtils.success(remotePortalService.getModelInfo(id));
     }
+
+    @RequestMapping(value = "/getUnitList/{currentPage}/{pagesize}",method = RequestMethod.GET)
+    JsonResult getModel( @PathVariable("currentPage") int currentPage, @PathVariable("pagesize") int pagesize){
+        return ResultUtils.success(remotePortalService.getUnitList(currentPage,pagesize));
+    }
 }

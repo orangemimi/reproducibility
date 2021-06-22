@@ -6,7 +6,7 @@ import edu.njnu.reproducibility.domain.file.FileItem;
 import lombok.Data;
 
 @Data
-public class AddDataItemDTO implements ToDomainConverter<FileItem> {
+public class AddFileItemDTO implements ToDomainConverter<FileItem> {
     String name;
     String alia;//别名
     String suffix;//suffix

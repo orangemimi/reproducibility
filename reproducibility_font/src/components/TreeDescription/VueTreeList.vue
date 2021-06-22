@@ -493,7 +493,9 @@ export default {
     margin-left: -1rem;
   }
   .vtl-operation {
-    margin-left: 2rem;
+    // float: right;
+    // right: 0;
+    margin-left: 15rem;
     letter-spacing: 1px;
   }
 }

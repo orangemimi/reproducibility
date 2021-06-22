@@ -4,7 +4,7 @@ package edu.njnu.reproducibility.domain.file;
 import edu.njnu.reproducibility.annotation.JwtTokenParser;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
-import edu.njnu.reproducibility.domain.file.dto.AddDataItemDTO;
+import edu.njnu.reproducibility.domain.file.dto.AddFileItemDTO;
 import edu.njnu.reproducibility.domain.file.dto.UpdateFileItemDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +44,7 @@ public class FileItemController {
     }
 
     @RequestMapping(value = "",method = RequestMethod.POST)
-    public JsonResult save(@RequestBody AddDataItemDTO add,@JwtTokenParser(key="userId") String userId){
+    public JsonResult save(@RequestBody AddFileItemDTO add, @JwtTokenParser(key="userId") String userId){
         return fileItemService.save(add,userId);
     }
 
