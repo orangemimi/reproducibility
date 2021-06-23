@@ -12,20 +12,20 @@
 
       <el-form-item label="Data">
         <div v-if="formType == 'file'">
-          <div class="drag" v-if="form.format == 'file'">
-            <el-upload drag action :auto-upload="true" :show-file-list="false" ref="upload" :http-request="submitUpload" :on-remove="handleRemove">
+          <div v-if="currentFile.name != null || currentFile.name != undefined" class="select_data">
+            <div class="select-data select-data-line">
+              <div class="data-name">{{ currentFile.name }}</div>
+              <i class="el-icon-close" @click="remove"></i>
+            </div>
+          </div>
+          <div class="drag" v-else>
+            <el-upload drag action :auto-upload="true" :show-file-list="false" ref="upload" :http-request="submitUpload" :on-remove="handleRemove" :on-success="handleSuccess">
               <i class="el-icon-upload"></i>
               <div class="el-upload__text">
                 Drag a file here to upload or
                 <em>Click to upload</em>
               </div>
             </el-upload>
-          </div>
-          <div v-else class="select_data">
-            <div class="select-data select-data-line">
-              <div class="data-name">{{ form.name }}</div>
-              <i class="el-icon-close" @click="remove"></i>
-            </div>
           </div>
         </div>
 
@@ -45,7 +45,7 @@
       </el-form-item>
 
       <el-form-item label="Keywords">
-        <el-input v-model="form.keywords"></el-input>
+        <el-input v-model="form.keywords[0]"></el-input>
       </el-form-item>
       <div v-if="formType != 'parameter'">
         <el-form-item label="Spatial Info">
@@ -69,7 +69,7 @@
         </el-form-item>
         <!-- <el-form-item v-model="form.restriction.content"></el-form-item> -->
         <el-form-item label="Unit">
-          {{ form.restriction.unit }}
+          {{ form.restriction.unit.value }}
           <el-button size="mini" @click="drawer = true">Add Unit</el-button>
         </el-form-item>
       </div>
@@ -131,9 +131,10 @@
 
 <script>
 import { post } from '@/axios';
-import { saveDataItem } from '@/api/request';
+import { saveDataItem, saveFileItem } from '@/api/request';
 // import addImage from '_com/AddImage';
 import { VueTreeList, Tree, TreeNode } from '_com/TreeDescription';
+// import { objToStrMap } from '@/utils/utils';
 import temporalInfoTable from '_com/ContextTable/TemporalInfoTable';
 import temporalInfoDialog from '_com/ContextTable/TemporalInfoDialog';
 import spatialInfoTable from '_com/ContextTable/SpatialInfoTable';
@@ -161,14 +162,12 @@ export default {
     return {
       projectId: this.$route.params.id,
       form: {
-        alia: '',
         name: '',
         type: 'Input',
         description: '',
-        privacy: 'discoverable',
-        folder: false,
+        keywords: [],
         agentAttribute: {
-          organization: '',
+          organization: {},
           reference: ''
         },
         activityAttribute: {
@@ -184,9 +183,6 @@ export default {
             description: ''
           }
         },
-        thumbnail: '',
-        userUpload: '',
-        address: '',
         state: 'Public',
         version: '1.0',
         format: 'file',
@@ -194,8 +190,21 @@ export default {
           type: '',
           decimal: '',
           content: '',
-          unit: ''
+          unit: { value: '' }
         }
+      },
+
+      fileForm: {
+        alia: '',
+        name: '',
+        type: '',
+        description: '',
+        privacy: 'discoverable',
+        folder: false,
+        source: '',
+        thumbnail: '',
+        userUpload: '',
+        address: ''
       },
 
       typeEnums: ['String', 'Number', 'Date'],
@@ -254,7 +263,10 @@ export default {
       showUnitDrawer: false,
       drawer: false,
       addSpatialInfodialogVisible: false,
-      addTemporalInfodialogVisible: false
+      addTemporalInfodialogVisible: false,
+
+      //file uolad related
+      currentFile: {}
     };
   },
 
@@ -292,13 +304,22 @@ export default {
 
       let { data } = await post(`/dataContainer/uploadSingle`, this.uploadFileForm);
 
-      this.form.name = data.file_name;
-      this.form.suffix = this.getSuffix(param.file.name);
-      this.form.fileSize = this.renderSize(param.file.size);
+      this.fileForm.name = data.file_name;
+      this.fileForm.suffix = this.getSuffix(param.file.name);
+      this.fileForm.fileSize = this.renderSize(param.file.size);
+      this.fileForm.folder = false;
+      this.fileForm.userUpload = true;
 
-      this.form.address = `http://221.226.60.2:8082/data/${data.id}`;
-      this.form.projectId = this.projectId;
+      this.fileForm.address = `http://221.226.60.2:8082/data/${data.id}`;
+
       this.$forceUpdate();
+    },
+
+    handleSuccess(response, file, fileList) {
+      console.log(response, file, fileList);
+      if (file.status == 'success') {
+        this.currentFile = this.fileForm;
+      }
     },
 
     getSuffix(filename) {
@@ -323,10 +344,15 @@ export default {
     //data item保存到数据库
     //上传数据直接保存到fileItems,即用户的资源可全部显示，之后选择所需的数据，之后保存选择的数据之后 保存到resource数据表里面去
     async submit() {
-      this.form.userUpload = true;
-      this.form.organizaiton = this.treeData;
+      this.fileForm.description = this.form.description;
+      await saveFileItem(this.fileForm);
+      //   this.form.userUpload = true;
+      //   this.form.agentAttribute.organization = this.treeData;
+
+      console.log('orgasnizaion', this.treeData);
       this.form.spatialInfo = this.spatialInfoForm;
       this.form.temporalInfo = this.temporalInfoForm;
+      this.form.projectId = this.projectId;
       await saveDataItem(this.form);
       // let data = await post(`/fileItems`, this.form);
       // console.log(data);

@@ -1,5 +1,6 @@
 package edu.njnu.reproducibility.domain.dataItemCollection.agentAttribute;
 
+import cn.hutool.json.JSONObject;
 import lombok.Data;
 
 import java.util.Map;
@@ -12,6 +13,6 @@ import java.util.Map;
  */
 @Data
 public class AgentAttribute {
-    Map<String,String> organization;
+    Object organization;
     String reference;
 }

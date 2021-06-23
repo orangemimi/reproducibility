@@ -16,10 +16,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -70,6 +67,32 @@ public class RemoteDataContainerController {
     //    无需配置文件的上传接口
     @RequestMapping(value = "/uploadSingle", method = RequestMethod.POST)
     public JsonResult uploadData(HttpServletRequest request, @JwtTokenParser(key = "name") String name, @JwtTokenParser() String id) throws IOException, ServletException {
+        MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+        Part part = multiRequest.getPart("file");
+        String header = part.getHeader("Content-Disposition");
+        String filename2 = header.substring(header.indexOf("filename=\"") + 10, header.lastIndexOf("\""));//filename=" (整个字符串长度为10，所以要加10)
+
+        String filename = FilenameUtils.getBaseName(filename2);
+        //  获取文件后缀名
+        String suffix = "." + FilenameUtils.getExtension(filename2);
+        File file = File.createTempFile(part.getName(), suffix);//创建临时文件
+        FileUtils.copyInputStreamToFile(part.getInputStream(), file);
+
+        FileSystemResource resource = new FileSystemResource(file);      //临时文件
+        MultiValueMap<String, Object> form = new LinkedMultiValueMap<>();
+        form.add("serverNode", "china");
+        form.add("userId", id);
+        form.add("datafile", resource);
+        form.add("name", filename);
+        form.add("origination", "reproducibility");
+
+//        return ResultUtils.success(dataContainerService.upload(file,id,name));
+        return ResultUtils.success(dataContainerFeign.upload(form));
+    }
+
+
+    @RequestMapping(value = "/uploadAction", method = RequestMethod.POST)
+    public JsonResult uploadDataAction(@RequestParam("file") HttpServletRequest request, @JwtTokenParser(key = "name") String name, @JwtTokenParser() String id) throws IOException, ServletException {
         MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
         Part part = multiRequest.getPart("file");
         String header = part.getHeader("Content-Disposition");

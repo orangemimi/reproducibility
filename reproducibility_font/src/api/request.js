@@ -165,6 +165,7 @@ export async function getFileItemByCreatorId(projectId) {
 //-----------------------------------------------dataitems---------------------------------------------
 
 export async function saveDataItem(form) {
+  console.log('form', form);
   let data = await post(`/dataItems`, form);
   if (data != null) {
     successNotification('save', 'data items');

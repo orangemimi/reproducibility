@@ -11,8 +11,8 @@ import lombok.Data;
  */
 @Data
 public class Restriction {
-    TypeEnums type;
+    String type;// string date number
     String decimal;
-    ContentEnums content;
+    String content;
     Unit unit;
 }

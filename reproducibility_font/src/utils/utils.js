@@ -69,6 +69,16 @@ export const getUuid = () => {
 //   return Date()
 // }
 
+export const objToStrMap = obj => {
+  let strMap = new Map();
+
+  for (let k of Object.keys(obj)) {
+    strMap.set(k, obj[k]);
+  }
+
+  return strMap;
+};
+
 export const getSuffix = filename => {
   let index = filename.lastIndexOf('.');
   return filename.substr(index + 1);
