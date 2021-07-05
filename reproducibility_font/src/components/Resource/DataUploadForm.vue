@@ -114,7 +114,7 @@
     <unit-drawer :drawer="drawer" @selectUnit="selectUnit" @closeDrawer="closeDrawer"></unit-drawer>
 
     <el-dialog :visible.sync="addSpatialInfodialogVisible" width="40%" title="Add Spatial Info" class="spatialDialog" :append-to-body="true">
-      <spatial-info-dialog :spatialInfoForm="spatialInfoForm"></spatial-info-dialog>
+      <spatial-info-dialog :spatialInfo="spatialInfoForm"></spatial-info-dialog>
 
       <!-- <template #footer>
         <span class="dialog-footer">
@@ -145,6 +145,20 @@ export default {
   props: {
     formType: {
       type: String
+    },
+    initFormData: {
+      type: Object
+    }
+  },
+
+  watch: {
+    initFormData: {
+      handler(val) {
+        if (val != '') {
+          this.form = val;
+        }
+      },
+      deep: true
     }
   },
   components: {
@@ -161,6 +175,7 @@ export default {
   data() {
     return {
       projectId: this.$route.params.id,
+
       form: {
         name: '',
         type: 'Input',
@@ -185,12 +200,14 @@ export default {
         },
         state: 'Public',
         version: '1.0',
-        format: 'file',
+        format: this.formType,
         restriction: {
           type: '',
           decimal: '',
           content: '',
-          unit: { value: '' }
+          unit: { value: '' },
+          spatialInfo: {},
+          temporalInfo: {}
         }
       },
 
@@ -344,14 +361,14 @@ export default {
     //data item保存到数据库
     //上传数据直接保存到fileItems,即用户的资源可全部显示，之后选择所需的数据，之后保存选择的数据之后 保存到resource数据表里面去
     async submit() {
-      this.fileForm.description = this.form.description;
-      await saveFileItem(this.fileForm);
-      //   this.form.userUpload = true;
-      //   this.form.agentAttribute.organization = this.treeData;
+      if (this.uploadFileForm.get('file') != null) {
+        this.fileForm.description = this.form.description;
+        await saveFileItem(this.fileForm);
+      }
 
-      console.log('orgasnizaion', this.treeData);
-      this.form.spatialInfo = this.spatialInfoForm;
-      this.form.temporalInfo = this.temporalInfoForm;
+      // console.log('orgasnizaion', this.treeData);
+      this.form.restriction.spatialInfo = this.spatialInfoForm;
+      this.form.restriction.temporalInfo = this.temporalInfoForm;
       this.form.projectId = this.projectId;
       await saveDataItem(this.form);
       // let data = await post(`/fileItems`, this.form);

@@ -3,13 +3,13 @@
   <div class="main">
     <el-tabs v-model="activeName" size="mini">
       <el-tab-pane label="Upload File" name="file">
-        <data-upload-form :formType="'file'"></data-upload-form>
+        <data-upload-form :formType="'file'" :initFormData="initFormData"></data-upload-form>
       </el-tab-pane>
       <el-tab-pane label="Parameter" name="parameter" style="height:200px">
-        <data-upload-form :formType="'parameter'"></data-upload-form>
+        <data-upload-form :formType="'parameter'" :initFormData="initFormData"></data-upload-form>
       </el-tab-pane>
       <el-tab-pane label="Shared File" name="sharedFile">
-        <data-upload-form :formType="'sharedFile'"></data-upload-form>
+        <data-upload-form :formType="'sharedFile'" :initFormData="initFormData"></data-upload-form>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -23,10 +23,16 @@ export default {
   components: {
     dataUploadForm
   },
+  props: {
+    initFormData: {
+      type: Object
+    }
+  },
 
   data() {
     return {
       activeName: 'file'
+      // form: {}
     };
   },
 

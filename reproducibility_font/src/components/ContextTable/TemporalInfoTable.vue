@@ -77,7 +77,7 @@ export default {
   methods: {
     show(val) {
       this.$set(this, 'temporalInfo', val);
-      console.log('11111', this.temporalInfo);
+      // console.log('11111', this.temporalInfo);
       this.$forceUpdate();
     }
   },

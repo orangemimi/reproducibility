@@ -103,9 +103,9 @@ export default {
   },
   updated() {
     // eslint-disable-next-line no-undef
-    $('.content')
-      .find('code')
-      .css('background-color', 'rgb(187, 76, 76)');
+    // $('.content')
+    //   .find('code')
+    //   .css('background-color', 'rgb(187, 76, 76)');
   }
 };
 </script>

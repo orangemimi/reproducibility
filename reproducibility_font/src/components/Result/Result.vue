@@ -25,34 +25,27 @@ export default {
     return {
       tableData: [
         {
-          name: 'Entity',
+          name: 'Result Item',
           value: '',
-          id: 0,
-          pid: 0,
+          id: 4,
+          pid: 10,
           children: [
-            {
-              name: 'Result Item',
-              value: '',
-              id: 4,
-              pid: 10,
-              children: [
-                { name: 'Dimension', value: '', id: 4, pid: 10 },
-                { name: 'Form', value: '', id: 4, pid: 10 }
-              ]
-            }
+            { name: 'Name', value: '', id: 4, pid: 10 },
+            { name: 'Description', value: '', id: 4, pid: 10 },
+            { name: 'Keywords', value: '', id: 4, pid: 10 },
+            { name: 'Version', value: '', id: 4, pid: 10 },
+            { name: 'Distributors', value: '', id: 4, pid: 10 },
+            { name: 'Existing File', value: '', id: 4, pid: 10 },
+            { name: 'Restriction', value: '', id: 4, pid: 10 },
+            { name: 'Conclusion', value: '', id: 4, pid: 10 }
           ]
         },
         {
-          name: 'Agent',
+          name: 'Comparison',
           value: '',
           id: 1,
-          pid: 0
-        },
-        {
-          name: 'Activity',
-          value: '',
-          id: 3,
-          pid: 0
+          pid: 0,
+          children: [{ name: 'Method', value: '', id: 4, pid: 10 }]
         }
       ]
     };

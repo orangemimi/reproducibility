@@ -88,7 +88,7 @@
 <script>
 export default {
   props: {
-    spatialInfoForm: {
+    spatialInfo: {
       type: Object
     }
   },
@@ -100,6 +100,7 @@ export default {
 
   data() {
     return {
+      spatialInfoForm: this.spatialInfo,
       spatialDimensiomOptions: [
         {
           value: '2',
@@ -126,8 +127,9 @@ export default {
       this.addSpatialInfodialogVisible = false;
       this.spatialInfoForm.spatialExtentList = this.spatialExtentList;
       // this.spatialInfoForm.resolutionConstraintList =this
-      this.contextForm.spatialInfoList = [];
-      this.contextForm.spatialInfoList.push(this.spatialInfoForm);
+      this.spatialInfoForm.spatialInfoList = [];
+      this.spatialInfoForm.spatialInfoList.push(this.spatialInfoForm);
+      this.$emit('getSpatialInfoReturn', this.spatialInfoForm);
     },
     addSpatialConstraint() {
       this.spatialInfoForm.resolutionConstraintList.push({ name: '', value: '', unit: '' });

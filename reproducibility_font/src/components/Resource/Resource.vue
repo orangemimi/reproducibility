@@ -6,7 +6,7 @@
           <el-upload action :auto-upload="true" :show-data-list="false" ref="upload" :http-request="submitUpload">
             <el-button size="mini">
               <i class="el-icon-upload"></i>
-              Upload
+              Upload File
             </el-button>
           </el-upload>
         </div>
@@ -14,66 +14,77 @@
         <div class="btn"><el-button size="mini" @click="addData">Add Item</el-button></div>
       </div>
     </div>
+    <!-- {{ dataItemList }} -->
     <div class="row-style">
       <el-table
         ref="multipleTable"
-        :data="dataItemListDirect"
+        :data="dataItemList"
         tooltip-effect="dark"
         style="width: 100%"
         max-height="350"
         :row-style="{ height: '0' }"
         :cell-style="{ padding: '4px' }"
         border
-        type="expand"
+        :row-key="getRowKeys"
+        :expand-row-keys="expands"
+        @current-change="handleCurrentChange"
       >
         <template slot="empty">
           Please upload a data
         </template>
-        <template #default="scope">
-          <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="Name">
-              <span>{{ scope.row.name }}</span>
-            </el-form-item>
-            <el-form-item label="Description">
-              <span>{{ scope.row.description }}</span>
-            </el-form-item>
-            <el-form-item label="keywords">
-              <span>{{ scope.row.keywords }}</span>
-            </el-form-item>
-            <el-form-item label="Duty">
-              <span>{{ scope.row.duty }}</span>
-            </el-form-item>
-            <el-form-item label="Format">
-              <span>{{ scope.row.format }}</span>
-            </el-form-item>
-            <el-form-item label="Spatial Info">
-              <span>{{ scope.row.spatialInfo }}</span>
-            </el-form-item>
-            <el-form-item label="Temporal Info">
-              <span>{{ scope.row.temporalInfo }}</span>
-            </el-form-item>
-          </el-form>
-        </template>
-        <!-- <el-table-column type="selection" width="50" v-if="role == 'builder'"></el-table-column> -->
+        <el-table-column type="expand">
+          <template slot-scope="scope">
+            <el-form label-position="left" inline class="demo-table-expand">
+              <el-form-item label="Name">
+                <span>{{ scope.row.name }}</span>
+              </el-form-item>
+              <el-form-item label="Description">
+                <span>{{ scope.row.description }}</span>
+              </el-form-item>
+              <el-form-item label="keywords">
+                <span>{{ scope.row.keywords }}</span>
+              </el-form-item>
+              <el-form-item label="Format">
+                <span>{{ scope.row.format }}</span>
+              </el-form-item>
+              <div v-if="scope.row.format != 'parameter'">
+                <el-form-item label="Spatial Info">
+                  <span>{{ scope.row.restriction.spatialInfo }}</span>
+                </el-form-item>
+                <el-form-item label="Temporal Info">
+                  <span>{{ scope.row.restriction.temporalInfo }}</span>
+                </el-form-item>
+              </div>
+              <div v-else>
+                <el-form-item label="Spatial Info">
+                  <span>{{ scope.row.restriction.type }}</span>
+                </el-form-item>
+                <el-form-item label="Temporal Info">
+                  <span>{{ scope.row.restriction.unit }}</span>
+                </el-form-item>
+              </div>
+            </el-form>
+          </template>
+        </el-table-column>
 
-        <el-table-column label="Name" show-overflow-tooltip>
+        <el-table-column label="Name" width="150">
+          <template #default="scope">{{ scope.row.name }}</template>
+        </el-table-column>
+        <el-table-column label="Format" width="70">
           <template #default="scope">
-            <i class="collapse" :class="collapseClass(scope.row)"></i>
-            {{ scope.row.name }}
-            <span v-show="scope.row.folder == false">.{{ scope.row.suffix }}</span>
+            <span>{{ scope.row.format }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Type" show-overflow-tooltip width="70">
-          <template #default="scope">
-            <span v-show="scope.row.folder == true">Folder</span>
-            <span v-show="scope.row.folder == false">Data</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="Data size" width="80">
-          <template #default="scope">{{ scope.row.dataSize }}</template>
-        </el-table-column>
-        <el-table-column label="Upload time" width="160" show-overflow-tooltip>
+        <el-table-column label="Upload time" width="120">
           <template #default="scope">{{ scope.row.createTime }}</template>
+        </el-table-column>
+        <el-table-column label="Value">
+          <el-button size="mini">Upload</el-button>
+          <el-button size="mini">Download</el-button>
+          <!-- <span>{{ scope.row.value }}</span> -->
+        </el-table-column>
+        <el-table-column label="Action" width="100">
+          <el-button size="mini" @click="editDataItem">Edit</el-button>
         </el-table-column>
       </el-table>
     </div>
@@ -82,11 +93,15 @@
     <el-dialog title="Upload data" :visible.sync="uploadDataDialogShow" width="40%" :close-on-click-modal="false" :append-to-body="true">
       <data-upload-info @uploadSuccess="uploadSuccess"></data-upload-info>
     </el-dialog>
+
+    <el-dialog title="Upload data" :visible.sync="editDataDialogShow" width="40%" :close-on-click-modal="false" :append-to-body="true">
+      <data-upload-info @uploadSuccess="uploadSuccess" :initFormData="currentRow"></data-upload-info>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getDataItemsByProjectId, updateResource, updatePerformanceById, saveDataItem, updateDataItemById, postDataContainer } from '@/api/request';
+import { getDataItemsByProjectId, updateResource, updatePerformanceById, saveFileItem, updateDataItemById, postDataContainer } from '@/api/request';
 // import dataUpload from './DataUpload'; //dialogcontent
 import dataUploadInfo from './DataUploadInfo'; //dialogcontent
 import { getUuid, getSuffix, renderSize, getTime } from '@/utils/utils';
@@ -100,6 +115,7 @@ export default {
   data() {
     return {
       uploadDataDialogShow: false, //upload data dialog
+      editDataDialogShow: false,
       dataItemList: [],
       dataItemListFromResource: [],
       projectId: this.$route.params.id,
@@ -114,9 +130,11 @@ export default {
       //add folder
       isAddFolder: false,
       folderName: '',
-      currentRow: '',
-      dataItemListDirect: [],
-      drawer: false
+      currentRow: {},
+      // dataItemListDirect: [],
+      drawer: false,
+      // 要展开的行，数值的元素是row的key值
+      expands: []
     };
   },
   computed: {
@@ -144,26 +162,27 @@ export default {
     //get all the data
     async getDataCollection() {
       let data = await getDataItemsByProjectId(this.projectId);
+      // console.log('dataITem', data);
       // let data = await get(`/dataItems`);
       this.dataItemList = data;
-      this.dataItemListDirect = this.getDataItemListDirect();
+      // this.dataItemListDirect = this.getDataItemListDirect();
 
-      await this.getSelectedData();
+      // await this.getSelectedData();
     },
 
-    getDataItemListDirect() {
-      if (this.role == 'builder') {
-        if (this.dataItemList.length != 0 || this.dataItemList != null || this.dataItemList != undefined) {
-          return this.dataItemList.filter(item => item.userUpload == true);
-        } else {
-          return [];
-        }
-      }
-      if (this.role == 'rebuilder_operator') {
-        return this.dataItemListFromResource;
-      }
-      return [];
-    },
+    // getDataItemListDirect() {
+    //   if (this.role == 'builder') {
+    //     if (this.dataItemList.length != 0 || this.dataItemList != null || this.dataItemList != undefined) {
+    //       return this.dataItemList.filter(item => item.userUpload == true);
+    //     } else {
+    //       return [];
+    //     }
+    //   }
+    //   if (this.role == 'rebuilder_operator') {
+    //     return this.dataItemListFromResource;
+    //   }
+    //   return [];
+    // },
 
     //init table selection
     toggleSelection(rows) {
@@ -253,19 +272,19 @@ export default {
       this.isAddFolder = false;
     },
 
-    async uploadFolder() {
-      let form = {
-        alia: '',
-        name: this.folderName,
-        folder: true,
-        description: '',
-        privacy: 'discoverable',
-        parent: '',
-        children: [],
-        userUpload: true
-      };
-      await this.saveResource(form);
-    },
+    // async uploadFolder() {
+    //   let form = {
+    //     alia: '',
+    //     name: this.folderName,
+    //     folder: true,
+    //     description: '',
+    //     privacy: 'discoverable',
+    //     parent: '',
+    //     children: [],
+    //     userUpload: true
+    //   };
+    //   await this.saveResource(form);
+    // },
 
     //上传文件到服务器
     async submitUpload(param) {
@@ -290,7 +309,7 @@ export default {
 
     async saveResource(form) {
       if (this.currentRow == '') {
-        let data = await saveDataItem(form);
+        let data = await saveFileItem(form);
         this.dataItemList.push(data);
       } else {
         form.parent = this.currentRow.id;
@@ -307,6 +326,16 @@ export default {
 
     collapseClass(params) {
       return params.folder === true ? 'el-icon-folder' : 'el-icon-document';
+    },
+    getRowKeys(row) {
+      console.log('row', row);
+      return row.id;
+    },
+    clickTable(row) {
+      this.$refs.multipleTable.toggleRowExpansion(row);
+    },
+    editDataItem() {
+      this.editDataDialogShow = true;
     }
   },
   async mounted() {

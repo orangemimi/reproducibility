@@ -33,8 +33,7 @@ public class DataItemCollection {
     String projectId;
     String userId;//creatorId
 
-    SpatialInfo spatialInfo;
-    TemporalInfo temporalInfo;
+
     Restriction restriction;
 
     String version;

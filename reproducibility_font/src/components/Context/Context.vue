@@ -46,7 +46,7 @@
     </vue-scroll>
 
     <el-dialog :visible.sync="addSpatialInfodialogVisible" width="40%" title="Add Spatial Info" class="spatialDialog">
-      <spatial-info-dialog :spatialInfoForm="spatialInfoForm"></spatial-info-dialog>
+      <spatial-info-dialog :spatialInfo="spatialInfoForm" @getSpatialInfoReturn="getSpatialInfoReturn"></spatial-info-dialog>
 
       <!-- <template #footer>
         <span class="dialog-footer">
@@ -168,10 +168,15 @@ export default {
       let data = await getContextByProjectId(this.projectId);
       // console.log('context', data);
       this.contextForm = data;
-      console.log(data);
-      this.spatialInfoForm = data.spatialInfoList[0];
-      this.temporalInfoForm = data.temporalInfoList[0];
-      this.temporalExtentList = data.temporalInfoList[0].temporalExtentList[0];
+      // console.log(data);
+      if (data.spatialInfoList != null) {
+        this.spatialInfoForm = data.spatialInfoList[0];
+      }
+      if (data.temporalInfoList != null) {
+        this.temporalInfoForm = data.temporalInfoList[0];
+        this.temporalExtentList = data.temporalInfoList.temporalExtentList[0];
+      }
+
       this.$forceUpdate();
     },
     async submitContext() {
@@ -203,6 +208,7 @@ export default {
 
     showTagInput() {
       this.tagInputVisible = true;
+
       this.$nextTick(() => {
         this.$refs.tagInput.$refs.input.focus();
         // console.log(_);
@@ -215,7 +221,7 @@ export default {
         this.contextForm.themes = [];
       }
       if (tag != '') {
-        this.contextForm.themes = [];
+        // this.contextForm.themes = [];
         this.contextForm.themes.push(tag);
       }
       this.tagInputVisible = false;
@@ -229,6 +235,12 @@ export default {
     // eslint-disable-next-line no-unused-vars
     tableRowStyle({ row, rowIndex }) {
       return 'background-color:pink;font-size:15px;';
+    },
+
+    //get spatial info back
+    getSpatialInfoReturn(value) {
+      console.log('spatialInfo', value);
+      this.spatialInfoForm = value;
     }
   },
   created() {

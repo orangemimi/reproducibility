@@ -1,6 +1,8 @@
 package edu.njnu.reproducibility.domain.dataItemCollection.restrictionSupport;
 
 import com.sun.org.apache.xml.internal.security.Init;
+import edu.njnu.reproducibility.domain.context.SpatialInfo;
+import edu.njnu.reproducibility.domain.context.TemporalInfo;
 import lombok.Data;
 
 /**
@@ -15,4 +17,6 @@ public class Restriction {
     String decimal;
     String content;
     Unit unit;
+    SpatialInfo spatialInfo;
+    TemporalInfo temporalInfo;
 }
