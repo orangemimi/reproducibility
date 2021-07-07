@@ -1,16 +1,11 @@
 <template>
   <div class="main">
     <div class="btnList" v-if="role == 'builder'">
-      <div>
-        <div class="btn">
-          <el-upload action :auto-upload="true" :show-data-list="false" ref="upload" :http-request="submitUpload">
-            <el-button size="mini">
-              <i class="el-icon-upload"></i>
-              Upload File
-            </el-button>
-          </el-upload>
-        </div>
-        <!-- <div class="btn"><el-button size="mini" @click="submitBtn">Add Item</el-button></div> -->
+      <div class="btn">
+        <!-- <el-button size="mini" @click="uploadFileDialogShow = true">
+          <i class="el-icon-upload"></i>
+          Upload File
+        </el-button> -->
         <div class="btn"><el-button size="mini" @click="addData">Add Item</el-button></div>
       </div>
     </div>
@@ -67,49 +62,64 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="Name" width="150">
+        <el-table-column label="Name" width="160">
           <template #default="scope">{{ scope.row.name }}</template>
         </el-table-column>
-        <el-table-column label="Format" width="70">
+        <el-table-column label="Format" width="100">
           <template #default="scope">
             <span>{{ scope.row.format }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Upload time" width="120">
+        <el-table-column label="Upload time" width="160">
           <template #default="scope">{{ scope.row.createTime }}</template>
         </el-table-column>
-        <el-table-column label="Value">
-          <el-button size="mini">Upload</el-button>
-          <el-button size="mini">Download</el-button>
-          <!-- <span>{{ scope.row.value }}</span> -->
-        </el-table-column>
-        <el-table-column label="Action" width="100">
-          <el-button size="mini" @click="editDataItem">Edit</el-button>
+        <el-table-column label="Value" fixed="right">
+          <template #default="scope">
+            <div v-if="scope.row.value != null">
+              <el-button size="mini">Download</el-button>
+            </div>
+            <div v-else>
+              <el-button size="mini" @click="bindResource(scope.row)">Bind</el-button>
+              <el-button size="mini" @click="editDataItem">Edit</el-button>
+            </div>
+          </template>
         </el-table-column>
       </el-table>
     </div>
 
     <!-- upload data -->
-    <el-dialog title="Upload data" :visible.sync="uploadDataDialogShow" width="40%" :close-on-click-modal="false" :append-to-body="true">
+    <el-dialog title="Upload resource" :visible.sync="uploadDataDialogShow" width="40%" :close-on-click-modal="false" :append-to-body="true">
       <data-upload-info @uploadSuccess="uploadSuccess"></data-upload-info>
     </el-dialog>
 
-    <el-dialog title="Upload data" :visible.sync="editDataDialogShow" width="40%" :close-on-click-modal="false" :append-to-body="true">
+    <el-dialog title="Upload resource" :visible.sync="editDataDialogShow" width="40%" :close-on-click-modal="false" :append-to-body="true">
       <data-upload-info @uploadSuccess="uploadSuccess" :initFormData="currentRow"></data-upload-info>
+    </el-dialog>
+
+    <el-dialog title="Bind value" :visible.sync="bindResourceDialogShow" width="40%" :close-on-click-modal="false" :append-to-body="true">
+      <bind-resource @returnResourceUrl="returnResourceUrl" :resourceType="currentRow.format"></bind-resource>
+    </el-dialog>
+
+    <el-dialog title="Upload file" :visible.sync="uploadFileDialogShow" width="50%" :close-on-click-modal="false" :append-to-body="true">
+      <file-upload></file-upload>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getDataItemsByProjectId, updateResource, updatePerformanceById, saveFileItem, updateDataItemById, postDataContainer } from '@/api/request';
+import { getDataItemsByProjectId, updateDataItemById, saveFileItem, postDataContainer } from '@/api/request';
 // import dataUpload from './DataUpload'; //dialogcontent
 import dataUploadInfo from './DataUploadInfo'; //dialogcontent
+import bindResource from './BindResource';
+import fileUpload from './FileUpload';
 import { getUuid, getSuffix, renderSize, getTime } from '@/utils/utils';
 import { mapState } from 'vuex';
 
 export default {
   components: {
-    dataUploadInfo
+    dataUploadInfo,
+    bindResource,
+    fileUpload
   },
 
   data() {
@@ -134,7 +144,10 @@ export default {
       // dataItemListDirect: [],
       drawer: false,
       // 要展开的行，数值的元素是row的key值
-      expands: []
+      expands: [],
+      bindResourceDialogShow: false,
+      uploadFileDialogShow: false,
+      selectItem: {}
     };
   },
   computed: {
@@ -240,29 +253,29 @@ export default {
     },
 
     //submit
-    async submitBtn() {
-      if (this.multipleSelection.length == 0) {
-        this.$notify({
-          title: 'Warning',
-          message: 'You have not select any data!',
-          type: 'warning'
-        });
-        return;
-      }
+    // async submitBtn() {
+    //   if (this.multipleSelection.length == 0) {
+    //     this.$notify({
+    //       title: 'Warning',
+    //       message: 'You have not select any data!',
+    //       type: 'warning'
+    //     });
+    //     return;
+    //   }
 
-      //用id重组一个新数组
-      let filter = [];
-      this.multipleSelection.forEach(ele => {
-        filter.push(ele.id);
-      });
-      await updateResource(this.projectId, {
-        dataItemCollection: filter
-      });
+    //   //用id重组一个新数组
+    //   let filter = [];
+    //   this.multipleSelection.forEach(ele => {
+    //     filter.push(ele.id);
+    //   });
+    //   await updateDataItemById(this.projectId, {
+    //     dataItemCollection: filter
+    //   });
 
-      let content = { content: 'Resource Collection', degree: '100%', type: 'success', icon: 'el-icon-folder' };
+    //   let content = { content: 'Resource Collection', degree: '100%', type: 'success', icon: 'el-icon-folder' };
 
-      await updatePerformanceById('resource', this.projectId, content);
-    },
+    //   await updatePerformanceById('resource', this.projectId, content);
+    // },
 
     addFolderShow() {
       this.folderName = '';
@@ -283,7 +296,7 @@ export default {
     //     children: [],
     //     userUpload: true
     //   };
-    //   await this.saveResource(form);
+    //   await this.saveProjectResource(form);
     // },
 
     //上传文件到服务器
@@ -304,10 +317,10 @@ export default {
         folder: false
       };
 
-      await this.saveResource(form);
+      await this.saveProjectResource(form);
     },
 
-    async saveResource(form) {
+    async saveProjectResource(form) {
       if (this.currentRow == '') {
         let data = await saveFileItem(form);
         this.dataItemList.push(data);
@@ -336,6 +349,18 @@ export default {
     },
     editDataItem() {
       this.editDataDialogShow = true;
+    },
+    bindResource(selectItem) {
+      this.bindResourceDialogShow = true;
+      this.selectItem = this.dataItemList.find(item => item.id == selectItem.id);
+      // console.log(item);
+    },
+
+    async returnResourceUrl(value) {
+      this.selectItem.value = value;
+      // let json ={value:value}
+      let data = await updateDataItemById(this.selectItem.id, this.selectItem);
+      console.log('updateData', data);
     }
   },
   async mounted() {

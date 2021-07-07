@@ -63,7 +63,7 @@
 import timeExtentHorizontal from '_com/TimeExtent/TimeExtentHorizontal';
 export default {
   props: {
-    spattemporalInfoFormialInfoForm: {
+    temporalInfo: {
       type: Object
     }
   },
@@ -75,6 +75,7 @@ export default {
 
   data() {
     return {
+      temporalInfoForm: this.temporalInfo,
       addTemporalConstraintCount: [],
       otherTemplateReferenceVisible: false,
       temporalExtentList: [],
@@ -91,11 +92,11 @@ export default {
       this.addTemporalInfodialogVisible = false;
       this.temporalInfoForm.temporalExtentList = this.temporalExtentList;
       this.temporalInfoForm.stepConstraintList = this.stepConstraintList;
+      this.$emit('getTemporalInfoReturn', this.temporalInfoForm);
 
-      this.contextForm.temporalInfoList = [];
-      this.contextForm.temporalInfoList.push(this.temporalInfoForm);
+      // this.temporalInfoForm.temporalInfoList.push(this.temporalInfoForm);
 
-      // console.log(this.contextForm);
+      console.log(this.temporalInfoForm);
     },
     addTemporalExtents() {
       this.addTemporalCount.push({});

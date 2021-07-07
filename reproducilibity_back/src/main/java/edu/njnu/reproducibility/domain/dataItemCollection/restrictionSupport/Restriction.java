@@ -13,10 +13,5 @@ import lombok.Data;
  */
 @Data
 public class Restriction {
-    String type;// string date number
-    String decimal;
     String content;
-    Unit unit;
-    SpatialInfo spatialInfo;
-    TemporalInfo temporalInfo;
 }

@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * @Version 1.0.0
  */
 @Data
-@Document(collection = "DataItems")
+@Document(collection = "FileItems")
 public class FileItem extends BaseEntity {
     @Id
     String id;

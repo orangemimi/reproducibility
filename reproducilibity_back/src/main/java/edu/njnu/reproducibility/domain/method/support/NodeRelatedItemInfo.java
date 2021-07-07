@@ -3,7 +3,7 @@ package edu.njnu.reproducibility.domain.method.support;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import edu.njnu.reproducibility.domain.context.ContextDefinition;
-import edu.njnu.reproducibility.domain.resource.Resource;
+import edu.njnu.reproducibility.domain.projectResource.Resource;
 import lombok.Data;
 
 /**

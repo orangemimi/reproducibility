@@ -18,7 +18,7 @@ import { mapState } from 'vuex';
 import plugins from './plugins';
 import toolbar from './toolbar';
 import load from './dynamicLoadScript';
-import { uploadResourcePicture } from '@/api/request';
+import { uploadProjectResourcePicture } from '@/api/request';
 
 // why use this cdn, detail see https://github.com/PanJiaChen/tinymce-all-in-one
 const tinymceCDN = 'https://cdn.jsdelivr.net/npm/tinymce-all-in-one@4.9.3/tinymce.min.js';
@@ -155,7 +155,7 @@ export default {
             _this.fullscreen = e.state;
           });
         },
-        images_upload_url: `http://${window.location.host}/r/resources/picture`, //上传路径
+        images_upload_url: `http://${window.location.host}/r/projectResources/picture`, //上传路径
 
         images_upload_handler: async (blobInfo, success, failure) => {
           if (blobInfo.blob().size > self.maxSize) {
@@ -165,14 +165,14 @@ export default {
           let formData = new FormData();
           // 服务端接收文件的参数名，文件数据，文件名
           formData.append('pictureFile', blobInfo.blob(), blobInfo.filename());
-          let fileName = await uploadResourcePicture(formData);
+          let fileName = await uploadProjectResourcePicture(formData);
           let url = `http://${window.location.host}/r/${this.userId}/resourcePicture/${fileName}`;
           // console.log(url);
           success(url);
           // this.axios({
           //   method: 'POST',
           //   // 上传地址
-          //   url: '/resources/picture',
+          //   url: '/projectResources/picture',
           //   data: formData
           // })
           //   .then(res => {

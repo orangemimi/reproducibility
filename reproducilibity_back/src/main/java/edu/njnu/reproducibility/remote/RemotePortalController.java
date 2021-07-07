@@ -35,6 +35,7 @@ public class RemotePortalController {
 
 
 
+
     @RequestMapping(value = "/modelBehavior/{id}",method = RequestMethod.GET)
     JsonResult getModel(@PathVariable(value = "id") String id){
         return ResultUtils.success(remotePortalService.getModelInfo(id));

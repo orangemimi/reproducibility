@@ -1,7 +1,7 @@
 <!--  -->
 <template>
   <div>
-    <el-table :data="tableData" style="width: 100%;margin-bottom: 20px;" row-key="id" border default-expand-all :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
+    <el-table :data="tableData" :row-style="{ height: '0' }" :cell-style="{ padding: '4px' }" row-key="id" border :tree-props="{ children: 'children', hasChildren: 'hasChildren' }" height="380">
       <el-table-column prop="name" label="Key" sortable width="180"></el-table-column>
       <el-table-column prop="value" label="Value" sortable width="180"></el-table-column>
 
@@ -27,25 +27,25 @@ export default {
         {
           name: 'Result Item',
           value: '',
-          id: 4,
-          pid: 10,
+          id: 0,
+          pid: 120,
           children: [
-            { name: 'Name', value: '', id: 4, pid: 10 },
-            { name: 'Description', value: '', id: 4, pid: 10 },
-            { name: 'Keywords', value: '', id: 4, pid: 10 },
-            { name: 'Version', value: '', id: 4, pid: 10 },
-            { name: 'Distributors', value: '', id: 4, pid: 10 },
-            { name: 'Existing File', value: '', id: 4, pid: 10 },
-            { name: 'Restriction', value: '', id: 4, pid: 10 },
-            { name: 'Conclusion', value: '', id: 4, pid: 10 }
+            { name: 'Name', value: '', id: 21, pid: 222 }
+            // { name: 'Description', value: '', id: 32, pid: 3 },
+            // { name: 'Keywords', value: '', id: 42, pid: 4 },
+            // { name: 'Version', value: '', id: 52, pid: 5 },
+            // { name: 'Distributors', value: '', id: 62, pid: 6 },
+            // { name: 'Existing File', value: '', id: 72, pid: 7 },
+            // { name: 'Restriction', value: '', id: 28, pid: 8 },
+            // { name: 'Conclusion', value: '', id: 92, pid: 9 }
           ]
         },
         {
           name: 'Comparison',
           value: '',
           id: 1,
-          pid: 0,
-          children: [{ name: 'Method', value: '', id: 4, pid: 10 }]
+          pid: 1,
+          children: [{ name: 'Method', value: '', id: 10, pid: 10 }]
         }
       ]
     };

@@ -4,10 +4,10 @@ package edu.njnu.reproducibility.domain.resource;
 import edu.njnu.reproducibility.annotation.JwtTokenParser;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
-import edu.njnu.reproducibility.domain.resource.dto.AddResourceDTO;
-import edu.njnu.reproducibility.domain.resource.dto.UpdateResourceDataDTO;
-import edu.njnu.reproducibility.domain.resource.dto.UpdateResourceModelDTO;
-import edu.njnu.reproducibility.domain.resource.dto.UpdateResourceRelatedDataDTO;
+import edu.njnu.reproducibility.domain.projectResource.dto.AddResourceDTO;
+import edu.njnu.reproducibility.domain.projectResource.dto.UpdateResourceDataDTO;
+import edu.njnu.reproducibility.domain.projectResource.dto.UpdateResourceModelDTO;
+import edu.njnu.reproducibility.domain.projectResource.dto.UpdateResourceRelatedDataDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @CrossOrigin(origins = "*",allowCredentials = "true")
 @RestController
-@RequestMapping("/resources")
+@RequestMapping("/projectResources")
 public class ResourceController {
     @Autowired
     ResourceService resourceService;

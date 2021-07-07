@@ -10,7 +10,7 @@
             </el-button>
           </el-upload>
         </div>
-        <div class="btn"><el-button size="mini" @click="submitBtn">Submit</el-button></div>
+        <!-- <div class="btn"></div> -->
         <div class="btn"><el-button size="mini" @click="addFolderShow">Add folder</el-button></div>
       </div>
       <div v-else>
@@ -25,11 +25,9 @@
     <div class="row-style">
       <el-table
         ref="multipleTable"
-        :data="dataItemListDirect"
+        :data="fileItemListDirect"
         tooltip-effect="dark"
         style="width: 100%"
-        @selection-change="handleSelectionChange"
-        @select="selectRow"
         max-height="350"
         :row-style="{ height: '0' }"
         :cell-style="{ padding: '4px' }"
@@ -43,7 +41,6 @@
         <template slot="empty">
           Please upload a file
         </template>
-        <el-table-column type="selection" width="50" v-if="role == 'builder'"></el-table-column>
 
         <el-table-column label="Name" show-overflow-tooltip>
           <template #default="scope">
@@ -58,25 +55,32 @@
             <span v-show="scope.row.folder == false">File</span>
           </template>
         </el-table-column>
-        <el-table-column label="File size" width="80">
+        <el-table-column label="File size" width="180">
           <template #default="scope">{{ scope.row.fileSize }}</template>
         </el-table-column>
-        <el-table-column label="Upload time" width="160" show-overflow-tooltip>
+        <el-table-column label="Upload time" width="200" show-overflow-tooltip>
           <template #default="scope">{{ scope.row.createTime }}</template>
         </el-table-column>
       </el-table>
     </div>
+    <div class="contentBottom">
+      <div class="selectFile" v-show="currentRow != ''">
+        <!-- {{ currentRow }} -->
+        <div style="float:left">{{ currentRow.name }} . {{ currentRow.suffix }}</div>
+        <i class="el-icon-error" style="float:right;" @click="cancleRow" />
+      </div>
+    </div>
 
     <!-- upload data -->
-    <el-dialog title="Upload data" :visible.sync="uploadDataDialogShow" width="40%" :close-on-click-modal="false">
+    <el-dialog title="Upload data" :visible.sync="uploadFileDialogShow" width="40%" :close-on-click-modal="false">
       <data-upload-info @uploadSuccess="uploadSuccess"></data-upload-info>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getFileItemsByJwtUserId, updateResource, updatePerformanceById, getFileItemByCreatorId, saveFileItem, updateFileItemById, postDataContainer } from '@/api/request';
-// import dataUpload from './DataUpload'; //dialogcontent
+import { getFileItemsByJwtUserId, getFileItemByCreatorId, saveFileItem, updateFileItemById, postDataContainer } from '@/api/request';
+// import dataUpload from './FileUpload'; //dialogcontent
 import dataUploadInfo from './DataUploadInfo'; //dialogcontent
 import { getUuid, getSuffix, renderSize, getTime } from '@/utils/utils';
 import { mapState } from 'vuex';
@@ -88,13 +92,13 @@ export default {
 
   data() {
     return {
-      uploadDataDialogShow: false, //upload data dialog
-      dataItemList: [],
-      dataItemListFromResource: [],
+      uploadFileDialogShow: false, //upload data dialog
+      fileItemList: [],
+      fileItemListFromResource: [],
       projectId: this.$route.params.id,
       modelItemList: [],
       checkAll: false,
-      checkedDataItemList: [],
+      checkedFileItemList: [],
       isIndeterminate: false,
 
       //table
@@ -103,48 +107,55 @@ export default {
       //add folder
       isAddFolder: false,
       folderName: '',
-      currentRow: '',
-      dataItemListDirect: []
+      currentRow: ''
+      // fileItemListDirect: []
     };
   },
   computed: {
     ...mapState({
       role: state => state.permission.role
-    })
+    }),
+    fileItemListDirect() {
+      if (this.fileItemList.length != 0 || this.fileItemList != null || this.fileItemList != undefined) {
+        return this.fileItemList.filter(item => item.userUpload == true);
+      } else {
+        return [];
+      }
+    }
   },
 
   methods: {
     //close the dialog
     uploadSuccess(val) {
       if (val) {
-        this.uploadDataDialogShow = false;
+        this.uploadFileDialogShow = false;
       }
     },
 
-    downloadDataResource(data) {
+    downloadFileResource(data) {
       window.open(data.address);
     },
 
     //get all the data
-    async getDataCollection() {
+    async getFileCollection() {
       let data = await getFileItemsByJwtUserId();
       // let data = await get(`/fileItems`);
-      this.dataItemList = data;
-      this.dataItemListDirect = this.getDataItemListDirect();
+      this.fileItemList = data;
+      // this.fileItemListDirect = this.getFileItemListDirect();
 
-      await this.getSelectedData();
+      // await this.getSelectedFile();
     },
 
-    getDataItemListDirect() {
+    getFileItemListDirect() {
       if (this.role == 'builder') {
-        if (this.dataItemList.length != 0 || this.dataItemList != null || this.dataItemList != undefined) {
-          return this.dataItemList.filter(item => item.userUpload == true);
+        if (this.fileItemList.length != 0 || this.fileItemList != null || this.fileItemList != undefined) {
+          return this.fileItemList.filter(item => item.userUpload == true);
         } else {
           return [];
         }
       }
       if (this.role == 'rebuilder_operator') {
-        return this.dataItemListFromResource;
+        return this.fileItemListFromResource;
       }
       return [];
     },
@@ -164,69 +175,45 @@ export default {
     },
 
     //selection change
-    handleSelectionChange(val) {
-      // this.multipleSelection = val;
-      console.log(val);
-    },
+    // handleSelectionChange(val) {
+    //   // this.multipleSelection = val;
+    //   console.log(val);
+    // },
 
-    selectRow(selection, row) {
-      let val = row;
-      // this.multipleSelection.push(row);
-      if (selection.some(el => el == row)) {
-        if (val.folder && val.children.length != 0 && val.children != null) {
-          val.children.forEach(child => {
-            this.multipleSelection.push(child);
-          });
-        }
-      } else {
-        if (val.folder && val.children.length != 0 && val.children != null) {
-          val.children.forEach(child => {
-            this.multipleSelection.splice(item => item.id == child.id);
-          });
-        }
-      }
+    // selectRow(selection, row) {
+    //   let val = row;
+    //   // this.multipleSelection.push(row);
+    //   if (selection.some(el => el == row)) {
+    //     if (val.folder && val.children.length != 0 && val.children != null) {
+    //       val.children.forEach(child => {
+    //         this.multipleSelection.push(child);
+    //       });
+    //     }
+    //   } else {
+    //     if (val.folder && val.children.length != 0 && val.children != null) {
+    //       val.children.forEach(child => {
+    //         this.multipleSelection.splice(item => item.id == child.id);
+    //       });
+    //     }
+    //   }
 
-      console.log('selection', this.multipleSelection);
-      this.toggleSelection(this.multipleSelection);
-    },
+    //   console.log('selection', this.multipleSelection);
+    //   this.toggleSelection(this.multipleSelection);
+    // },
 
     handleCurrentChange(row) {
       this.currentRow = row;
+      this.$emit('returnFileUrl', row);
     },
     cancleCurrentRow() {
       this.currentRow = '';
     },
 
-    async getDataAsOperator() {
+    async getFileAsOperator() {
       let data = await getFileItemByCreatorId(this.projectId);
-      this.dataItemListFromResource = data;
+      this.fileItemListFromResource = data;
       this.$refs.multipleTable.toggleAllSelection();
       // console.log('DATA', data);
-    },
-
-    //submit
-    async submitBtn() {
-      if (this.multipleSelection.length == 0) {
-        this.$notify({
-          title: 'Warning',
-          message: 'You have not select any data!',
-          type: 'warning'
-        });
-        return;
-      }
-
-      //用id重组一个新数组
-      let filter = [];
-      this.multipleSelection.forEach(ele => {
-        filter.push(ele.id);
-      });
-      await updateResource(this.projectId, {
-        dataItemCollection: filter
-      });
-
-      let content = { content: 'Resource Collection', degree: '100%', type: 'success', icon: 'el-icon-folder' };
-
-      await updatePerformanceById('resource', this.projectId, content);
     },
 
     addFolderShow() {
@@ -248,7 +235,7 @@ export default {
         children: [],
         userUpload: true
       };
-      await this.saveResource(form);
+      await this.saveProjectResource(form);
     },
 
     //上传文件到服务器
@@ -256,6 +243,8 @@ export default {
       let uploadFileForm = new FormData();
       uploadFileForm.append('file', param.file);
       let data = await postDataContainer(uploadFileForm);
+
+      console.log('submitupload', data);
 
       let form = {
         name: data.file_name,
@@ -269,37 +258,36 @@ export default {
         folder: false
       };
 
-      await this.saveResource(form);
+      await this.saveProjectResource(form);
     },
 
-    async saveResource(form) {
+    async saveProjectResource(form) {
       if (this.currentRow == '') {
         let data = await saveFileItem(form);
-        this.dataItemList.push(data);
+        this.fileItemList.push(data);
       } else {
         form.parent = this.currentRow.id;
         form.id = getUuid();
         form.createTime = getTime();
-        let parentData = this.currentRow;
-        if (parentData.children == null) {
-          parentData.children = [];
+        let parentFile = this.currentRow;
+        if (parentFile.children == null) {
+          parentFile.children = [];
         }
-        parentData.children.push(form);
-        await updateFileItemById(parentData.id, parentData);
+        parentFile.children.push(form);
+        await updateFileItemById(parentFile.id, parentFile);
       }
+      //  this.fileItemListDirect
     },
 
     collapseClass(params) {
       return params.folder === true ? 'el-icon-folder' : 'el-icon-document';
+    },
+    cancleRow() {
+      this.currentRow = '';
     }
   },
   async mounted() {
-    if (this.role == 'builder') {
-      await this.getDataCollection();
-    }
-    if (this.role == 'rebuilder_operator') {
-      await this.getDataAsOperator();
-    }
+    await this.getFileCollection();
   }
 };
 </script>
@@ -331,6 +319,26 @@ export default {
   .el-table__body tr.current-row > td {
     background-color: #69a8ea !important;
     color: #fff;
+  }
+
+  .contentBottom {
+    height: 40px;
+    line-height: 40px;
+    margin-top: 10px;
+
+    .selectFile {
+      background-color: lightgoldenrodyellow;
+      float: left;
+      width: 250px;
+      margin: 0 0 0 10px;
+      border: 1px solid #dddddd;
+      border-radius: 4px;
+      // border-top: 5px solid #67c23a;
+    }
+    .submitBtn {
+      float: right;
+      // width: 30%;
+    }
   }
 }
 </style>

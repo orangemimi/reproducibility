@@ -56,7 +56,7 @@
     </el-dialog>
 
     <el-dialog :visible.sync="addTemporalInfodialogVisible" width="40%" class="temporalDialog" title="Add Temporal Info">
-      <temporal-info-dialog :temporalInfoForm="temporalInfoForm"></temporal-info-dialog>
+      <temporal-info-dialog :temporalInfo="temporalInfoForm" @getTemporalInfoReturn="getTemporalInfoReturn"></temporal-info-dialog>
     </el-dialog>
   </div>
 </template>
@@ -241,6 +241,11 @@ export default {
     getSpatialInfoReturn(value) {
       console.log('spatialInfo', value);
       this.spatialInfoForm = value;
+      this.addSpatialInfodialogVisible = false;
+    },
+    getTemporalInfoReturn(value) {
+      this.temporalInfoForm = value;
+      this.addTemporalInfodialogVisible = false;
     }
   },
   created() {

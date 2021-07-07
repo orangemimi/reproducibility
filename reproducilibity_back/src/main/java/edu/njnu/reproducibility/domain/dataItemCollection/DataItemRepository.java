@@ -13,5 +13,6 @@ import java.util.Optional;
  */
 public interface DataItemRepository extends MongoRepository<DataItemCollection,String> {
     Optional<DataItemCollection> findFirstByProjectId(String pid);
+    Optional<DataItemCollection> findFirstById(String id);
     List<DataItemCollection> findAllByProjectId(String pid);
 }

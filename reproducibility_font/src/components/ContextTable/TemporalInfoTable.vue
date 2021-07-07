@@ -14,7 +14,7 @@
       </tr>
 
       <tr>
-        <td class="title" :rowspan="temporalInfo.temporalExtentList.length + 1">Temporal Extents</td>
+        <td class="title" :rowspan="temporalInfo.temporalExtentList.length + 2">Temporal Extents</td>
         <td class="content" :colspan="6" v-if="temporalInfo.temporalExtentList.length == 0">Undefined</td>
       </tr>
       <tr v-show="temporalInfo.temporalExtentList.length != 0">

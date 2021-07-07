@@ -35,8 +35,8 @@ public class DataItemService {
         return dataItemCollections;
     }
 
-    public DataItemCollection updateResourceData(String pid, UpdateDataItemDTO update) {
-        DataItemCollection dataItemCollection = dataItemRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
+    public DataItemCollection updateResourceData(String id, UpdateDataItemDTO update) {
+        DataItemCollection dataItemCollection = dataItemRepository.findFirstById(id).orElseThrow(MyException::noObject);
         update.updateTo(dataItemCollection);
         return dataItemRepository.save(dataItemCollection);
     }

@@ -95,7 +95,7 @@
 
 <script>
 import { mapState } from 'vuex';
-import { getResourcesById } from '@/api/request';
+import { getProjectResourcesById } from '@/api/request';
 
 export default {
   props: {
@@ -166,7 +166,7 @@ export default {
     },
 
     async getResources() {
-      let data = await getResourcesById(this.projectId);
+      let data = await getProjectResourcesById(this.projectId);
       console.log('resource', data);
       this.dataItemList = data; //id list
     },

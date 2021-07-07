@@ -115,24 +115,24 @@ export async function getContextByProjectId(projectId) {
   return await get(`/context/${projectId}`);
 }
 
-//---------------------------------------------------resources------------------------------------------
+//---------------------------------------------------projectResources------------------------------------------
 
-export async function getResourcesById(projectId) {
-  return await get(`/resources/${projectId}`);
+export async function getProjectResourcesById(projectId) {
+  return await get(`/projectResources/${projectId}`);
 }
 
-export async function saveResource(form) {
-  return await post(`/resources`, form);
+export async function saveProjectResource(form) {
+  return await post(`/projectResources`, form);
 }
 
-export async function uploadResourcePicture(form) {
-  return await post(`/resources/picture`, form);
+export async function uploadProjectResourcePicture(form) {
+  return await post(`/projectResources/picture`, form);
 }
 
-export async function updateResource(projectId, form) {
-  let data = await patch(`/resources/data/${projectId}`, form);
+export async function updateProjectResource(projectId, form) {
+  let data = await patch(`/projectResources/data/${projectId}`, form);
   if (data != null) {
-    successNotification('update', 'resources');
+    successNotification('update', 'projectResources');
   }
   return data;
 }
@@ -196,7 +196,7 @@ export async function getDataItemsByProjectId(projectId) {
 
 export async function postDataContainer(form) {
   // debugger;
-  let { data } = await post(`/dataContainer/uploadSingle`, form);
+  let data = await post(`/dataContainer/uploadSingle`, form);
   return data;
 }
 
@@ -380,7 +380,7 @@ export async function savePerformance(form) {
 }
 
 export async function updatePerformanceById(type, id, form) {
-  return await patch(`/performances/${type}/${id}`, form); //type==context/resource/scenario/results
+  return await patch(`/performances/${type}/${id}`, form); //type==context/projectResource/scenario/results
 }
 
 export async function getPerformanceByProjectId(projectId) {

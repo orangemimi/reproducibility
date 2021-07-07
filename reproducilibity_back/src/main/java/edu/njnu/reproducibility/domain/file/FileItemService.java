@@ -9,7 +9,7 @@ import edu.njnu.reproducibility.domain.file.dto.UpdateFileItemDTO;
 import edu.njnu.reproducibility.domain.project.Member;
 import edu.njnu.reproducibility.domain.project.Project;
 import edu.njnu.reproducibility.domain.project.ProjectService;
-import edu.njnu.reproducibility.domain.resource.ResourceService;
+import edu.njnu.reproducibility.domain.projectResource.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,7 @@
 <!-- data upload information -->
 <template>
   <div class="main">
+    <!-- {{ formType }} -->
     <el-form class="resource" ref="form" :model="form" label-width="100px" size="mini">
       <el-form-item label="Name">
         <el-input v-model="form.name"></el-input>
@@ -47,32 +48,32 @@
       <el-form-item label="Keywords">
         <el-input v-model="form.keywords[0]"></el-input>
       </el-form-item>
-      <div v-if="formType != 'parameter'">
-        <el-form-item label="Spatial Info">
-          <el-button @click="addSpatialInfodialogVisible = true" size="mini" class="spatioEdit">Edit</el-button>
-          <spatial-info-table :spatialInfoForm="spatialInfoForm"></spatial-info-table>
-        </el-form-item>
-        <el-form-item label="Temporal Info">
-          <el-button @click="addTemporalInfodialogVisible = true" size="mini" class="temporalEdit">Edit</el-button>
-          <temporal-info-table :temporalInfoForm="temporalInfoForm"></temporal-info-table>
-        </el-form-item>
-      </div>
+
+      <el-form-item label="Spatial Info" v-show="formType != 'parameter'">
+        <el-button @click="addSpatialInfodialogVisible = true" size="mini" class="spatioEdit">Edit</el-button>
+        <spatial-info-table :spatialInfoForm="spatialInfoForm"></spatial-info-table>
+      </el-form-item>
+      <el-form-item label="Temporal Info" v-show="formType != 'parameter'">
+        <el-button @click="addTemporalInfodialogVisible = true" size="mini" class="temporalEdit">Edit</el-button>
+        <temporal-info-table :temporalInfoForm="temporalInfoForm"></temporal-info-table>
+      </el-form-item>
+
       <!-- <el-form ref="formRestriction" :model="form" label-width="100px" size="mini"> -->
-      <div v-else>
-        <el-form-item label="Type">
-          <el-radio-group v-model="form.restriction.type" v-for="(item, index) in typeEnums" :key="index">
-            <el-radio :label="item"></el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="Decimal">
-          <el-input v-model="form.restriction.decimal"></el-input>
-        </el-form-item>
-        <!-- <el-form-item v-model="form.restriction.content"></el-form-item> -->
-        <el-form-item label="Unit">
-          {{ form.restriction.unit.value }}
-          <el-button size="mini" @click="drawer = true">Add Unit</el-button>
-        </el-form-item>
-      </div>
+
+      <el-form-item label="Type" v-show="formType == 'parameter'">
+        <el-radio-group v-model="form.restriction.type" v-for="(item, index) in typeEnums" :key="index">
+          <el-radio :label="item"></el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="Decimal" v-show="formType == 'parameter'">
+        <el-input v-model="form.restriction.decimal"></el-input>
+      </el-form-item>
+      <!-- <el-form-item v-model="form.restriction.content"></el-form-item> -->
+      <el-form-item label="Unit" v-show="formType == 'parameter'">
+        {{ form.restriction.unit.value }}
+        <el-button size="mini" @click="drawer = true">Add Unit</el-button>
+      </el-form-item>
+
       <!-- </el-form> -->
 
       <el-form-item label="State">
@@ -90,10 +91,6 @@
       </el-form-item>
 
       <el-form-item label="Organization">
-        <!-- <el-input v-model="form.agentAttribute.organization">
-          <el-button slot="append" icon="el-icon-search" @click="addDescription">Add description</el-button>
-        </el-input> -->
-
         <div class="tree">
           <vue-tree-list @click="onClick" @delete-node="onDel" :model="treeData" default-tree-node-name="new node" default-leaf-node-name="new leaf" v-bind:default-expanded="false">
             <template v-slot:leafNameDisplay="slotProps" class="content">
@@ -105,11 +102,11 @@
           </vue-tree-list>
         </div>
       </el-form-item>
-    </el-form>
 
-    <div class="submit">
-      <el-button @click="submit">Submit</el-button>
-    </div>
+      <el-form-item>
+        <el-button @click="submit">Submit</el-button>
+      </el-form-item>
+    </el-form>
 
     <unit-drawer :drawer="drawer" @selectUnit="selectUnit" @closeDrawer="closeDrawer"></unit-drawer>
 
@@ -124,17 +121,18 @@
     </el-dialog>
 
     <el-dialog :visible.sync="addTemporalInfodialogVisible" width="40%" class="temporalDialog" title="Add Temporal Info" :append-to-body="true">
-      <temporal-info-dialog :temporalInfoForm="temporalInfoForm"></temporal-info-dialog>
+      <temporal-info-dialog :temporalInfo="temporalInfoForm"></temporal-info-dialog>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { post } from '@/axios';
-import { saveDataItem, saveFileItem } from '@/api/request';
+// import { post } from '@/axios';
+import { saveDataItem, saveFileItem, postDataContainer } from '@/api/request';
 // import addImage from '_com/AddImage';
 import { VueTreeList, Tree, TreeNode } from '_com/TreeDescription';
-// import { objToStrMap } from '@/utils/utils';
+import { getSuffix, renderSize } from '@/utils/utils';
+
 import temporalInfoTable from '_com/ContextTable/TemporalInfoTable';
 import temporalInfoDialog from '_com/ContextTable/TemporalInfoDialog';
 import spatialInfoTable from '_com/ContextTable/SpatialInfoTable';
@@ -319,11 +317,11 @@ export default {
       this.uploadFileForm.append('file', param.file);
       // console.log(this.uploadFileForm.get('file'));
 
-      let { data } = await post(`/dataContainer/uploadSingle`, this.uploadFileForm);
+      let data = await postDataContainer(this.uploadFileForm);
 
       this.fileForm.name = data.file_name;
-      this.fileForm.suffix = this.getSuffix(param.file.name);
-      this.fileForm.fileSize = this.renderSize(param.file.size);
+      this.fileForm.suffix = getSuffix(param.file.name);
+      this.fileForm.fileSize = renderSize(param.file.size);
       this.fileForm.folder = false;
       this.fileForm.userUpload = true;
 
@@ -339,28 +337,10 @@ export default {
       }
     },
 
-    getSuffix(filename) {
-      let index = filename.lastIndexOf('.');
-      return filename.substr(index + 1);
-    },
-
-    renderSize(value) {
-      if (null == value || value == '') {
-        return '0 Bytes';
-      }
-      var unitArr = new Array('Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
-      var index = 0,
-        srcsize = parseFloat(value);
-      index = Math.floor(Math.log(srcsize) / Math.log(1024));
-      var size = srcsize / Math.pow(1024, index);
-      //  保留的小数位数
-      size = size.toFixed(2);
-      return size + unitArr[index];
-    },
-
     //data item保存到数据库
     //上传数据直接保存到fileItems,即用户的资源可全部显示，之后选择所需的数据，之后保存选择的数据之后 保存到resource数据表里面去
     async submit() {
+      console.log('getFile', this.uploadFileForm.get('file'));
       if (this.uploadFileForm.get('file') != null) {
         this.fileForm.description = this.form.description;
         await saveFileItem(this.fileForm);
@@ -373,11 +353,6 @@ export default {
       await saveDataItem(this.form);
       // let data = await post(`/fileItems`, this.form);
       // console.log(data);
-      this.$notify({
-        title: 'Success',
-        message: 'You have upload the file successfully!',
-        type: 'success'
-      });
 
       this.$emit('uploadSuccess', true);
     },

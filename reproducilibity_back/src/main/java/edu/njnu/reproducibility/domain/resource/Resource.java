@@ -2,7 +2,6 @@ package edu.njnu.reproducibility.domain.resource;
 
 
 import edu.njnu.reproducibility.common.entity.BaseEntity;
-import edu.njnu.reproducibility.domain.*;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -15,7 +14,7 @@ import java.util.List;
  * @Version 1.0.0
  */
 @Data
-@Document(collection = "Resources")
+@Document(collection = "ProjectResources")
 public class Resource extends BaseEntity {
     @Id
     String id;

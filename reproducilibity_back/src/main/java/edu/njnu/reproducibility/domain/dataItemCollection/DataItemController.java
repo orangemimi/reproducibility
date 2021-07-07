@@ -6,10 +6,6 @@ import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
 import edu.njnu.reproducibility.domain.dataItemCollection.dto.AddDataItemDTO;
 import edu.njnu.reproducibility.domain.dataItemCollection.dto.UpdateDataItemDTO;
-import edu.njnu.reproducibility.domain.file.dto.AddFileItemDTO;
-import edu.njnu.reproducibility.domain.resource.dto.UpdateResourceDataDTO;
-import edu.njnu.reproducibility.domain.resource.dto.UpdateResourceModelDTO;
-import edu.njnu.reproducibility.domain.resource.dto.UpdateResourceRelatedDataDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,9 +33,9 @@ public class DataItemController {
         return ResultUtils.success(dataItemService.getResourcesByProjectId(projectId));
     }
 
-    @RequestMapping(value = "/data/{pid}", produces = {"application/json;charset=UTF-8"},method = RequestMethod.PATCH)
-    public JsonResult updateResourceData(@PathVariable("pid") String pid,@RequestBody UpdateDataItemDTO update){
-        return ResultUtils.success(dataItemService.updateResourceData(pid, update));
+    @RequestMapping(value = "/{id}", produces = {"application/json;charset=UTF-8"},method = RequestMethod.PATCH)
+    public JsonResult updateResourceData(@PathVariable("id") String id,@RequestBody UpdateDataItemDTO update){
+        return ResultUtils.success(dataItemService.updateResourceData(id, update));
     }
 //
 //    @RequestMapping(value = "/relatedData/{pid}", produces = {"application/json;charset=UTF-8"},method = RequestMethod.PATCH)

@@ -5,6 +5,7 @@ import edu.njnu.reproducibility.domain.context.SpatialInfo;
 import edu.njnu.reproducibility.domain.context.TemporalInfo;
 import edu.njnu.reproducibility.domain.dataItemCollection.DataItemCollection;
 import edu.njnu.reproducibility.domain.dataItemCollection.activityAttribute.ActivityAttribute;
+import edu.njnu.reproducibility.domain.dataItemCollection.agentAttribute.AgentAttribute;
 import edu.njnu.reproducibility.domain.dataItemCollection.restrictionSupport.Restriction;
 import lombok.Data;
 
@@ -15,15 +16,20 @@ public class UpdateDataItemDTO implements ToDomainConverter<DataItemCollection> 
     String name;
     String description;
     List<String> keywords;
-    String duty;
-
+    //    String duty;
     String format;//file/parameter/sharedFile
+    String value;//url or value
+    String size;
+
     String projectId;
     String userId;//creatorId
+
 
     Restriction restriction;
 
     String version;
-    ActivityAttribute activityAttribute;
     String state;//published ;
+
+    ActivityAttribute activityAttribute;
+    AgentAttribute agentAttribute;
 }

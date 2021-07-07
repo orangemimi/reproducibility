@@ -127,7 +127,7 @@ export default {
       this.addSpatialInfodialogVisible = false;
       this.spatialInfoForm.spatialExtentList = this.spatialExtentList;
       // this.spatialInfoForm.resolutionConstraintList =this
-      this.spatialInfoForm.spatialInfoList = [];
+      // this.spatialInfoForm.spatialInfoList = [];
       this.spatialInfoForm.spatialInfoList.push(this.spatialInfoForm);
       this.$emit('getSpatialInfoReturn', this.spatialInfoForm);
     },

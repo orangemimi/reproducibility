@@ -19,7 +19,7 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item label="Image">
-        <add-image @uploadImgResponse="uploadImgResponse" :uploadPath="'resources/picture'"></add-image>
+        <add-image @uploadImgResponse="uploadImgResponse" :uploadPath="'projectResources/picture'"></add-image>
       </el-form-item>
       <el-form-item label="Upload">
         <data-upload></data-upload>

@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 
 /**
  * @Author ：Zhiyi
@@ -37,7 +36,7 @@ import java.util.Collection;
 @RequestMapping("/dataContainer")
 public class RemoteDataContainerController {
     @Autowired
-    DataContainerFeign dataContainerFeign;
+    DataContainerService dataContainerService;
 
 
 //    @RequestMapping (value = "/uploadFileForm", method = RequestMethod.POST)
@@ -87,7 +86,7 @@ public class RemoteDataContainerController {
         form.add("origination", "reproducibility");
 
 //        return ResultUtils.success(dataContainerService.upload(file,id,name));
-        return ResultUtils.success(dataContainerFeign.upload(form));
+        return ResultUtils.success(dataContainerService.upload(form));
     }
 
 
@@ -113,14 +112,14 @@ public class RemoteDataContainerController {
         form.add("origination", "reproducibility");
 
 //        return ResultUtils.success(dataContainerService.upload(file,id,name));
-        return ResultUtils.success(dataContainerFeign.upload(form));
+        return ResultUtils.success(dataContainerService.upload(form));
     }
 
 
 
     @RequestMapping(value = "/download/{uid}", method = RequestMethod.GET)
-    public JSONObject download(@PathVariable("uid") String uid) {
-        return dataContainerFeign.download(uid);
+    public ResponseEntity<byte[]> download(@PathVariable("uid") String uid) {
+        return dataContainerService.download(uid);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)

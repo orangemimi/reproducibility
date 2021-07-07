@@ -3,13 +3,13 @@
   <div class="main">
     <el-tabs v-model="activeName" size="mini">
       <el-tab-pane label="Upload File" name="file">
-        <data-upload-form :formType="'file'" :initFormData="initFormData"></data-upload-form>
+        <data-upload-form :formType="'file'" :initFormData="initFormData" @uploadSuccess="uploadSuccess"></data-upload-form>
       </el-tab-pane>
-      <el-tab-pane label="Parameter" name="parameter" style="height:200px">
-        <data-upload-form :formType="'parameter'" :initFormData="initFormData"></data-upload-form>
+      <el-tab-pane label="Parameter" name="parameter">
+        <data-upload-form :formType="'parameter'" :initFormData="initFormData" @uploadSuccess="uploadSuccess"></data-upload-form>
       </el-tab-pane>
-      <el-tab-pane label="Shared File" name="sharedFile">
-        <data-upload-form :formType="'sharedFile'" :initFormData="initFormData"></data-upload-form>
+      <el-tab-pane label="Shared File" name="shared_file">
+        <data-upload-form :formType="'shared_file'" :initFormData="initFormData" @uploadSuccess="uploadSuccess"></data-upload-form>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -36,7 +36,11 @@ export default {
     };
   },
 
-  methods: {},
+  methods: {
+    uploadSuccess(val) {
+      this.$emit('uploadSuccess', val);
+    }
+  },
 
   mounted() {}
 };

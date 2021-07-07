@@ -17,7 +17,7 @@
   </div>
 </template>
 <script>
-// import { uploadResourcePicture } from '@/api/request';
+// import { uploadProjectResourcePicture } from '@/api/request';
 // import tinymce from '_com/Tinymce/Tinymce';
 export default {
   props: {
@@ -73,13 +73,13 @@ export default {
           let formData = new FormData();
           formData.append('pictureFile', file);
 
-          // let fileName = await uploadResourcePicture(formData);
+          // let fileName = await uploadProjectResourcePicture(formData);
 
           // this.toolInfo.toolImg = url;
           // this.image = e.target.result;
           // this.$('#choosePicture').val('');
           this.axios
-            .post('/resources/picture', formData)
+            .post('/projectResources/picture', formData)
             .then(res => {
               if (res.data != 'Fail') {
                 let url = `http://${window.location.host}/r/${this.userId}/projectPicture/${res.data}`;

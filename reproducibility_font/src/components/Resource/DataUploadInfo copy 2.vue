@@ -89,7 +89,7 @@
               </el-form-item>
             </el-form>
           </el-tab-pane>
-          <el-tab-pane label="Shared File" name="sharedFile" style="height:140px">
+          <el-tab-pane label="Shared File" name="shared_file" style="height:140px">
             <el-input v-model="form.value"></el-input>
 
             <div>

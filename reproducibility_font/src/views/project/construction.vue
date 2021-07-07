@@ -22,7 +22,12 @@
       <div class="record">
         <div class="block">
           <el-timeline>
-            <el-timeline-item :icon="completion.context.icon" :type="completion.context.type" size="large" :timestamp="dateFormat(completion.context.updateTime)">
+            <el-timeline-item
+              :icon="completion.context.icon == null ? 'el-icon-upload' : completion.context.icon"
+              :type="completion.context.type"
+              size="large"
+              :timestamp="dateFormat(completion.context.updateTime)"
+            >
               {{ completion.context.content }}
             </el-timeline-item>
 

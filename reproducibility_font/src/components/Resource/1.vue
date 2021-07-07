@@ -96,7 +96,16 @@
 </template>
 
 <script>
-import { getFileItemsByJwtUserId, getResourcesById, updateResource, updatePerformanceById, getFileItemByCreatorId, saveFileItem, updateFileItemById, postDataContainer } from '@/api/request';
+import {
+  getFileItemsByJwtUserId,
+  getProjectResourcesById,
+  updateProjectResource,
+  updatePerformanceById,
+  getFileItemByCreatorId,
+  saveFileItem,
+  updateFileItemById,
+  postDataContainer
+} from '@/api/request';
 // import dataUpload from './DataUpload'; //dialogcontent
 import dataUploadInfo from './DataUploadInfo'; //dialogcontent
 import { getUuid, getSuffix, renderSize, getTime } from '@/utils/utils';
@@ -169,9 +178,9 @@ export default {
       return [];
     },
 
-    //get resources
+    //get projectResources
     async getSelectedData() {
-      let data = await getResourcesById(this.projectId);
+      let data = await getProjectResourcesById(this.projectId);
 
       let dataSelected = data;
 
@@ -314,7 +323,7 @@ export default {
       this.multipleSelection.forEach(ele => {
         filter.push(ele.id);
       });
-      await updateResource(this.projectId, {
+      await updateProjectResource(this.projectId, {
         dataItemCollection: filter
       });
 
@@ -342,7 +351,7 @@ export default {
         children: [],
         userUpload: true
       };
-      await this.saveResource(form);
+      await this.saveProjectResource(form);
     },
 
     //上传文件到服务器
@@ -363,10 +372,10 @@ export default {
         folder: false
       };
 
-      await this.saveResource(form);
+      await this.saveProjectResource(form);
     },
 
-    async saveResource(form) {
+    async saveProjectResource(form) {
       if (this.currentRow == '') {
         let data = await saveFileItem(form);
         this.dataItemList.push(data);
