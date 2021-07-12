@@ -3,11 +3,24 @@
     <el-col :xs="24" :sm="24" :md="{ span: 22, offset: 1 }" :lg="{ span: 18, offset: 3 }">
       <div class="main-card">
         <el-row :gutter="20">
+<<<<<<< HEAD
           <el-col :span="24">
             <step-card :cardInfo="{ btnType: 'Context Definition' }" style="height:450px;width:100%"></step-card>
+=======
+          <el-col :span="12">
+            <step-card
+              :cardInfo="{ btnType: 'Context Definition' }"
+              :projectInfo="projectInfo"
+              style="height:450px;width:100%"
+            ></step-card>
+>>>>>>> parent of f11cd19 (mxgraph)
           </el-col>
           <el-col :span="12">
-            <step-card :cardInfo="{ btnType: 'Resource Collection' }" style="height:450px;width:100%"></step-card>
+            <step-card
+              :cardInfo="{ btnType: 'Resource Collection' }"
+              :projectInfo="projectInfo"
+              style="height:450px;width:100%"
+            ></step-card>
           </el-col>
           <el-col :span="12">
             <step-card :cardInfo="{ btnType: 'Expected Result' }" style="height:450px;width:100%"></step-card>
@@ -15,11 +28,16 @@
         </el-row>
         <el-row>
           <el-col :span="24">
-            <step-card :cardInfo="{ btnType: 'Simulation Scenario' }" style="height:900px;width:100%"></step-card>
+            <step-card
+              :cardInfo="{ btnType: 'Simulation Construction' }"
+              :projectInfo="projectInfo"
+              style="height:900px;width:100%"
+            ></step-card>
           </el-col>
         </el-row>
       </div>
       <div class="record">
+<<<<<<< HEAD
         <div class="block">
           <el-timeline>
             <el-timeline-item
@@ -46,6 +64,10 @@
         </div>
         <!-- <el-popover placement="top" width="460" trigger="click">
           <record-list></record-list>
+=======
+        <el-popover placement="top" width="460" trigger="click">
+          <div><record-list :projectInfo="projectInfo"></record-list></div>
+>>>>>>> parent of f11cd19 (mxgraph)
           <el-button type="success" class="folder_collect" slot="reference" circle>
             <i class="el-icon-folder-opened"></i>
           </el-button>
@@ -56,10 +78,16 @@
 </template>
 
 <script>
+<<<<<<< HEAD
 import stepCard from '_com/StepCard';
 // import recordList from '_com/RecordList';
 import { getProjectAndUsers, getPerformanceByProjectId } from '@/api/request';
 import { dateFormat } from '@/utils/utils';
+=======
+import stepCard from './components/StepCard';
+import recordList from './components/RecordList';
+import { getProjectAndUsers } from '@/api/request';
+>>>>>>> parent of f11cd19 (mxgraph)
 export default {
   components: {
     stepCard

@@ -21,7 +21,12 @@
           <el-button @click="exportGraph" type="text" size="mini">Export as XML</el-button>
           <!-- <input @change="readFile" ref="importInput" class="hide" type="file" />
           <el-button @click="importGraphFile" type="text" size="mini">Import mxGraph</el-button> -->
-          <el-button @click="checked ? deleteCells() : deleteCellsConfirmDialog()" type="text" size="mini" :disabled="selectionCells.length == 0">
+          <el-button
+            @click="checked ? deleteCells() : deleteCellsConfirmDialog()"
+            type="text"
+            size="mini"
+            :disabled="selectionCells.length == 0"
+          >
             Delete
           </el-button>
           <el-button @click="undo" type="text" size="mini">Undo</el-button>
@@ -310,7 +315,7 @@ export default {
     },
 
     exportGraph() {
-      getGraphXml();
+      this.getGraphXml();
       let xml = mxUtils.getPrettyXml(this.graphXml);
       const blob = new Blob([xml], {
         type: 'text/plain;charset=utf-8'

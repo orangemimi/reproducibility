@@ -20,8 +20,11 @@ public class AddIntegrateTaskDTO implements ToDomainConverter<IntegrateTask> {
     String taskName;
     String taskDescription;
 
+<<<<<<< HEAD
     String content;
     String selectInstanceId;
 //    String type;//Integrate Task; notebook
+=======
+>>>>>>> parent of f11cd19 (mxgraph)
 
 }

@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * @Version 1.0.0
  */
 @Data
-@Document(collection = "IntegrateTask")
+@Document(collection = "IntegratedTask")
 public class IntegrateTask extends BaseEntity {
     @Id
     String id;

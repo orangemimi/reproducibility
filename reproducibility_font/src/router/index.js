@@ -118,7 +118,7 @@ export const constantRoutes = [
         },
         components: {
           header: () => import('_com/layout/MyHeader.vue'),
-          main: () => import('@/views/new-project/index'),
+          main: () => import('@/views/projects/create'),
           footer: () => import('_com/layout/MyFooter.vue')
         }
       },

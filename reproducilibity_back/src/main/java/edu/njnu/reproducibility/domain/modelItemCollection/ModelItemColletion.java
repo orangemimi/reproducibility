@@ -26,6 +26,10 @@ public class ModelItemColletion {
     String privacy;
     String thumbnail;
     List<String> tags;
+<<<<<<< HEAD:reproducilibity_back/src/main/java/edu/njnu/reproducibility/domain/modelItemCollection/ModelItemColletion.java
     String userId;//creator Id
     String md5;
+=======
+    String uploaderId;
+>>>>>>> parent of f11cd19 (mxgraph):reproducilibity_back/src/main/java/edu/njnu/reproducibility/domain/model/support/ModelItem.java
 }

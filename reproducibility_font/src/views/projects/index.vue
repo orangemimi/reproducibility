@@ -41,10 +41,25 @@ export default {
     },
 
     async getAllProjects() {
+<<<<<<< HEAD
       this.projectList = await getAllProjects(this.pageFilter.page, this.pageFilter.pageSize);
       // this.projectList.forEach(async project => {
       //   this.judgeRole(project);
       // });
+=======
+      let data = await getAllProjects(this.pageFilter.page, this.pageFilter.pageSize);
+      this.projectList = data;
+    },
+
+    async judgeRole(project) {
+      console.log(this.userId);
+      await this.$store.dispatch('permission/getRole', {
+        project: project,
+        userId: this.userId
+      });
+      console.log(this.role);
+      this.$router.push({ path: `/project/${project.id}/info` });
+>>>>>>> parent of f11cd19 (mxgraph)
     }
 
     // async judgeRole(project) {

@@ -125,7 +125,10 @@
       var flipH = this.flipH;
       var flipV = this.flipV;
 
-      if (this.direction == mxConstants.DIRECTION_NORTH || this.direction == mxConstants.DIRECTION_SOUTH) {
+      if (
+        this.direction == mxConstants.DIRECTION_NORTH ||
+        this.direction == mxConstants.DIRECTION_SOUTH
+      ) {
         var tmp = flipH;
         flipH = flipV;
         flipV = tmp;
@@ -198,9 +201,18 @@
   CubeShape.prototype.darkOpacity2 = 0;
 
   CubeShape.prototype.paintVertexShape = function(c, x, y, w, h) {
-    var s = Math.max(0, Math.min(w, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size)))));
-    var op = Math.max(-1, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'darkOpacity', this.darkOpacity))));
-    var op2 = Math.max(-1, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'darkOpacity2', this.darkOpacity2))));
+    var s = Math.max(
+      0,
+      Math.min(w, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size))))
+    );
+    var op = Math.max(
+      -1,
+      Math.min(1, parseFloat(mxUtils.getValue(this.style, 'darkOpacity', this.darkOpacity)))
+    );
+    var op2 = Math.max(
+      -1,
+      Math.min(1, parseFloat(mxUtils.getValue(this.style, 'darkOpacity2', this.darkOpacity2)))
+    );
     c.translate(x, y);
 
     c.begin();
@@ -370,7 +382,12 @@
     }
   };
   DataStoreShape.prototype.getLabelMargins = function(rect) {
-    return new mxRectangle(0, 2.5 * Math.min(rect.height / 2, Math.round(rect.height / 8) + this.strokewidth - 1), 0, 0);
+    return new mxRectangle(
+      0,
+      2.5 * Math.min(rect.height / 2, Math.round(rect.height / 8) + this.strokewidth - 1),
+      0,
+      0
+    );
   };
 
   mxCellRenderer.registerShape('datastore', DataStoreShape);
@@ -384,8 +401,14 @@
   NoteShape.prototype.darkOpacity = 0;
 
   NoteShape.prototype.paintVertexShape = function(c, x, y, w, h) {
-    var s = Math.max(0, Math.min(w, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size)))));
-    var op = Math.max(-1, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'darkOpacity', this.darkOpacity))));
+    var s = Math.max(
+      0,
+      Math.min(w, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size))))
+    );
+    var op = Math.max(
+      -1,
+      Math.min(1, parseFloat(mxUtils.getValue(this.style, 'darkOpacity', this.darkOpacity)))
+    );
     c.translate(x, y);
 
     c.begin();
@@ -440,7 +463,13 @@
   IsoCubeShape2.prototype.isoAngle = 15;
 
   IsoCubeShape2.prototype.paintVertexShape = function(c, x, y, w, h) {
-    var isoAngle = (Math.max(0.01, Math.min(94, parseFloat(mxUtils.getValue(this.style, 'isoAngle', this.isoAngle)))) * Math.PI) / 200;
+    var isoAngle =
+      (Math.max(
+        0.01,
+        Math.min(94, parseFloat(mxUtils.getValue(this.style, 'isoAngle', this.isoAngle)))
+      ) *
+        Math.PI) /
+      200;
     var isoH = Math.min(w * Math.tan(isoAngle), h * 0.5);
 
     c.translate(x, y);
@@ -478,7 +507,10 @@
   CylinderShape.prototype.size = 15;
 
   CylinderShape.prototype.paintVertexShape = function(c, x, y, w, h) {
-    var size = Math.max(0, Math.min(h * 0.5, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
+    var size = Math.max(
+      0,
+      Math.min(h * 0.5, parseFloat(mxUtils.getValue(this.style, 'size', this.size)))
+    );
 
     c.translate(x, y);
 
@@ -522,7 +554,10 @@
   CylinderShape3.prototype.size = 15;
 
   CylinderShape3.prototype.paintVertexShape = function(c, x, y, w, h) {
-    var size = Math.max(0, Math.min(h * 0.5, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
+    var size = Math.max(
+      0,
+      Math.min(h * 0.5, parseFloat(mxUtils.getValue(this.style, 'size', this.size)))
+    );
     var lid = mxUtils.getValue(this.style, 'lid', true);
 
     c.translate(x, y);
@@ -593,8 +628,14 @@
   FolderShape.prototype.paintVertexShape = function(c, x, y, w, h) {
     c.translate(x, y);
 
-    var dx = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'tabWidth', this.tabWidth))));
-    var dy = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'tabHeight', this.tabHeight))));
+    var dx = Math.max(
+      0,
+      Math.min(w, parseFloat(mxUtils.getValue(this.style, 'tabWidth', this.tabWidth)))
+    );
+    var dy = Math.max(
+      0,
+      Math.min(h, parseFloat(mxUtils.getValue(this.style, 'tabHeight', this.tabHeight)))
+    );
     var tp = mxUtils.getValue(this.style, 'tabPosition', this.tabPosition);
     var rounded = mxUtils.getValue(this.style, 'rounded', false);
     var absArcSize = mxUtils.getValue(this.style, 'absoluteArcSize', false);
@@ -753,9 +794,25 @@
     return true;
   };
   CardShape.prototype.redrawPath = function(c, x, y, w, h) {
-    var s = Math.max(0, Math.min(w, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size)))));
-    var arcSize = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
-    this.addPoints(c, [new mxPoint(s, 0), new mxPoint(w, 0), new mxPoint(w, h), new mxPoint(0, h), new mxPoint(0, s)], this.isRounded, arcSize, true);
+    var s = Math.max(
+      0,
+      Math.min(w, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size))))
+    );
+    var arcSize =
+      mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
+    this.addPoints(
+      c,
+      [
+        new mxPoint(s, 0),
+        new mxPoint(w, 0),
+        new mxPoint(w, h),
+        new mxPoint(0, h),
+        new mxPoint(0, s)
+      ],
+      this.isRounded,
+      arcSize,
+      true
+    );
     c.end();
   };
 
@@ -768,7 +825,8 @@
   mxUtils.extend(TapeShape, mxActor);
   TapeShape.prototype.size = 0.4;
   TapeShape.prototype.redrawPath = function(c, x, y, w, h) {
-    var dy = h * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
+    var dy =
+      h * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
     var fy = 1.4;
 
     c.moveTo(0, dy / 2);
@@ -788,7 +846,11 @@
       var w = rect.width;
       var h = rect.height;
 
-      if (this.direction == null || this.direction == mxConstants.DIRECTION_EAST || this.direction == mxConstants.DIRECTION_WEST) {
+      if (
+        this.direction == null ||
+        this.direction == mxConstants.DIRECTION_EAST ||
+        this.direction == mxConstants.DIRECTION_WEST
+      ) {
         var dy = h * size;
 
         return new mxRectangle(rect.x, rect.y + dy, w, h - 2 * dy);
@@ -812,13 +874,19 @@
   DocumentShape.prototype.size = 0.3;
   DocumentShape.prototype.getLabelMargins = function(rect) {
     if (mxUtils.getValue(this.style, 'boundedLbl', false)) {
-      return new mxRectangle(0, 0, 0, parseFloat(mxUtils.getValue(this.style, 'size', this.size)) * rect.height);
+      return new mxRectangle(
+        0,
+        0,
+        0,
+        parseFloat(mxUtils.getValue(this.style, 'size', this.size)) * rect.height
+      );
     }
 
     return null;
   };
   DocumentShape.prototype.redrawPath = function(c, x, y, w, h) {
-    var dy = h * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
+    var dy =
+      h * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
     var fy = 1.4;
 
     c.moveTo(0, 0);
@@ -863,7 +931,12 @@
         size /= 2;
       }
 
-      return new mxRectangle(0, Math.min(rect.height * this.scale, size * 2 * this.scale), 0, Math.max(0, size * 0.3 * this.scale));
+      return new mxRectangle(
+        0,
+        Math.min(rect.height * this.scale, size * 2 * this.scale),
+        0,
+        Math.max(0, size * 0.3 * this.scale)
+      );
     }
 
     return null;
@@ -891,9 +964,19 @@
         }
 
         if (mxUtils.getValue(this.style, 'tabPosition', this.tabPosition) == 'left') {
-          return new mxRectangle(arcSize, 0, Math.min(rect.width, rect.width - sizeX), Math.min(rect.height, rect.height - sizeY));
+          return new mxRectangle(
+            arcSize,
+            0,
+            Math.min(rect.width, rect.width - sizeX),
+            Math.min(rect.height, rect.height - sizeY)
+          );
         } else {
-          return new mxRectangle(Math.min(rect.width, rect.width - sizeX), 0, arcSize, Math.min(rect.height, rect.height - sizeY));
+          return new mxRectangle(
+            Math.min(rect.width, rect.width - sizeX),
+            0,
+            arcSize,
+            Math.min(rect.height, rect.height - sizeY)
+          );
         }
       } else {
         return new mxRectangle(0, Math.min(rect.height, sizeY), 0, 0);
@@ -919,7 +1002,12 @@
     if (mxUtils.getValue(this.style, 'boundedLbl', false)) {
       var size = mxUtils.getValue(this.style, 'size', 15);
 
-      return new mxRectangle(0, Math.min(rect.height * this.scale, size * this.scale), 0, Math.max(0, size * this.scale));
+      return new mxRectangle(
+        0,
+        Math.min(rect.height * this.scale, size * this.scale),
+        0,
+        Math.max(0, size * this.scale)
+      );
     }
 
     return null;
@@ -939,9 +1027,18 @@
   ParallelogramShape.prototype.redrawPath = function(c, x, y, w, h) {
     var fixed = mxUtils.getValue(this.style, 'fixedSize', '0') != '0';
 
-    var dx = fixed ? Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'size', this.fixedSize)))) : w * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
-    var arcSize = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
-    this.addPoints(c, [new mxPoint(0, h), new mxPoint(dx, 0), new mxPoint(w, 0), new mxPoint(w - dx, h)], this.isRounded, arcSize, true);
+    var dx = fixed
+      ? Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'size', this.fixedSize))))
+      : w * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
+    var arcSize =
+      mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
+    this.addPoints(
+      c,
+      [new mxPoint(0, h), new mxPoint(dx, 0), new mxPoint(w, 0), new mxPoint(w - dx, h)],
+      this.isRounded,
+      arcSize,
+      true
+    );
     c.end();
   };
 
@@ -960,9 +1057,21 @@
   TrapezoidShape.prototype.redrawPath = function(c, x, y, w, h) {
     var fixed = mxUtils.getValue(this.style, 'fixedSize', '0') != '0';
 
-    var dx = fixed ? Math.max(0, Math.min(w * 0.5, parseFloat(mxUtils.getValue(this.style, 'size', this.fixedSize)))) : w * Math.max(0, Math.min(0.5, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
-    var arcSize = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
-    this.addPoints(c, [new mxPoint(0, h), new mxPoint(dx, 0), new mxPoint(w - dx, 0), new mxPoint(w, h)], this.isRounded, arcSize, true);
+    var dx = fixed
+      ? Math.max(
+          0,
+          Math.min(w * 0.5, parseFloat(mxUtils.getValue(this.style, 'size', this.fixedSize)))
+        )
+      : w * Math.max(0, Math.min(0.5, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
+    var arcSize =
+      mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
+    this.addPoints(
+      c,
+      [new mxPoint(0, h), new mxPoint(dx, 0), new mxPoint(w - dx, 0), new mxPoint(w, h)],
+      this.isRounded,
+      arcSize,
+      true
+    );
   };
 
   mxCellRenderer.registerShape('trapezoid', TrapezoidShape);
@@ -975,9 +1084,25 @@
   CurlyBracketShape.prototype.size = 0.5;
   CurlyBracketShape.prototype.redrawPath = function(c, x, y, w, h) {
     c.setFillColor(null);
-    var s = w * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
-    var arcSize = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
-    this.addPoints(c, [new mxPoint(w, 0), new mxPoint(s, 0), new mxPoint(s, h / 2), new mxPoint(0, h / 2), new mxPoint(s, h / 2), new mxPoint(s, h), new mxPoint(w, h)], this.isRounded, arcSize, false);
+    var s =
+      w * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
+    var arcSize =
+      mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
+    this.addPoints(
+      c,
+      [
+        new mxPoint(w, 0),
+        new mxPoint(s, 0),
+        new mxPoint(s, h / 2),
+        new mxPoint(0, h / 2),
+        new mxPoint(s, h / 2),
+        new mxPoint(s, h),
+        new mxPoint(w, h)
+      ],
+      this.isRounded,
+      arcSize,
+      false
+    );
     c.end();
   };
 
@@ -1170,7 +1295,13 @@
   // Overrides to avoid call to rect
   var mxRectangleShapeIsHtmlAllowed0 = mxRectangleShape.prototype.isHtmlAllowed;
   mxRectangleShape.prototype.isHtmlAllowed = function() {
-    return !this.outline && (this.style == null || (mxUtils.getValue(this.style, 'comic', '0') == '0' && mxUtils.getValue(this.style, 'sketch', urlParams['rough'] == '1' ? '1' : '0') == '0')) && mxRectangleShapeIsHtmlAllowed0.apply(this, arguments);
+    return (
+      !this.outline &&
+      (this.style == null ||
+        (mxUtils.getValue(this.style, 'comic', '0') == '0' &&
+          mxUtils.getValue(this.style, 'sketch', urlParams['rough'] == '1' ? '1' : '0') == '0')) &&
+      mxRectangleShapeIsHtmlAllowed0.apply(this, arguments)
+    );
   };
 
   var mxRectangleShapePaintBackground0 = mxRectangleShape.prototype.paintBackground;
@@ -1184,7 +1315,11 @@
         events = mxUtils.getValue(this.style, mxConstants.STYLE_POINTER_EVENTS, '1') == '1';
       }
 
-      if (events || (this.fill != null && this.fill != mxConstants.NONE) || (this.stroke != null && this.stroke != mxConstants.NONE)) {
+      if (
+        events ||
+        (this.fill != null && this.fill != mxConstants.NONE) ||
+        (this.stroke != null && this.stroke != mxConstants.NONE)
+      ) {
         if (!events && (this.fill == null || this.fill == mxConstants.NONE)) {
           c.pointerEvents = false;
         }
@@ -1195,9 +1330,21 @@
           var r = 0;
 
           if (mxUtils.getValue(this.style, mxConstants.STYLE_ABSOLUTE_ARCSIZE, 0) == '1') {
-            r = Math.min(w / 2, Math.min(h / 2, mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2));
+            r = Math.min(
+              w / 2,
+              Math.min(
+                h / 2,
+                mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) /
+                  2
+              )
+            );
           } else {
-            var f = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.RECTANGLE_ROUNDING_FACTOR * 100) / 100;
+            var f =
+              mxUtils.getValue(
+                this.style,
+                mxConstants.STYLE_ARCSIZE,
+                mxConstants.RECTANGLE_ROUNDING_FACTOR * 100
+              ) / 100;
             r = Math.min(w * f, h * f);
           }
 
@@ -1251,15 +1398,26 @@
     return false;
   };
   ProcessShape.prototype.getLabelBounds = function(rect) {
-    if (mxUtils.getValue(this.state.style, mxConstants.STYLE_HORIZONTAL, true) == (this.direction == null || this.direction == mxConstants.DIRECTION_EAST || this.direction == mxConstants.DIRECTION_WEST)) {
+    if (
+      mxUtils.getValue(this.state.style, mxConstants.STYLE_HORIZONTAL, true) ==
+      (this.direction == null ||
+        this.direction == mxConstants.DIRECTION_EAST ||
+        this.direction == mxConstants.DIRECTION_WEST)
+    ) {
       var w = rect.width;
       var h = rect.height;
       var r = new mxRectangle(rect.x, rect.y, w, h);
 
-      var inset = w * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
+      var inset =
+        w * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
 
       if (this.isRounded) {
-        var f = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.RECTANGLE_ROUNDING_FACTOR * 100) / 100;
+        var f =
+          mxUtils.getValue(
+            this.style,
+            mxConstants.STYLE_ARCSIZE,
+            mxConstants.RECTANGLE_ROUNDING_FACTOR * 100
+          ) / 100;
         inset = Math.max(inset, Math.min(w * f, h * f));
       }
 
@@ -1282,7 +1440,12 @@
     }
 
     if (this.isRounded) {
-      var f = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.RECTANGLE_ROUNDING_FACTOR * 100) / 100;
+      var f =
+        mxUtils.getValue(
+          this.style,
+          mxConstants.STYLE_ARCSIZE,
+          mxConstants.RECTANGLE_ROUNDING_FACTOR * 100
+        ) / 100;
       inset = Math.max(inset, Math.min(w * f, h * f));
     }
 
@@ -1325,19 +1488,50 @@
   CalloutShape.prototype.position2 = 0.5;
   CalloutShape.prototype.base = 20;
   CalloutShape.prototype.getLabelMargins = function() {
-    return new mxRectangle(0, 0, 0, parseFloat(mxUtils.getValue(this.style, 'size', this.size)) * this.scale);
+    return new mxRectangle(
+      0,
+      0,
+      0,
+      parseFloat(mxUtils.getValue(this.style, 'size', this.size)) * this.scale
+    );
   };
   CalloutShape.prototype.isRoundable = function() {
     return true;
   };
   CalloutShape.prototype.redrawPath = function(c, x, y, w, h) {
-    var arcSize = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
+    var arcSize =
+      mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
     var s = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
-    var dx = w * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'position', this.position))));
-    var dx2 = w * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'position2', this.position2))));
-    var base = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'base', this.base))));
+    var dx =
+      w *
+      Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'position', this.position))));
+    var dx2 =
+      w *
+      Math.max(
+        0,
+        Math.min(1, parseFloat(mxUtils.getValue(this.style, 'position2', this.position2)))
+      );
+    var base = Math.max(
+      0,
+      Math.min(w, parseFloat(mxUtils.getValue(this.style, 'base', this.base)))
+    );
 
-    this.addPoints(c, [new mxPoint(0, 0), new mxPoint(w, 0), new mxPoint(w, h - s), new mxPoint(Math.min(w, dx + base), h - s), new mxPoint(dx2, h), new mxPoint(Math.max(0, dx), h - s), new mxPoint(0, h - s)], this.isRounded, arcSize, true, [4]);
+    this.addPoints(
+      c,
+      [
+        new mxPoint(0, 0),
+        new mxPoint(w, 0),
+        new mxPoint(w, h - s),
+        new mxPoint(Math.min(w, dx + base), h - s),
+        new mxPoint(dx2, h),
+        new mxPoint(Math.max(0, dx), h - s),
+        new mxPoint(0, h - s)
+      ],
+      this.isRounded,
+      arcSize,
+      true,
+      [4]
+    );
   };
 
   mxCellRenderer.registerShape('callout', CalloutShape);
@@ -1354,9 +1548,25 @@
   };
   StepShape.prototype.redrawPath = function(c, x, y, w, h) {
     var fixed = mxUtils.getValue(this.style, 'fixedSize', '0') != '0';
-    var s = fixed ? Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'size', this.fixedSize)))) : w * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
-    var arcSize = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
-    this.addPoints(c, [new mxPoint(0, 0), new mxPoint(w - s, 0), new mxPoint(w, h / 2), new mxPoint(w - s, h), new mxPoint(0, h), new mxPoint(s, h / 2)], this.isRounded, arcSize, true);
+    var s = fixed
+      ? Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'size', this.fixedSize))))
+      : w * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
+    var arcSize =
+      mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
+    this.addPoints(
+      c,
+      [
+        new mxPoint(0, 0),
+        new mxPoint(w - s, 0),
+        new mxPoint(w, h / 2),
+        new mxPoint(w - s, h),
+        new mxPoint(0, h),
+        new mxPoint(s, h / 2)
+      ],
+      this.isRounded,
+      arcSize,
+      true
+    );
     c.end();
   };
 
@@ -1374,9 +1584,28 @@
   };
   HexagonShape.prototype.redrawPath = function(c, x, y, w, h) {
     var fixed = mxUtils.getValue(this.style, 'fixedSize', '0') != '0';
-    var s = fixed ? Math.max(0, Math.min(w * 0.5, parseFloat(mxUtils.getValue(this.style, 'size', this.fixedSize)))) : w * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
-    var arcSize = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
-    this.addPoints(c, [new mxPoint(s, 0), new mxPoint(w - s, 0), new mxPoint(w, 0.5 * h), new mxPoint(w - s, h), new mxPoint(s, h), new mxPoint(0, 0.5 * h)], this.isRounded, arcSize, true);
+    var s = fixed
+      ? Math.max(
+          0,
+          Math.min(w * 0.5, parseFloat(mxUtils.getValue(this.style, 'size', this.fixedSize)))
+        )
+      : w * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
+    var arcSize =
+      mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
+    this.addPoints(
+      c,
+      [
+        new mxPoint(s, 0),
+        new mxPoint(w - s, 0),
+        new mxPoint(w, 0.5 * h),
+        new mxPoint(w - s, h),
+        new mxPoint(s, h),
+        new mxPoint(0, 0.5 * h)
+      ],
+      this.isRounded,
+      arcSize,
+      true
+    );
   };
 
   mxCellRenderer.registerShape('hexagon', HexagonShape);
@@ -1408,9 +1637,17 @@
   var mxRhombusPaintVertexShape = mxRhombus.prototype.paintVertexShape;
   mxRhombus.prototype.getLabelBounds = function(rect) {
     if (this.style['double'] == 1) {
-      var margin = (Math.max(2, this.strokewidth + 1) * 2 + parseFloat(this.style[mxConstants.STYLE_MARGIN] || 0)) * this.scale;
+      var margin =
+        (Math.max(2, this.strokewidth + 1) * 2 +
+          parseFloat(this.style[mxConstants.STYLE_MARGIN] || 0)) *
+        this.scale;
 
-      return new mxRectangle(rect.x + margin, rect.y + margin, rect.width - 2 * margin, rect.height - 2 * margin);
+      return new mxRectangle(
+        rect.x + margin,
+        rect.y + margin,
+        rect.width - 2 * margin,
+        rect.height - 2 * margin
+      );
     }
 
     return rect;
@@ -1419,7 +1656,9 @@
     mxRhombusPaintVertexShape.apply(this, arguments);
 
     if (!this.outline && this.style['double'] == 1) {
-      var margin = Math.max(2, this.strokewidth + 1) * 2 + parseFloat(this.style[mxConstants.STYLE_MARGIN] || 0);
+      var margin =
+        Math.max(2, this.strokewidth + 1) * 2 +
+        parseFloat(this.style[mxConstants.STYLE_MARGIN] || 0);
       x += margin;
       y += margin;
       w -= 2 * margin;
@@ -1445,9 +1684,17 @@
   };
   ExtendedShape.prototype.getLabelBounds = function(rect) {
     if (this.style['double'] == 1) {
-      var margin = (Math.max(2, this.strokewidth + 1) + parseFloat(this.style[mxConstants.STYLE_MARGIN] || 0)) * this.scale;
+      var margin =
+        (Math.max(2, this.strokewidth + 1) +
+          parseFloat(this.style[mxConstants.STYLE_MARGIN] || 0)) *
+        this.scale;
 
-      return new mxRectangle(rect.x + margin, rect.y + margin, rect.width - 2 * margin, rect.height - 2 * margin);
+      return new mxRectangle(
+        rect.x + margin,
+        rect.y + margin,
+        rect.width - 2 * margin,
+        rect.height - 2 * margin
+      );
     }
 
     return rect;
@@ -1456,7 +1703,8 @@
   ExtendedShape.prototype.paintForeground = function(c, x, y, w, h) {
     if (this.style != null) {
       if (!this.outline && this.style['double'] == 1) {
-        var margin = Math.max(2, this.strokewidth + 1) + parseFloat(this.style[mxConstants.STYLE_MARGIN] || 0);
+        var margin =
+          Math.max(2, this.strokewidth + 1) + parseFloat(this.style[mxConstants.STYLE_MARGIN] || 0);
         x += margin;
         y += margin;
         w -= 2 * margin;
@@ -1702,12 +1950,21 @@
     return false;
   };
   UmlLifeline.prototype.getLabelBounds = function(rect) {
-    var size = Math.max(0, Math.min(rect.height, parseFloat(mxUtils.getValue(this.style, 'size', this.size)) * this.scale));
+    var size = Math.max(
+      0,
+      Math.min(
+        rect.height,
+        parseFloat(mxUtils.getValue(this.style, 'size', this.size)) * this.scale
+      )
+    );
 
     return new mxRectangle(rect.x, rect.y, rect.width, size);
   };
   UmlLifeline.prototype.paintBackground = function(c, x, y, w, h) {
-    var size = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
+    var size = Math.max(
+      0,
+      Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size)))
+    );
     var participant = mxUtils.getValue(this.style, 'participant');
 
     if (participant == null || this.state == null) {
@@ -1734,7 +1991,10 @@
     }
   };
   UmlLifeline.prototype.paintForeground = function(c, x, y, w, h) {
-    var size = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
+    var size = Math.max(
+      0,
+      Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size)))
+    );
     mxRectangleShape.prototype.paintForeground.call(this, c, x, y, w, Math.min(h, size));
   };
 
@@ -1749,12 +2009,23 @@
   UmlFrame.prototype.height = 30;
   UmlFrame.prototype.corner = 10;
   UmlFrame.prototype.getLabelMargins = function(rect) {
-    return new mxRectangle(0, 0, rect.width - parseFloat(mxUtils.getValue(this.style, 'width', this.width) * this.scale), rect.height - parseFloat(mxUtils.getValue(this.style, 'height', this.height) * this.scale));
+    return new mxRectangle(
+      0,
+      0,
+      rect.width - parseFloat(mxUtils.getValue(this.style, 'width', this.width) * this.scale),
+      rect.height - parseFloat(mxUtils.getValue(this.style, 'height', this.height) * this.scale)
+    );
   };
   UmlFrame.prototype.paintBackground = function(c, x, y, w, h) {
     var co = this.corner;
-    var w0 = Math.min(w, Math.max(co, parseFloat(mxUtils.getValue(this.style, 'width', this.width))));
-    var h0 = Math.min(h, Math.max(co * 1.5, parseFloat(mxUtils.getValue(this.style, 'height', this.height))));
+    var w0 = Math.min(
+      w,
+      Math.max(co, parseFloat(mxUtils.getValue(this.style, 'width', this.width)))
+    );
+    var h0 = Math.min(
+      h,
+      Math.max(co * 1.5, parseFloat(mxUtils.getValue(this.style, 'height', this.height)))
+    );
     var bg = mxUtils.getValue(this.style, mxConstants.STYLE_SWIMLANE_FILLCOLOR, mxConstants.NONE);
 
     if (bg != mxConstants.NONE) {
@@ -1763,7 +2034,12 @@
       c.fill();
     }
 
-    if (this.fill != null && this.fill != mxConstants.NONE && this.gradient && this.gradient != mxConstants.NONE) {
+    if (
+      this.fill != null &&
+      this.fill != mxConstants.NONE &&
+      this.gradient &&
+      this.gradient != mxConstants.NONE
+    ) {
       var b = this.getGradientBounds(c, x, y, w, h);
       c.setGradient(this.fill, this.gradient, x, y, w, h, this.gradientDirection);
     } else {
@@ -1797,14 +2073,18 @@
       size = mxUtils.getValue(vertex.style, 'size', size) * vertex.view.scale;
     }
 
-    var sw = (parseFloat(vertex.style[mxConstants.STYLE_STROKEWIDTH] || 1) * vertex.view.scale) / 2 - 1;
+    var sw =
+      (parseFloat(vertex.style[mxConstants.STYLE_STROKEWIDTH] || 1) * vertex.view.scale) / 2 - 1;
 
     if (next.x < bounds.getCenterX()) {
       sw += 1;
       sw *= -1;
     }
 
-    return new mxPoint(bounds.getCenterX() + sw, Math.min(bounds.y + bounds.height, Math.max(bounds.y + size, next.y)));
+    return new mxPoint(
+      bounds.getCenterX() + sw,
+      Math.min(bounds.y + bounds.height, Math.max(bounds.y + size, next.y))
+    );
   };
 
   mxStyleRegistry.putValue('lifelinePerimeter', mxPerimeter.LifelinePerimeter);
@@ -1818,26 +2098,36 @@
   mxStyleRegistry.putValue('orthogonalPerimeter', mxPerimeter.OrthogonalPerimeter);
 
   mxPerimeter.BackbonePerimeter = function(bounds, vertex, next, orthogonal) {
-    var sw = (parseFloat(vertex.style[mxConstants.STYLE_STROKEWIDTH] || 1) * vertex.view.scale) / 2 - 1;
+    var sw =
+      (parseFloat(vertex.style[mxConstants.STYLE_STROKEWIDTH] || 1) * vertex.view.scale) / 2 - 1;
 
     if (vertex.style['backboneSize'] != null) {
       sw += (parseFloat(vertex.style['backboneSize']) * vertex.view.scale) / 2 - 1;
     }
 
-    if (vertex.style[mxConstants.STYLE_DIRECTION] == 'south' || vertex.style[mxConstants.STYLE_DIRECTION] == 'north') {
+    if (
+      vertex.style[mxConstants.STYLE_DIRECTION] == 'south' ||
+      vertex.style[mxConstants.STYLE_DIRECTION] == 'north'
+    ) {
       if (next.x < bounds.getCenterX()) {
         sw += 1;
         sw *= -1;
       }
 
-      return new mxPoint(bounds.getCenterX() + sw, Math.min(bounds.y + bounds.height, Math.max(bounds.y, next.y)));
+      return new mxPoint(
+        bounds.getCenterX() + sw,
+        Math.min(bounds.y + bounds.height, Math.max(bounds.y, next.y))
+      );
     } else {
       if (next.y < bounds.getCenterY()) {
         sw += 1;
         sw *= -1;
       }
 
-      return new mxPoint(Math.min(bounds.x + bounds.width, Math.max(bounds.x, next.x)), bounds.getCenterY() + sw);
+      return new mxPoint(
+        Math.min(bounds.x + bounds.width, Math.max(bounds.x, next.x)),
+        bounds.getCenterY() + sw
+      );
     }
   };
 
@@ -1845,7 +2135,28 @@
 
   // Callout Perimeter
   mxPerimeter.CalloutPerimeter = function(bounds, vertex, next, orthogonal) {
-    return mxPerimeter.RectanglePerimeter(mxUtils.getDirectedBounds(bounds, new mxRectangle(0, 0, 0, Math.max(0, Math.min(bounds.height, parseFloat(mxUtils.getValue(vertex.style, 'size', CalloutShape.prototype.size)) * vertex.view.scale))), vertex.style), vertex, next, orthogonal);
+    return mxPerimeter.RectanglePerimeter(
+      mxUtils.getDirectedBounds(
+        bounds,
+        new mxRectangle(
+          0,
+          0,
+          0,
+          Math.max(
+            0,
+            Math.min(
+              bounds.height,
+              parseFloat(mxUtils.getValue(vertex.style, 'size', CalloutShape.prototype.size)) *
+                vertex.view.scale
+            )
+          )
+        ),
+        vertex.style
+      ),
+      vertex,
+      next,
+      orthogonal
+    );
   };
 
   mxStyleRegistry.putValue('calloutPerimeter', mxPerimeter.CalloutPerimeter);
@@ -1868,16 +2179,32 @@
     var w = bounds.width;
     var h = bounds.height;
 
-    var direction = vertex != null ? mxUtils.getValue(vertex.style, mxConstants.STYLE_DIRECTION, mxConstants.DIRECTION_EAST) : mxConstants.DIRECTION_EAST;
-    var vertical = direction == mxConstants.DIRECTION_NORTH || direction == mxConstants.DIRECTION_SOUTH;
+    var direction =
+      vertex != null
+        ? mxUtils.getValue(vertex.style, mxConstants.STYLE_DIRECTION, mxConstants.DIRECTION_EAST)
+        : mxConstants.DIRECTION_EAST;
+    var vertical =
+      direction == mxConstants.DIRECTION_NORTH || direction == mxConstants.DIRECTION_SOUTH;
     var points;
 
     if (vertical) {
       var dy = fixed ? Math.max(0, Math.min(h, size)) : h * Math.max(0, Math.min(1, size));
-      points = [new mxPoint(x, y), new mxPoint(x + w, y + dy), new mxPoint(x + w, y + h), new mxPoint(x, y + h - dy), new mxPoint(x, y)];
+      points = [
+        new mxPoint(x, y),
+        new mxPoint(x + w, y + dy),
+        new mxPoint(x + w, y + h),
+        new mxPoint(x, y + h - dy),
+        new mxPoint(x, y)
+      ];
     } else {
       var dx = fixed ? Math.max(0, Math.min(w * 0.5, size)) : w * Math.max(0, Math.min(1, size));
-      points = [new mxPoint(x + dx, y), new mxPoint(x + w, y), new mxPoint(x + w - dx, y + h), new mxPoint(x, y + h), new mxPoint(x + dx, y)];
+      points = [
+        new mxPoint(x + dx, y),
+        new mxPoint(x + w, y),
+        new mxPoint(x + w - dx, y + h),
+        new mxPoint(x, y + h),
+        new mxPoint(x + dx, y)
+      ];
     }
 
     var cx = bounds.getCenterX();
@@ -1916,21 +2243,48 @@
     var w = bounds.width;
     var h = bounds.height;
 
-    var direction = vertex != null ? mxUtils.getValue(vertex.style, mxConstants.STYLE_DIRECTION, mxConstants.DIRECTION_EAST) : mxConstants.DIRECTION_EAST;
+    var direction =
+      vertex != null
+        ? mxUtils.getValue(vertex.style, mxConstants.STYLE_DIRECTION, mxConstants.DIRECTION_EAST)
+        : mxConstants.DIRECTION_EAST;
     var points = [];
 
     if (direction == mxConstants.DIRECTION_EAST) {
       var dx = fixed ? Math.max(0, Math.min(w * 0.5, size)) : w * Math.max(0, Math.min(1, size));
-      points = [new mxPoint(x + dx, y), new mxPoint(x + w - dx, y), new mxPoint(x + w, y + h), new mxPoint(x, y + h), new mxPoint(x + dx, y)];
+      points = [
+        new mxPoint(x + dx, y),
+        new mxPoint(x + w - dx, y),
+        new mxPoint(x + w, y + h),
+        new mxPoint(x, y + h),
+        new mxPoint(x + dx, y)
+      ];
     } else if (direction == mxConstants.DIRECTION_WEST) {
       var dx = fixed ? Math.max(0, Math.min(w, size)) : w * Math.max(0, Math.min(1, size));
-      points = [new mxPoint(x, y), new mxPoint(x + w, y), new mxPoint(x + w - dx, y + h), new mxPoint(x + dx, y + h), new mxPoint(x, y)];
+      points = [
+        new mxPoint(x, y),
+        new mxPoint(x + w, y),
+        new mxPoint(x + w - dx, y + h),
+        new mxPoint(x + dx, y + h),
+        new mxPoint(x, y)
+      ];
     } else if (direction == mxConstants.DIRECTION_NORTH) {
       var dy = fixed ? Math.max(0, Math.min(h, size)) : h * Math.max(0, Math.min(1, size));
-      points = [new mxPoint(x, y + dy), new mxPoint(x + w, y), new mxPoint(x + w, y + h), new mxPoint(x, y + h - dy), new mxPoint(x, y + dy)];
+      points = [
+        new mxPoint(x, y + dy),
+        new mxPoint(x + w, y),
+        new mxPoint(x + w, y + h),
+        new mxPoint(x, y + h - dy),
+        new mxPoint(x, y + dy)
+      ];
     } else {
       var dy = fixed ? Math.max(0, Math.min(h, size)) : h * Math.max(0, Math.min(1, size));
-      points = [new mxPoint(x, y), new mxPoint(x + w, y + dy), new mxPoint(x + w, y + h - dy), new mxPoint(x, y + h), new mxPoint(x, y)];
+      points = [
+        new mxPoint(x, y),
+        new mxPoint(x + w, y + dy),
+        new mxPoint(x + w, y + h - dy),
+        new mxPoint(x, y + h),
+        new mxPoint(x, y)
+      ];
     }
 
     var cx = bounds.getCenterX();
@@ -1972,21 +2326,56 @@
     var cx = bounds.getCenterX();
     var cy = bounds.getCenterY();
 
-    var direction = vertex != null ? mxUtils.getValue(vertex.style, mxConstants.STYLE_DIRECTION, mxConstants.DIRECTION_EAST) : mxConstants.DIRECTION_EAST;
+    var direction =
+      vertex != null
+        ? mxUtils.getValue(vertex.style, mxConstants.STYLE_DIRECTION, mxConstants.DIRECTION_EAST)
+        : mxConstants.DIRECTION_EAST;
     var points;
 
     if (direction == mxConstants.DIRECTION_EAST) {
       var dx = fixed ? Math.max(0, Math.min(w, size)) : w * Math.max(0, Math.min(1, size));
-      points = [new mxPoint(x, y), new mxPoint(x + w - dx, y), new mxPoint(x + w, cy), new mxPoint(x + w - dx, y + h), new mxPoint(x, y + h), new mxPoint(x + dx, cy), new mxPoint(x, y)];
+      points = [
+        new mxPoint(x, y),
+        new mxPoint(x + w - dx, y),
+        new mxPoint(x + w, cy),
+        new mxPoint(x + w - dx, y + h),
+        new mxPoint(x, y + h),
+        new mxPoint(x + dx, cy),
+        new mxPoint(x, y)
+      ];
     } else if (direction == mxConstants.DIRECTION_WEST) {
       var dx = fixed ? Math.max(0, Math.min(w, size)) : w * Math.max(0, Math.min(1, size));
-      points = [new mxPoint(x + dx, y), new mxPoint(x + w, y), new mxPoint(x + w - dx, cy), new mxPoint(x + w, y + h), new mxPoint(x + dx, y + h), new mxPoint(x, cy), new mxPoint(x + dx, y)];
+      points = [
+        new mxPoint(x + dx, y),
+        new mxPoint(x + w, y),
+        new mxPoint(x + w - dx, cy),
+        new mxPoint(x + w, y + h),
+        new mxPoint(x + dx, y + h),
+        new mxPoint(x, cy),
+        new mxPoint(x + dx, y)
+      ];
     } else if (direction == mxConstants.DIRECTION_NORTH) {
       var dy = fixed ? Math.max(0, Math.min(h, size)) : h * Math.max(0, Math.min(1, size));
-      points = [new mxPoint(x, y + dy), new mxPoint(cx, y), new mxPoint(x + w, y + dy), new mxPoint(x + w, y + h), new mxPoint(cx, y + h - dy), new mxPoint(x, y + h), new mxPoint(x, y + dy)];
+      points = [
+        new mxPoint(x, y + dy),
+        new mxPoint(cx, y),
+        new mxPoint(x + w, y + dy),
+        new mxPoint(x + w, y + h),
+        new mxPoint(cx, y + h - dy),
+        new mxPoint(x, y + h),
+        new mxPoint(x, y + dy)
+      ];
     } else {
       var dy = fixed ? Math.max(0, Math.min(h, size)) : h * Math.max(0, Math.min(1, size));
-      points = [new mxPoint(x, y), new mxPoint(cx, y + dy), new mxPoint(x + w, y), new mxPoint(x + w, y + h - dy), new mxPoint(cx, y + h), new mxPoint(x, y + h - dy), new mxPoint(x, y)];
+      points = [
+        new mxPoint(x, y),
+        new mxPoint(cx, y + dy),
+        new mxPoint(x + w, y),
+        new mxPoint(x + w, y + h - dy),
+        new mxPoint(cx, y + h),
+        new mxPoint(x, y + h - dy),
+        new mxPoint(x, y)
+      ];
     }
 
     var p1 = new mxPoint(cx, cy);
@@ -2025,16 +2414,36 @@
     var cx = bounds.getCenterX();
     var cy = bounds.getCenterY();
 
-    var direction = vertex != null ? mxUtils.getValue(vertex.style, mxConstants.STYLE_DIRECTION, mxConstants.DIRECTION_EAST) : mxConstants.DIRECTION_EAST;
-    var vertical = direction == mxConstants.DIRECTION_NORTH || direction == mxConstants.DIRECTION_SOUTH;
+    var direction =
+      vertex != null
+        ? mxUtils.getValue(vertex.style, mxConstants.STYLE_DIRECTION, mxConstants.DIRECTION_EAST)
+        : mxConstants.DIRECTION_EAST;
+    var vertical =
+      direction == mxConstants.DIRECTION_NORTH || direction == mxConstants.DIRECTION_SOUTH;
     var points;
 
     if (vertical) {
       var dy = fixed ? Math.max(0, Math.min(h, size)) : h * Math.max(0, Math.min(1, size));
-      points = [new mxPoint(cx, y), new mxPoint(x + w, y + dy), new mxPoint(x + w, y + h - dy), new mxPoint(cx, y + h), new mxPoint(x, y + h - dy), new mxPoint(x, y + dy), new mxPoint(cx, y)];
+      points = [
+        new mxPoint(cx, y),
+        new mxPoint(x + w, y + dy),
+        new mxPoint(x + w, y + h - dy),
+        new mxPoint(cx, y + h),
+        new mxPoint(x, y + h - dy),
+        new mxPoint(x, y + dy),
+        new mxPoint(cx, y)
+      ];
     } else {
       var dx = fixed ? Math.max(0, Math.min(w, size)) : w * Math.max(0, Math.min(1, size));
-      points = [new mxPoint(x + dx, y), new mxPoint(x + w - dx, y), new mxPoint(x + w, cy), new mxPoint(x + w - dx, y + h), new mxPoint(x + dx, y + h), new mxPoint(x, cy), new mxPoint(x + dx, y)];
+      points = [
+        new mxPoint(x + dx, y),
+        new mxPoint(x + w - dx, y),
+        new mxPoint(x + w, cy),
+        new mxPoint(x + w - dx, y + h),
+        new mxPoint(x + dx, y + h),
+        new mxPoint(x, cy),
+        new mxPoint(x + dx, y)
+      ];
     }
 
     var p1 = new mxPoint(cx, cy);
@@ -2243,9 +2652,21 @@
     var hw = w / 2;
     var hh = h / 2;
 
-    var arcSize = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
+    var arcSize =
+      mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
     c.begin();
-    this.addPoints(c, [new mxPoint(x + hw, y), new mxPoint(x + w, y + hh), new mxPoint(x + hw, y + h), new mxPoint(x, y + hh)], this.isRounded, arcSize, true);
+    this.addPoints(
+      c,
+      [
+        new mxPoint(x + hw, y),
+        new mxPoint(x + w, y + hh),
+        new mxPoint(x + hw, y + h),
+        new mxPoint(x, y + hh)
+      ],
+      this.isRounded,
+      arcSize,
+      true
+    );
     c.stroke();
 
     mxRectangleShape.prototype.paintForeground.apply(this, arguments);
@@ -2298,7 +2719,9 @@
   };
 
   LinkShape.prototype.getEdgeWidth = function() {
-    return mxUtils.getNumber(this.style, 'width', this.defaultWidth) + Math.max(0, this.strokewidth - 1);
+    return (
+      mxUtils.getNumber(this.style, 'width', this.defaultWidth) + Math.max(0, this.strokewidth - 1)
+    );
   };
 
   LinkShape.prototype.isArrowRounded = function() {
@@ -2318,7 +2741,9 @@
   FlexArrowShape.prototype.defaultArrowWidth = 20;
 
   FlexArrowShape.prototype.getStartArrowWidth = function() {
-    return this.getEdgeWidth() + mxUtils.getNumber(this.style, 'startWidth', this.defaultArrowWidth);
+    return (
+      this.getEdgeWidth() + mxUtils.getNumber(this.style, 'startWidth', this.defaultArrowWidth)
+    );
   };
 
   FlexArrowShape.prototype.getEndArrowWidth = function() {
@@ -2326,7 +2751,9 @@
   };
 
   FlexArrowShape.prototype.getEdgeWidth = function() {
-    return mxUtils.getNumber(this.style, 'width', this.defaultWidth) + Math.max(0, this.strokewidth - 1);
+    return (
+      mxUtils.getNumber(this.style, 'width', this.defaultWidth) + Math.max(0, this.strokewidth - 1)
+    );
   };
 
   // Registers the link shape
@@ -2343,8 +2770,15 @@
   };
   ManualInputShape.prototype.redrawPath = function(c, x, y, w, h) {
     var s = Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size)));
-    var arcSize = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
-    this.addPoints(c, [new mxPoint(0, h), new mxPoint(0, s), new mxPoint(w, 0), new mxPoint(w, h)], this.isRounded, arcSize, true);
+    var arcSize =
+      mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
+    this.addPoints(
+      c,
+      [new mxPoint(0, h), new mxPoint(0, s), new mxPoint(w, 0), new mxPoint(w, h)],
+      this.isRounded,
+      arcSize,
+      true
+    );
     c.end();
   };
 
@@ -2365,7 +2799,12 @@
     var inset = 0;
 
     if (this.isRounded) {
-      var f = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.RECTANGLE_ROUNDING_FACTOR * 100) / 100;
+      var f =
+        mxUtils.getValue(
+          this.style,
+          mxConstants.STYLE_ARCSIZE,
+          mxConstants.RECTANGLE_ROUNDING_FACTOR * 100
+        ) / 100;
       inset = Math.max(inset, Math.min(w * f, h * f));
     }
 
@@ -2400,9 +2839,26 @@
     var dx = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx', this.dx))));
     var dy = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
 
-    var s = Math.min(w / 2, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
-    var arcSize = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
-    this.addPoints(c, [new mxPoint(0, 0), new mxPoint(w, 0), new mxPoint(w, dy), new mxPoint(dx, dy), new mxPoint(dx, h), new mxPoint(0, h)], this.isRounded, arcSize, true);
+    var s = Math.min(
+      w / 2,
+      Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size)))
+    );
+    var arcSize =
+      mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
+    this.addPoints(
+      c,
+      [
+        new mxPoint(0, 0),
+        new mxPoint(w, 0),
+        new mxPoint(w, dy),
+        new mxPoint(dx, dy),
+        new mxPoint(dx, h),
+        new mxPoint(0, h)
+      ],
+      this.isRounded,
+      arcSize,
+      true
+    );
     c.end();
   };
 
@@ -2444,9 +2900,28 @@
     var dy = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
     var w2 = Math.abs(w - dx) / 2;
 
-    var s = Math.min(w / 2, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
-    var arcSize = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
-    this.addPoints(c, [new mxPoint(0, 0), new mxPoint(w, 0), new mxPoint(w, dy), new mxPoint((w + dx) / 2, dy), new mxPoint((w + dx) / 2, h), new mxPoint((w - dx) / 2, h), new mxPoint((w - dx) / 2, dy), new mxPoint(0, dy)], this.isRounded, arcSize, true);
+    var s = Math.min(
+      w / 2,
+      Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size)))
+    );
+    var arcSize =
+      mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
+    this.addPoints(
+      c,
+      [
+        new mxPoint(0, 0),
+        new mxPoint(w, 0),
+        new mxPoint(w, dy),
+        new mxPoint((w + dx) / 2, dy),
+        new mxPoint((w + dx) / 2, h),
+        new mxPoint((w - dx) / 2, h),
+        new mxPoint((w - dx) / 2, dy),
+        new mxPoint(0, dy)
+      ],
+      this.isRounded,
+      arcSize,
+      true
+    );
     c.end();
   };
 
@@ -2460,13 +2935,38 @@
   SingleArrowShape.prototype.arrowWidth = 0.3;
   SingleArrowShape.prototype.arrowSize = 0.2;
   SingleArrowShape.prototype.redrawPath = function(c, x, y, w, h) {
-    var aw = h * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'arrowWidth', this.arrowWidth))));
-    var as = w * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'arrowSize', this.arrowSize))));
+    var aw =
+      h *
+      Math.max(
+        0,
+        Math.min(1, parseFloat(mxUtils.getValue(this.style, 'arrowWidth', this.arrowWidth)))
+      );
+    var as =
+      w *
+      Math.max(
+        0,
+        Math.min(1, parseFloat(mxUtils.getValue(this.style, 'arrowSize', this.arrowSize)))
+      );
     var at = (h - aw) / 2;
     var ab = at + aw;
 
-    var arcSize = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
-    this.addPoints(c, [new mxPoint(0, at), new mxPoint(w - as, at), new mxPoint(w - as, 0), new mxPoint(w, h / 2), new mxPoint(w - as, h), new mxPoint(w - as, ab), new mxPoint(0, ab)], this.isRounded, arcSize, true);
+    var arcSize =
+      mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
+    this.addPoints(
+      c,
+      [
+        new mxPoint(0, at),
+        new mxPoint(w - as, at),
+        new mxPoint(w - as, 0),
+        new mxPoint(w, h / 2),
+        new mxPoint(w - as, h),
+        new mxPoint(w - as, ab),
+        new mxPoint(0, ab)
+      ],
+      this.isRounded,
+      arcSize,
+      true
+    );
     c.end();
   };
 
@@ -2478,13 +2978,51 @@
   }
   mxUtils.extend(DoubleArrowShape, mxActor);
   DoubleArrowShape.prototype.redrawPath = function(c, x, y, w, h) {
-    var aw = h * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'arrowWidth', SingleArrowShape.prototype.arrowWidth))));
-    var as = w * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'arrowSize', SingleArrowShape.prototype.arrowSize))));
+    var aw =
+      h *
+      Math.max(
+        0,
+        Math.min(
+          1,
+          parseFloat(
+            mxUtils.getValue(this.style, 'arrowWidth', SingleArrowShape.prototype.arrowWidth)
+          )
+        )
+      );
+    var as =
+      w *
+      Math.max(
+        0,
+        Math.min(
+          1,
+          parseFloat(
+            mxUtils.getValue(this.style, 'arrowSize', SingleArrowShape.prototype.arrowSize)
+          )
+        )
+      );
     var at = (h - aw) / 2;
     var ab = at + aw;
 
-    var arcSize = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
-    this.addPoints(c, [new mxPoint(0, h / 2), new mxPoint(as, 0), new mxPoint(as, at), new mxPoint(w - as, at), new mxPoint(w - as, 0), new mxPoint(w, h / 2), new mxPoint(w - as, h), new mxPoint(w - as, ab), new mxPoint(as, ab), new mxPoint(as, h)], this.isRounded, arcSize, true);
+    var arcSize =
+      mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
+    this.addPoints(
+      c,
+      [
+        new mxPoint(0, h / 2),
+        new mxPoint(as, 0),
+        new mxPoint(as, at),
+        new mxPoint(w - as, at),
+        new mxPoint(w - as, 0),
+        new mxPoint(w, h / 2),
+        new mxPoint(w - as, h),
+        new mxPoint(w - as, ab),
+        new mxPoint(as, ab),
+        new mxPoint(as, h)
+      ],
+      this.isRounded,
+      arcSize,
+      true
+    );
     c.end();
   };
 
@@ -2499,7 +3037,9 @@
   DataStorageShape.prototype.fixedSize = 20;
   DataStorageShape.prototype.redrawPath = function(c, x, y, w, h) {
     var fixed = mxUtils.getValue(this.style, 'fixedSize', '0') != '0';
-    var s = fixed ? Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'size', this.fixedSize)))) : w * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
+    var s = fixed
+      ? Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'size', this.fixedSize))))
+      : w * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
 
     c.moveTo(s, 0);
     c.lineTo(w, 0);
@@ -2553,9 +3093,26 @@
     return true;
   };
   LoopLimitShape.prototype.redrawPath = function(c, x, y, w, h) {
-    var s = Math.min(w / 2, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
-    var arcSize = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
-    this.addPoints(c, [new mxPoint(s, 0), new mxPoint(w - s, 0), new mxPoint(w, s * 0.8), new mxPoint(w, h), new mxPoint(0, h), new mxPoint(0, s * 0.8)], this.isRounded, arcSize, true);
+    var s = Math.min(
+      w / 2,
+      Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size)))
+    );
+    var arcSize =
+      mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
+    this.addPoints(
+      c,
+      [
+        new mxPoint(s, 0),
+        new mxPoint(w - s, 0),
+        new mxPoint(w, s * 0.8),
+        new mxPoint(w, h),
+        new mxPoint(0, h),
+        new mxPoint(0, s * 0.8)
+      ],
+      this.isRounded,
+      arcSize,
+      true
+    );
     c.end();
   };
 
@@ -2571,9 +3128,23 @@
     return true;
   };
   OffPageConnectorShape.prototype.redrawPath = function(c, x, y, w, h) {
-    var s = h * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
-    var arcSize = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
-    this.addPoints(c, [new mxPoint(0, 0), new mxPoint(w, 0), new mxPoint(w, h - s), new mxPoint(w / 2, h), new mxPoint(0, h - s)], this.isRounded, arcSize, true);
+    var s =
+      h * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
+    var arcSize =
+      mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
+    this.addPoints(
+      c,
+      [
+        new mxPoint(0, 0),
+        new mxPoint(w, 0),
+        new mxPoint(w, h - s),
+        new mxPoint(w / 2, h),
+        new mxPoint(0, h - s)
+      ],
+      this.isRounded,
+      arcSize,
+      true
+    );
     c.end();
   };
 
@@ -2825,7 +3396,10 @@
   CrossShape.prototype.size = 0.2;
   CrossShape.prototype.redrawPath = function(c, x, y, w, h) {
     var m = Math.min(h, w);
-    var size = Math.max(0, Math.min(m, m * parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
+    var size = Math.max(
+      0,
+      Math.min(m, m * parseFloat(mxUtils.getValue(this.style, 'size', this.size)))
+    );
     var t = (h - size) / 2;
     var b = t + size;
     var l = (w - size) / 2;
@@ -2857,7 +3431,10 @@
   DisplayShape.prototype.size = 0.25;
   DisplayShape.prototype.redrawPath = function(c, x, y, w, h) {
     var dx = Math.min(w, h / 2);
-    var s = Math.min(w - dx, Math.max(0, parseFloat(mxUtils.getValue(this.style, 'size', this.size))) * w);
+    var s = Math.min(
+      w - dx,
+      Math.max(0, parseFloat(mxUtils.getValue(this.style, 'size', this.size))) * w
+    );
 
     c.moveTo(0, h / 2);
     c.lineTo(s, 0);
@@ -3007,7 +3584,18 @@
   }
 
   mxMarker.addMarker('circle', circleMarker);
-  mxMarker.addMarker('circlePlus', function(c, shape, type, pe, unitX, unitY, size, source, sw, filled) {
+  mxMarker.addMarker('circlePlus', function(
+    c,
+    shape,
+    type,
+    pe,
+    unitX,
+    unitY,
+    size,
+    source,
+    sw,
+    filled
+  ) {
     var pt = pe.clone();
     var fn = circleMarker.apply(this, arguments);
     var nx = unitX * (size + 2 * sw); // (size + sw + 1);
@@ -3026,7 +3614,18 @@
   });
 
   // Registers and defines the custom marker
-  mxMarker.addMarker('halfCircle', function(c, shape, type, pe, unitX, unitY, size, source, sw, filled) {
+  mxMarker.addMarker('halfCircle', function(
+    c,
+    shape,
+    type,
+    pe,
+    unitX,
+    unitY,
+    size,
+    source,
+    sw,
+    filled
+  ) {
     var nx = unitX * (size + sw + 1);
     var ny = unitY * (size + sw + 1);
     var pt = pe.clone();
@@ -3148,7 +3747,15 @@
 
   // Handlers are only added if mxVertexHandler is defined (ie. not in embedded graph)
   if (typeof mxVertexHandler !== 'undefined') {
-    function createHandle(state, keys, getPositionFn, setPositionFn, ignoreGrid, redrawEdges, executeFn) {
+    function createHandle(
+      state,
+      keys,
+      getPositionFn,
+      setPositionFn,
+      ignoreGrid,
+      redrawEdges,
+      executeFn
+    ) {
       var handle = new mxHandle(state, null, mxVertexHandler.prototype.secondaryHandleImage);
 
       handle.execute = function(me) {
@@ -3189,20 +3796,51 @@
           var tmp = yOffset != null ? yOffset : bounds.height / 8;
 
           if (mxUtils.getValue(state.style, mxConstants.STYLE_ABSOLUTE_ARCSIZE, 0) == '1') {
-            var arcSize = mxUtils.getValue(state.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
+            var arcSize =
+              mxUtils.getValue(state.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) /
+              2;
 
-            return new mxPoint(bounds.x + bounds.width - Math.min(bounds.width / 2, arcSize), bounds.y + tmp);
+            return new mxPoint(
+              bounds.x + bounds.width - Math.min(bounds.width / 2, arcSize),
+              bounds.y + tmp
+            );
           } else {
-            var arcSize = Math.max(0, parseFloat(mxUtils.getValue(state.style, mxConstants.STYLE_ARCSIZE, mxConstants.RECTANGLE_ROUNDING_FACTOR * 100))) / 100;
+            var arcSize =
+              Math.max(
+                0,
+                parseFloat(
+                  mxUtils.getValue(
+                    state.style,
+                    mxConstants.STYLE_ARCSIZE,
+                    mxConstants.RECTANGLE_ROUNDING_FACTOR * 100
+                  )
+                )
+              ) / 100;
 
-            return new mxPoint(bounds.x + bounds.width - Math.min(Math.max(bounds.width / 2, bounds.height / 2), Math.min(bounds.width, bounds.height) * arcSize), bounds.y + tmp);
+            return new mxPoint(
+              bounds.x +
+                bounds.width -
+                Math.min(
+                  Math.max(bounds.width / 2, bounds.height / 2),
+                  Math.min(bounds.width, bounds.height) * arcSize
+                ),
+              bounds.y + tmp
+            );
           }
         },
         function(bounds, pt, me) {
           if (mxUtils.getValue(state.style, mxConstants.STYLE_ABSOLUTE_ARCSIZE, 0) == '1') {
-            this.state.style[mxConstants.STYLE_ARCSIZE] = Math.round(Math.max(0, Math.min(bounds.width, (bounds.x + bounds.width - pt.x) * 2)));
+            this.state.style[mxConstants.STYLE_ARCSIZE] = Math.round(
+              Math.max(0, Math.min(bounds.width, (bounds.x + bounds.width - pt.x) * 2))
+            );
           } else {
-            var f = Math.min(50, Math.max(0, ((bounds.width - pt.x + bounds.x) * 100) / Math.min(bounds.width, bounds.height)));
+            var f = Math.min(
+              50,
+              Math.max(
+                0,
+                ((bounds.width - pt.x + bounds.x) * 100) / Math.min(bounds.width, bounds.height)
+              )
+            );
             this.state.style[mxConstants.STYLE_ARCSIZE] = Math.round(f);
           }
         }
@@ -3230,14 +3868,35 @@
             state,
             ['size'],
             function(bounds) {
-              var fixed = fixedDefaultValue != null ? mxUtils.getValue(this.state.style, 'fixedSize', '0') != '0' : null;
-              var size = Math.max(0, parseFloat(mxUtils.getValue(this.state.style, 'size', fixed ? fixedDefaultValue : defaultValue)));
+              var fixed =
+                fixedDefaultValue != null
+                  ? mxUtils.getValue(this.state.style, 'fixedSize', '0') != '0'
+                  : null;
+              var size = Math.max(
+                0,
+                parseFloat(
+                  mxUtils.getValue(
+                    this.state.style,
+                    'size',
+                    fixed ? fixedDefaultValue : defaultValue
+                  )
+                )
+              );
 
-              return new mxPoint(bounds.x + Math.min(bounds.width * 0.75 * max, size * (fixed ? 0.75 : bounds.width * 0.75)), bounds.y + bounds.height / 4);
+              return new mxPoint(
+                bounds.x +
+                  Math.min(bounds.width * 0.75 * max, size * (fixed ? 0.75 : bounds.width * 0.75)),
+                bounds.y + bounds.height / 4
+              );
             },
             function(bounds, pt) {
-              var fixed = fixedDefaultValue != null ? mxUtils.getValue(this.state.style, 'fixedSize', '0') != '0' : null;
-              var size = fixed ? pt.x - bounds.x : Math.max(0, Math.min(max, ((pt.x - bounds.x) / bounds.width) * 0.75));
+              var fixed =
+                fixedDefaultValue != null
+                  ? mxUtils.getValue(this.state.style, 'fixedSize', '0') != '0'
+                  : null;
+              var size = fixed
+                ? pt.x - bounds.x
+                : Math.max(0, Math.min(max, ((pt.x - bounds.x) / bounds.width) * 0.75));
 
               this.state.style['size'] = size;
             },
@@ -3254,7 +3913,13 @@
       };
     }
 
-    function createDisplayHandleFunction(defaultValue, allowArcHandle, max, redrawEdges, fixedDefaultValue) {
+    function createDisplayHandleFunction(
+      defaultValue,
+      allowArcHandle,
+      max,
+      redrawEdges,
+      fixedDefaultValue
+    ) {
       max = max != null ? max : 0.5;
 
       return function(state) {
@@ -3263,14 +3928,28 @@
             state,
             ['size'],
             function(bounds) {
-              var fixed = fixedDefaultValue != null ? mxUtils.getValue(this.state.style, 'fixedSize', '0') != '0' : null;
-              var size = parseFloat(mxUtils.getValue(this.state.style, 'size', fixed ? fixedDefaultValue : defaultValue));
+              var fixed =
+                fixedDefaultValue != null
+                  ? mxUtils.getValue(this.state.style, 'fixedSize', '0') != '0'
+                  : null;
+              var size = parseFloat(
+                mxUtils.getValue(this.state.style, 'size', fixed ? fixedDefaultValue : defaultValue)
+              );
 
-              return new mxPoint(bounds.x + Math.max(0, Math.min(bounds.width * 0.5, size * (fixed ? 1 : bounds.width))), bounds.getCenterY());
+              return new mxPoint(
+                bounds.x +
+                  Math.max(0, Math.min(bounds.width * 0.5, size * (fixed ? 1 : bounds.width))),
+                bounds.getCenterY()
+              );
             },
             function(bounds, pt, me) {
-              var fixed = fixedDefaultValue != null ? mxUtils.getValue(this.state.style, 'fixedSize', '0') != '0' : null;
-              var size = fixed ? pt.x - bounds.x : Math.max(0, Math.min(max, (pt.x - bounds.x) / bounds.width));
+              var fixed =
+                fixedDefaultValue != null
+                  ? mxUtils.getValue(this.state.style, 'fixedSize', '0') != '0'
+                  : null;
+              var size = fixed
+                ? pt.x - bounds.x
+                : Math.max(0, Math.min(max, (pt.x - bounds.x) / bounds.width));
 
               this.state.style['size'] = size;
             },
@@ -3294,12 +3973,30 @@
             state,
             ['size'],
             function(bounds) {
-              var size = Math.max(0, Math.min(bounds.width, Math.min(bounds.height, parseFloat(mxUtils.getValue(this.state.style, 'size', defaultValue))))) * factor;
+              var size =
+                Math.max(
+                  0,
+                  Math.min(
+                    bounds.width,
+                    Math.min(
+                      bounds.height,
+                      parseFloat(mxUtils.getValue(this.state.style, 'size', defaultValue))
+                    )
+                  )
+                ) * factor;
 
               return new mxPoint(bounds.x + size, bounds.y + size);
             },
             function(bounds, pt) {
-              this.state.style['size'] = Math.round(Math.max(0, Math.min(Math.min(bounds.width, pt.x - bounds.x), Math.min(bounds.height, pt.y - bounds.y))) / factor);
+              this.state.style['size'] = Math.round(
+                Math.max(
+                  0,
+                  Math.min(
+                    Math.min(bounds.width, pt.x - bounds.x),
+                    Math.min(bounds.height, pt.y - bounds.y)
+                  )
+                ) / factor
+              );
             },
             false
           )
@@ -3320,7 +4017,13 @@
             state,
             ['size'],
             function(bounds) {
-              var size = Math.max(0, Math.min(bounds.height * 0.5, parseFloat(mxUtils.getValue(this.state.style, 'size', defaultValue))));
+              var size = Math.max(
+                0,
+                Math.min(
+                  bounds.height * 0.5,
+                  parseFloat(mxUtils.getValue(this.state.style, 'size', defaultValue))
+                )
+              );
 
               return new mxPoint(bounds.x, bounds.y + size);
             },
@@ -3340,14 +4043,43 @@
             state,
             ['arrowWidth', 'arrowSize'],
             function(bounds) {
-              var aw = Math.max(0, Math.min(1, mxUtils.getValue(this.state.style, 'arrowWidth', SingleArrowShape.prototype.arrowWidth)));
-              var as = Math.max(0, Math.min(maxSize, mxUtils.getValue(this.state.style, 'arrowSize', SingleArrowShape.prototype.arrowSize)));
+              var aw = Math.max(
+                0,
+                Math.min(
+                  1,
+                  mxUtils.getValue(
+                    this.state.style,
+                    'arrowWidth',
+                    SingleArrowShape.prototype.arrowWidth
+                  )
+                )
+              );
+              var as = Math.max(
+                0,
+                Math.min(
+                  maxSize,
+                  mxUtils.getValue(
+                    this.state.style,
+                    'arrowSize',
+                    SingleArrowShape.prototype.arrowSize
+                  )
+                )
+              );
 
-              return new mxPoint(bounds.x + (1 - as) * bounds.width, bounds.y + ((1 - aw) * bounds.height) / 2);
+              return new mxPoint(
+                bounds.x + (1 - as) * bounds.width,
+                bounds.y + ((1 - aw) * bounds.height) / 2
+              );
             },
             function(bounds, pt) {
-              this.state.style['arrowWidth'] = Math.max(0, Math.min(1, (Math.abs(bounds.y + bounds.height / 2 - pt.y) / bounds.height) * 2));
-              this.state.style['arrowSize'] = Math.max(0, Math.min(maxSize, (bounds.x + bounds.width - pt.x) / bounds.width));
+              this.state.style['arrowWidth'] = Math.max(
+                0,
+                Math.min(1, (Math.abs(bounds.y + bounds.height / 2 - pt.y) / bounds.height) * 2)
+              );
+              this.state.style['arrowSize'] = Math.max(
+                0,
+                Math.min(maxSize, (bounds.x + bounds.width - pt.x) / bounds.width)
+              );
             }
           )
         ];
@@ -3405,7 +4137,10 @@
         function(dist, nx, ny, p0, p1) {
           var w = state.shape.getEdgeWidth() * state.view.scale + spacing;
 
-          return new mxPoint(p0.x + (nx * dist) / 4 + (ny * w) / 2, p0.y + (ny * dist) / 4 - (nx * w) / 2);
+          return new mxPoint(
+            p0.x + (nx * dist) / 4 + (ny * w) / 2,
+            p0.y + (ny * dist) / 4 - (nx * w) / 2
+          );
         },
         function(dist, nx, ny, p0, p1, pt) {
           var w = Math.sqrt(mxUtils.ptSegDistSq(p0.x, p0.y, p1.x, p1.y, pt.x, pt.y));
@@ -3415,21 +4150,30 @@
     }
 
     function ptLineDistance(x1, y1, x2, y2, x0, y0) {
-      return Math.abs((y2 - y1) * x0 - (x2 - x1) * y0 + x2 * y1 - y2 * x1) / Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
+      return (
+        Math.abs((y2 - y1) * x0 - (x2 - x1) * y0 + x2 * y1 - y2 * x1) /
+        Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1))
+      );
     }
 
     var handleFactory = {
       link: function(state) {
         var spacing = 10;
 
-        return [createEdgeWidthHandle(state, true, spacing), createEdgeWidthHandle(state, false, spacing)];
+        return [
+          createEdgeWidthHandle(state, true, spacing),
+          createEdgeWidthHandle(state, false, spacing)
+        ];
       },
       flexArrow: function(state) {
         // Do not use state.shape.startSize/endSize since it is cached
         var tol = state.view.graph.gridSize / state.view.scale;
         var handles = [];
 
-        if (mxUtils.getValue(state.style, mxConstants.STYLE_STARTARROW, mxConstants.NONE) != mxConstants.NONE) {
+        if (
+          mxUtils.getValue(state.style, mxConstants.STYLE_STARTARROW, mxConstants.NONE) !=
+          mxConstants.NONE
+        ) {
           handles.push(
             createEdgeHandle(
               state,
@@ -3437,15 +4181,26 @@
               true,
               function(dist, nx, ny, p0, p1) {
                 var w = (state.shape.getEdgeWidth() - state.shape.strokewidth) * state.view.scale;
-                var l = mxUtils.getNumber(state.style, mxConstants.STYLE_STARTSIZE, mxConstants.ARROW_SIZE / 5) * 3 * state.view.scale;
+                var l =
+                  mxUtils.getNumber(
+                    state.style,
+                    mxConstants.STYLE_STARTSIZE,
+                    mxConstants.ARROW_SIZE / 5
+                  ) *
+                  3 *
+                  state.view.scale;
 
-                return new mxPoint(p0.x + nx * (l + state.shape.strokewidth * state.view.scale) + (ny * w) / 2, p0.y + ny * (l + state.shape.strokewidth * state.view.scale) - (nx * w) / 2);
+                return new mxPoint(
+                  p0.x + nx * (l + state.shape.strokewidth * state.view.scale) + (ny * w) / 2,
+                  p0.y + ny * (l + state.shape.strokewidth * state.view.scale) - (nx * w) / 2
+                );
               },
               function(dist, nx, ny, p0, p1, pt, me) {
                 var w = Math.sqrt(mxUtils.ptSegDistSq(p0.x, p0.y, p1.x, p1.y, pt.x, pt.y));
                 var l = mxUtils.ptLineDist(p0.x, p0.y, p0.x + ny, p0.y - nx, pt.x, pt.y);
 
-                state.style[mxConstants.STYLE_STARTSIZE] = Math.round(((l - state.shape.strokewidth) * 100) / 3) / 100 / state.view.scale;
+                state.style[mxConstants.STYLE_STARTSIZE] =
+                  Math.round(((l - state.shape.strokewidth) * 100) / 3) / 100 / state.view.scale;
                 state.style['width'] = Math.round(w * 2) / state.view.scale;
 
                 // Applies to opposite side
@@ -3455,8 +4210,15 @@
 
                 // Snaps to end geometry
                 if (!mxEvent.isAltDown(me.getEvent())) {
-                  if (Math.abs(parseFloat(state.style[mxConstants.STYLE_STARTSIZE]) - parseFloat(state.style[mxConstants.STYLE_ENDSIZE])) < tol / 6) {
-                    state.style[mxConstants.STYLE_STARTSIZE] = state.style[mxConstants.STYLE_ENDSIZE];
+                  if (
+                    Math.abs(
+                      parseFloat(state.style[mxConstants.STYLE_STARTSIZE]) -
+                        parseFloat(state.style[mxConstants.STYLE_ENDSIZE])
+                    ) <
+                    tol / 6
+                  ) {
+                    state.style[mxConstants.STYLE_STARTSIZE] =
+                      state.style[mxConstants.STYLE_ENDSIZE];
                   }
                 }
               }
@@ -3469,17 +4231,30 @@
               ['startWidth', 'endWidth', mxConstants.STYLE_STARTSIZE, mxConstants.STYLE_ENDSIZE],
               true,
               function(dist, nx, ny, p0, p1) {
-                var w = (state.shape.getStartArrowWidth() - state.shape.strokewidth) * state.view.scale;
-                var l = mxUtils.getNumber(state.style, mxConstants.STYLE_STARTSIZE, mxConstants.ARROW_SIZE / 5) * 3 * state.view.scale;
+                var w =
+                  (state.shape.getStartArrowWidth() - state.shape.strokewidth) * state.view.scale;
+                var l =
+                  mxUtils.getNumber(
+                    state.style,
+                    mxConstants.STYLE_STARTSIZE,
+                    mxConstants.ARROW_SIZE / 5
+                  ) *
+                  3 *
+                  state.view.scale;
 
-                return new mxPoint(p0.x + nx * (l + state.shape.strokewidth * state.view.scale) + (ny * w) / 2, p0.y + ny * (l + state.shape.strokewidth * state.view.scale) - (nx * w) / 2);
+                return new mxPoint(
+                  p0.x + nx * (l + state.shape.strokewidth * state.view.scale) + (ny * w) / 2,
+                  p0.y + ny * (l + state.shape.strokewidth * state.view.scale) - (nx * w) / 2
+                );
               },
               function(dist, nx, ny, p0, p1, pt, me) {
                 var w = Math.sqrt(mxUtils.ptSegDistSq(p0.x, p0.y, p1.x, p1.y, pt.x, pt.y));
                 var l = mxUtils.ptLineDist(p0.x, p0.y, p0.x + ny, p0.y - nx, pt.x, pt.y);
 
-                state.style[mxConstants.STYLE_STARTSIZE] = Math.round(((l - state.shape.strokewidth) * 100) / 3) / 100 / state.view.scale;
-                state.style['startWidth'] = Math.max(0, Math.round(w * 2) - state.shape.getEdgeWidth()) / state.view.scale;
+                state.style[mxConstants.STYLE_STARTSIZE] =
+                  Math.round(((l - state.shape.strokewidth) * 100) / 3) / 100 / state.view.scale;
+                state.style['startWidth'] =
+                  Math.max(0, Math.round(w * 2) - state.shape.getEdgeWidth()) / state.view.scale;
 
                 // Applies to opposite side
                 if (mxEvent.isControlDown(me.getEvent())) {
@@ -3489,11 +4264,22 @@
 
                 // Snaps to endWidth
                 if (!mxEvent.isAltDown(me.getEvent())) {
-                  if (Math.abs(parseFloat(state.style[mxConstants.STYLE_STARTSIZE]) - parseFloat(state.style[mxConstants.STYLE_ENDSIZE])) < tol / 6) {
-                    state.style[mxConstants.STYLE_STARTSIZE] = state.style[mxConstants.STYLE_ENDSIZE];
+                  if (
+                    Math.abs(
+                      parseFloat(state.style[mxConstants.STYLE_STARTSIZE]) -
+                        parseFloat(state.style[mxConstants.STYLE_ENDSIZE])
+                    ) <
+                    tol / 6
+                  ) {
+                    state.style[mxConstants.STYLE_STARTSIZE] =
+                      state.style[mxConstants.STYLE_ENDSIZE];
                   }
 
-                  if (Math.abs(parseFloat(state.style['startWidth']) - parseFloat(state.style['endWidth'])) < tol) {
+                  if (
+                    Math.abs(
+                      parseFloat(state.style['startWidth']) - parseFloat(state.style['endWidth'])
+                    ) < tol
+                  ) {
                     state.style['startWidth'] = state.style['endWidth'];
                   }
                 }
@@ -3502,7 +4288,10 @@
           );
         }
 
-        if (mxUtils.getValue(state.style, mxConstants.STYLE_ENDARROW, mxConstants.NONE) != mxConstants.NONE) {
+        if (
+          mxUtils.getValue(state.style, mxConstants.STYLE_ENDARROW, mxConstants.NONE) !=
+          mxConstants.NONE
+        ) {
           handles.push(
             createEdgeHandle(
               state,
@@ -3510,15 +4299,26 @@
               false,
               function(dist, nx, ny, p0, p1) {
                 var w = (state.shape.getEdgeWidth() - state.shape.strokewidth) * state.view.scale;
-                var l = mxUtils.getNumber(state.style, mxConstants.STYLE_ENDSIZE, mxConstants.ARROW_SIZE / 5) * 3 * state.view.scale;
+                var l =
+                  mxUtils.getNumber(
+                    state.style,
+                    mxConstants.STYLE_ENDSIZE,
+                    mxConstants.ARROW_SIZE / 5
+                  ) *
+                  3 *
+                  state.view.scale;
 
-                return new mxPoint(p0.x + nx * (l + state.shape.strokewidth * state.view.scale) - (ny * w) / 2, p0.y + ny * (l + state.shape.strokewidth * state.view.scale) + (nx * w) / 2);
+                return new mxPoint(
+                  p0.x + nx * (l + state.shape.strokewidth * state.view.scale) - (ny * w) / 2,
+                  p0.y + ny * (l + state.shape.strokewidth * state.view.scale) + (nx * w) / 2
+                );
               },
               function(dist, nx, ny, p0, p1, pt, me) {
                 var w = Math.sqrt(mxUtils.ptSegDistSq(p0.x, p0.y, p1.x, p1.y, pt.x, pt.y));
                 var l = mxUtils.ptLineDist(p0.x, p0.y, p0.x + ny, p0.y - nx, pt.x, pt.y);
 
-                state.style[mxConstants.STYLE_ENDSIZE] = Math.round(((l - state.shape.strokewidth) * 100) / 3) / 100 / state.view.scale;
+                state.style[mxConstants.STYLE_ENDSIZE] =
+                  Math.round(((l - state.shape.strokewidth) * 100) / 3) / 100 / state.view.scale;
                 state.style['width'] = Math.round(w * 2) / state.view.scale;
 
                 // Applies to opposite side
@@ -3528,8 +4328,15 @@
 
                 // Snaps to start geometry
                 if (!mxEvent.isAltDown(me.getEvent())) {
-                  if (Math.abs(parseFloat(state.style[mxConstants.STYLE_ENDSIZE]) - parseFloat(state.style[mxConstants.STYLE_STARTSIZE])) < tol / 6) {
-                    state.style[mxConstants.STYLE_ENDSIZE] = state.style[mxConstants.STYLE_STARTSIZE];
+                  if (
+                    Math.abs(
+                      parseFloat(state.style[mxConstants.STYLE_ENDSIZE]) -
+                        parseFloat(state.style[mxConstants.STYLE_STARTSIZE])
+                    ) <
+                    tol / 6
+                  ) {
+                    state.style[mxConstants.STYLE_ENDSIZE] =
+                      state.style[mxConstants.STYLE_STARTSIZE];
                   }
                 }
               }
@@ -3542,17 +4349,30 @@
               ['startWidth', 'endWidth', mxConstants.STYLE_STARTSIZE, mxConstants.STYLE_ENDSIZE],
               false,
               function(dist, nx, ny, p0, p1) {
-                var w = (state.shape.getEndArrowWidth() - state.shape.strokewidth) * state.view.scale;
-                var l = mxUtils.getNumber(state.style, mxConstants.STYLE_ENDSIZE, mxConstants.ARROW_SIZE / 5) * 3 * state.view.scale;
+                var w =
+                  (state.shape.getEndArrowWidth() - state.shape.strokewidth) * state.view.scale;
+                var l =
+                  mxUtils.getNumber(
+                    state.style,
+                    mxConstants.STYLE_ENDSIZE,
+                    mxConstants.ARROW_SIZE / 5
+                  ) *
+                  3 *
+                  state.view.scale;
 
-                return new mxPoint(p0.x + nx * (l + state.shape.strokewidth * state.view.scale) - (ny * w) / 2, p0.y + ny * (l + state.shape.strokewidth * state.view.scale) + (nx * w) / 2);
+                return new mxPoint(
+                  p0.x + nx * (l + state.shape.strokewidth * state.view.scale) - (ny * w) / 2,
+                  p0.y + ny * (l + state.shape.strokewidth * state.view.scale) + (nx * w) / 2
+                );
               },
               function(dist, nx, ny, p0, p1, pt, me) {
                 var w = Math.sqrt(mxUtils.ptSegDistSq(p0.x, p0.y, p1.x, p1.y, pt.x, pt.y));
                 var l = mxUtils.ptLineDist(p0.x, p0.y, p0.x + ny, p0.y - nx, pt.x, pt.y);
 
-                state.style[mxConstants.STYLE_ENDSIZE] = Math.round(((l - state.shape.strokewidth) * 100) / 3) / 100 / state.view.scale;
-                state.style['endWidth'] = Math.max(0, Math.round(w * 2) - state.shape.getEdgeWidth()) / state.view.scale;
+                state.style[mxConstants.STYLE_ENDSIZE] =
+                  Math.round(((l - state.shape.strokewidth) * 100) / 3) / 100 / state.view.scale;
+                state.style['endWidth'] =
+                  Math.max(0, Math.round(w * 2) - state.shape.getEdgeWidth()) / state.view.scale;
 
                 // Applies to opposite side
                 if (mxEvent.isControlDown(me.getEvent())) {
@@ -3562,11 +4382,22 @@
 
                 // Snaps to start geometry
                 if (!mxEvent.isAltDown(me.getEvent())) {
-                  if (Math.abs(parseFloat(state.style[mxConstants.STYLE_ENDSIZE]) - parseFloat(state.style[mxConstants.STYLE_STARTSIZE])) < tol / 6) {
-                    state.style[mxConstants.STYLE_ENDSIZE] = state.style[mxConstants.STYLE_STARTSIZE];
+                  if (
+                    Math.abs(
+                      parseFloat(state.style[mxConstants.STYLE_ENDSIZE]) -
+                        parseFloat(state.style[mxConstants.STYLE_STARTSIZE])
+                    ) <
+                    tol / 6
+                  ) {
+                    state.style[mxConstants.STYLE_ENDSIZE] =
+                      state.style[mxConstants.STYLE_STARTSIZE];
                   }
 
-                  if (Math.abs(parseFloat(state.style['endWidth']) - parseFloat(state.style['startWidth'])) < tol) {
+                  if (
+                    Math.abs(
+                      parseFloat(state.style['endWidth']) - parseFloat(state.style['startWidth'])
+                    ) < tol
+                  ) {
                     state.style['endWidth'] = state.style['startWidth'];
                   }
                 }
@@ -3581,7 +4412,13 @@
         var handles = [];
 
         if (mxUtils.getValue(state.style, mxConstants.STYLE_ROUNDED)) {
-          var size = parseFloat(mxUtils.getValue(state.style, mxConstants.STYLE_STARTSIZE, mxConstants.DEFAULT_STARTSIZE));
+          var size = parseFloat(
+            mxUtils.getValue(
+              state.style,
+              mxConstants.STYLE_STARTSIZE,
+              mxConstants.DEFAULT_STARTSIZE
+            )
+          );
           handles.push(createArcHandle(state, size / 2));
         }
 
@@ -3591,16 +4428,31 @@
             state,
             [mxConstants.STYLE_STARTSIZE],
             function(bounds) {
-              var size = parseFloat(mxUtils.getValue(state.style, mxConstants.STYLE_STARTSIZE, mxConstants.DEFAULT_STARTSIZE));
+              var size = parseFloat(
+                mxUtils.getValue(
+                  state.style,
+                  mxConstants.STYLE_STARTSIZE,
+                  mxConstants.DEFAULT_STARTSIZE
+                )
+              );
 
               if (mxUtils.getValue(state.style, mxConstants.STYLE_HORIZONTAL, 1) == 1) {
-                return new mxPoint(bounds.getCenterX(), bounds.y + Math.max(0, Math.min(bounds.height, size)));
+                return new mxPoint(
+                  bounds.getCenterX(),
+                  bounds.y + Math.max(0, Math.min(bounds.height, size))
+                );
               } else {
-                return new mxPoint(bounds.x + Math.max(0, Math.min(bounds.width, size)), bounds.getCenterY());
+                return new mxPoint(
+                  bounds.x + Math.max(0, Math.min(bounds.width, size)),
+                  bounds.getCenterY()
+                );
               }
             },
             function(bounds, pt) {
-              state.style[mxConstants.STYLE_STARTSIZE] = mxUtils.getValue(this.state.style, mxConstants.STYLE_HORIZONTAL, 1) == 1 ? Math.round(Math.max(0, Math.min(bounds.height, pt.y - bounds.y))) : Math.round(Math.max(0, Math.min(bounds.width, pt.x - bounds.x)));
+              state.style[mxConstants.STYLE_STARTSIZE] =
+                mxUtils.getValue(this.state.style, mxConstants.STYLE_HORIZONTAL, 1) == 1
+                  ? Math.round(Math.max(0, Math.min(bounds.height, pt.y - bounds.y)))
+                  : Math.round(Math.max(0, Math.min(bounds.width, pt.x - bounds.x)));
             },
             false,
             null,
@@ -3616,12 +4468,20 @@
 
                   for (var i = 0; i < cells.length; i++) {
                     // Finds siblings with the same direction and to set start size
-                    if (cells[i] != state.cell && graph.isSwimlane(cells[i]) && graph.getSwimlaneDirection(graph.getCurrentCellStyle(cells[i])) == dir) {
+                    if (
+                      cells[i] != state.cell &&
+                      graph.isSwimlane(cells[i]) &&
+                      graph.getSwimlaneDirection(graph.getCurrentCellStyle(cells[i])) == dir
+                    ) {
                       temp.push(cells[i]);
                     }
                   }
 
-                  graph.setCellStyles(mxConstants.STYLE_STARTSIZE, state.style[mxConstants.STYLE_STARTSIZE], temp);
+                  graph.setCellStyles(
+                    mxConstants.STYLE_STARTSIZE,
+                    state.style[mxConstants.STYLE_STARTSIZE],
+                    temp
+                  );
                 }
               }
             }
@@ -3641,12 +4501,20 @@
             state,
             ['size'],
             function(bounds) {
-              var size = Math.max(0, Math.min(bounds.height, parseFloat(mxUtils.getValue(this.state.style, 'size', UmlLifeline.prototype.size))));
+              var size = Math.max(
+                0,
+                Math.min(
+                  bounds.height,
+                  parseFloat(mxUtils.getValue(this.state.style, 'size', UmlLifeline.prototype.size))
+                )
+              );
 
               return new mxPoint(bounds.getCenterX(), bounds.y + size);
             },
             function(bounds, pt) {
-              this.state.style['size'] = Math.round(Math.max(0, Math.min(bounds.height, pt.y - bounds.y)));
+              this.state.style['size'] = Math.round(
+                Math.max(0, Math.min(bounds.height, pt.y - bounds.y))
+              );
             },
             false
           )
@@ -3658,14 +4526,30 @@
             state,
             ['width', 'height'],
             function(bounds) {
-              var w0 = Math.max(UmlFrame.prototype.corner, Math.min(bounds.width, mxUtils.getValue(this.state.style, 'width', UmlFrame.prototype.width)));
-              var h0 = Math.max(UmlFrame.prototype.corner * 1.5, Math.min(bounds.height, mxUtils.getValue(this.state.style, 'height', UmlFrame.prototype.height)));
+              var w0 = Math.max(
+                UmlFrame.prototype.corner,
+                Math.min(
+                  bounds.width,
+                  mxUtils.getValue(this.state.style, 'width', UmlFrame.prototype.width)
+                )
+              );
+              var h0 = Math.max(
+                UmlFrame.prototype.corner * 1.5,
+                Math.min(
+                  bounds.height,
+                  mxUtils.getValue(this.state.style, 'height', UmlFrame.prototype.height)
+                )
+              );
 
               return new mxPoint(bounds.x + w0, bounds.y + h0);
             },
             function(bounds, pt) {
-              this.state.style['width'] = Math.round(Math.max(UmlFrame.prototype.corner, Math.min(bounds.width, pt.x - bounds.x)));
-              this.state.style['height'] = Math.round(Math.max(UmlFrame.prototype.corner * 1.5, Math.min(bounds.height, pt.y - bounds.y)));
+              this.state.style['width'] = Math.round(
+                Math.max(UmlFrame.prototype.corner, Math.min(bounds.width, pt.x - bounds.x))
+              );
+              this.state.style['height'] = Math.round(
+                Math.max(UmlFrame.prototype.corner * 1.5, Math.min(bounds.height, pt.y - bounds.y))
+              );
             },
             false
           )
@@ -3680,13 +4564,19 @@
             ['size'],
             function(bounds) {
               var fixed = mxUtils.getValue(this.state.style, 'fixedSize', '0') != '0';
-              var size = parseFloat(mxUtils.getValue(this.state.style, 'size', ProcessShape.prototype.size));
+              var size = parseFloat(
+                mxUtils.getValue(this.state.style, 'size', ProcessShape.prototype.size)
+              );
 
-              return fixed ? new mxPoint(bounds.x + size, bounds.y + bounds.height / 4) : new mxPoint(bounds.x + bounds.width * size, bounds.y + bounds.height / 4);
+              return fixed
+                ? new mxPoint(bounds.x + size, bounds.y + bounds.height / 4)
+                : new mxPoint(bounds.x + bounds.width * size, bounds.y + bounds.height / 4);
             },
             function(bounds, pt) {
               var fixed = mxUtils.getValue(this.state.style, 'fixedSize', '0') != '0';
-              var size = fixed ? Math.max(0, Math.min(bounds.width * 0.5, pt.x - bounds.x)) : Math.max(0, Math.min(0.5, (pt.x - bounds.x) / bounds.width));
+              var size = fixed
+                ? Math.max(0, Math.min(bounds.width * 0.5, pt.x - bounds.x))
+                : Math.max(0, Math.min(0.5, (pt.x - bounds.x) / bounds.width));
               this.state.style['size'] = size;
             },
             false
@@ -3706,13 +4596,28 @@
             ['size'],
             function(bounds) {
               var m = Math.min(bounds.width, bounds.height);
-              var size = (Math.max(0, Math.min(1, mxUtils.getValue(this.state.style, 'size', CrossShape.prototype.size))) * m) / 2;
+              var size =
+                (Math.max(
+                  0,
+                  Math.min(1, mxUtils.getValue(this.state.style, 'size', CrossShape.prototype.size))
+                ) *
+                  m) /
+                2;
 
               return new mxPoint(bounds.getCenterX() - size, bounds.getCenterY() - size);
             },
             function(bounds, pt) {
               var m = Math.min(bounds.width, bounds.height);
-              this.state.style['size'] = Math.max(0, Math.min(1, Math.min((Math.max(0, bounds.getCenterY() - pt.y) / m) * 2, (Math.max(0, bounds.getCenterX() - pt.x) / m) * 2)));
+              this.state.style['size'] = Math.max(
+                0,
+                Math.min(
+                  1,
+                  Math.min(
+                    (Math.max(0, bounds.getCenterY() - pt.y) / m) * 2,
+                    (Math.max(0, bounds.getCenterX() - pt.x) / m) * 2
+                  )
+                )
+              );
             }
           )
         ];
@@ -3723,12 +4628,29 @@
             state,
             ['size'],
             function(bounds) {
-              var size = Math.max(0, Math.min(bounds.width, Math.min(bounds.height, parseFloat(mxUtils.getValue(this.state.style, 'size', NoteShape.prototype.size)))));
+              var size = Math.max(
+                0,
+                Math.min(
+                  bounds.width,
+                  Math.min(
+                    bounds.height,
+                    parseFloat(mxUtils.getValue(this.state.style, 'size', NoteShape.prototype.size))
+                  )
+                )
+              );
 
               return new mxPoint(bounds.x + bounds.width - size, bounds.y + size);
             },
             function(bounds, pt) {
-              this.state.style['size'] = Math.round(Math.max(0, Math.min(Math.min(bounds.width, bounds.x + bounds.width - pt.x), Math.min(bounds.height, pt.y - bounds.y))));
+              this.state.style['size'] = Math.round(
+                Math.max(
+                  0,
+                  Math.min(
+                    Math.min(bounds.width, bounds.x + bounds.width - pt.x),
+                    Math.min(bounds.height, pt.y - bounds.y)
+                  )
+                )
+              );
             }
           )
         ];
@@ -3739,12 +4661,31 @@
             state,
             ['size'],
             function(bounds) {
-              var size = Math.max(0, Math.min(bounds.width, Math.min(bounds.height, parseFloat(mxUtils.getValue(this.state.style, 'size', NoteShape2.prototype.size)))));
+              var size = Math.max(
+                0,
+                Math.min(
+                  bounds.width,
+                  Math.min(
+                    bounds.height,
+                    parseFloat(
+                      mxUtils.getValue(this.state.style, 'size', NoteShape2.prototype.size)
+                    )
+                  )
+                )
+              );
 
               return new mxPoint(bounds.x + bounds.width - size, bounds.y + size);
             },
             function(bounds, pt) {
-              this.state.style['size'] = Math.round(Math.max(0, Math.min(Math.min(bounds.width, bounds.x + bounds.width - pt.x), Math.min(bounds.height, pt.y - bounds.y))));
+              this.state.style['size'] = Math.round(
+                Math.max(
+                  0,
+                  Math.min(
+                    Math.min(bounds.width, bounds.x + bounds.width - pt.x),
+                    Math.min(bounds.height, pt.y - bounds.y)
+                  )
+                )
+              );
             }
           )
         ];
@@ -3755,12 +4696,20 @@
             state,
             ['size'],
             function(bounds) {
-              var size = Math.max(0, Math.min(bounds.height, mxUtils.getValue(this.state.style, 'size', ManualInputShape.prototype.size)));
+              var size = Math.max(
+                0,
+                Math.min(
+                  bounds.height,
+                  mxUtils.getValue(this.state.style, 'size', ManualInputShape.prototype.size)
+                )
+              );
 
               return new mxPoint(bounds.x + bounds.width / 4, bounds.y + (size * 3) / 4);
             },
             function(bounds, pt) {
-              this.state.style['size'] = Math.round(Math.max(0, Math.min(bounds.height, ((pt.y - bounds.y) * 4) / 3)));
+              this.state.style['size'] = Math.round(
+                Math.max(0, Math.min(bounds.height, ((pt.y - bounds.y) * 4) / 3))
+              );
             },
             false
           )
@@ -3779,13 +4728,24 @@
             ['size'],
             function(bounds) {
               var fixed = mxUtils.getValue(this.state.style, 'fixedSize', '0') != '0';
-              var size = parseFloat(mxUtils.getValue(this.state.style, 'size', fixed ? DataStorageShape.prototype.fixedSize : DataStorageShape.prototype.size));
+              var size = parseFloat(
+                mxUtils.getValue(
+                  this.state.style,
+                  'size',
+                  fixed ? DataStorageShape.prototype.fixedSize : DataStorageShape.prototype.size
+                )
+              );
 
-              return new mxPoint(bounds.x + bounds.width - size * (fixed ? 1 : bounds.width), bounds.getCenterY());
+              return new mxPoint(
+                bounds.x + bounds.width - size * (fixed ? 1 : bounds.width),
+                bounds.getCenterY()
+              );
             },
             function(bounds, pt) {
               var fixed = mxUtils.getValue(this.state.style, 'fixedSize', '0') != '0';
-              var size = fixed ? Math.max(0, Math.min(bounds.width, bounds.x + bounds.width - pt.x)) : Math.max(0, Math.min(1, (bounds.x + bounds.width - pt.x) / bounds.width));
+              var size = fixed
+                ? Math.max(0, Math.min(bounds.width, bounds.x + bounds.width - pt.x))
+                : Math.max(0, Math.min(1, (bounds.x + bounds.width - pt.x) / bounds.width));
 
               this.state.style['size'] = size;
             },
@@ -3799,16 +4759,46 @@
             state,
             ['size', 'position'],
             function(bounds) {
-              var size = Math.max(0, Math.min(bounds.height, mxUtils.getValue(this.state.style, 'size', CalloutShape.prototype.size)));
-              var position = Math.max(0, Math.min(1, mxUtils.getValue(this.state.style, 'position', CalloutShape.prototype.position)));
-              var base = Math.max(0, Math.min(bounds.width, mxUtils.getValue(this.state.style, 'base', CalloutShape.prototype.base)));
+              var size = Math.max(
+                0,
+                Math.min(
+                  bounds.height,
+                  mxUtils.getValue(this.state.style, 'size', CalloutShape.prototype.size)
+                )
+              );
+              var position = Math.max(
+                0,
+                Math.min(
+                  1,
+                  mxUtils.getValue(this.state.style, 'position', CalloutShape.prototype.position)
+                )
+              );
+              var base = Math.max(
+                0,
+                Math.min(
+                  bounds.width,
+                  mxUtils.getValue(this.state.style, 'base', CalloutShape.prototype.base)
+                )
+              );
 
-              return new mxPoint(bounds.x + position * bounds.width, bounds.y + bounds.height - size);
+              return new mxPoint(
+                bounds.x + position * bounds.width,
+                bounds.y + bounds.height - size
+              );
             },
             function(bounds, pt) {
-              var base = Math.max(0, Math.min(bounds.width, mxUtils.getValue(this.state.style, 'base', CalloutShape.prototype.base)));
-              this.state.style['size'] = Math.round(Math.max(0, Math.min(bounds.height, bounds.y + bounds.height - pt.y)));
-              this.state.style['position'] = Math.round(Math.max(0, Math.min(1, (pt.x - bounds.x) / bounds.width)) * 100) / 100;
+              var base = Math.max(
+                0,
+                Math.min(
+                  bounds.width,
+                  mxUtils.getValue(this.state.style, 'base', CalloutShape.prototype.base)
+                )
+              );
+              this.state.style['size'] = Math.round(
+                Math.max(0, Math.min(bounds.height, bounds.y + bounds.height - pt.y))
+              );
+              this.state.style['position'] =
+                Math.round(Math.max(0, Math.min(1, (pt.x - bounds.x) / bounds.width)) * 100) / 100;
             },
             false
           ),
@@ -3816,12 +4806,19 @@
             state,
             ['position2'],
             function(bounds) {
-              var position2 = Math.max(0, Math.min(1, mxUtils.getValue(this.state.style, 'position2', CalloutShape.prototype.position2)));
+              var position2 = Math.max(
+                0,
+                Math.min(
+                  1,
+                  mxUtils.getValue(this.state.style, 'position2', CalloutShape.prototype.position2)
+                )
+              );
 
               return new mxPoint(bounds.x + position2 * bounds.width, bounds.y + bounds.height);
             },
             function(bounds, pt) {
-              this.state.style['position2'] = Math.round(Math.max(0, Math.min(1, (pt.x - bounds.x) / bounds.width)) * 100) / 100;
+              this.state.style['position2'] =
+                Math.round(Math.max(0, Math.min(1, (pt.x - bounds.x) / bounds.width)) * 100) / 100;
             },
             false
           ),
@@ -3829,16 +4826,45 @@
             state,
             ['base'],
             function(bounds) {
-              var size = Math.max(0, Math.min(bounds.height, mxUtils.getValue(this.state.style, 'size', CalloutShape.prototype.size)));
-              var position = Math.max(0, Math.min(1, mxUtils.getValue(this.state.style, 'position', CalloutShape.prototype.position)));
-              var base = Math.max(0, Math.min(bounds.width, mxUtils.getValue(this.state.style, 'base', CalloutShape.prototype.base)));
+              var size = Math.max(
+                0,
+                Math.min(
+                  bounds.height,
+                  mxUtils.getValue(this.state.style, 'size', CalloutShape.prototype.size)
+                )
+              );
+              var position = Math.max(
+                0,
+                Math.min(
+                  1,
+                  mxUtils.getValue(this.state.style, 'position', CalloutShape.prototype.position)
+                )
+              );
+              var base = Math.max(
+                0,
+                Math.min(
+                  bounds.width,
+                  mxUtils.getValue(this.state.style, 'base', CalloutShape.prototype.base)
+                )
+              );
 
-              return new mxPoint(bounds.x + Math.min(bounds.width, position * bounds.width + base), bounds.y + bounds.height - size);
+              return new mxPoint(
+                bounds.x + Math.min(bounds.width, position * bounds.width + base),
+                bounds.y + bounds.height - size
+              );
             },
             function(bounds, pt) {
-              var position = Math.max(0, Math.min(1, mxUtils.getValue(this.state.style, 'position', CalloutShape.prototype.position)));
+              var position = Math.max(
+                0,
+                Math.min(
+                  1,
+                  mxUtils.getValue(this.state.style, 'position', CalloutShape.prototype.position)
+                )
+              );
 
-              this.state.style['base'] = Math.round(Math.max(0, Math.min(bounds.width, pt.x - bounds.x - position * bounds.width)));
+              this.state.style['base'] = Math.round(
+                Math.max(0, Math.min(bounds.width, pt.x - bounds.x - position * bounds.width))
+              );
             },
             false
           )
@@ -3856,14 +4882,30 @@
             state,
             ['dx', 'dy'],
             function(bounds) {
-              var dx = Math.max(0, Math.min(bounds.width, mxUtils.getValue(this.state.style, 'dx', InternalStorageShape.prototype.dx)));
-              var dy = Math.max(0, Math.min(bounds.height, mxUtils.getValue(this.state.style, 'dy', InternalStorageShape.prototype.dy)));
+              var dx = Math.max(
+                0,
+                Math.min(
+                  bounds.width,
+                  mxUtils.getValue(this.state.style, 'dx', InternalStorageShape.prototype.dx)
+                )
+              );
+              var dy = Math.max(
+                0,
+                Math.min(
+                  bounds.height,
+                  mxUtils.getValue(this.state.style, 'dy', InternalStorageShape.prototype.dy)
+                )
+              );
 
               return new mxPoint(bounds.x + dx, bounds.y + dy);
             },
             function(bounds, pt) {
-              this.state.style['dx'] = Math.round(Math.max(0, Math.min(bounds.width, pt.x - bounds.x)));
-              this.state.style['dy'] = Math.round(Math.max(0, Math.min(bounds.height, pt.y - bounds.y)));
+              this.state.style['dx'] = Math.round(
+                Math.max(0, Math.min(bounds.width, pt.x - bounds.x))
+              );
+              this.state.style['dy'] = Math.round(
+                Math.max(0, Math.min(bounds.height, pt.y - bounds.y))
+              );
             },
             false
           )
@@ -3881,14 +4923,34 @@
             state,
             ['jettyWidth', 'jettyHeight'],
             function(bounds) {
-              var dx = Math.max(0, Math.min(bounds.width, mxUtils.getValue(this.state.style, 'jettyWidth', ModuleShape.prototype.jettyWidth)));
-              var dy = Math.max(0, Math.min(bounds.height, mxUtils.getValue(this.state.style, 'jettyHeight', ModuleShape.prototype.jettyHeight)));
+              var dx = Math.max(
+                0,
+                Math.min(
+                  bounds.width,
+                  mxUtils.getValue(this.state.style, 'jettyWidth', ModuleShape.prototype.jettyWidth)
+                )
+              );
+              var dy = Math.max(
+                0,
+                Math.min(
+                  bounds.height,
+                  mxUtils.getValue(
+                    this.state.style,
+                    'jettyHeight',
+                    ModuleShape.prototype.jettyHeight
+                  )
+                )
+              );
 
               return new mxPoint(bounds.x + dx / 2, bounds.y + dy * 2);
             },
             function(bounds, pt) {
-              this.state.style['jettyWidth'] = Math.round(Math.max(0, Math.min(bounds.width, pt.x - bounds.x)) * 2);
-              this.state.style['jettyHeight'] = Math.round(Math.max(0, Math.min(bounds.height, pt.y - bounds.y)) / 2);
+              this.state.style['jettyWidth'] = Math.round(
+                Math.max(0, Math.min(bounds.width, pt.x - bounds.x)) * 2
+              );
+              this.state.style['jettyHeight'] = Math.round(
+                Math.max(0, Math.min(bounds.height, pt.y - bounds.y)) / 2
+              );
             }
           )
         ];
@@ -3901,14 +4963,30 @@
             state,
             ['dx', 'dy'],
             function(bounds) {
-              var dx = Math.max(0, Math.min(bounds.width, mxUtils.getValue(this.state.style, 'dx', CornerShape.prototype.dx)));
-              var dy = Math.max(0, Math.min(bounds.height, mxUtils.getValue(this.state.style, 'dy', CornerShape.prototype.dy)));
+              var dx = Math.max(
+                0,
+                Math.min(
+                  bounds.width,
+                  mxUtils.getValue(this.state.style, 'dx', CornerShape.prototype.dx)
+                )
+              );
+              var dy = Math.max(
+                0,
+                Math.min(
+                  bounds.height,
+                  mxUtils.getValue(this.state.style, 'dy', CornerShape.prototype.dy)
+                )
+              );
 
               return new mxPoint(bounds.x + dx, bounds.y + dy);
             },
             function(bounds, pt) {
-              this.state.style['dx'] = Math.round(Math.max(0, Math.min(bounds.width, pt.x - bounds.x)));
-              this.state.style['dy'] = Math.round(Math.max(0, Math.min(bounds.height, pt.y - bounds.y)));
+              this.state.style['dx'] = Math.round(
+                Math.max(0, Math.min(bounds.width, pt.x - bounds.x))
+              );
+              this.state.style['dy'] = Math.round(
+                Math.max(0, Math.min(bounds.height, pt.y - bounds.y))
+              );
             },
             false
           )
@@ -3920,14 +4998,30 @@
             state,
             ['dx', 'dy'],
             function(bounds) {
-              var dx = Math.max(0, Math.min(bounds.width, mxUtils.getValue(this.state.style, 'dx', TeeShape.prototype.dx)));
-              var dy = Math.max(0, Math.min(bounds.height, mxUtils.getValue(this.state.style, 'dy', TeeShape.prototype.dy)));
+              var dx = Math.max(
+                0,
+                Math.min(
+                  bounds.width,
+                  mxUtils.getValue(this.state.style, 'dx', TeeShape.prototype.dx)
+                )
+              );
+              var dy = Math.max(
+                0,
+                Math.min(
+                  bounds.height,
+                  mxUtils.getValue(this.state.style, 'dy', TeeShape.prototype.dy)
+                )
+              );
 
               return new mxPoint(bounds.x + (bounds.width + dx) / 2, bounds.y + dy);
             },
             function(bounds, pt) {
-              this.state.style['dx'] = Math.round(Math.max(0, Math.min(bounds.width / 2, pt.x - bounds.x - bounds.width / 2) * 2));
-              this.state.style['dy'] = Math.round(Math.max(0, Math.min(bounds.height, pt.y - bounds.y)));
+              this.state.style['dx'] = Math.round(
+                Math.max(0, Math.min(bounds.width / 2, pt.x - bounds.x - bounds.width / 2) * 2)
+              );
+              this.state.style['dy'] = Math.round(
+                Math.max(0, Math.min(bounds.height, pt.y - bounds.y))
+              );
             },
             false
           )
@@ -3941,10 +5035,28 @@
             state,
             ['tabWidth', 'tabHeight'],
             function(bounds) {
-              var tw = Math.max(0, Math.min(bounds.width, mxUtils.getValue(this.state.style, 'tabWidth', FolderShape.prototype.tabWidth)));
-              var th = Math.max(0, Math.min(bounds.height, mxUtils.getValue(this.state.style, 'tabHeight', FolderShape.prototype.tabHeight)));
+              var tw = Math.max(
+                0,
+                Math.min(
+                  bounds.width,
+                  mxUtils.getValue(this.state.style, 'tabWidth', FolderShape.prototype.tabWidth)
+                )
+              );
+              var th = Math.max(
+                0,
+                Math.min(
+                  bounds.height,
+                  mxUtils.getValue(this.state.style, 'tabHeight', FolderShape.prototype.tabHeight)
+                )
+              );
 
-              if (mxUtils.getValue(this.state.style, 'tabPosition', FolderShape.prototype.tabPosition) == mxConstants.ALIGN_RIGHT) {
+              if (
+                mxUtils.getValue(
+                  this.state.style,
+                  'tabPosition',
+                  FolderShape.prototype.tabPosition
+                ) == mxConstants.ALIGN_RIGHT
+              ) {
                 tw = bounds.width - tw;
               }
 
@@ -3953,12 +5065,20 @@
             function(bounds, pt) {
               var tw = Math.max(0, Math.min(bounds.width, pt.x - bounds.x));
 
-              if (mxUtils.getValue(this.state.style, 'tabPosition', FolderShape.prototype.tabPosition) == mxConstants.ALIGN_RIGHT) {
+              if (
+                mxUtils.getValue(
+                  this.state.style,
+                  'tabPosition',
+                  FolderShape.prototype.tabPosition
+                ) == mxConstants.ALIGN_RIGHT
+              ) {
                 tw = bounds.width - tw;
               }
 
               this.state.style['tabWidth'] = Math.round(tw);
-              this.state.style['tabHeight'] = Math.round(Math.max(0, Math.min(bounds.height, pt.y - bounds.y)));
+              this.state.style['tabHeight'] = Math.round(
+                Math.max(0, Math.min(bounds.height, pt.y - bounds.y))
+              );
             },
             false
           )
@@ -3970,12 +5090,26 @@
             state,
             ['size'],
             function(bounds) {
-              var size = Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.state.style, 'size', DocumentShape.prototype.size))));
+              var size = Math.max(
+                0,
+                Math.min(
+                  1,
+                  parseFloat(
+                    mxUtils.getValue(this.state.style, 'size', DocumentShape.prototype.size)
+                  )
+                )
+              );
 
-              return new mxPoint(bounds.x + (3 * bounds.width) / 4, bounds.y + (1 - size) * bounds.height);
+              return new mxPoint(
+                bounds.x + (3 * bounds.width) / 4,
+                bounds.y + (1 - size) * bounds.height
+              );
             },
             function(bounds, pt) {
-              this.state.style['size'] = Math.max(0, Math.min(1, (bounds.y + bounds.height - pt.y) / bounds.height));
+              this.state.style['size'] = Math.max(
+                0,
+                Math.min(1, (bounds.y + bounds.height - pt.y) / bounds.height)
+              );
             },
             false
           )
@@ -3987,12 +5121,21 @@
             state,
             ['size'],
             function(bounds) {
-              var size = Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.state.style, 'size', TapeShape.prototype.size))));
+              var size = Math.max(
+                0,
+                Math.min(
+                  1,
+                  parseFloat(mxUtils.getValue(this.state.style, 'size', TapeShape.prototype.size))
+                )
+              );
 
               return new mxPoint(bounds.getCenterX(), bounds.y + (size * bounds.height) / 2);
             },
             function(bounds, pt) {
-              this.state.style['size'] = Math.max(0, Math.min(1, ((pt.y - bounds.y) / bounds.height) * 2));
+              this.state.style['size'] = Math.max(
+                0,
+                Math.min(1, ((pt.y - bounds.y) / bounds.height) * 2)
+              );
             },
             false
           )
@@ -4004,7 +5147,18 @@
             state,
             ['isoAngle'],
             function(bounds) {
-              var isoAngle = (Math.max(0.01, Math.min(94, parseFloat(mxUtils.getValue(this.state.style, 'isoAngle', IsoCubeShape2.isoAngle)))) * Math.PI) / 200;
+              var isoAngle =
+                (Math.max(
+                  0.01,
+                  Math.min(
+                    94,
+                    parseFloat(
+                      mxUtils.getValue(this.state.style, 'isoAngle', IsoCubeShape2.isoAngle)
+                    )
+                  )
+                ) *
+                  Math.PI) /
+                200;
               var isoH = Math.min(bounds.width * Math.tan(isoAngle), bounds.height * 0.5);
 
               return new mxPoint(bounds.x, bounds.y + isoH);
@@ -4024,26 +5178,57 @@
             state,
             ['size'],
             function(bounds) {
-              var size = Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.state.style, 'size', OffPageConnectorShape.prototype.size))));
+              var size = Math.max(
+                0,
+                Math.min(
+                  1,
+                  parseFloat(
+                    mxUtils.getValue(this.state.style, 'size', OffPageConnectorShape.prototype.size)
+                  )
+                )
+              );
 
               return new mxPoint(bounds.getCenterX(), bounds.y + (1 - size) * bounds.height);
             },
             function(bounds, pt) {
-              this.state.style['size'] = Math.max(0, Math.min(1, (bounds.y + bounds.height - pt.y) / bounds.height));
+              this.state.style['size'] = Math.max(
+                0,
+                Math.min(1, (bounds.y + bounds.height - pt.y) / bounds.height)
+              );
             },
             false
           )
         ];
       },
-      step: createDisplayHandleFunction(StepShape.prototype.size, true, null, true, StepShape.prototype.fixedSize),
-      hexagon: createDisplayHandleFunction(HexagonShape.prototype.size, true, 0.5, true, HexagonShape.prototype.fixedSize),
+      step: createDisplayHandleFunction(
+        StepShape.prototype.size,
+        true,
+        null,
+        true,
+        StepShape.prototype.fixedSize
+      ),
+      hexagon: createDisplayHandleFunction(
+        HexagonShape.prototype.size,
+        true,
+        0.5,
+        true,
+        HexagonShape.prototype.fixedSize
+      ),
       curlyBracket: createDisplayHandleFunction(CurlyBracketShape.prototype.size, false),
       display: createDisplayHandleFunction(DisplayShape.prototype.size, false),
       cube: createCubeHandleFunction(1, CubeShape.prototype.size, false),
       card: createCubeHandleFunction(0.5, CardShape.prototype.size, true),
       loopLimit: createCubeHandleFunction(0.5, LoopLimitShape.prototype.size, true),
-      trapezoid: createTrapezoidHandleFunction(0.5, TrapezoidShape.prototype.size, TrapezoidShape.prototype.fixedSize),
-      parallelogram: createTrapezoidHandleFunction(1, ParallelogramShape.prototype.size, ParallelogramShape.prototype.fixedSize)
+      trapezoid: createTrapezoidHandleFunction(
+        0.5,
+        TrapezoidShape.prototype.size,
+        TrapezoidShape.prototype.fixedSize
+      ),
+      parallelogram: createTrapezoidHandleFunction(
+        1,
+        ParallelogramShape.prototype.size,
+        ParallelogramShape.prototype.fixedSize
+      )
     };
 
     // Exposes custom handles
@@ -4060,7 +5245,10 @@
         //if (this.graph.isCellResizable(this.state.cell) || this.graph.isCellMovable(this.state.cell))
         var name = this.state.style['shape'];
 
-        if (mxCellRenderer.defaultShapes[name] == null && mxStencilRegistry.getStencil(name) == null) {
+        if (
+          mxCellRenderer.defaultShapes[name] == null &&
+          mxStencilRegistry.getStencil(name) == null
+        ) {
           name = mxConstants.SHAPE_RECTANGLE;
         } else if (this.state.view.graph.isSwimlane(this.state.cell)) {
           name = mxConstants.SHAPE_SWIMLANE;
@@ -4091,7 +5279,10 @@
     mxEdgeHandler.prototype.createCustomHandles = function() {
       var name = this.state.style['shape'];
 
-      if (mxCellRenderer.defaultShapes[name] == null && mxStencilRegistry.getStencil(name) == null) {
+      if (
+        mxCellRenderer.defaultShapes[name] == null &&
+        mxStencilRegistry.getStencil(name) == null
+      ) {
         name = mxConstants.SHAPE_CONNECTOR;
       }
 
@@ -4222,10 +5413,20 @@
     var dy = (h - m) / 2;
 
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx, dy + 0.25 * m));
-    constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx + 0.5 * m, dy + m * tan30Dx));
+    constr.push(
+      new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx + 0.5 * m, dy + m * tan30Dx)
+    );
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx + m, dy + 0.25 * m));
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx + m, dy + 0.75 * m));
-    constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx + 0.5 * m, dy + (1 - tan30Dx) * m));
+    constr.push(
+      new mxConnectionConstraint(
+        new mxPoint(0, 0),
+        false,
+        null,
+        dx + 0.5 * m,
+        dy + (1 - tan30Dx) * m
+      )
+    );
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx, dy + 0.75 * m));
 
     return constr;
@@ -4233,7 +5434,13 @@
 
   IsoCubeShape2.prototype.getConstraints = function(style, w, h) {
     var constr = [];
-    var isoAngle = (Math.max(0.01, Math.min(94, parseFloat(mxUtils.getValue(this.style, 'isoAngle', this.isoAngle)))) * Math.PI) / 200;
+    var isoAngle =
+      (Math.max(
+        0.01,
+        Math.min(94, parseFloat(mxUtils.getValue(this.style, 'isoAngle', this.isoAngle)))
+      ) *
+        Math.PI) /
+      200;
     var isoH = Math.min(w * Math.tan(isoAngle), h * 0.5);
 
     constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false));
@@ -4250,11 +5457,22 @@
 
   CalloutShape.prototype.getConstraints = function(style, w, h) {
     var constr = [];
-    var arcSize = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
+    var arcSize =
+      mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
     var s = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
-    var dx = w * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'position', this.position))));
-    var dx2 = w * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'position2', this.position2))));
-    var base = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'base', this.base))));
+    var dx =
+      w *
+      Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'position', this.position))));
+    var dx2 =
+      w *
+      Math.max(
+        0,
+        Math.min(1, parseFloat(mxUtils.getValue(this.style, 'position2', this.position2)))
+      );
+    var base = Math.max(
+      0,
+      Math.min(w, parseFloat(mxUtils.getValue(this.style, 'base', this.base)))
+    );
 
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false));
     constr.push(new mxConnectionConstraint(new mxPoint(0.25, 0), false));
@@ -4310,7 +5528,10 @@
 
   NoteShape.prototype.getConstraints = function(style, w, h) {
     var constr = [];
-    var s = Math.max(0, Math.min(w, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size)))));
+    var s = Math.max(
+      0,
+      Math.min(w, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size))))
+    );
 
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false));
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w - s) * 0.5, 0));
@@ -4332,7 +5553,10 @@
 
   CardShape.prototype.getConstraints = function(style, w, h) {
     var constr = [];
-    var s = Math.max(0, Math.min(w, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size)))));
+    var s = Math.max(
+      0,
+      Math.min(w, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size))))
+    );
 
     constr.push(new mxConnectionConstraint(new mxPoint(1, 0), false));
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w + s) * 0.5, 0));
@@ -4354,7 +5578,10 @@
 
   CubeShape.prototype.getConstraints = function(style, w, h) {
     var constr = [];
-    var s = Math.max(0, Math.min(w, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size)))));
+    var s = Math.max(
+      0,
+      Math.min(w, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size))))
+    );
 
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false));
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w - s) * 0.5, 0));
@@ -4386,10 +5613,18 @@
     constr.push(new mxConnectionConstraint(new mxPoint(1, 1), false, null, 0, -s));
     constr.push(new mxConnectionConstraint(new mxPoint(0, 1), false, null, 0, -s));
 
-    constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, s + (h * 0.5 - s) * 0.5));
-    constr.push(new mxConnectionConstraint(new mxPoint(1, 0), false, null, 0, s + (h * 0.5 - s) * 0.5));
-    constr.push(new mxConnectionConstraint(new mxPoint(1, 0), false, null, 0, h - s - (h * 0.5 - s) * 0.5));
-    constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h - s - (h * 0.5 - s) * 0.5));
+    constr.push(
+      new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, s + (h * 0.5 - s) * 0.5)
+    );
+    constr.push(
+      new mxConnectionConstraint(new mxPoint(1, 0), false, null, 0, s + (h * 0.5 - s) * 0.5)
+    );
+    constr.push(
+      new mxConnectionConstraint(new mxPoint(1, 0), false, null, 0, h - s - (h * 0.5 - s) * 0.5)
+    );
+    constr.push(
+      new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h - s - (h * 0.5 - s) * 0.5)
+    );
 
     constr.push(new mxConnectionConstraint(new mxPoint(0.145, 0), false, null, 0, s * 0.29));
     constr.push(new mxConnectionConstraint(new mxPoint(0.855, 0), false, null, 0, s * 0.29));
@@ -4401,8 +5636,14 @@
 
   FolderShape.prototype.getConstraints = function(style, w, h) {
     var constr = [];
-    var dx = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'tabWidth', this.tabWidth))));
-    var dy = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'tabHeight', this.tabHeight))));
+    var dx = Math.max(
+      0,
+      Math.min(w, parseFloat(mxUtils.getValue(this.style, 'tabWidth', this.tabWidth)))
+    );
+    var dy = Math.max(
+      0,
+      Math.min(h, parseFloat(mxUtils.getValue(this.style, 'tabHeight', this.tabHeight)))
+    );
     var tp = mxUtils.getValue(this.style, 'tabPosition', this.tabPosition);
 
     if (tp == 'left') {
@@ -4420,14 +5661,22 @@
     }
 
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, dy));
-    constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, (h - dy) * 0.25 + dy));
+    constr.push(
+      new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, (h - dy) * 0.25 + dy)
+    );
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, (h - dy) * 0.5 + dy));
-    constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, (h - dy) * 0.75 + dy));
+    constr.push(
+      new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, (h - dy) * 0.75 + dy)
+    );
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, h));
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, dy));
-    constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, (h - dy) * 0.25 + dy));
+    constr.push(
+      new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, (h - dy) * 0.25 + dy)
+    );
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, (h - dy) * 0.5 + dy));
-    constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, (h - dy) * 0.75 + dy));
+    constr.push(
+      new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, (h - dy) * 0.75 + dy)
+    );
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h));
     constr.push(new mxConnectionConstraint(new mxPoint(0.25, 1), false));
     constr.push(new mxConnectionConstraint(new mxPoint(0.5, 1), false));
@@ -4448,7 +5697,10 @@
   DisplayShape.prototype.getConstraints = function(style, w, h) {
     var constr = [];
     var dx = Math.min(w, h / 2);
-    var s = Math.min(w - dx, Math.max(0, parseFloat(mxUtils.getValue(this.style, 'size', this.size))) * w);
+    var s = Math.min(
+      w - dx,
+      Math.max(0, parseFloat(mxUtils.getValue(this.style, 'size', this.size))) * w
+    );
 
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0.5), false, null));
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, s, 0));
@@ -4463,7 +5715,8 @@
   };
 
   ModuleShape.prototype.getConstraints = function(style, w, h) {
-    var x0 = parseFloat(mxUtils.getValue(style, 'jettyWidth', ModuleShape.prototype.jettyWidth)) / 2;
+    var x0 =
+      parseFloat(mxUtils.getValue(style, 'jettyWidth', ModuleShape.prototype.jettyWidth)) / 2;
     var dy = parseFloat(mxUtils.getValue(style, 'jettyHeight', ModuleShape.prototype.jettyHeight));
     var constr = [
       new mxConnectionConstraint(new mxPoint(0, 0), false, null, x0),
@@ -4479,8 +5732,20 @@
       new mxConnectionConstraint(new mxPoint(0.5, 1), true),
       new mxConnectionConstraint(new mxPoint(0.75, 1), true),
       new mxConnectionConstraint(new mxPoint(1, 1), true),
-      new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, Math.min(h - 0.5 * dy, 1.5 * dy)),
-      new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, Math.min(h - 0.5 * dy, 3.5 * dy))
+      new mxConnectionConstraint(
+        new mxPoint(0, 0),
+        false,
+        null,
+        0,
+        Math.min(h - 0.5 * dy, 1.5 * dy)
+      ),
+      new mxConnectionConstraint(
+        new mxPoint(0, 0),
+        false,
+        null,
+        0,
+        Math.min(h - 0.5 * dy, 3.5 * dy)
+      )
     ];
 
     if (h > 5 * dy) {
@@ -4583,11 +5848,26 @@
     new mxConnectionConstraint(new mxPoint(1, 0.5), true),
     new mxConnectionConstraint(new mxPoint(1, 0.75), true)
   ];
-  mxLine.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0, 0.5), false), new mxConnectionConstraint(new mxPoint(0.25, 0.5), false), new mxConnectionConstraint(new mxPoint(0.75, 0.5), false), new mxConnectionConstraint(new mxPoint(1, 0.5), false)];
-  LollipopShape.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0.5, 0), false), new mxConnectionConstraint(new mxPoint(0.5, 1), false)];
+  mxLine.prototype.constraints = [
+    new mxConnectionConstraint(new mxPoint(0, 0.5), false),
+    new mxConnectionConstraint(new mxPoint(0.25, 0.5), false),
+    new mxConnectionConstraint(new mxPoint(0.75, 0.5), false),
+    new mxConnectionConstraint(new mxPoint(1, 0.5), false)
+  ];
+  LollipopShape.prototype.constraints = [
+    new mxConnectionConstraint(new mxPoint(0.5, 0), false),
+    new mxConnectionConstraint(new mxPoint(0.5, 1), false)
+  ];
   mxDoubleEllipse.prototype.constraints = mxEllipse.prototype.constraints;
   mxRhombus.prototype.constraints = mxEllipse.prototype.constraints;
-  mxTriangle.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0, 0.25), true), new mxConnectionConstraint(new mxPoint(0, 0.5), true), new mxConnectionConstraint(new mxPoint(0, 0.75), true), new mxConnectionConstraint(new mxPoint(0.5, 0), true), new mxConnectionConstraint(new mxPoint(0.5, 1), true), new mxConnectionConstraint(new mxPoint(1, 0.5), true)];
+  mxTriangle.prototype.constraints = [
+    new mxConnectionConstraint(new mxPoint(0, 0.25), true),
+    new mxConnectionConstraint(new mxPoint(0, 0.5), true),
+    new mxConnectionConstraint(new mxPoint(0, 0.75), true),
+    new mxConnectionConstraint(new mxPoint(0.5, 0), true),
+    new mxConnectionConstraint(new mxPoint(0.5, 1), true),
+    new mxConnectionConstraint(new mxPoint(1, 0.5), true)
+  ];
   mxHexagon.prototype.constraints = [
     new mxConnectionConstraint(new mxPoint(0.375, 0), true),
     new mxConnectionConstraint(new mxPoint(0.5, 0), true),
@@ -4642,15 +5922,23 @@
     constr.push(new mxConnectionConstraint(new mxPoint(1, 0), false));
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, dy * 0.5));
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, dy));
-    constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.75 + dx * 0.25, dy));
+    constr.push(
+      new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.75 + dx * 0.25, dy)
+    );
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w + dx) * 0.5, dy));
-    constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w + dx) * 0.5, (h + dy) * 0.5));
+    constr.push(
+      new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w + dx) * 0.5, (h + dy) * 0.5)
+    );
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w + dx) * 0.5, h));
     constr.push(new mxConnectionConstraint(new mxPoint(0.5, 1), false));
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w - dx) * 0.5, h));
-    constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w - dx) * 0.5, (h + dy) * 0.5));
+    constr.push(
+      new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w - dx) * 0.5, (h + dy) * 0.5)
+    );
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w - dx) * 0.5, dy));
-    constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.25 - dx * 0.25, dy));
+    constr.push(
+      new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.25 - dx * 0.25, dy)
+    );
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, dy));
     constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, dy * 0.5));
 
@@ -4692,8 +5980,18 @@
 
   SingleArrowShape.prototype.getConstraints = function(style, w, h) {
     var constr = [];
-    var aw = h * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'arrowWidth', this.arrowWidth))));
-    var as = w * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'arrowSize', this.arrowSize))));
+    var aw =
+      h *
+      Math.max(
+        0,
+        Math.min(1, parseFloat(mxUtils.getValue(this.style, 'arrowWidth', this.arrowWidth)))
+      );
+    var as =
+      w *
+      Math.max(
+        0,
+        Math.min(1, parseFloat(mxUtils.getValue(this.style, 'arrowSize', this.arrowSize)))
+      );
     var at = (h - aw) / 2;
     var ab = at + aw;
 
@@ -4711,8 +6009,28 @@
 
   DoubleArrowShape.prototype.getConstraints = function(style, w, h) {
     var constr = [];
-    var aw = h * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'arrowWidth', SingleArrowShape.prototype.arrowWidth))));
-    var as = w * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'arrowSize', SingleArrowShape.prototype.arrowSize))));
+    var aw =
+      h *
+      Math.max(
+        0,
+        Math.min(
+          1,
+          parseFloat(
+            mxUtils.getValue(this.style, 'arrowWidth', SingleArrowShape.prototype.arrowWidth)
+          )
+        )
+      );
+    var as =
+      w *
+      Math.max(
+        0,
+        Math.min(
+          1,
+          parseFloat(
+            mxUtils.getValue(this.style, 'arrowSize', SingleArrowShape.prototype.arrowSize)
+          )
+        )
+      );
     var at = (h - aw) / 2;
     var ab = at + aw;
 
@@ -4731,7 +6049,10 @@
   CrossShape.prototype.getConstraints = function(style, w, h) {
     var constr = [];
     var m = Math.min(h, w);
-    var size = Math.max(0, Math.min(m, m * parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
+    var size = Math.max(
+      0,
+      Math.min(m, m * parseFloat(mxUtils.getValue(this.style, 'size', this.size)))
+    );
     var t = (h - size) / 2;
     var b = t + size;
     var l = (w - size) / 2;
@@ -4766,8 +6087,28 @@
   };
 
   UmlLifeline.prototype.constraints = null;
-  OrShape.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0, 0.25), false), new mxConnectionConstraint(new mxPoint(0, 0.5), false), new mxConnectionConstraint(new mxPoint(0, 0.75), false), new mxConnectionConstraint(new mxPoint(1, 0.5), false), new mxConnectionConstraint(new mxPoint(0.7, 0.1), false), new mxConnectionConstraint(new mxPoint(0.7, 0.9), false)];
-  XorShape.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0.175, 0.25), false), new mxConnectionConstraint(new mxPoint(0.25, 0.5), false), new mxConnectionConstraint(new mxPoint(0.175, 0.75), false), new mxConnectionConstraint(new mxPoint(1, 0.5), false), new mxConnectionConstraint(new mxPoint(0.7, 0.1), false), new mxConnectionConstraint(new mxPoint(0.7, 0.9), false)];
-  RequiredInterfaceShape.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0, 0.5), false), new mxConnectionConstraint(new mxPoint(1, 0.5), false)];
-  ProvidedRequiredInterfaceShape.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0, 0.5), false), new mxConnectionConstraint(new mxPoint(1, 0.5), false)];
+  OrShape.prototype.constraints = [
+    new mxConnectionConstraint(new mxPoint(0, 0.25), false),
+    new mxConnectionConstraint(new mxPoint(0, 0.5), false),
+    new mxConnectionConstraint(new mxPoint(0, 0.75), false),
+    new mxConnectionConstraint(new mxPoint(1, 0.5), false),
+    new mxConnectionConstraint(new mxPoint(0.7, 0.1), false),
+    new mxConnectionConstraint(new mxPoint(0.7, 0.9), false)
+  ];
+  XorShape.prototype.constraints = [
+    new mxConnectionConstraint(new mxPoint(0.175, 0.25), false),
+    new mxConnectionConstraint(new mxPoint(0.25, 0.5), false),
+    new mxConnectionConstraint(new mxPoint(0.175, 0.75), false),
+    new mxConnectionConstraint(new mxPoint(1, 0.5), false),
+    new mxConnectionConstraint(new mxPoint(0.7, 0.1), false),
+    new mxConnectionConstraint(new mxPoint(0.7, 0.9), false)
+  ];
+  RequiredInterfaceShape.prototype.constraints = [
+    new mxConnectionConstraint(new mxPoint(0, 0.5), false),
+    new mxConnectionConstraint(new mxPoint(1, 0.5), false)
+  ];
+  ProvidedRequiredInterfaceShape.prototype.constraints = [
+    new mxConnectionConstraint(new mxPoint(0, 0.5), false),
+    new mxConnectionConstraint(new mxPoint(1, 0.5), false)
+  ];
 })();
