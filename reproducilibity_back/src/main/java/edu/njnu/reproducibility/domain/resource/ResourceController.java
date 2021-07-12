@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @CrossOrigin(origins = "*",allowCredentials = "true")
 @RestController
-@RequestMapping("/resources")
+@RequestMapping("/projectResources")
 public class ResourceController {
     @Autowired
     ResourceService resourceService;

@@ -15,18 +15,14 @@ import 'mavon-editor/dist/css/index.css';
 import './assets/iconfont/iconfont.css';
 import '@/router/permission'; // permission control
 import vuescroll from 'vuescroll';
-import vueJsonEditor from 'vue-json-editor';
 
 // import Descriptions from '_com/Description/index.js';
 
 Vue.config.productionTip = false;
 Vue.use(ElementUI, { locale: enLocale });
+// Vue.use(ElementPlus, { enLocale });
 Vue.use(mavonEditor);
 Vue.use(vuescroll);
-// Vue.use();
-
-Vue.component('vue-json-editor', vueJsonEditor);
-// Vue.use(vueJsonEditor);
 
 Vue.config.errorHandler = errorHandler;
 Vue.prototype.$throw = error => errorHandler(error, this);

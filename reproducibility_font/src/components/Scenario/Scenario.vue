@@ -27,7 +27,6 @@
         </div>
       </div>
     </div>
-
     <div class="customToolbarContainer" v-show="isIntegrateTaskShow">
       <mx-graph :taskInfoInit="taskInfoInit"></mx-graph>
     </div>
@@ -84,7 +83,6 @@ export default {
 
     async getScenario() {
       let data = await getScenarioByProjectId(this.projectId);
-      console.log('daaaaaa', data);
       if (data == null || data.selectTaskId == '' || data.selectTaskId == null) {
         this.isNewTaskShow = true;
         return;
@@ -104,7 +102,7 @@ export default {
 
     async createNewTask() {
       // let noteType = '';
-
+      this.isNewTaskShow = false;
       let postJson = {
         projectId: this.projectId,
         content: '',
@@ -117,7 +115,6 @@ export default {
       if (this.taskInfo.type == 'notebook') {
         this.isNoteTaskShow = true;
       }
-      this.isNewTaskShow = false;
       let data = await saveIntegrateTask(postJson);
       this.taskInfoInit = data;
       await updateScenarioByProjectId(this.projectId, { selectTaskId: data.id, type: this.taskInfo.type });

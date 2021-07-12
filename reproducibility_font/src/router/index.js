@@ -188,19 +188,6 @@ export const constantRoutes = [
         }
       },
       {
-        path: '/newdataservice',
-        name: 'NewDataService',
-        meta: {
-          title: 'new',
-          requireAuth: true
-        },
-        components: {
-          header: () => import('_com/layout/MyHeader.vue'),
-          main: () => import('@/views/data-service/create.vue'),
-          footer: () => import('_com/layout/MyFooter.vue')
-        }
-      },
-      {
         path: '/models',
         name: 'Models',
         meta: {

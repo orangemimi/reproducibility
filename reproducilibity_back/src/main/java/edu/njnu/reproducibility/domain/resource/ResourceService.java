@@ -12,7 +12,7 @@ import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
 import edu.njnu.reproducibility.domain.file.FileItem;
 import edu.njnu.reproducibility.domain.file.FileItemRepository;
-import edu.njnu.reproducibility.domain.projectResource.ProjectResource;
+import edu.njnu.reproducibility.domain.projectResource.Resource;
 import edu.njnu.reproducibility.domain.projectResource.dto.AddResourceDTO;
 import edu.njnu.reproducibility.domain.projectResource.dto.UpdateResourceDataDTO;
 import edu.njnu.reproducibility.domain.projectResource.dto.UpdateResourceModelDTO;
@@ -46,7 +46,7 @@ public class ResourceService {
 <<<<<<< HEAD
 
     public List<FileItem> getResourcesByProjectId(String projectId) {
-        ProjectResource resources = resourceRepository.findByProjectId(projectId).orElseThrow(MyException::noObject);
+        edu.njnu.reproducibility.domain.projectResource.Resource resources = resourceRepository.findByProjectId(projectId).orElseThrow(MyException::noObject);
         List<FileItem> fileItemList = new ArrayList<>();
         if (resources.getDataItemCollection()==null) {
             return fileItemList;
@@ -70,25 +70,26 @@ public class ResourceService {
         return fileItemList;
     }
 
-    public ProjectResource updateResourceData(String pid, UpdateResourceDataDTO updateResourceDataDTO) {
-        ProjectResource projectResource = resourceRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
-        updateResourceDataDTO.updateTo(projectResource);
-        return resourceRepository.save(projectResource);
+    public edu.njnu.reproducibility.domain.projectResource.Resource updateResourceData(String pid, UpdateResourceDataDTO updateResourceDataDTO) {
+        edu.njnu.reproducibility.domain.projectResource.Resource resource = resourceRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
+        updateResourceDataDTO.updateTo(resource);
+        return resourceRepository.save(resource);
     }
 
-    public ProjectResource updateResourceRelatedData(String pid, UpdateResourceRelatedDataDTO update) {
-        ProjectResource projectResource = resourceRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
-        update.updateTo(projectResource);
-        return resourceRepository.save(projectResource);
+    public edu.njnu.reproducibility.domain.projectResource.Resource updateResourceRelatedData(String pid, UpdateResourceRelatedDataDTO update) {
+        edu.njnu.reproducibility.domain.projectResource.Resource resource = resourceRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
+        update.updateTo(resource);
+        return resourceRepository.save(resource);
     }
 
-    public ProjectResource updateResourceModel(String pid, UpdateResourceModelDTO updateResourceModelDTO) {
-        ProjectResource projectResource = resourceRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
-        updateResourceModelDTO.updateTo(projectResource);
-        return resourceRepository.save(projectResource);
+    public edu.njnu.reproducibility.domain.projectResource.Resource updateResourceModel(String pid, UpdateResourceModelDTO updateResourceModelDTO) {
+        edu.njnu.reproducibility.domain.projectResource.Resource resource = resourceRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
+        updateResourceModelDTO.updateTo(resource);
+        return resourceRepository.save(resource);
     }
 
 
+<<<<<<< HEAD
     public ProjectResource saveResources(AddResourceDTO add, String userId) {
         ProjectResource projectResource = new ProjectResource();
         add.convertTo(projectResource);
@@ -123,6 +124,13 @@ public class ResourceService {
         resource.setUserId(userId);
         return  resourceRepository.insert(resource);
 >>>>>>> parent of f11cd19 (mxgraph)
+=======
+    public edu.njnu.reproducibility.domain.projectResource.Resource saveResources(AddResourceDTO add, String userId) {
+        edu.njnu.reproducibility.domain.projectResource.Resource resource = new Resource();
+        add.convertTo(resource);
+        resource.setUserId(userId);
+        return resourceRepository.insert(resource);
+>>>>>>> parent of 4c1cfb9 (mxgraph)
     }
 
     public Object uploadPicture(MultipartFile upload, String userId) {

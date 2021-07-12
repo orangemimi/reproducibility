@@ -16,7 +16,6 @@ import java.util.List;
 public class AddDataServiceDTO implements ToDomainConverter<DataService> {
     String dataServiceId;
     String name;
-    String type;
-    String userId;
-    List<String> fileList;
+    List<String> dataSet;
+    String date;
 }

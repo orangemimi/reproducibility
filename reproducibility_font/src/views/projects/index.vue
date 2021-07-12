@@ -31,7 +31,7 @@ export default {
   },
 
   data() {
-    return { projectList: [], pageFilter: { page: 0, pageSize: 12 }, userProjectsInfo: {} };
+    return { projectList: [], pageFilter: { page: 0, pageSize: 8 }, userProjectsInfo: {} };
   },
 
   methods: {
