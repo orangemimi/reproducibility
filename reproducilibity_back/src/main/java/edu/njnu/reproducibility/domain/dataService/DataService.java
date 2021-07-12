@@ -21,6 +21,7 @@ public class DataService extends BaseEntity {
     String id;
     String dataServiceId;
     String name;
-    List<String> dataSet;
-    String date;
+    String type;
+    String userId;
+    List<String> fileList;
 }

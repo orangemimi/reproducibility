@@ -9,6 +9,7 @@
         <el-collapse v-model="activeNames" class="collapse">
           <el-collapse-item title="General" name="general">
             <general-toolbar ref="generalBar"></general-toolbar>
+            <code-toolbar ref="codeBar"></code-toolbar>
           </el-collapse-item>
           <el-collapse-item title="Models" name="models">
             <model-item-toolbar ref="modelBar" @getModels="getModels"></model-item-toolbar>
@@ -139,8 +140,9 @@ import instanceCard from '_com/Cards/InstanceCard';
 import modelItemToolbar from '_com/MxGraphBars/ModelItemToolbar';
 import dataItemToolbar from '_com/MxGraphBars/DataItemToolbar';
 import generalToolbar from '_com/MxGraphBars/GeneralToolbar';
+import codeToolbar from '_com/MxGraphBars/CodeToolbar';
 import dataProcessingToolbar from '_com/MxGraphBars/DataProcessingToolbar';
-import { generalList } from '_com/MxGraphBars/toolbar';
+import { generalList, codeList } from '_com/MxGraphBars/toolbar';
 import comparison from './Comparison';
 
 const {
@@ -164,6 +166,7 @@ export default {
     integrateTasks,
     instanceCard,
     generalToolbar,
+    codeToolbar,
     dataProcessingToolbar,
     comparison
   },
@@ -187,6 +190,7 @@ export default {
 
   computed: {
     generalList: () => generalList, // general toolbar
+    codeList: () => codeList,
     ...mapState({
       role: state => state.permission.role
     })
@@ -222,8 +226,12 @@ export default {
 
       modelClick: false,
       modelDoubleClick: false,
+
       dataClick: false,
       dataDoubleClick: false,
+
+      codeClick: false,
+      codeDoubleClick: false,
 
       modelListInGraph: [],
       dataInputInGraph: [],
@@ -339,6 +347,7 @@ export default {
       this.createGraph();
       this.listenGraphEvent();
       this.initLeftBar('generalBar');
+      // this.initLeftBar('codeBar');
       this.initLeftBar('modelBar');
       this.getScenario();
     },
@@ -449,11 +458,16 @@ export default {
         refType = 'dataItemBar';
         barRef = 'outputItemList';
         barItemList = this.outputItemList;
-      } else {
+      } else if (panel == 'generalBar') {
         refType = 'generalBar';
         barRef = 'general';
         barItemList = this.generalList;
       }
+      // else if (panel == 'codeBar') {
+      //   refType = 'codeBar';
+      //   barRef = 'general';
+      //   barItemList = this.codeList;
+      // }
 
       const domArray = this.$refs[refType].$refs[barRef];
 

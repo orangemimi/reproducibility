@@ -9,7 +9,7 @@ import edu.njnu.reproducibility.domain.file.dto.UpdateFileItemDTO;
 import edu.njnu.reproducibility.domain.project.Member;
 import edu.njnu.reproducibility.domain.project.Project;
 import edu.njnu.reproducibility.domain.project.ProjectService;
-import edu.njnu.reproducibility.domain.projectResource.ResourceService;
+import edu.njnu.reproducibility.domain.projectResource.ProjectResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +35,7 @@ public class FileItemService {
     ProjectService projectService;
 
     @Autowired
-    ResourceService resourceService;
+    ProjectResourceService projectResourceService;
 
     public List<FileItem> getAll(String userId) {
         List<FileItem> fileItemList = fileItemRepository.findAllByUploaderId(userId);
@@ -51,7 +51,7 @@ public class FileItemService {
         for(Member member:memberList){
             //如果是其中一个的化
             if(member.getMemberId().equals(userId)){
-                fileItemList = resourceService.getResourcesByProjectId(projectId);
+                fileItemList = projectResourceService.getResourcesByProjectId(projectId);
             }
         }
 

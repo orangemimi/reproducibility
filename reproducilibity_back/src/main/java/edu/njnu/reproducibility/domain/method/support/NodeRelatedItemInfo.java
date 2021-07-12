@@ -3,7 +3,7 @@ package edu.njnu.reproducibility.domain.method.support;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import edu.njnu.reproducibility.domain.context.ContextDefinition;
-import edu.njnu.reproducibility.domain.projectResource.Resource;
+import edu.njnu.reproducibility.domain.projectResource.ProjectResource;
 import lombok.Data;
 
 /**
@@ -15,7 +15,7 @@ import lombok.Data;
 @Data
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type",visible =true,defaultImpl = ContextDefinition.class)
 @JsonSubTypes({@JsonSubTypes.Type(value = ContextDefinition.class, name = "contextDefinition")
-        , @JsonSubTypes.Type(value = Resource.class, name = "resource"),
+        , @JsonSubTypes.Type(value = ProjectResource.class, name = "resource"),
 })
 public class NodeRelatedItemInfo {
     String relatedNodeId;

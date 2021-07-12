@@ -2,8 +2,8 @@
   <div class="main_content">
     <el-col :span="22" :offset="1">
       <!-- <el-col :span="12"> -->
-      {{ taskInfoInit }}
-      <!-- <tinymce ref="editor" v-model="taskInfoInit.content" @saveNote="saveNote" :height="600" /> -->
+      <!-- {{ taskInfoInit }} -->
+      <tinymce ref="editor" v-model="taskInfoInit.content" @saveNote="saveNote" :height="600" />
 
       <!-- </el-col> -->
       <!-- <el-col :span="12">
@@ -18,7 +18,7 @@
 </template>
 <script>
 // import { uploadProjectResourcePicture } from '@/api/request';
-// import tinymce from '_com/Tinymce/Tinymce';
+import tinymce from '_com/Tinymce/Tinymce';
 export default {
   props: {
     taskInfoInit: {
@@ -26,9 +26,9 @@ export default {
     }
   },
 
-  // components: {
-  //   tinymce
-  // },
+  components: {
+    tinymce
+  },
 
   data() {
     return {
