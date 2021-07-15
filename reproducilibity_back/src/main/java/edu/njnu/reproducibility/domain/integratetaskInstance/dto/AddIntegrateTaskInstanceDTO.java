@@ -5,6 +5,9 @@ import edu.njnu.reproducibility.domain.integratetask.support.Action;
 import edu.njnu.reproducibility.domain.integratetaskInstance.IntegrateTaskInstance;
 import lombok.Data;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @Author ：Zhiyi
  * @Date ：2021/4/6 20:11

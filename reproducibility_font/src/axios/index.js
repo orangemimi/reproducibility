@@ -1,6 +1,6 @@
 import axios from 'axios';
 import sf from 'string-format';
-// import { Loading } from 'element-ui';
+import { Loading } from 'element-ui';
 import { ResError } from '@/lib/error/ResError';
 import store from '@/store';
 import router from '@/router';
@@ -16,25 +16,25 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   config => {
-    // if (config.loading == true) {
-    //   Loading.service();
-    // }
+    if (config.loading == true) {
+      Loading.service();
+    }
     config.headers.Authorization = localStorage.getItem('token') || null;
     return config;
   },
   error => {
     //前台捕获的错误
-    // if (error.config.loading == true) {
-    //   Loading.service().close();
-    // }
+    if (error.config.loading == true) {
+      Loading.service().close();
+    }
     return Promise.reject(error);
   }
 );
 axiosInstance.interceptors.response.use(
   res => {
-    // if (res.config.loading == true) {
-    //   Loading.service().close();
-    // }
+    if (res.config.loading == true) {
+      Loading.service().close();
+    }
 
     //身份异常
     if (
@@ -56,14 +56,13 @@ axiosInstance.interceptors.response.use(
       //由弹窗出来，是为了给用户看
       throw new ResError(res.data.msg);
     }
-
     return res.data.data;
   },
-  () => {
+  error => {
     //后台未捕获的错误
-    // if (error.config.loading == true) {
-    //   Loading.service().close();
-    // }
+    if (error.config.loading == true) {
+      Loading.service().close();
+    }
     throw new ResError('请求服务器失败，请检查服务是否正常！');
   }
 );

@@ -14,7 +14,7 @@
               </div>
             </el-form-item>
             <el-form-item label="Purpose">
-              <el-input v-model="contextForm.purpose" placeholder="Please enter the content." type="textarea" maxlength="550" show-word-limit></el-input>
+              <el-input v-model="contextForm.purpose" placeholder="Please enter the content." type="textarea" maxlength="50" show-word-limit></el-input>
             </el-form-item>
             <!-- <el-form-item label="Object">
               <el-input v-model="contextForm.objects" placeholder="Please enter the content."></el-input>

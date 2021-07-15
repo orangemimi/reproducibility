@@ -3,7 +3,13 @@
     <el-row>Register</el-row>
     <el-row>
       <div class="register-form">
-        <el-form ref="registerForm" :rules="registerRules" :model="registerForm" label-width="150px" label-position="right">
+        <el-form
+          ref="registerForm"
+          :rules="registerRules"
+          :model="registerForm"
+          label-width="150px"
+          label-position="right"
+        >
           <el-form-item label="Name" prop="name" required>
             <el-input v-model="registerForm.name" />
           </el-form-item>
@@ -30,7 +36,7 @@
 
 <script>
 import md5 from 'js-md5';
-import { saveUser } from '@/api/request';
+import { saveUsers } from '@/api/request';
 export default {
   components: {},
 
@@ -90,7 +96,7 @@ export default {
             joinedProjects: [],
             createdProjects: []
           };
-          await saveUser(form);
+          await saveUsers(form);
           this.$notify({
             title: 'Success',
             message: 'Register successfully!',

@@ -1,15 +1,18 @@
 <template>
   <div>
-    <mavon-editor v-model="value" @save="saveDoc"></mavon-editor>
+    <mavon-editor
+      v-model="value"
+      @save="saveDoc"
+    ></mavon-editor>
   </div>
 </template>
 <script>
-import { mavonEditor } from 'mavon-editor';
-import 'mavon-editor/dist/css/index.css';
+import { mavonEditor } from "mavon-editor";
+import "mavon-editor/dist/css/index.css";
 export default {
   props: [],
   data() {
-    return { value: '' };
+    return { value: "" };
   },
   methods: {
     saveDoc(markdown, html) {
@@ -20,4 +23,5 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+</style>

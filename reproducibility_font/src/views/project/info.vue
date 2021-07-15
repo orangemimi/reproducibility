@@ -53,7 +53,14 @@
                   </el-button-group>
                 </div>
                 <div>
-                  <avatar username="projectInfo.name" :src="projectInfo.picture" :size="150" style="margin-top: 10px" :rounded="false" class="avatar-img"></avatar>
+                  <avatar
+                    username="projectInfo.name"
+                    :src="projectInfo.picture"
+                    :size="150"
+                    style="margin-top: 10px"
+                    :rounded="false"
+                    class="avatar-img"
+                  ></avatar>
                 </div>
               </div>
             </div>
@@ -113,12 +120,25 @@
     </el-col>
 
     <!-- edit the project dialog -->
-    <el-dialog title="Edit Project Info" :visible.sync="editProjectInfoDialogShow" width="40%" :close-on-click-modal="false">
-      <edit-info-form :projectInfo="projectInfo" @editProjectInfoResponse="editProjectInfoResponse"></edit-info-form>
+    <el-dialog
+      title="Edit Project Info"
+      :visible.sync="editProjectInfoDialogShow"
+      width="40%"
+      :close-on-click-modal="false"
+    >
+      <edit-info-form
+        :projectInfo="projectInfo"
+        @editProjectInfoResponse="editProjectInfoResponse"
+      ></edit-info-form>
     </el-dialog>
 
     <!-- share the project with email  -->
-    <el-dialog :title="'Invite a collaborator to ' + projectInfo.name" :visible.sync="addParticipantDialogShow" width="40%" :close-on-click-modal="false">
+    <el-dialog
+      :title="'Invite a collaborator to ' + projectInfo.name"
+      :visible.sync="addParticipantDialogShow"
+      width="40%"
+      :close-on-click-modal="false"
+    >
       <share-project></share-project>
     </el-dialog>
   </div>

@@ -32,13 +32,13 @@
         <td class="content" :colspan="6" v-if="temporalInfo.stepConstraintList.length == 0">Undefined</td>
       </tr>
       <tr v-show="temporalInfo.stepConstraintList.length != 0">
-        <!-- <td :colspan="2">Name</td> -->
+        <td :colspan="2">Name</td>
         <td :colspan="2">Value</td>
         <td :colspan="2">Unit</td>
       </tr>
 
       <tr v-show="temporalInfo.stepConstraintList.length != 0" v-for="(item, index) in temporalInfo.stepConstraintList" :key="index">
-        <!-- <td class="content" :colspan="2">{{ item.name }}</td> -->
+        <td class="content" :colspan="2">{{ item.name }}</td>
         <td class="content" :colspan="2">{{ item.value }}</td>
         <td class="content" :colspan="2">{{ item.unit }}</td>
       </tr>

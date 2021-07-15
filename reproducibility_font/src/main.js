@@ -25,6 +25,7 @@ import 'codemirror/lib/codemirror.css';
 
 Vue.config.productionTip = false;
 Vue.use(ElementUI, { locale: enLocale });
+// Vue.use(ElementPlus, { enLocale });
 Vue.use(mavonEditor);
 Vue.use(vuescroll);
 // Vue.use(Highlight);

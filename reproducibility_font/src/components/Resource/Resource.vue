@@ -65,7 +65,6 @@
         <el-table-column label="Name" width="160">
           <template #default="scope">{{ scope.row.name }}</template>
         </el-table-column>
-
         <el-table-column label="Format" width="100">
           <template #default="scope">
             <span>{{ scope.row.format }}</span>
@@ -342,7 +341,7 @@ export default {
       return params.folder === true ? 'el-icon-folder' : 'el-icon-document';
     },
     getRowKeys(row) {
-      // console.log('row', row);
+      console.log('row', row);
       return row.id;
     },
     clickTable(row) {

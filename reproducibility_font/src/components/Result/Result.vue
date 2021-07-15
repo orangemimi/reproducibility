@@ -1,28 +1,15 @@
 <!--  -->
 <template>
-  <div class="mainContainer">
-    <el-table :data="tableData" :row-style="{ height: '0' }" :cell-style="{ padding: '4px' }" row-key="name" border :tree-props="{ children: 'children' }" height="380" :span-method="arraySpanMethod">
+  <div>
+    <el-table :data="tableData" :row-style="{ height: '0' }" :cell-style="{ padding: '4px' }" row-key="id" border :tree-props="{ children: 'children', hasChildren: 'hasChildren' }" height="380">
       <el-table-column prop="name" label="Key" sortable width="180"></el-table-column>
-      <el-table-column prop="value" label="Value" sortable></el-table-column>
+      <el-table-column prop="value" label="Value" sortable width="180"></el-table-column>
 
-      <el-table-column label="Action" width="180">
-        <el-button size="mini" @click="editResultDialogShow = true">Edit</el-button>
-        <el-button size="mini" @click="addItem">Add Item</el-button>
+      <el-table-column label="Action">
+        <el-button size="mini" @click="edit(scope.$index, scope.row)">Edit</el-button>
+        <el-button size="mini" @click="addItem(scope.$index, scope.row)">Add Item</el-button>
       </el-table-column>
     </el-table>
-
-    <!-- upload data -->
-    <div class="dialogs">
-      <el-dialog title="Edit result" :visible.sync="editResultDialogShow" width="40%" :close-on-click-modal="false" :append-to-body="true">
-        <!-- <pre>{{ JSON.stringify(tableData, null, 4) }}</pre> -->
-        <!-- <b-code-editor v-model="(JSON.stringify(JSON.parse(tableData),null,2))" :indent-unit="4" height="auto" /> -->
-
-        <vue-json-editor v-model="tableData" :expand_height="'true'" :mode="'code'" class="vue-json-editor" @json-change="onJsonChange" @json-save="onJsonSave" style="height: 600px" />
-        <div style="margin-top:10px">
-          <el-button size="mini" @click="saveResult">Save</el-button>
-        </div>
-      </el-dialog>
-    </div>
   </div>
 </template>
 
@@ -40,27 +27,27 @@ export default {
         {
           name: 'Result Item',
           value: '',
-          id: 1,
-
+          id: 0,
+          pid: 120,
           children: [
-            { name: 'Name', value: '', id: 2 },
-            { name: 'Description', value: '', id: 3 },
-            { name: 'Keywords', value: '', id: 4 },
-            { name: 'Version', value: '', id: 5 },
-            { name: 'Distributors', value: '', id: 6 },
-            { name: 'Existing File', value: '', id: 7 },
-            { name: 'Restriction', value: '', id: 8 },
-            { name: 'Conclusion', value: '', id: 9 }
+            { name: 'Name', value: '', id: 21, pid: 222 }
+            // { name: 'Description', value: '', id: 32, pid: 3 },
+            // { name: 'Keywords', value: '', id: 42, pid: 4 },
+            // { name: 'Version', value: '', id: 52, pid: 5 },
+            // { name: 'Distributors', value: '', id: 62, pid: 6 },
+            // { name: 'Existing File', value: '', id: 72, pid: 7 },
+            // { name: 'Restriction', value: '', id: 28, pid: 8 },
+            // { name: 'Conclusion', value: '', id: 92, pid: 9 }
           ]
         },
         {
           name: 'Comparison',
           value: '',
-          id: 10,
-          children: [{ name: 'Method', value: '', id: 11 }]
+          id: 1,
+          pid: 1,
+          children: [{ name: 'Method', value: '', id: 10, pid: 10 }]
         }
-      ],
-      editResultDialogShow: false
+      ]
     };
   },
 
@@ -70,45 +57,10 @@ export default {
     },
     addItem(index, row) {
       console.log(index, row);
-    },
-    // eslint-disable-next-line no-unused-vars
-    arraySpanMethod({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex === 2) {
-        return [11, 1];
-      }
-    },
-
-    onJsonChange() {
-      // 数据改变时触发
-    },
-    onJsonSave() {
-      // 点击保存触发
-    },
-    saveResult() {}
+    }
   },
 
   mounted() {}
 };
 </script>
-//
-<style lang="scss" scoped>
-// .mainContainer {
-//   width: 98%;
-//   margin: 16px auto;
-//   height: 100%;
-
-//   .dialogs {
-
-//   }
-// }
-//
-</style>
-
-<style lang="less">
-.jsoneditor-vue {
-  height: 100%;
-}
-.el-dialog__body {
-  padding: 20px;
-}
-</style>
+<style lang="scss" scoped></style>

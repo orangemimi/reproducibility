@@ -24,18 +24,35 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item label="Tag">
-            <el-input v-model="inputTagValue" ref="addTagRef" size="small" @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm" style="margin-bottom:5px">
+            <el-input
+              v-model="inputTagValue"
+              ref="addTagRef"
+              size="small"
+              @keyup.enter.native="handleInputConfirm"
+              @blur="handleInputConfirm"
+              style="margin-bottom:5px"
+            >
               <template slot="append">
                 + New Tag
               </template>
             </el-input>
 
-            <el-tag :key="tag" v-for="tag in form.tags" closable :disable-transitions="false" @close="handleClose(tag)">
+            <el-tag
+              :key="tag"
+              v-for="tag in form.tags"
+              closable
+              :disable-transitions="false"
+              @close="handleClose(tag)"
+            >
               {{ tag }}
             </el-tag>
           </el-form-item>
           <el-form-item label="Image">
-            <add-image @uploadImgResponse="uploadImgResponse" :fileUrl="form.picture" :uploadPath="'projects/picture'"></add-image>
+            <add-image
+              @uploadImgResponse="uploadImgResponse"
+              :fileUrl="form.picture"
+              :uploadPath="'projects/picture'"
+            ></add-image>
           </el-form-item>
         </el-form>
       </el-col>
