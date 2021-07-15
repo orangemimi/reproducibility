@@ -1,15 +1,15 @@
 import { get, post, patch, del } from '@/axios';
-
+import { successNotification } from '@/utils/notification';
 //-------------------------------------------------users--------------------------------------
-export async function getUserInfoLike(email) {
+
+export async function getUserByEmailLike(email) {
   return await get(`/users/like/${email}`);
 }
 
-export async function getUserInfoByJwtUserId() {
+export async function getUserByJwtUserId() {
   return await get(`/users`);
 }
 
-<<<<<<< HEAD
 export async function getUserProjectInfo() {
   return await get(`/users/projects`);
 }
@@ -43,23 +43,18 @@ export async function saveUser(form) {
     successNotification('create', 'user');
   }
   return data;
-=======
-export async function updateUsersByJwtUserId(form) {
-  return await patch(`/users`, form);
-}
-
-export async function saveUsers(form) {
-  await post(`/users/register`, form);
->>>>>>> parent of f11cd19 (mxgraph)
 }
 
 //----------------------------------------------------projects-----------------------------------------
+
 export async function getProjectAndUsers(projectId) {
   return await get(`/projects/user/${projectId}`);
 }
 
 export async function getAllProjects(currentPage, pagesize) {
-  await get(`/projects/${currentPage}/${pagesize}`);
+  let data = await get(`/projects/${currentPage}/${pagesize}`);
+  console.log(data);
+  return data;
 }
 
 export async function getProjectById(projectId) {
@@ -67,7 +62,11 @@ export async function getProjectById(projectId) {
 }
 
 export async function updateProject(projectId, form) {
-  return await patch(`/projects/${projectId}`, form);
+  let data = await patch(`/projects/${projectId}`, form);
+  if (data != null) {
+    successNotification('update', 'project');
+  }
+  return data;
 }
 
 export async function updateProjectMembers(projectId, form) {
@@ -79,7 +78,6 @@ export async function updateProjectMembers(projectId, form) {
 }
 
 export async function saveProject(form) {
-<<<<<<< HEAD
   let data = await post(`/projects`, form);
   if (data != null) {
     successNotification('create', 'project');
@@ -173,38 +171,17 @@ export async function saveDataItem(form) {
     successNotification('save', 'data items');
   }
   return data;
-=======
-  return await post(`/projects`, form);
-}
-
-//---------------------------------------------------resources------------------------------------------
-export async function getResourcesById(projectId) {
-  return await get(`/resources/${projectId}`);
-}
-
-export async function saveResources(form) {
-  return await post(`/resources`, form);
-}
-
-export async function updateResources(projectId, form) {
-  return await patch(`/resources/data/${projectId}`, form);
-}
-
-//-----------------------------------------------dataitems---------------------------------------------
-export async function saveDataItems(form) {
-  return await post(`/dataItems`, form);
->>>>>>> parent of f11cd19 (mxgraph)
 }
 export async function updateDataItemById(id, form) {
   return await patch(`/dataItems/${id}`, form);
 }
 
-export async function deleteDataItemsById(id) {
+export async function deleteDataItemById(id) {
   await del(`/dataItems/${id}`);
 }
 
 export async function getDataItemsByJwtUserId() {
-  await del(`/dataItems`);
+  return await get(`/dataItems`);
 }
 
 export async function getDataItemsByProjectId(projectId) {
@@ -224,16 +201,29 @@ export async function postDataContainer(form) {
 }
 
 //----------------------------------------------integrate tasks------------------------------------------
+
 export async function getAllIntegrateTasksByProjectId(projectId) {
-  return await get(`/integrateTasks/all/${projectId}`); //获得该项目的所有tasks
+  return await get(`/integrateTasks/all/${projectId}`);
 }
 
-export async function saveIntegrateTasks(postJson) {
-  return await post(`/integrateTasks`, postJson);
+export async function getIntegrateTaskByTaskId(taskId) {
+  return await get(`/integrateTasks/${taskId}`);
 }
 
-export async function updateIntegrateTasks(taskId, postJson) {
-  return await patch(`/integrateTasks/${taskId}`, postJson);
+export async function saveIntegrateTask(postJson) {
+  let data = await post(`/integrateTasks`, postJson);
+  if (data != null) {
+    successNotification('save', 'integrate tasks');
+  }
+  return data;
+}
+
+export async function updateIntegrateTask(taskId, postJson) {
+  let data = await patch(`/integrateTasks/${taskId}`, postJson);
+  if (data != null) {
+    successNotification('update', 'integrate tasks');
+  }
+  return data;
 }
 
 export async function updateIntegrateTaskInstance(taskId, instanceId) {
@@ -243,7 +233,6 @@ export async function updateIntegrateTaskInstance(taskId, instanceId) {
 }
 
 //--------------------------------------integrateTaskInstances--------------------------------------------
-<<<<<<< HEAD
 
 export async function getAllIntegrateTaskInstancesByTaskId(taskId, currentPage, pagesize) {
   return await get(`/integrateTaskInstances/${taskId}/${currentPage}/${pagesize}`);
@@ -253,27 +242,22 @@ export async function getIntegrateTaskInstanceById(id) {
   let data = await get(`/integrateTaskInstances/one/${id}`);
 
   return data;
-=======
-export async function getAllInstancesByTaskId(taskId, currentPage, pagesize) {
-  return await get(`/integrateTaskInstances/all/${taskId}/${currentPage}/${pagesize}`); //获得该项目的所有tasks
->>>>>>> parent of f11cd19 (mxgraph)
 }
 
-export async function saveIntegrateTaskInstances(postJson) {
-  return await post(`/integrateTaskInstances`, postJson);
+export async function saveIntegrateTaskInstance(postJson) {
+  let data = await post(`/integrateTaskInstances`, postJson);
+  if (data != null) {
+    successNotification('create', 'integrateTaskInstances');
+  }
+  return data;
 }
 
-<<<<<<< HEAD
 export async function updateIntegrateTaskInstanceById(id, postJson) {
   let data = await patch(`/integrateTaskInstances/${id}`, postJson);
   if (data != null) {
     successNotification('update', 'integrateTaskInstances');
   }
   return data;
-=======
-export async function updateIntegrateTaskInstances(taskId, postJson) {
-  return await patch(`/integrateTasks/${taskId}`, postJson);
->>>>>>> parent of f11cd19 (mxgraph)
 }
 
 export async function updateNoteTaskInstanceById(id, postJson) {
@@ -285,24 +269,47 @@ export async function updateNoteTaskInstanceById(id, postJson) {
 }
 
 //-------------------------------------------modelitems--------------------------------------------------
-export async function getAllModels(currentPage, pagesize) {
+
+export async function getAllModelItems(currentPage, pagesize) {
   return await get(`/modelItems/${currentPage}/${pagesize}`);
 }
 
-export async function getModelsByPrivacy(privacy, currentPage, pagesize) {
+export async function getModelItemsByPrivacy(privacy, currentPage, pagesize) {
   return await get(`/modelItems/${privacy}/${currentPage}/${pagesize}`);
 }
 
-export async function getModelsByProvider(currentPage, pagesize) {
+export async function getModelItemsByProvider(currentPage, pagesize) {
   return await get(`/modelItems/provider/${currentPage}/${pagesize}`);
 }
 
 //------------------------------------------methods-----------------------------------
-export async function saveMethods(form) {
-  return await post(`/methods`, form);
+
+export async function saveMethod(form) {
+  let data = await post(`/methods`, form);
+  if (data != null) {
+    successNotification('save', 'method');
+  }
+  return data;
 }
 
-<<<<<<< HEAD
+//------------------------------------------scenario------------------------------------
+
+export async function getScenarioByProjectId(projectId) {
+  return await get(`/scenario/${projectId}`);
+}
+
+export async function saveScenario(postJson) {
+  return await post(`/scenario`, postJson);
+}
+
+export async function updateScenarioByProjectId(projectId, postJson) {
+  let data = await patch(`/scenario/${projectId}`, postJson);
+  if (data != null) {
+    successNotification('update', 'scenario');
+  }
+  return data;
+}
+
 //------------------------------------------notices------------------------------------
 
 export async function saveNotice(form) {
@@ -321,16 +328,31 @@ export async function getNoticesBySenderId() {
 
 export async function changeNoticeState(id, state) {
   return await patch(`/notices/${id}/${state}`);
-=======
-//------------------------------------------noticeS------------------------------------
-export async function saveNotices(form) {
-  return await post(`/notices`, form);
->>>>>>> parent of f11cd19 (mxgraph)
 }
 
 //------------------------------------------emails------------------------------------
 export async function saveEmails(form) {
-  return await post(`/emails/invite`, form);
+  let data = await post(`/emails/invite`, form);
+  if (data != null) {
+    successNotification('save', 'emails');
+  }
+  return data;
+}
+
+//------------------------------------------records------------------------------------
+
+export async function getRecordByProjectId(projectId) {
+  return await get(`/records/${projectId}`);
+}
+
+export async function saveRecord(form) {
+  return await post(`/records`, form);
+}
+
+//------------------------------------------portal------------------------------------
+
+export async function getModelInfo(doi) {
+  return await get(`/portal/modelBehavior/${doi}`);
 }
 
 export async function getAllUnitsFromPoral(currentPage, pagesize) {

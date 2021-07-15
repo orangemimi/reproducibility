@@ -1,18 +1,15 @@
 <template>
-  <div class="mainContain" v-if="JSON.stringify(currentEvent) != '{}'">
-    <el-row>
+  <div class="mainContain" v-if="currentEvent != null">
+    <el-row class="dataInfo">
       <div class="data">
         <div class="dataTitle">State name:</div>
-        <div class="dataDetail">{{ currentEvent.state.name }}</div>
+        <div class="dataDetail">{{ currentEvent.stateName }}</div>
       </div>
       <div class="data">
         <div class="dataTitle">State description:</div>
-        <div class="dataDetail">{{ currentEvent.state.description }}</div>
+        <div class="dataDetail">{{ currentEvent.stateDescription }}</div>
       </div>
-      <div class="data">
-        <div class="dataTitle">State type:</div>
-        <div class="dataDetail">{{ currentEvent.state.type }}</div>
-      </div>
+
       <div class="data">
         <div class="dataTitle">Event name:</div>
         <div class="dataDetail">{{ currentEvent.name }}</div>
@@ -31,26 +28,21 @@
       <el-divider class="eventDivider"></el-divider>
     </el-row>
     <el-row>
-      <div v-if="currentCell.type == 'output'">
-        <div v-if="currentCell.value != '' && currentCell.value != undefined">
+      <div v-if="currentEvent.type == 'output'">
+        <div v-if="currentEvent.value != '' && currentEvent.value != undefined">
           <el-button>DownLoad</el-button>
         </div>
         <div v-else>Please run this task to get the output!</div>
       </div>
-      <div v-else-if="currentCell.type == 'link'">
+      <div v-else-if="currentEvent.type == 'link'">
         Link to the output
       </div>
-      <div v-else>
-        <div v-if="currentEvent.datasetItem.type == `internal`" class="uploadContent">
+      <div v-else-if="currentEvent.type == 'input'">
+        {{ selectDataId }}
+        <div v-if="currentEvent.datasetItem != undefined && currentEvent.datasetItem.type == `internal`" class="uploadContent">
           <vue-scroll style="height: 100%" :ops="ops">
             <div v-if="filterEvent">
-              <el-table
-                border
-                :data="filterEvent[0].UdxNode"
-                size="mini"
-                class="table"
-                style="width: 100%"
-              >
+              <el-table border :data="filterEvent[0].UdxNode" size="mini" class="table" style="width: 100%">
                 <el-table-column type="expand" width="20">
                   <template slot-scope="props">
                     <el-form label-position="top" inline class="table-expand" size="mini">
@@ -76,24 +68,8 @@
             </div>
             <div v-else>
               <!-- {{ dataItemList }} -->
-<<<<<<< HEAD:reproducibility_font/src/components/DataCellInfo/Info.vue
               <el-select v-if="role == 'builder'" v-model="selectDataId" clearable placeholder="Please select data" class="uploadContent" @change="changeSelectResource">
                 <el-option v-for="(item, dataIndex) in dataItemList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
-=======
-              <el-select
-                v-model="selectDataId"
-                clearable
-                placeholder="Please select data"
-                class="uploadContent"
-                @change="changeSelectResource"
-              >
-                <el-option
-                  v-for="(item, dataIndex) in dataItemList"
-                  :key="dataIndex"
-                  :label="item.name"
-                  :value="item.id"
-                ></el-option>
->>>>>>> parent of f11cd19 (mxgraph):reproducibility_font/src/views/project/components/Construction/DataItemInfo.vue
               </el-select>
               <div v-else>
                 <el-button>{{ selectDataItem.name }}</el-button>
@@ -102,24 +78,8 @@
           </vue-scroll>
         </div>
         <div v-else>
-<<<<<<< HEAD:reproducibility_font/src/components/DataCellInfo/Info.vue
           <el-select v-if="role == 'builder'" v-model="selectDataId" clearable placeholder="Please select data" class="uploadContent" @change="changeSelectResource">
             <el-option v-for="(item, dataIndex) in dataItemList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
-=======
-          <el-select
-            v-model="selectDataId"
-            clearable
-            placeholder="Please select data"
-            class="uploadContent"
-            @change="changeSelectResource"
-          >
-            <el-option
-              v-for="(item, dataIndex) in dataItemList"
-              :key="dataIndex"
-              :label="item.name"
-              :value="item.id"
-            ></el-option>
->>>>>>> parent of f11cd19 (mxgraph):reproducibility_font/src/views/project/components/Construction/DataItemInfo.vue
           </el-select>
           <div v-else>
             <el-button>{{ selectDataItem.name }}</el-button>
@@ -134,15 +94,8 @@
 </template>
 
 <script>
-<<<<<<< HEAD:reproducibility_font/src/components/DataCellInfo/Info.vue
 import { mapState } from 'vuex';
 import { getProjectResourcesById } from '@/api/request';
-=======
-// import file from '@/components/dataTemplate/File';
-import { get } from '@/axios';
-
-import { getResourcesById } from '@/api/request';
->>>>>>> parent of f11cd19 (mxgraph):reproducibility_font/src/views/project/components/Construction/DataItemInfo.vue
 
 export default {
   props: {
@@ -152,8 +105,8 @@ export default {
   },
   watch: {
     cell: {
+      // immediate: true,
       handler(val) {
-<<<<<<< HEAD:reproducibility_font/src/components/DataCellInfo/Info.vue
         if (val != '') {
           this.currentEvent = val;
           console.log(this.currentEvent);
@@ -163,22 +116,17 @@ export default {
             name: this.currentEvent.fileName,
             url: this.currentEvent.value
           };
-=======
-        if (val != '' && val.doi != undefined) {
-          this.doi = val.doi;
-          this.currentCell = val;
-          this.selectDataId = this.currentCell.fileId;
->>>>>>> parent of f11cd19 (mxgraph):reproducibility_font/src/views/project/components/Construction/DataItemInfo.vue
           this.init();
         }
       },
-      deep: true
+      deep: true,
+      immediate: true
     }
   },
 
   computed: {
     filterEvent() {
-      let datasetItem = this.currentDatasetItem;
+      let datasetItem = this.currentEvent.datasetItem;
       if (Object.prototype.hasOwnProperty.call(datasetItem, 'UdxDeclaration')) {
         if (datasetItem.UdxDeclaration[0].UdxNode != '') {
           return false;
@@ -195,24 +143,12 @@ export default {
     })
   },
 
-  // created() {
-  //   this.$set(this.cell);
-  // },
-
   data() {
     return {
-      doi: '',
-      modelIntroduction: {},
-      modelInstance: {},
-      md5: '',
-      stateList: [],
-      stateInView: {},
-      currentCell: this.cell,
+      currentEvent: this.cell,
       dataItemList: [],
       projectId: this.$route.params.id,
 
-      currentEvent: {},
-      currentDatasetItem: {},
       ops: {
         bar: {
           background: '#808695',
@@ -226,48 +162,7 @@ export default {
 
   methods: {
     async init() {
-      await this.getModelInfo();
       await this.getResources();
-    },
-
-    async getModelInfo() {
-      let data = await get(`/portal/modelBehavior/${this.doi}`); //获得模型所有信息
-      this.md5 = data.md5;
-      this.modelIntroduction = data;
-      this.stateList = data.convertMdlJson;
-      console.log('stateList', this.stateList);
-
-      this.currentEvent = this.convertStateList();
-      if (this.currentCell.value != undefined) {
-        this.currentEvent.value = this.currentCell.value;
-        // this.$set(this.currentEvent, "value", this.currentCell.value);
-      }
-      if (Object.prototype.hasOwnProperty.call(this.currentCell, 'datasetItem')) {
-        this.currentDatasetItem = this.currentCell.datasetItem;
-      } else {
-        this.currentDatasetItem = this.currentEvent.datasetItem;
-      }
-    },
-
-    convertStateList() {
-      if (this.stateList == '') {
-        return;
-      }
-      let stateList = this.stateList;
-      let currentCell = this.currentCell;
-      let current;
-      stateList.forEach(state => {
-        if (state.name == currentCell.stateName) {
-          let events = state.Event;
-          current = events.filter(event => {
-            return event.name == currentCell.name;
-          });
-          current = { state, Event, ...current[0] };
-        }
-      });
-      console.log(current);
-
-      return current;
     },
 
     async getResources() {
@@ -289,7 +184,6 @@ export default {
     async submitResource() {
       // console.log(this.currentEvent);
 
-<<<<<<< HEAD:reproducibility_font/src/components/DataCellInfo/Info.vue
       this.currentEvent.fileName = this.selectDataItem.name;
       this.currentEvent.fileId = this.selectDataItem.id;
       this.currentEvent.value = this.selectDataItem.address;
@@ -297,18 +191,8 @@ export default {
       // console.log(this. currentEvent);
       this.currentEvent.datasetItem = this.currentDatasetItem;
       // this. currentEvent.name = this.currentEvent.name;
-=======
-      this.currentCell.fileName = this.selectDataItem.name;
-      this.currentCell.fileId = this.selectDataItem.id;
-      this.currentCell.value = this.selectDataItem.url;
-      this.currentCell.fileDescription = this.selectDataItem.description;
-      // console.log(this.currentCell);
-      this.currentCell.datasetItem = this.currentDatasetItem;
-      // this.currentCell.name = this.currentEvent.name;
-      this.currentCell.description = this.currentEvent.description;
->>>>>>> parent of f11cd19 (mxgraph):reproducibility_font/src/views/project/components/Construction/DataItemInfo.vue
 
-      this.$emit('currentEventWithFile', this.currentCell);
+      this.$emit('currentEventWithFile', this.currentEvent);
     }
   }
 };
@@ -318,23 +202,28 @@ export default {
 .mainContain {
   width: 100%;
   height: 100%;
+  .dataInfo {
+    .data {
+      font-size: 16px;
+      line-height: 20px;
+      .dataTitle {
+        clear: both;
+        font-weight: 600;
+        width: 150px;
+        float: left;
+      }
+      .dataDetail {
+        float: left;
+      }
+    }
+  }
 
   .uploadContent {
     // height: 390px;
     width: 100%;
   }
 }
-.data {
-  font-size: 15px;
-  .dataTitle {
-    font-weight: 600;
-    width: 150px;
-    float: left;
-  }
-  .dataDetail {
-    float: left;
-  }
-}
+
 .eventDivider {
   >>> .el-divider--horizontal {
     margin: 5px 0;

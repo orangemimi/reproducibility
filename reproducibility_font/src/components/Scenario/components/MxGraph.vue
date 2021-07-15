@@ -1,67 +1,7 @@
 <template>
   <div class="main">
     <div class="leftBar" v-if="role == 'builder'">
-      <el-input placeholder="Search model/tool" size="mini" class="search_input">
-        <el-button slot="append" icon="el-icon-search"></el-button>
-      </el-input>
-
-      <vue-scroll style="height: calc(86vh); width: 100%" :ops="ops">
-        <el-collapse v-model="activeNames" class="collapse">
-          <el-collapse-item title="General" name="general">
-            <general-toolbar ref="generalBar" :showType="'rhombus'"></general-toolbar>
-            <general-toolbar ref="codeBar" :showType="'rectangle'"></general-toolbar>
-          </el-collapse-item>
-          <el-collapse-item title="Models" name="models">
-            <model-item-toolbar ref="modelBar" @getModels="getModels"></model-item-toolbar>
-          </el-collapse-item>
-          <el-collapse-item title="Data Processing Methods" name="dataProcessings">
-            <data-processing-toolbar ref="dataProcessingBar" @getDataServices="getDataServices"></data-processing-toolbar>
-          </el-collapse-item>
-          <el-collapse-item title="Related Datas" name="modelRelatedDatas">
-            <div v-if="modelDoubleClick">
-              <data-item-toolbar :cell="cell" ref="dataItemBar" @getInAndOut="getInAndOut"></data-item-toolbar>
-            </div>
-          </el-collapse-item>
-        </el-collapse>
-      </vue-scroll>
-
-    <div class="leftBar">
-      <div class="modelbarContainer">
-        <el-row>
-          <all-models ref="modelBar" @getModels="getModels"></all-models>
-        </el-row>
-      </div>
-      <div class="editCellContainer">
-        <!-- <edit-cell :visible="editCellVisible" @currentGraph="grapg"></edit-cell> -->
-        <div v-if="modelClick" class="normalContaniner">
-          <div>Node Info</div>
-          <!-- <vue-scroll style="height: 630px; width: 100%">
-            <data-item-info :cell="dataNode"></data-item-info>
-          </vue-scroll> -->
-        </div>
-        <div v-show="modelDoubleClick" class="normalContaniner">
-          <div>Node Info</div>
-          <vue-scroll style="height: 400px; width: 100%">
-            <data-item-toolbar
-              :cell="cell"
-              ref="dataItemBar"
-              @getInAndOut="getInAndOut"
-              :key="dataItemModelbarKey"
-            ></data-item-toolbar>
-          </vue-scroll>
-        </div>
-        <div v-show="dataClick" class="expandContaniner">
-          <div>Node Info</div>
-          <data-item-info
-            :cell="dataNode"
-            @currentEventWithFile="currentEventWithFile"
-          ></data-item-info>
-        </div>
-        <div v-show="dataDoubleClick">
-          <div>Node Info</div>
-          <!-- <data-item-info :cell="dataNode"></data-item-info> -->
-        </div>
-      </div>
+      <left-toolbar ref="leftToolbar"></left-toolbar>
     </div>
     <div class="mainContainer">
       <div class="modelbarTop">
@@ -69,12 +9,7 @@
         <!-- <el-button @click="exportGraph" type="text" size="mini">Export as XML</el-button>
         <input @change="readFile" ref="importInput" class="hide" type="file" />
         <el-button @click="importGraphFile" type="text" size="mini">Import mxGraph</el-button> -->
-        <el-button
-          @click="checked ? deleteCells() : deleteCellsConfirmDialog()"
-          type="text"
-          size="mini"
-          :disabled="selectionCells.length == 0"
-        >
+        <el-button @click="checked ? deleteCells() : deleteCellsConfirmDialog()" type="text" size="mini" :disabled="selectionCells.length == 0">
           Delete
         </el-button>
         <el-button @click="undo" type="text" size="mini">Undo</el-button>
@@ -94,7 +29,7 @@
 
         <integrate-tasks @selectTask="selectTask" style="float:right"></integrate-tasks>
       </div>
-      <vue-scroll style="height: 800px; width: calc(100%)" :ops="ops">
+      <vue-scroll style="height: 900px; width: calc(100%)" :ops="ops">
         <div class="graphContainer" ref="container"></div>
       </vue-scroll>
     </div>
@@ -136,15 +71,6 @@
     </div>
 
     <div class="dialogs">
-      <el-dialog :visible.sync="dataDoubleClick" width="50%" title="Configuration">
-        <span>
-          <!-- Configuration -->
-          <data-cell-info :cell="dataNode" @currentEventWithFile="currentEventWithFile"></data-cell-info>
-        </span>
-      </el-dialog>
-    </div>
-
-    <div class="dialogs">
       <el-dialog :visible.sync="comparisonDialogShow" width="80%" title="Comparison">
         <div style="height:500px">
           <!-- Configuration -->
@@ -173,72 +99,51 @@ import {
   updatePerformanceById,
   updateScenarioByProjectId
 } from '@/api/request';
-import { generateAction, generateXml, differCellStyle, getCellStyle } from './configuration';
+import { generateAction, generateXml, getCellStyle } from './configuration';
 import { initSetTimeOut, hasProperty } from '@/utils/utils';
 
-import dataCellInfo from '_com/DataCellInfo/Info';
 import integrateTasks from '_com/IntegrateTasks';
 import instanceCard from '_com/Cards/InstanceCard';
 
-import modelItemToolbar from '_com/MxGraphBars/ModelItemToolbar';
-import dataItemToolbar from '_com/MxGraphBars/DataItemToolbar';
-import generalToolbar from '_com/MxGraphBars/GeneralToolbar';
-import dataProcessingToolbar from '_com/MxGraphBars/DataProcessingToolbar';
-import { generalList } from '_com/MxGraphBars/toolbar';
 import comparison from './Comparison';
+import leftToolbar from './LeftToolbar.vue';
 
 const {
   // mxGraph,
-  mxEvent,
+  // mxEvent,
   mxUtils,
   mxCodec
 } = mxgraph;
 
 export default {
   props: {
-    sendXml: {
-      type: String
-    },
     taskInfoInit: {
       type: Object
     }
   },
 
   components: {
-    allModels,
-    dataItemToolbar,
-    dataItemInfo,
     integrateTasks,
     instanceCard,
-    generalToolbar,
-    dataProcessingToolbar,
-    comparison
+    comparison,
+    leftToolbar
   },
 
   watch: {
-    sendXml: {
-      handler(val) {
-        if (val != '') {
-          this.getXml = val;
-          this.graph.importGraph(this.getXml);
-        }
-      },
-      deep: true
-    },
     taskInfoInit: {
-
-      handler(val) {
-        if (JSON.stringify(val) != '{}') {
+      async handler(val, oldVal) {
+        if (val.id != undefined && val.id != oldVal.id) {
+          console.log('valval', val);
           await initSetTimeOut();
           // debugger;
           this.currentTask = val;
 
           this.init();
+          this.$refs.leftToolbar.init();
+          this.$refs.leftToolbar.listenGraphEvent();
+
           await this.getAllIntegrateTaskInstances(0);
           this.graph.importGraph(val.note);
-
-          // console.log('initTak', val);
-          this.currentTask = val;
         }
       },
       deep: true
@@ -246,12 +151,6 @@ export default {
   },
 
   computed: {
-    rhombusList: () => {
-      return generalList.filter(item => item.style.shape == 'rhombus');
-    }, // general toolbar
-    rectangleList: () => {
-      return generalList.filter(item => item.style.shape == 'rectangle');
-    },
     ...mapState({
       role: state => state.permission.role
     })
@@ -274,21 +173,10 @@ export default {
       },
 
       getXml: this.sendXml,
-      //modelbar
-      modelItemList: [],
 
       doi: '',
       cell: {}, //双击事件 cell
       state: {},
-      inputItemList: [],
-      outputItemList: [],
-
-      dataNode: {},
-
-      modelClick: false,
-      modelDoubleClick: false,
-      dataClick: false,
-      dataDoubleClick: false,
 
       modelListInGraph: [],
       dataInputInGraph: [],
@@ -297,7 +185,7 @@ export default {
       linkEdgeList: [],
 
       stateList: [],
-      dataItemModelbarKey: 0,
+      // dataItemModelbarKey: 0,
 
       taskInfo: {
         taskName: '',
@@ -337,12 +225,6 @@ export default {
       //select task to show
       isSelectTaskInConsruction: true,
 
-      //collapse
-      activeNames: ['general', 'models'],
-
-      //dom
-      domFlag: 0,
-
       //currentInstance;
       currentTaskInstance: {},
 
@@ -362,6 +244,7 @@ export default {
     compareResult() {
       this.comparisonDialogShow = true;
     },
+
     async setAsSelectTaskInConstruction() {
       this.isSelectTaskInConsruction = !this.isSelectTaskInConsruction;
       let taskId = '';
@@ -376,32 +259,19 @@ export default {
       // console.log('!!!');
     },
     //--------------初始化 bar的modelItem的内容--由 AllModels组件返回
-    getModels(val) {
-      // console.log('modelitm', val);
-      this.$set(this, 'modelItemList', val);
-    },
 
-    getDataServices(val) {
-      console.log(val);
-    },
+    // handleCollapseChange(val) {
 
-    //--------------初始化 bar的dataItem的内容--由 data-item-toolbar组件返回
-    getInAndOut(input, output) {
-      // this.state = val;
-      this.inputItemList = input;
-      this.outputItemList = output;
-      this.initLeftBar('inputBar');
-      this.initLeftBar('outputBar');
-    },
+    // },
 
     //初始化mxgraph
     async init() {
       this.container = this.$refs.container;
       this.createGraph();
-      this.listenGraphEvent();
-      this.initLeftBar('generalBar');
-      this.initLeftBar('codeBar');
-      this.initLeftBar('modelBar');
+
+      // this.initLeftBar('generalBar');
+      // this.initLeftBar('codeBar');
+      // this.initLeftBar('modelBar');
       this.getScenario();
     },
 
@@ -416,193 +286,6 @@ export default {
     // Creates the graph inside the given container
     createGraph() {
       this.graph = genGraph(this.container);
-    },
-
-    listenGraphEvent() {
-      // 监听双击事件
-      this.graph.addListener(mxEvent.DOUBLE_CLICK, async (graph, evt) => {
-        // DOUBLE_CLICK
-        let cell = evt.properties.cell;
-        let clickModelType = cell.type;
-        if (clickModelType == 'model') {
-          this.dataItemModelbarKey++;
-          await this.$refs.dataItemBar.initSetTimeOut();
-          this.modelDoubleClick = true;
-          this.cell = JSON.parse(JSON.stringify(cell));
-          this.dataDoubleClick = this.dataClick = this.modelClick = false;
-        }
-      });
-
-      // 监听单击事件
-      //单击空白处 dialog隐藏
-      this.graph.addListener(mxEvent.CLICK, (sender, evt) => {
-        let isCell = Object.prototype.hasOwnProperty.call(evt.properties, 'cell');
-        if (isCell) {
-          let cell = evt.properties.cell;
-
-          const clickModelType = cell.type;
-
-          if (clickModelType == 'model') {
-            // 使用 mxGraph 事件中心，触发自定义事件
-            // this.cell = cell;
-            this.modelClick = true;
-            this.modelDoubleClick = this.dataClick = this.dataDoubleClick = false;
-          } else {
-            this.modelDoubleClick = this.modelClick = this.dataDoubleClick = false;
-            this.dataClick = true;
-            // console.log(cell);
-            this.dataNode = cell;
-          }
-        } else {
-          //单击空白处
-          this.cell = {};
-        }
-      });
-
-      //监听增加连接线
-      this.graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
-        const cell = evt.properties.cells[0];
-        if (cell.vertex) {
-          // this.$message.info('Add a node');
-        } else if (cell.edge) {
-          //判断是否是link to next dataitem
-          let linkCell = cell.target;
-          if (linkCell.type == 'input') {
-            this.graph.getModel().beginUpdate();
-            try {
-              linkCell.type = 'link';
-
-              let style = getCellStyle(differCellStyle(linkCell.type), linkCell);
-
-              this.graph.getModel().setStyle(linkCell, style);
-            } finally {
-              this.graph.getModel().endUpdate();
-            }
-          }
-          this.$message.info('Add a line');
-        }
-      });
-
-      // 监听 mxGraph 事件
-      this.mxGraphSelectionModel = this.graph.getSelectionModel();
-      this.mxGraphSelectionModel.addListener(mxEvent.CHANGE, this.handleSelectionChange);
-    },
-
-    initLeftBar(panel) {
-      let refType;
-      let barRef; //对应各个Bar组件中的ref
-      let barItemList = [];
-      let styleIn = differCellStyle(panel);
-
-      if (panel == 'modelBar') {
-        refType = 'modelBar';
-        barRef = 'modelItemList';
-        barItemList = this.modelItemList;
-      } else if (panel == 'inputBar') {
-        refType = 'dataItemBar';
-        barRef = 'inputItemList';
-        barItemList = this.inputItemList;
-      } else if (panel == 'outputBar') {
-        refType = 'dataItemBar';
-        barRef = 'outputItemList';
-        barItemList = this.outputItemList;
-      } else {
-        refType = 'generalBar';
-        barRef = 'general';
-        barItemList = this.rhombusList;
-      } 
-      // else if (panel == 'codeBar') {
-      //   refType = 'codeBar';
-      //   barRef = 'code';
-      //   barItemList = this.rectangleList;
-      // }
-
-      const domArray = this.$refs[refType].$refs[barRef];
-
-      if (!(domArray instanceof Array) || domArray.length <= 0) {
-        return;
-      }
-
-      domArray.forEach((dom, domIndex) => {
-        const dragItem = barItemList[domIndex];
-
-        let cellStyle = getCellStyle(styleIn, dragItem);
-
-        const dropHandler = (graph, evt, cell, x, y) => {
-          this.addCell(dragItem, x, y, panel, cellStyle);
-        };
-
-        const createDragPreview = () => {
-          const elt = document.createElement('div');
-          elt.style.border = '2px dotted black';
-          elt.style.width = `200px`;
-          elt.style.height = `50px`;
-          return elt;
-        };
-
-        mxUtils.makeDraggable(dom, this.graph, dropHandler, createDragPreview(), 0, 0, false, true);
-      });
-    },
-
-    addCell(item, x, y, type, styleObj) {
-      this.graph.getModel().beginUpdate();
-
-      let vertex = this.graph.insertVertex(
-        this.graph.getDefaultParent(),
-        null,
-        null,
-        x,
-        y,
-        200, //width
-        50, //height
-        styleObj
-      );
-      setTimeout(() => {
-        this.graph.getModel().setStyle(vertex, styleObj);
-      }, 2000);
-
-      try {
-        if (type == 'modelBar' || type == 'codeBar') {
-          vertex.name = item.name;
-          vertex.doi = item.doi;
-          vertex.type = 'model';
-          vertex.iterationNum = '1';
-        } else {
-          if (this.selectionCells.length == 0) {
-            this.$notify.error({
-              title: 'Error',
-              message: 'You have not select any model'
-            });
-
-            return;
-          }
-
-          let selectionCell = this.selectionCells[0];
-          vertex.name = item.name;
-          vertex.eventId = item.eventId;
-          vertex.description = item.description; //event description
-          vertex.stateId = item.stateId; //event description
-          vertex.stateName = item.stateName;
-          vertex.stateDescription = item.stateDescription;
-          vertex.md5 = item.md5;
-          vertex.doi = item.doi;
-          vertex.optional = item.optional;
-          vertex.linkModelCellId = selectionCell.id; //放置输入输出node时 与其关联的model的nodeId
-          vertex.type = item.type;
-
-          if (type == 'inputBar') {
-            this.addEdge(vertex, selectionCell);
-          } else if (type == 'outputBar') {
-            this.addEdge(selectionCell, vertex);
-          }
-        }
-      } finally {
-        this.graph.getModel().endUpdate();
-      }
-    },
-
-    addEdge(source, target) {
-      this.graph.insertEdge(this.graph.getDefaultParent(), null, null, source, target, null);
     },
 
     getCells() {
@@ -624,9 +307,7 @@ export default {
           }
         }
       });
-      let links = Object.values(this.graph.getModel().cells).filter(cell =>
-        Object.prototype.hasOwnProperty.call(cell, 'edge')
-      );
+      let links = Object.values(this.graph.getModel().cells).filter(cell => Object.prototype.hasOwnProperty.call(cell, 'edge'));
       this.linkEdgeList = links;
       this.modelListInGraph = modelListInGraph;
       this.dataOutputInGraph = dataOutputInGraph;
@@ -764,7 +445,7 @@ export default {
       // console.log(postJson);
       // let data = await post(`/integrateTasks`, postJson);
 
-      let data = await saveIntegrateTasks(postJson);
+      let data = await saveIntegrateTask(postJson);
       this.currentTask = data;
       this.isNewTaskContainerShow = false;
       // console.log(data);
@@ -783,7 +464,7 @@ export default {
       let xml = generateXml(this.currentTask.taskName, this.modelListInGraph, this.dataInputInGraph, this.dataLinkInGraph, this.dataOutputInGraph, this.linkEdgeList);
 
       //mxgraph xml文件
-      let graphXml = getGraphXml(this);
+      let graphXml = this.graph.getGraphXml();
 
       //model action
       let action = generateAction(this.currentTask.id, this.modelListInGraph, this.dataInputInGraph, this.dataLinkInGraph, this.dataOutputInGraph, this.linkEdgeList, 'task');
@@ -871,45 +552,66 @@ export default {
 
     async getOutputs(tid) {
       //获得结果
+
       this.record = {};
       this.timer = setInterval(async () => {
         if (this.record.status == 1) {
           clearInterval(this.timer);
           await this.putOutputToCell();
-          await this.addTaskInstances();
+
           return;
         } else {
           let data = await checkTaskStatus(tid);
           this.record = data;
+          this.changeCellColor(data);
         }
       }, 3000);
     },
 
-    putOutputToCell() {
-      let actionResponse = this.record.taskInfo.modelActions;
+    changeCellColor(data) {
+      let modelActions = data.taskInfo.modelActionList;
+      let runningTask = modelActions.running; //yellow
+      let failedTask = modelActions.failed; //red
+      let completedTask = modelActions.completed;
 
-      this.dataOutputInGraph.forEach(async event => {
-        let outputActionList = actionResponse.filter(
-          response => event.linkModelCellId == response.id
-        );
-        let outputValueJson = outputActionList[0].outputData.outputs.filter(
-          out => out.dataId == event.eventId && out.state == event.stateName
-        );
+      this.getCells();
+      let modelListInGraph = this.modelListInGraph;
 
-        event.value = outputValueJson[0].dataContent.value;
+      modelListInGraph.forEach(modelCell => {
+        //判断runnign里面是否有model
+        if (runningTask.some(task => task.id == modelCell.id)) {
+          //change color
+          this.changeCellStyleByStatus(0, modelCell, false);
+          this.changeDataCellByStatus(0, modelCell, false);
+        }
+        //判断completedTask里面是否有model
+        if (completedTask.some(task => task.id == modelCell.id)) {
+          //change color
 
-        await this.saveRelatedDataItemToResource(outputValueJson[0].dataContent);
+          this.changeCellStyleByStatus(1, modelCell, false);
+
+          this.changeDataCellByStatus(1, modelCell, false);
+        }
+        //判断failedTask里面是否有model
+        if (failedTask.some(task => task.id == modelCell.id)) {
+          //change color
+          this.changeCellStyleByStatus(2, modelCell, false);
+
+          this.changeDataCellByStatus(2, modelCell, false);
+        }
       });
     },
 
-    async saveRelatedDataItemToResource(response) {
-      let dataJson = {
-        name: response.name,
-        url: response.value,
-        suffix: response.suffix,
-        description: '',
-        isDirect: false //--false是中间数据
-      };
+    changeDataCellByStatus(status, modelCell) {
+      let list = [...this.dataInputInGraph, ...this.dataLinkInGraph];
+      let inputList = list.filter(event => event.md5 == modelCell.md5);
+      let outputList = this.dataOutputInGraph.filter(event => event.md5 == modelCell.md5);
+      inputList.forEach(item => {
+        this.changeCellStyleByStatus(status, item, true);
+      });
+      outputList.forEach(item => {
+        this.changeCellStyleByStatus(status, item, true);
+      });
     },
 
     changeCellStyleByStatus(status, item, isData) {
@@ -989,24 +691,6 @@ export default {
       await updateIntegrateTaskInstanceById(this.currentTaskInstance.id, postJson);
     },
 
-    currentEventWithFile(val) {
-      this.graph.getModel().beginUpdate();
-
-      try {
-        Object.values(this.graph.getModel().cells).forEach(cell => {
-          if (cell.id == val.id) {
-            cell.value = val.value;
-            this.$message({
-              message: 'You have submit the file successfully',
-              type: 'success'
-            });
-          }
-        });
-      } finally {
-        this.graph.getModel().endUpdate();
-      }
-    },
-
     //instance list
     async getAllIntegrateTaskInstances(page) {
       let data = await getAllIntegrateTaskInstancesByTaskId(this.currentTask.id, page, this.instancePageFilter.pageSize);
@@ -1026,10 +710,7 @@ export default {
     }
   },
 
-  async mounted() {
-    await this.$refs.modelBar.initSetTimeOut();
-    await this.init();
-  }
+  async mounted() {}
 };
 </script>
 
@@ -1039,81 +720,6 @@ export default {
   height: 100%;
   // display: flex;
   // position: relative;
-
-  .leftBar {
-    // position: relative;
-    width: 300px;
-    float: left;
-    // padding-right: 10px;
-    .search_input {
-      padding: 0 10px 5px 0;
-    }
-
-    .collapse {
-      padding-right: 10px;
-
-      /deep/.el-collapse-item__header {
-        font-size: 16px;
-        font-weight: 600;
-        font-style: italic;
-        background-color: rgba($color: $blueEmplasisFont, $alpha: 0.1);
-        line-height: 35px;
-        height: 35px;
-        color: #6386cc;
-        text-align: center;
-        // border-radius: 5px;
-        padding-left: 20px;
-        border-top: 3px solid #939fb8;
-      }
-      /deep/ .el-collapse-item__wrap {
-        background-color: rgba($color: #3066d6, $alpha: 0.05);
-      }
-    }
-
-    .modelbarContainer {
-      background-color: rgba($color: #b2b5c7, $alpha: 0.1);
-      border: 0.5px solid #a7a8ad;
-      border-radius: 5px;
-      // box-shadow: $normalBoxShadow;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 50%;
-
-      .modelbarTitle {
-        font-size: 20px;
-        font-weight: 600;
-        text-align: center;
-        margin: 5px 0;
-      }
-
-      .items {
-        margin-top: 2px;
-        .item {
-          margin: 0 10px;
-          width: 120px;
-          text-align: center;
-          margin-bottom: 5px;
-        }
-      }
-      // z-index: 1;
-    }
-
-    .editCellContainer {
-      background-color: rgba(243, 243, 243, 0.5);
-      border: 0.5px solid rgb(243, 243, 243);
-      border-radius: 5px;
-      position: absolute;
-      width: 100%;
-      padding: 0 5px;
-
-      z-index: auto;
-      height: 50%;
-      bottom: 0px;
-      left: 0px;
-    }
-  }
 
   .mainContainer {
     float: left;
@@ -1126,7 +732,7 @@ export default {
       background: rgb(251, 251, 251);
       padding-left: 10px;
       border-radius: 4px;
-      margin-bottom: 10px;
+      margin-bottom: 5px;
 
       .fade-enter-active,
       .fade-leave-active {
@@ -1155,9 +761,8 @@ export default {
       height: 100%;
       width: 100%;
       min-width: calc(100%);
-      min-height: 800px;
-      background: rgb(251, 251, 251) url('./../../../../../assets/images/mxgraph/point.gif') 0 0
-        repeat;
+      min-height: 850px;
+      background: rgb(251, 251, 251) url('./../../../assets/images/mxgraph/point.gif') 0 0 repeat;
       border-radius: 4px;
     }
   }
@@ -1206,6 +811,11 @@ export default {
     }
     #graphOutline {
       width: 200px;
+    }
+  }
+  .dialogs {
+    /deep/ .el-dialog__body {
+      padding: 20px;
     }
   }
 }

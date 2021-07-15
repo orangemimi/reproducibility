@@ -9,7 +9,7 @@
           </div>
           <div class="content">
             <div class="content-comp">
-              <component :is="typeMapping(info.btnType)" :projectInfo="projectInfo"></component>
+              <component :is="typeMapping(info.btnType)"></component>
             </div>
           </div>
         </div>
@@ -19,39 +19,23 @@
 </template>
 
 <script>
-<<<<<<< HEAD:reproducibility_font/src/components/StepCard/index.vue
 import ContextContent from '_com/Context/Context';
 import ScenarioContent from '_com/Scenario/Scenario';
 // import ReScenarioContent from '_com/Scenario/reScenario';
 import ResourceContent from '_com/Resource/Resource';
 import ResultContent from '_com/Result/Result';
-=======
-import ContextContent from './Context/ContextContent';
-import ConstructionContent from './Construction/ConstructionContent';
-import ResourceContent from './Resource/ResourceContent';
-// import ResultContent from "./ResultContent";
->>>>>>> parent of f11cd19 (mxgraph):reproducibility_font/src/views/project/components/StepCard.vue
 // import AnalysisContent from "./AnalysisContent";
 export default {
   components: {
     ContextContent,
-<<<<<<< HEAD:reproducibility_font/src/components/StepCard/index.vue
     ScenarioContent,
     ResourceContent,
     // ReScenarioContent,
     ResultContent
-=======
-    ConstructionContent,
-    ResourceContent
-    // ResultContent,
->>>>>>> parent of f11cd19 (mxgraph):reproducibility_font/src/views/project/components/StepCard.vue
     // AnalysisContent,
   },
   props: {
     cardInfo: {
-      type: Object
-    },
-    projectInfo: {
       type: Object
     }
   },
@@ -77,9 +61,9 @@ export default {
             vueType = 'ContextContent';
           }
           break;
-        case 'Simulation Construction':
+        case 'Simulation Scenario':
           {
-            vueType = 'ConstructionContent';
+            vueType = 'ScenarioContent';
           }
           break;
         case 'Reproducible Simulation Scenario':

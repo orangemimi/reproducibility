@@ -57,9 +57,10 @@ export default {
   components: { selectCard },
   watch: {
     cell: {
-      handler(val) {
-        if (JSON.stringify(val) != '{}') {
+      handler(val, oldVla) {
+        if (val != undefined && val != oldVla) {
           console.log('cell', val);
+          debugger;
           this.doi = val.doi;
           this.init();
         }
@@ -84,22 +85,12 @@ export default {
   },
 
   methods: {
-    initSetTimeOut() {
-      return new Promise(function(reslove) {
-        // 模拟异步，加载组件
-        setTimeout(function() {
-          console.log('等了1秒钟');
-          reslove(1000);
-        }, 1000);
-      });
-    },
-
     async init() {
       await this.getModelInfo();
     },
 
     async getModelInfo() {
-      let data = await get(`/portal/modelBehavior/${this.doi}`); //获得模型所有信息
+      let data = await getModelInfo(this.doi); //获得模型所有信息
       console.log(data);
       this.md5 = data.md5;
       this.modelIntroduction = data;

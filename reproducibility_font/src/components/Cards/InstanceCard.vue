@@ -19,8 +19,7 @@
       <div class="task_view" @click="showInstanceStatus">
         View
       </div>
-      <div>
-      </div>
+      <div></div>
     </el-card>
   </div>
 </template>
@@ -92,7 +91,6 @@ export default {
   text-align: center;
   // padding-right: 50px;
   /deep/ .el-card {
-<<<<<<< HEAD:reproducibility_font/src/components/Cards/InstanceCard.vue
     // padding: 5px;
     width: 100%;
     height: 100%;
@@ -109,15 +107,6 @@ export default {
     background-color: #fdf6ec;
     border: 1px solid #e6a23c;
     border-top: 5px solid #e6a23c;
-=======
-    box-shadow: 0 1px 5px 0 rgba(161, 161, 161, 0.1);
-    
-    .el-card__body {
-      padding: 5px;
-      width: 100%;
-      height: 80px;
-    }
->>>>>>> parent of f11cd19 (mxgraph):reproducibility_font/src/views/project/components/Construction/components/InstanceCard.vue
   }
 
   .el-card:hover {

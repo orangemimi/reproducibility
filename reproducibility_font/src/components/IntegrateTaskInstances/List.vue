@@ -1,7 +1,6 @@
 <!--  -->
 <template>
   <div class="main">
-<<<<<<< HEAD:reproducibility_font/src/components/IntegrateTaskInstances/List.vue
     555
     <el-row>
       <el-card shadow="hover" class="box-card">
@@ -27,29 +26,12 @@
         ></el-pagination>
       </div>
     </el-row>
-=======
-    <div class="instances">
-      <div v-for="(item, index) in instanceList" :key="index">
-        <instance-card :instanceItem="item"></instance-card>
-      </div>
-    </div>
-    <div class="page">
-      <el-pagination
-        @current-change="handleCurrentChange"
-        :current-page.sync="pageFilter.page"
-        :page-size="pageFilter.pageSize"
-        background
-        layout="prev, pager, next"
-        :total="instanceList.length + 1"
-      ></el-pagination>
-    </div>
->>>>>>> parent of f11cd19 (mxgraph):reproducibility_font/src/views/project/components/Construction/components/IntegrateTaskInstances.vue
   </div>
 </template>
 
 <script>
-import instanceCard from './InstanceCard';
-import { getAllInstancesByTaskId } from '@/api/request';
+import instanceCard from '_com/Cards/InstanceCard';
+import { getAllIntegrateTaskInstancesByTaskId } from '@/api/request';
 export default {
   components: { instanceCard },
 
@@ -62,10 +44,13 @@ export default {
   watch: {
     currentTaskInit: {
       handler(val) {
-        this.currentTask = val;
-        this.init();
+        if (Object.prototype.hasOwnProperty.call(val, 'id')) {
+          this.currentTask = val;
+          this.init();
+        }
       },
-      deep: true
+      deep: true,
+      immediate: true
     }
   },
 
@@ -84,21 +69,30 @@ export default {
 
   methods: {
     async init() {
-      await this.getAllInstancesByTaskId(0);
+      await this.getAllInstances(0);
     },
 
-    async getAllInstancesByTaskId(page) {
-      let data = await getAllInstancesByTaskId(this.currentTask.id, page, this.pageFilter.pageSize);
+    async getAllInstances(page) {
+      let data = await getAllIntegrateTaskInstancesByTaskId(this.currentTask.id, page, this.pageFilter.pageSize);
       // let data = await get(
       //   `/integrateTaskInstances/${this.currentTask.id}/${page}/${this.pageFilter.pageSize}`
       // );
+      if (data == null) {
+        this.instanceList = [];
+        return;
+      }
+
       this.instanceList = data.content;
       this.pageFilter.page++;
-      console.log('instances', data);
+      // console.log('instances', data);
     },
 
     async handleCurrentChange(val) {
-      await this.getAllInstancesByTaskId(val++);
+      await this.getAllInstances(val++);
+    },
+
+    showConfiguration(item) {
+      this.$emit('showInstanceStatus', item);
     }
   },
 

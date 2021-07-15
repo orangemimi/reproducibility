@@ -6,35 +6,19 @@
       <el-menu-item index="3">消息中心</el-menu-item>
     </el-menu> -->
     <div class="menu">
-      <div
-        class="info menu-item"
-        @click="handleClick('Information')"
-        :class="{ isActive: isInfoActive }"
-      >
+      <div class="info menu-item" @click="handleClick('Information')" :class="{ isActive: isInfoActive }">
         <i class="el-icon-info"></i>
         Information
       </div>
-      <div
-        class="construction  menu-item"
-        @click="handleClick('Construction')"
-        :class="{ isActive: isConstructionActive }"
-      >
+      <div class="construction  menu-item" @click="handleClick('Construction')" :class="{ isActive: isConstructionActive }">
         <i class="el-icon-info"></i>
         Construction
       </div>
-      <div
-        class="contributor  menu-item"
-        @click="handleClick('Contributor')"
-        :class="{ isActive: isContributorActive }"
-      >
+      <div class="contributor  menu-item" @click="handleClick('Contributor')" :class="{ isActive: isContributorActive }">
         <i class="el-icon-info"></i>
         Contributor
       </div>
-      <div
-        class="settings  menu-item"
-        @click="handleClick('Settings')"
-        :class="{ isActive: isSettingsActive }"
-      >
+      <div class="settings  menu-item" @click="handleClick('Settings')" :class="{ isActive: isSettingsActive }">
         <i class="el-icon-info"></i>
         Settings
       </div>

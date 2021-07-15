@@ -2,7 +2,7 @@ import mxgraph from '_com/MxGraph/index';
 
 const { mxConstants } = mxgraph;
 const rhombus = require('./icon/lingxing.png');
-
+const rectangle = require('./icon/rectangle.png');
 export const generalList = [
   {
     icon: rhombus,

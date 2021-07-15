@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <!-- reBUilder Menu -->
 <template>
   <div style="height:100%">
@@ -21,11 +20,6 @@
       </div>
     </div>
   </div>
-=======
-<!-- Rebuilder Menu -->
-<template>
-  <div>re</div>
->>>>>>> parent of f11cd19 (mxgraph)
 </template>
 
 <script>

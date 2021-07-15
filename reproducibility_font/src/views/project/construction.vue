@@ -7,11 +7,7 @@
             <step-card :cardInfo="{ btnType: 'Context Definition' }" style="height:450px;width:100%"></step-card>
           </el-col>
           <el-col :span="12">
-            <step-card
-              :cardInfo="{ btnType: 'Resource Collection' }"
-              :projectInfo="projectInfo"
-              style="height:450px;width:100%"
-            ></step-card>
+            <step-card :cardInfo="{ btnType: 'Resource Collection' }" :projectInfo="projectInfo" style="height:450px;width:100%"></step-card>
           </el-col>
           <el-col :span="12">
             <step-card :cardInfo="{ btnType: 'Expected Result' }" style="height:450px;width:100%"></step-card>

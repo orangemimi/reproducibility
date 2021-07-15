@@ -31,7 +31,7 @@
 
 <script>
 import modelCard from './ModelCard';
-import { getModelsByPrivacy, getModelsByProvider } from '@/api/request';
+import { getModelItemsByPrivacy, getModelItemsByProvider } from '@/api/request';
 
 export default {
   components: { modelCard },
@@ -58,44 +58,14 @@ export default {
   },
 
   methods: {
-    initSetTimeOut() {
-      return new Promise(function(reslove) {
-        // 模拟异步，加载组件
-        setTimeout(function() {
-          console.log('等了1秒钟');
-          reslove(1000);
-        }, 1000);
-      });
-    },
-
     async getPublicModels() {
-<<<<<<< HEAD:reproducibility_font/src/components/MxGraphBars/ModelItemToolbar.vue
       let { content } = await getModelItemsByPrivacy('public', this.publicModelFilter.page, this.publicModelFilter.pageSize);
-=======
-      let { content } = await getModelsByPrivacy(
-        'public',
-        this.publicModelFilter.page,
-        this.publicModelFilter.pageSize
-      );
-      // let { content } = await get(
-      //   `/modelItems/public/${this.publicModelFilter.page}/${this.publicModelFilter.pageSize}`
-      // );
-
->>>>>>> parent of f11cd19 (mxgraph):reproducibility_font/src/views/project/components/Construction/components/AllModels.vue
       this.$set(this, 'publicModels', content);
       this.$emit('getModels', content);
     },
 
     async getPersonalModels() {
-<<<<<<< HEAD:reproducibility_font/src/components/MxGraphBars/ModelItemToolbar.vue
       let data = await getModelItemsByProvider(this.personalModelFilter.page, this.personalModelFilter.pageSize);
-=======
-      let data = await getModelsByProvider(
-        this.personalModelFilter.page,
-        this.personalModelFilter.pageSize
-      );
-      // let data = await get(`/model/findByProvider`);
->>>>>>> parent of f11cd19 (mxgraph):reproducibility_font/src/views/project/components/Construction/components/AllModels.vue
       this.$set(this, 'personalModels', data);
       this.$emit('getModels', data);
     },
@@ -140,7 +110,7 @@ export default {
   }
 
   .card-contain {
-    height: 500px;
+    height: 300px;
     width: 100%;
     clear: both;
 

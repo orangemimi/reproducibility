@@ -302,6 +302,14 @@ export function differCellStyle(type) {
       shape: 'parallelogram'
     };
   }
+  if (type == 'codeBar') {
+    return {
+      fontColor: '#f6f6f6',
+      fillColor: '#c0d7eb',
+      strokeColor: '',
+      shape: 'rectangle'
+    };
+  }
   return {
     fillColor: '#b9e6d3', //b9e6d3 f4d160
     fontColor: '#24292E',

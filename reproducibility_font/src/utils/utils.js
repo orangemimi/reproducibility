@@ -4,7 +4,7 @@ export function initSetTimeOut() {
     setTimeout(function() {
       console.log('等了1秒钟');
       reslove(1000);
-    }, 1000);
+    }, 2000);
   });
 }
 

@@ -29,31 +29,10 @@
 <script>
 import { getAllIntegrateTasksByProjectId } from '@/api/request';
 export default {
-  components: {},
-  // props: {
-  //   currentTask: {
-  //     type: Object,
-  //   },
-  // },
-  // watch: {
-  //   currentTask: {
-  //     handler(val) {
-  //       if (val != "") {
-  //         this.newTask = val;
-  //         this.taskList.push(val);
-  //       }
-  //     },
-  //     deep: true,
-  //   },
-  // },
-
-  computed: {},
-
   data() {
     return {
       projectId: this.$route.params.id,
       taskList: []
-      // newTask: this.addNewTask,
     };
   },
 
@@ -62,14 +41,15 @@ export default {
       await this.getIntegrateTasks();
     },
     async getIntegrateTasks() {
-      // let data = await get(`/integrateTasks/all/${this.projectId}`); //获得该项目的所有tasks
       let data = await getAllIntegrateTasksByProjectId(this.projectId);
       if (data != null) {
         this.taskList = data;
+        return;
       }
+      this.taskList = [];
     },
+
     selectTask(task) {
-      // console.log("task", task);
       this.$emit('selectTask', task);
     }
   },
