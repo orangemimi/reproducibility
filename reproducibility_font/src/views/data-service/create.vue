@@ -3,12 +3,21 @@
   <div class="main-contain">
     <el-row>
       <el-col :span="24">
-        <el-form ref="form" :model="form" label-width="90px" size="small">
+        <el-form ref="form" :model="form" label-width="120px" size="small">
           <el-form-item label="Name">
             <el-input v-model="form.name" />
           </el-form-item>
-          <el-form-item label="Doi">
-            <el-input v-model="form.doi" />
+          <el-form-item label="Token">
+            <el-input v-model="form.token" />
+          </el-form-item>
+          <el-form-item label="Data Serice Id">
+            <el-input v-model="form.dataServiceId" />
+          </el-form-item>
+          <el-form-item label="Type">
+            <el-radio-group v-model="form.type">
+              <el-radio label="public">Processing</el-radio>
+              <el-radio label="discoverable">Visualization</el-radio>
+            </el-radio-group>
           </el-form-item>
           <el-form-item label="Privacy">
             <el-radio-group v-model="form.privacy">
@@ -32,16 +41,7 @@
             <el-input v-model="form.source" />
           </el-form-item>
           <el-form-item label="Image">
-            <add-image @uploadImgResponse="uploadImgResponse" :uploadPath="'models/picture'"></add-image>
-          </el-form-item>
-          <el-form-item label="Upload">
-            <el-upload drag action :auto-upload="true" :show-file-list="false" ref="upload" :http-request="submitUpload" :on-remove="handleRemove" :on-success="handleSuccess">
-              <i class="el-icon-upload"></i>
-              <div class="el-upload__text">
-                Drag a file here to upload or
-                <em>Click to upload</em>
-              </div>
-            </el-upload>
+            <add-image @uploadImgResponse="uploadImgResponse" :uploadPath="'dataService/picture'"></add-image>
           </el-form-item>
         </el-form>
       </el-col>
@@ -52,7 +52,7 @@
 
 <script>
 import addImage from '_com/AddImage';
-import { post } from '@/axios';
+import { saveDataService } from '@/api/request';
 export default {
   components: { addImage },
 
@@ -78,7 +78,7 @@ export default {
 
   methods: {
     async addService() {
-      let data = await post(`/modelItems`, this.form);
+      let data = await saveDataService(this.form);
       console.log(data);
       this.$notify({
         title: 'Success',

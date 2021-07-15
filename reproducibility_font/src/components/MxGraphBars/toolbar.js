@@ -21,10 +21,7 @@ export const generalList = [
       imageVerticalAlign: mxConstants.ALIGN_TOP, // 图形方向对其方式
       image: rhombus
     }
-  }
-];
-
-export const codeList = [
+  },
   {
     icon: rectangle,
     name: 'Code',
@@ -39,7 +36,7 @@ export const codeList = [
       verticalAlign: mxConstants.ALIGN_BOTTOM, // 垂直方向对其方式
       imageAlign: mxConstants.ALIGN_CENTER, // 图形水平方向对其方式
       imageVerticalAlign: mxConstants.ALIGN_TOP, // 图形方向对其方式
-      image: rhombus
+      image: rectangle
     }
   }
 ];

@@ -1,29 +1,7 @@
 <template>
   <div class="main">
     <div class="leftBar" v-if="role == 'builder'">
-      <el-input placeholder="Search model/tool" size="mini" class="search_input">
-        <el-button slot="append" icon="el-icon-search"></el-button>
-      </el-input>
-
-      <vue-scroll style="height: calc(86vh); width: 100%" :ops="ops">
-        <el-collapse v-model="activeNames" class="collapse">
-          <el-collapse-item title="General" name="general">
-            <general-toolbar ref="generalBar"></general-toolbar>
-            <code-toolbar ref="codeBar"></code-toolbar>
-          </el-collapse-item>
-          <el-collapse-item title="Models" name="models">
-            <model-item-toolbar ref="modelBar" @getModels="getModels"></model-item-toolbar>
-          </el-collapse-item>
-          <el-collapse-item title="Data Processing Methods" name="dataProcessings">
-            <data-processing-toolbar ref="dataProcessingBar" @getDataProcessings="getDataProcessings"></data-processing-toolbar>
-          </el-collapse-item>
-          <el-collapse-item title="Related Datas" name="modelRelatedDatas">
-            <div v-if="modelDoubleClick">
-              <data-item-toolbar :cell="cell" ref="dataItemBar" @getInAndOut="getInAndOut"></data-item-toolbar>
-            </div>
-          </el-collapse-item>
-        </el-collapse>
-      </vue-scroll>
+      <left-toolbar ref="leftToolbar"></left-toolbar>
     </div>
     <div class="mainContainer">
       <div class="modelbarTop">
@@ -51,7 +29,7 @@
 
         <integrate-tasks @selectTask="selectTask" style="float:right"></integrate-tasks>
       </div>
-      <vue-scroll style="height: 800px; width: calc(100%)" :ops="ops">
+      <vue-scroll style="height: 900px; width: calc(100%)" :ops="ops">
         <div class="graphContainer" ref="container"></div>
       </vue-scroll>
     </div>
@@ -93,15 +71,6 @@
     </div>
 
     <div class="dialogs">
-      <el-dialog :visible.sync="dataDoubleClick" width="50%" title="Configuration">
-        <span>
-          <!-- Configuration -->
-          <data-cell-info :cell="dataNode" @currentEventWithFile="currentEventWithFile"></data-cell-info>
-        </span>
-      </el-dialog>
-    </div>
-
-    <div class="dialogs">
       <el-dialog :visible.sync="comparisonDialogShow" width="80%" title="Comparison">
         <div style="height:500px">
           <!-- Configuration -->
@@ -130,24 +99,18 @@ import {
   updatePerformanceById,
   updateScenarioByProjectId
 } from '@/api/request';
-import { generateAction, generateXml, differCellStyle, getCellStyle } from './configuration';
+import { generateAction, generateXml, getCellStyle } from './configuration';
 import { initSetTimeOut, hasProperty } from '@/utils/utils';
 
-import dataCellInfo from '_com/DataCellInfo/Info';
 import integrateTasks from '_com/IntegrateTasks';
 import instanceCard from '_com/Cards/InstanceCard';
 
-import modelItemToolbar from '_com/MxGraphBars/ModelItemToolbar';
-import dataItemToolbar from '_com/MxGraphBars/DataItemToolbar';
-import generalToolbar from '_com/MxGraphBars/GeneralToolbar';
-import codeToolbar from '_com/MxGraphBars/CodeToolbar';
-import dataProcessingToolbar from '_com/MxGraphBars/DataProcessingToolbar';
-import { generalList, codeList } from '_com/MxGraphBars/toolbar';
 import comparison from './Comparison';
+import leftToolbar from './LeftToolbar.vue';
 
 const {
   // mxGraph,
-  mxEvent,
+  // mxEvent,
   mxUtils,
   mxCodec
 } = mxgraph;
@@ -160,26 +123,25 @@ export default {
   },
 
   components: {
-    modelItemToolbar,
-    dataItemToolbar,
-    dataCellInfo,
     integrateTasks,
     instanceCard,
-    generalToolbar,
-    codeToolbar,
-    dataProcessingToolbar,
-    comparison
+    comparison,
+    leftToolbar
   },
 
   watch: {
     taskInfoInit: {
-      async handler(val) {
-        if (JSON.stringify(val) != '{}') {
+      async handler(val, oldVal) {
+        if (val.id != undefined && val.id != oldVal.id) {
+          console.log('valval', val);
           await initSetTimeOut();
           // debugger;
           this.currentTask = val;
 
           this.init();
+          this.$refs.leftToolbar.init();
+          this.$refs.leftToolbar.listenGraphEvent();
+
           await this.getAllIntegrateTaskInstances(0);
           this.graph.importGraph(val.note);
         }
@@ -189,8 +151,6 @@ export default {
   },
 
   computed: {
-    generalList: () => generalList, // general toolbar
-    codeList: () => codeList,
     ...mapState({
       role: state => state.permission.role
     })
@@ -213,25 +173,10 @@ export default {
       },
 
       getXml: this.sendXml,
-      //modelbar
-      modelItemList: [],
 
       doi: '',
       cell: {}, //双击事件 cell
       state: {},
-      inputItemList: [],
-      outputItemList: [],
-
-      dataNode: {},
-
-      modelClick: false,
-      modelDoubleClick: false,
-
-      dataClick: false,
-      dataDoubleClick: false,
-
-      codeClick: false,
-      codeDoubleClick: false,
 
       modelListInGraph: [],
       dataInputInGraph: [],
@@ -280,12 +225,6 @@ export default {
       //select task to show
       isSelectTaskInConsruction: true,
 
-      //collapse
-      activeNames: ['general', 'models'],
-
-      //dom
-      domFlag: 0,
-
       //currentInstance;
       currentTaskInstance: {},
 
@@ -305,6 +244,7 @@ export default {
     compareResult() {
       this.comparisonDialogShow = true;
     },
+
     async setAsSelectTaskInConstruction() {
       this.isSelectTaskInConsruction = !this.isSelectTaskInConsruction;
       let taskId = '';
@@ -319,24 +259,7 @@ export default {
       // console.log('!!!');
     },
     //--------------初始化 bar的modelItem的内容--由 AllModels组件返回
-    getModels(val) {
-      // console.log('modelitm', val);
-      this.$set(this, 'modelItemList', val);
-    },
 
-    getDataProcessings(val) {
-      console.log(val);
-    },
-
-    //--------------初始化 bar的dataItem的内容--由 data-item-toolbar组件返回
-    getInAndOut(input, output) {
-      // this.state = val;
-
-      this.inputItemList = input;
-      this.outputItemList = output;
-      this.initLeftBar('inputBar');
-      this.initLeftBar('outputBar');
-    },
     // handleCollapseChange(val) {
 
     // },
@@ -345,10 +268,10 @@ export default {
     async init() {
       this.container = this.$refs.container;
       this.createGraph();
-      this.listenGraphEvent();
-      this.initLeftBar('generalBar');
+
+      // this.initLeftBar('generalBar');
       // this.initLeftBar('codeBar');
-      this.initLeftBar('modelBar');
+      // this.initLeftBar('modelBar');
       this.getScenario();
     },
 
@@ -363,201 +286,6 @@ export default {
     // Creates the graph inside the given container
     createGraph() {
       this.graph = genGraph(this.container);
-    },
-
-    listenGraphEvent() {
-      // 监听双击事件
-      this.graph.addListener(mxEvent.DOUBLE_CLICK, async (graph, evt) => {
-        // DOUBLE_CLICK
-        let cell = evt.properties.cell;
-        let clickModelType = cell.type;
-        if (clickModelType == 'model') {
-          this.modelDoubleClick = true;
-          this.domFlag++;
-          await initSetTimeOut();
-          this.cell = cell;
-          this.activeNames.push('modelRelatedDatas');
-          this.dataDoubleClick = this.dataClick = this.modelClick = false;
-        } else {
-          this.modelDoubleClick = this.modelClick = this.dataClick = false;
-          this.dataDoubleClick = true;
-          // console.log(cell);
-          this.dataNode = cell;
-        }
-      });
-
-      // 监听单击事件
-      //单击空白处 dialog隐藏
-      this.graph.addListener(mxEvent.CLICK, (sender, evt) => {
-        let isCell = Object.prototype.hasOwnProperty.call(evt.properties, 'cell');
-        if (isCell) {
-          let cell = evt.properties.cell;
-
-          const clickModelType = cell.type;
-
-          if (clickModelType == 'model') {
-            // 使用 mxGraph 事件中心，触发自定义事件
-            // this.cell = cell;
-            this.modelClick = true;
-            this.modelDoubleClick = this.dataClick = this.dataDoubleClick = false;
-          } else {
-            this.modelDoubleClick = this.modelClick = this.dataDoubleClick = false;
-            this.dataClick = true;
-            // console.log(cell);
-            this.dataNode = cell;
-          }
-        } else {
-          //单击空白处
-          this.cell = {};
-        }
-      });
-
-      //监听增加连接线
-      this.graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
-        const cell = evt.properties.cells[0];
-        if (cell.vertex) {
-          // this.$message.info('Add a node');
-        } else if (cell.edge) {
-          //判断是否是link to next dataitem
-          let linkCell = cell.target;
-          if (linkCell.type == 'input') {
-            this.graph.getModel().beginUpdate();
-            try {
-              linkCell.type = 'link';
-
-              let style = getCellStyle(differCellStyle(linkCell.type), linkCell);
-
-              this.graph.getModel().setStyle(linkCell, style);
-            } finally {
-              this.graph.getModel().endUpdate();
-            }
-          }
-        }
-      });
-
-      // 监听 mxGraph 事件
-      this.mxGraphSelectionModel = this.graph.getSelectionModel();
-      this.mxGraphSelectionModel.addListener(mxEvent.CHANGE, this.handleSelectionChange);
-    },
-
-    initLeftBar(panel) {
-      let refType;
-      let barRef; //对应各个Bar组件中的ref
-      let barItemList = [];
-      let styleIn = differCellStyle(panel);
-
-      if (panel == 'modelBar') {
-        refType = 'modelBar';
-        barRef = 'modelItemList';
-        barItemList = this.modelItemList;
-      } else if (panel == 'inputBar') {
-        refType = 'dataItemBar';
-        barRef = 'inputItemList';
-        barItemList = this.inputItemList;
-      } else if (panel == 'outputBar') {
-        refType = 'dataItemBar';
-        barRef = 'outputItemList';
-        barItemList = this.outputItemList;
-      } else if (panel == 'generalBar') {
-        refType = 'generalBar';
-        barRef = 'general';
-        barItemList = this.generalList;
-      }
-      // else if (panel == 'codeBar') {
-      //   refType = 'codeBar';
-      //   barRef = 'general';
-      //   barItemList = this.codeList;
-      // }
-
-      const domArray = this.$refs[refType].$refs[barRef];
-
-      if (!(domArray instanceof Array) || domArray.length <= 0) {
-        return;
-      }
-
-      domArray.forEach((dom, domIndex) => {
-        const dragItem = barItemList[domIndex];
-
-        let cellStyle = getCellStyle(styleIn, dragItem);
-
-        const dropHandler = (graph, evt, cell, x, y) => {
-          this.addCell(dragItem, x, y, panel, cellStyle);
-        };
-
-        const createDragPreview = () => {
-          const elt = document.createElement('div');
-          elt.style.border = '2px dotted black';
-          elt.style.width = `200px`;
-          elt.style.height = `50px`;
-          return elt;
-        };
-
-        mxUtils.makeDraggable(dom, this.graph, dropHandler, createDragPreview(), 0, 0, false, true);
-      });
-    },
-
-    addCell(item, x, y, type, styleObj) {
-      this.graph.getModel().beginUpdate();
-
-      let vertex = this.graph.insertVertex(
-        this.graph.getDefaultParent(),
-        null,
-        null,
-        x,
-        y,
-        200, //width
-        50, //height
-        styleObj
-      );
-      setTimeout(() => {
-        this.graph.getModel().setStyle(vertex, styleObj);
-      }, 1000);
-
-      try {
-        if (type == 'modelBar') {
-          vertex.name = item.name;
-          vertex.doi = item.doi;
-          vertex.type = 'model';
-          vertex.iterationNum = '1';
-          vertex.md5 = item.md5;
-        } else {
-          if (this.selectionCells.length == 0) {
-            this.$notify.error({
-              title: 'Error',
-              message: 'You have not select any model'
-            });
-
-            return;
-          }
-
-          let selectionCell = this.selectionCells[0];
-
-          vertex.name = item.name;
-          vertex.eventId = item.eventId;
-          vertex.description = item.description; //event description
-          vertex.datasetItem = item.datasetItem;
-          vertex.stateId = item.stateId; //event description
-          vertex.stateName = item.stateName;
-          vertex.stateDescription = item.stateDescription;
-          vertex.md5 = item.md5;
-          vertex.doi = item.doi;
-          vertex.optional = item.optional;
-          vertex.linkModelCellId = selectionCell.id; //放置输入输出node时 与其关联的model的nodeId
-          vertex.type = item.type;
-
-          if (type == 'inputBar') {
-            this.addEdge(vertex, selectionCell);
-          } else if (type == 'outputBar') {
-            this.addEdge(selectionCell, vertex);
-          }
-        }
-      } finally {
-        this.graph.getModel().endUpdate();
-      }
-    },
-
-    addEdge(source, target) {
-      this.graph.insertEdge(this.graph.getDefaultParent(), null, null, source, target, null);
     },
 
     getCells() {
@@ -963,24 +691,6 @@ export default {
       await updateIntegrateTaskInstanceById(this.currentTaskInstance.id, postJson);
     },
 
-    currentEventWithFile(val) {
-      this.graph.getModel().beginUpdate();
-
-      try {
-        Object.values(this.graph.getModel().cells).forEach(cell => {
-          if (cell.id == val.id) {
-            cell.value = val.value;
-            this.$message({
-              message: 'You have submit the file successfully',
-              type: 'success'
-            });
-          }
-        });
-      } finally {
-        this.graph.getModel().endUpdate();
-      }
-    },
-
     //instance list
     async getAllIntegrateTaskInstances(page) {
       let data = await getAllIntegrateTaskInstancesByTaskId(this.currentTask.id, page, this.instancePageFilter.pageSize);
@@ -1010,81 +720,6 @@ export default {
   height: 100%;
   // display: flex;
   // position: relative;
-
-  .leftBar {
-    // position: relative;
-    width: 300px;
-    float: left;
-    // padding-right: 10px;
-    .search_input {
-      padding: 0 10px 5px 0;
-    }
-
-    .collapse {
-      padding-right: 10px;
-
-      /deep/.el-collapse-item__header {
-        font-size: 16px;
-        font-weight: 600;
-        font-style: italic;
-        background-color: rgba($color: $blueEmplasisFont, $alpha: 0.1);
-        line-height: 35px;
-        height: 35px;
-        color: #6386cc;
-        text-align: center;
-        // border-radius: 5px;
-        padding-left: 20px;
-        border-top: 3px solid #939fb8;
-      }
-      /deep/ .el-collapse-item__wrap {
-        background-color: rgba($color: #3066d6, $alpha: 0.05);
-      }
-    }
-
-    .modelbarContainer {
-      background-color: rgba($color: #b2b5c7, $alpha: 0.1);
-      border: 0.5px solid #a7a8ad;
-      border-radius: 5px;
-      // box-shadow: $normalBoxShadow;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 50%;
-
-      .modelbarTitle {
-        font-size: 20px;
-        font-weight: 600;
-        text-align: center;
-        margin: 5px 0;
-      }
-
-      .items {
-        margin-top: 2px;
-        .item {
-          margin: 0 10px;
-          width: 120px;
-          text-align: center;
-          margin-bottom: 5px;
-        }
-      }
-      // z-index: 1;
-    }
-
-    .editCellContainer {
-      background-color: rgba(243, 243, 243, 0.5);
-      border: 0.5px solid rgb(243, 243, 243);
-      border-radius: 5px;
-      position: absolute;
-      width: 100%;
-      padding: 0 5px;
-
-      z-index: auto;
-      height: 50%;
-      bottom: 0px;
-      left: 0px;
-    }
-  }
 
   .mainContainer {
     float: left;
@@ -1126,7 +761,7 @@ export default {
       height: 100%;
       width: 100%;
       min-width: calc(100%);
-      min-height: 800px;
+      min-height: 850px;
       background: rgb(251, 251, 251) url('./../../../assets/images/mxgraph/point.gif') 0 0 repeat;
       border-radius: 4px;
     }

@@ -17,7 +17,7 @@
         </el-row>
         <el-row>
           <el-col :span="24">
-            <step-card :cardInfo="{ btnType: 'Simulation Scenario' }" style="height:900px;width:100%"></step-card>
+            <step-card :cardInfo="{ btnType: 'Simulation Scenario' }" style="height:1000px;width:100%"></step-card>
           </el-col>
         </el-row>
       </div>

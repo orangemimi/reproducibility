@@ -21,7 +21,7 @@
             </div>
           </el-collapse-item>
           <el-collapse-item title="Data Processing Methods" name="dataProcessings">
-            <data-processing-toolbar ref="dataProcessingBar" @getDataProcessings="getDataProcessings"></data-processing-toolbar>
+            <data-processing-toolbar ref="dataProcessingBar" @getDataServices="getDataServices"></data-processing-toolbar>
           </el-collapse-item>
           <el-collapse-item title="Related Datas" name="modelRelatedDatas">
             <div v-if="modelDoubleClick">
@@ -112,7 +112,7 @@ export default {
       // this.$emit('getModels', content);
     },
 
-    getDataProcessings(val) {
+    getDataServices(val) {
       console.log(val);
     },
 

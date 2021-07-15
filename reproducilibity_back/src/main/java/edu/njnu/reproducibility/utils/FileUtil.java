@@ -1,11 +1,14 @@
 package edu.njnu.reproducibility.utils;
 
 import cn.hutool.core.lang.UUID;
+import org.apache.commons.io.FileUtils;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * @Author ：Zhiyi
@@ -29,8 +32,6 @@ public class FileUtil {
 
         upload.transferTo(new File(newFilePath));  //将传来的文件写入新建的文件
         return newFileName;
-
-
     }
 
     /**
@@ -48,6 +49,35 @@ public class FileUtil {
         }
         return flag;
     }
+
+    /**
+     * 删除单个文件
+     * @param   content    内容
+     * @param   prefix    文件名前缀
+     * @param   suffix    文件名后缀
+     * @return 单个文件删除成功返回true，否则返回false
+     */
+    public static File getFile(String content, String filePath,String prefix,String suffix) throws IOException{
+        File file = new File(filePath);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+
+        String newFileName = UUID.randomUUID() + prefix+"."+suffix;
+        String newFilePath = filePath + newFileName; //新文件的路径
+        File file2= new File(newFilePath);
+
+        OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(file2), "UTF-8");
+        BufferedWriter bw = new BufferedWriter(fw);
+        bw.write(content);
+        bw.flush();
+        bw.close();
+        fw.close();
+
+        return file2;
+    }
+
+
 
 }
 

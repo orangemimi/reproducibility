@@ -268,7 +268,7 @@ function generateGUID() {
 }
 
 export function differCellStyle(type) {
-  if (type == 'modelBar') {
+  if (type == 'modelBar' || type == 'dataServiceBar') {
     return {
       fontColor: '#f6f6f6',
       fillColor: '#07689f',

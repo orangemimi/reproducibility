@@ -43,7 +43,7 @@ export default {
       // );
 
       this.$set(this, 'dataProcessing', content);
-      this.$emit('getDataProcessings', content);
+      this.$emit('getDataServices', content);
     },
 
     getModelInfo() {

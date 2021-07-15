@@ -3,8 +3,11 @@ package edu.njnu.reproducibility.remote;
 import cn.hutool.json.JSONObject;
 import edu.njnu.reproducibility.common.enums.ResultEnum;
 import edu.njnu.reproducibility.common.exception.MyException;
+import edu.njnu.reproducibility.common.untils.ResultUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,6 +16,9 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 /**
  * @ClassName dataItemService
@@ -62,5 +68,40 @@ public class DataContainerService {
 //        String urlResult = result.getJSONObject("data").getString("source_store_id");
         JSONObject urlResult = result.getJSONObject("data");
         return urlResult;
+    }
+
+    public String getIpByToken(String token) throws UnsupportedEncodingException {
+        String urlStr = "http://111.229.14.128:8898/state?token="+ URLEncoder.encode(token);
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add("Content-Type","application/json");
+//        HttpEntity<MultiValueMap> requestEntity = new HttpEntity<MultiValueMap>(null, headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<JSONObject> jsonObjectResponseEntity = restTemplate.getForEntity(urlStr, JSONObject.class);
+
+        if (!jsonObjectResponseEntity.getStatusCode().is2xxSuccessful()) {
+            throw new MyException(ResultEnum.REMOTE_SERVICE_ERROR);
+        }
+        JSONObject result = jsonObjectResponseEntity.getBody();//获得上传数据的URL
+//        String urlResult = result.getJSONObject("data").getString("source_store_id");
+        JSONObject urlResult = result.getJSONObject("ip");
+        return "urlResult";
+    }
+
+    public Object getDataService(String id, String token, String type) {
+        RestTemplate restTemplate = new RestTemplate();
+        String urlStr = "http://111.229.14.128:8898/capability?id=" + id + "&type="+type+"&token="+ URLEncoder.encode(token);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type","application/json");
+        HttpEntity<MultiValueMap> requestEntity = new HttpEntity<MultiValueMap>(null, headers);
+        ResponseEntity<JSONObject> jsonObjectResponseEntity = restTemplate.exchange(urlStr,HttpMethod.GET, requestEntity, JSONObject.class);
+
+        if (!jsonObjectResponseEntity.getStatusCode().is2xxSuccessful()) {
+            throw new MyException(ResultEnum.REMOTE_SERVICE_ERROR);
+        }
+
+        JSONObject  result = jsonObjectResponseEntity.getBody();//获得上传数据的URL
+        return ResultUtils.success(result);
     }
 }

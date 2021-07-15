@@ -15,13 +15,18 @@ import java.util.List;
  * @version: 1.0.0
  */
 @Data
-@Document(collection = "DataService")
+@Document(collection = "DataServices")
 public class DataService extends BaseEntity {
     @Id
     String id;
-    String dataServiceId;
     String name;
+    String description;
+    String dataServiceId;
+    String token;
     String type;
+    String privacy;
+    List<String> tags;
+
     String userId;
     List<String> fileList;
 }

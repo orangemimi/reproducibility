@@ -1,10 +1,20 @@
 <!-- general bar -->
 <template>
   <div class="main">
-    <div v-for="(item, index) in generalList" :key="index" ref="general">
-      <div class="tool">
-        <img :src="item.icon" :alt="item['name']" class="image" />
-        <div class="name">{{ item['name'] }}</div>
+    <div v-show="showType == 'rhombus'">
+      <div v-for="(item, index) in rhombusList" :key="index" ref="general">
+        <div class="tool">
+          <img :src="item.icon" :alt="item['name']" class="image" />
+          <div class="name">{{ item['name'] }}</div>
+        </div>
+      </div>
+    </div>
+    <div v-show="showType == 'rectangle'">
+      <div v-for="(item, index) in rectangleList" :key="index" ref="code">
+        <div class="tool">
+          <img :src="item.icon" :alt="item['name']" class="image" />
+          <div class="name">{{ item['name'] }}</div>
+        </div>
       </div>
     </div>
   </div>
@@ -13,12 +23,23 @@
 <script>
 import { generalList } from './toolbar';
 export default {
+  props: {
+    showType: {
+      type: String
+    }
+  },
+
   components: {},
 
   watch: {},
 
   computed: {
-    generalList: () => generalList // general toolbar
+    rhombusList: () => {
+      return generalList.filter(item => item.style.shape == 'rhombus');
+    }, // general toolbar
+    rectangleList: () => {
+      return generalList.filter(item => item.style.shape == 'rectangle');
+    }
   },
 
   data() {

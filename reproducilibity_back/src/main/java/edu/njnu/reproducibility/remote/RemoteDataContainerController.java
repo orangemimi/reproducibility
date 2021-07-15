@@ -6,6 +6,7 @@ import edu.njnu.reproducibility.common.enums.ResultEnum;
 import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
+import edu.njnu.reproducibility.domain.dataServiceCode.dto.AddDataServiceCodeDTO;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,11 +125,8 @@ public class RemoteDataContainerController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public JsonResult getDataServices() {
-
         String urlStr ="http://111.229.14.128:8898/onlineNodesAllPcs?token=fdtwTxlnhka8jY66lOT%2BkKutgZHnvi4NlnDc7QY5jR4%3D&type=Processing";
 //        JSONObject form = new JSONObject();
-
-
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type","application/json");
         HttpEntity<String> requestEntity = new HttpEntity<>(null, headers);
@@ -143,6 +141,24 @@ public class RemoteDataContainerController {
 
         return ResultUtils.success(result);
     }
+
+    @RequestMapping(value = "/newService", method = RequestMethod.POST)
+    public JsonResult createNewService(AddDataServiceCodeDTO serviceForm , @JwtTokenParser(key = "userId") String userId) throws IOException, ServletException {
+
+        String token = serviceForm.getToken();
+
+        return ResultUtils.success();
+    }
+
+    @RequestMapping(value = "/dataService/getData", method = RequestMethod.POST)
+    public JsonResult getDataService(@RequestBody JSONObject jsonObject) {
+        String id = jsonObject.getStr("serverId");
+        String token = jsonObject.getStr("token");
+        String type = jsonObject.getStr("type");
+        return ResultUtils.success( dataContainerService.getDataService(id,token,type));
+    }
+
+
 
 
 

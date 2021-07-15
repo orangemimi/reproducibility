@@ -8,14 +8,14 @@
       <vue-scroll style="height: calc(86vh); width: 100%" :ops="ops">
         <el-collapse v-model="activeNames" class="collapse">
           <el-collapse-item title="General" name="general">
-            <general-toolbar ref="generalBar"></general-toolbar>
-            <!-- <code-toolbar ref="codeBar"></code-toolbar> -->
+            <general-toolbar ref="generalBar" :showType="'rhombus'"></general-toolbar>
+            <general-toolbar ref="codeBar" :showType="'rectangle'"></general-toolbar>
           </el-collapse-item>
           <el-collapse-item title="Models" name="models">
             <model-item-toolbar ref="modelBar" @getModels="getModels"></model-item-toolbar>
           </el-collapse-item>
           <el-collapse-item title="Data Processing Methods" name="dataProcessings">
-            <data-processing-toolbar ref="dataProcessingBar" @getDataProcessings="getDataProcessings"></data-processing-toolbar>
+            <data-processing-toolbar ref="dataProcessingBar" @getDataServices="getDataServices"></data-processing-toolbar>
           </el-collapse-item>
           <el-collapse-item title="Related Datas" name="modelRelatedDatas">
             <div v-if="modelDoubleClick">
@@ -140,9 +140,8 @@ import instanceCard from '_com/Cards/InstanceCard';
 import modelItemToolbar from '_com/MxGraphBars/ModelItemToolbar';
 import dataItemToolbar from '_com/MxGraphBars/DataItemToolbar';
 import generalToolbar from '_com/MxGraphBars/GeneralToolbar';
-// import codeToolbar from '_com/MxGraphBars/CodeToolbar';
 import dataProcessingToolbar from '_com/MxGraphBars/DataProcessingToolbar';
-import { generalList, codeList } from '_com/MxGraphBars/toolbar';
+import { generalList } from '_com/MxGraphBars/toolbar';
 import comparison from './Comparison';
 
 const {
@@ -166,15 +165,15 @@ export default {
     integrateTasks,
     instanceCard,
     generalToolbar,
-    // codeToolbar,
     dataProcessingToolbar,
     comparison
   },
 
   watch: {
     taskInfoInit: {
-      async handler(val) {
-        if (JSON.stringify(val) != '{}') {
+      async handler(val, oldVal) {
+        if (val.id != undefined && val.id != oldVal.id) {
+          console.log('valval', val);
           await initSetTimeOut();
           // debugger;
           this.currentTask = val;
@@ -189,8 +188,12 @@ export default {
   },
 
   computed: {
-    generalList: () => generalList, // general toolbar
-    codeList: () => codeList,
+    rhombusList: () => {
+      return generalList.filter(item => item.style.shape == 'rhombus');
+    }, // general toolbar
+    rectangleList: () => {
+      return generalList.filter(item => item.style.shape == 'rectangle');
+    },
     ...mapState({
       role: state => state.permission.role
     })
@@ -226,12 +229,8 @@ export default {
 
       modelClick: false,
       modelDoubleClick: false,
-
       dataClick: false,
       dataDoubleClick: false,
-
-      codeClick: false,
-      codeDoubleClick: false,
 
       modelListInGraph: [],
       dataInputInGraph: [],
@@ -324,7 +323,7 @@ export default {
       this.$set(this, 'modelItemList', val);
     },
 
-    getDataProcessings(val) {
+    getDataServices(val) {
       console.log(val);
     },
 
@@ -347,7 +346,7 @@ export default {
       this.createGraph();
       this.listenGraphEvent();
       this.initLeftBar('generalBar');
-      // this.initLeftBar('codeBar');
+      this.initLeftBar('codeBar');
       this.initLeftBar('modelBar');
       this.getScenario();
     },
@@ -461,14 +460,12 @@ export default {
       } else if (panel == 'generalBar') {
         refType = 'generalBar';
         barRef = 'general';
-        barItemList = this.generalList;
+        barItemList = this.rhombusList;
+      } else if (panel == 'codeBar') {
+        refType = 'codeBar';
+        barRef = 'code';
+        barItemList = this.rectangleList;
       }
-
-      // else if (panel == 'codeBar') {
-      //   refType = 'codeBar';
-      //   barRef = 'general';
-      //   barItemList = this.codeList;
-      // }
 
       const domArray = this.$refs[refType].$refs[barRef];
 
@@ -512,10 +509,10 @@ export default {
       );
       setTimeout(() => {
         this.graph.getModel().setStyle(vertex, styleObj);
-      }, 1000);
+      }, 2000);
 
       try {
-        if (type == 'modelBar') {
+        if (type == 'modelBar' || type == 'codeBar') {
           vertex.name = item.name;
           vertex.doi = item.doi;
           vertex.type = 'model';

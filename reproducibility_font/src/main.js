@@ -16,6 +16,10 @@ import './assets/iconfont/iconfont.css';
 import '@/router/permission'; // permission control
 import vuescroll from 'vuescroll';
 import vueJsonEditor from 'vue-json-editor';
+// import Highlight from '@/utils/highlight'; // 这里是你项目highlight.js所在路径
+
+import { codemirror } from 'vue-codemirror';
+import 'codemirror/lib/codemirror.css';
 
 // import Descriptions from '_com/Description/index.js';
 
@@ -23,7 +27,8 @@ Vue.config.productionTip = false;
 Vue.use(ElementUI, { locale: enLocale });
 Vue.use(mavonEditor);
 Vue.use(vuescroll);
-// Vue.use();
+// Vue.use(Highlight);
+Vue.use(codemirror);
 
 Vue.component('vue-json-editor', vueJsonEditor);
 // Vue.use(vueJsonEditor);

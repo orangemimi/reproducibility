@@ -296,7 +296,7 @@ export default {
       });
     },
 
-    async remove() {
+    remove() {
       // await del(`/fileItems/${resource.id}`);
       this.form = {
         alia: '',

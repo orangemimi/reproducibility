@@ -365,6 +365,16 @@ export async function getDataServices(currentPage, pagesize) {
   return await get(`/dataServices/${currentPage}/${pagesize}`);
 }
 
+export async function saveDataService(form) {
+  return await post(`/dataServices`, form);
+}
+
+//------------------------------------------dataServiceCode------------------------------------
+
+export async function postDataServiceCode(form) {
+  return await post(`/dataServiceCode`, form);
+}
+
 //------------------------------------------manager server------------------------------------
 export async function runtask(formData) {
   return await post(`/managerServer/runtask`, formData);
