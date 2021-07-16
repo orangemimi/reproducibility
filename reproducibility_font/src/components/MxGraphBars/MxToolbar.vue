@@ -37,12 +37,12 @@
 <script>
 import mxgraph from '_com/MxGraph/index';
 // import modelItemToolbar from '_com/MxGraphBars/ModelItemToolbar';
-import dataItemToolbar from '_com/MxGraphBars/DataItemToolbar';
+import dataItemToolbar from '_com/MxGraphDialogs/ModelItemConfiguration';
 import generalToolbar from '_com/MxGraphBars/GeneralToolbar';
 import dataProcessingToolbar from '_com/MxGraphBars/DataProcessingToolbar';
 // import { initSetTimeOut } from '@/utils/utils';
 
-import modelCard from './ModelCard';
+import modelCard from '_com/Cards/MxModelCard';
 import { getModelItemsByPrivacy } from '@/api/request';
 const {
   // mxGraph,

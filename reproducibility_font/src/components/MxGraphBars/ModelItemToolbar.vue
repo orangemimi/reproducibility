@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import modelCard from './ModelCard';
+import modelCard from '_com/Cards/MxModelCard';
 import { getModelItemsByPrivacy, getModelItemsByProvider } from '@/api/request';
 
 export default {

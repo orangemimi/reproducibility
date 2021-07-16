@@ -41,7 +41,7 @@ import { getScenarioByProjectId, updateScenarioByProjectId, saveIntegrateTask, g
 import mxGraph from './components/MxGraph';
 import { mapState } from 'vuex';
 import integrateTasks from '_com/IntegrateTasks';
-import comparisonTask from './components/Comparison.vue';
+import comparisonTask from '_com/Comparison/Comparison';
 // import { initSetTimeOut } from '@/utils/utils';
 
 export default {
@@ -91,6 +91,7 @@ export default {
           this.isNoteTaskShow = this.isNewTaskShow = false;
           this.isIntegrateTaskShow = true;
           this.taskInfoInit = await getIntegrateTaskByTaskId(data.selectTaskId);
+          console.log(' this.taskInfoInit', this.taskInfoInit);
         }
         if (data.type == 'notebook') {
           this.isIntegrateTaskShow = this.isNewTaskShow = false;

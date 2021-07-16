@@ -105,7 +105,7 @@ import { initSetTimeOut, hasProperty } from '@/utils/utils';
 import integrateTasks from '_com/IntegrateTasks';
 import instanceCard from '_com/Cards/InstanceCard';
 
-import comparison from './Comparison';
+import comparison from '_com/Comparison/Comparison';
 import leftToolbar from './LeftToolbar.vue';
 
 const {

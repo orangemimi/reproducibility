@@ -1,6 +1,5 @@
 package edu.njnu.reproducibility.domain.dataService;
 
-import edu.njnu.reproducibility.domain.model.support.ModelItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

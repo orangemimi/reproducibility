@@ -41,7 +41,7 @@ public class IntegrateTaskService {
     private String wzpIpAndPort;
 
     public IntegrateTask getModelTaskInfo(String id) {
-        IntegrateTask integrateModelTask = integrateTaskRepository.findFirstById(id).orElseThrow(MyException::noObject);
+        IntegrateTask integrateModelTask = integrateTaskRepository.findById(id).orElseThrow(MyException::noObject);
         return  integrateModelTask;
     }
 
@@ -61,19 +61,19 @@ public class IntegrateTaskService {
     }
 
     public IntegrateTask updateModelTaskInfo(String id, UpdateIntegratedTaskDTO updateIntegratedTaskDTO, String userName) {
-        IntegrateTask integrateTask = integrateTaskRepository.findFirstById(id).orElseThrow(MyException::noObject);
+        IntegrateTask integrateTask = integrateTaskRepository.findById(id).orElseThrow(MyException::noObject);
         updateIntegratedTaskDTO.updateTo(integrateTask);
         return integrateTaskRepository.save(integrateTask);
     }
 
     public IntegrateTask updateSelectAction(String id, UpdateCurrentActionInTaskDTO update, String userId) {
-        IntegrateTask integrateTask = integrateTaskRepository.findFirstById(id).orElseThrow(MyException::noObject);
+        IntegrateTask integrateTask = integrateTaskRepository.findById(id).orElseThrow(MyException::noObject);
         update.updateTo(integrateTask);
         return integrateTaskRepository.save(integrateTask);
     }
 
     public IntegrateTask changeSelectInstance(String id, String instanceId, String userId) {
-        IntegrateTask integrateTask = integrateTaskRepository.findFirstById(id).orElseThrow(MyException::noObject);
+        IntegrateTask integrateTask = integrateTaskRepository.findById(id).orElseThrow(MyException::noObject);
         integrateTask.setSelectInstanceId(instanceId);
         return integrateTaskRepository.save(integrateTask);
     }

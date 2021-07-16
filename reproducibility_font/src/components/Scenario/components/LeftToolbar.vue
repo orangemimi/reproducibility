@@ -14,14 +14,14 @@
         <el-collapse-item title="Models" name="models">
           <model-item-toolbar ref="modelBar" @getModels="getModels"></model-item-toolbar>
         </el-collapse-item>
-        <el-collapse-item title="Data Processing Methods" name="dataProcessings">
+        <el-collapse-item title="Data Service Methods" name="dataServices">
           <data-service-toolbar ref="dataServiceBar" @getDataServices="getDataServices"></data-service-toolbar>
         </el-collapse-item>
-        <el-collapse-item title="Related Datas" name="modelRelatedDatas">
-          <!-- <div v-if="modelDoubleClick">
+        <!-- <el-collapse-item title="Related Datas" name="modelRelatedDatas">
+          <div v-if="modelDoubleClick">
             <data-item-toolbar :cell="cell" ref="dataItemBar" @getInAndOut="getInAndOut"></data-item-toolbar>
-          </div> -->
-        </el-collapse-item>
+          </div>
+        </el-collapse-item> -->
       </el-collapse>
     </vue-scroll>
 
@@ -34,7 +34,7 @@
         <data-cell-info :cell="dataNode" @currentEventWithFile="currentEventWithFile"></data-cell-info>
       </el-dialog>
       <el-dialog :visible.sync="codeDoubleClick" width="50%" title="Configuration" destroy-on-close :close-on-click-modal="false">
-        <data-service-configuration></data-service-configuration>
+        <data-service-code-configuration></data-service-code-configuration>
       </el-dialog>
       <el-dialog :visible.sync="dataServiceDoubleClick" width="50%" title="Configuration" destroy-on-close :close-on-click-modal="false">
         <data-service-configuration></data-service-configuration>
@@ -52,7 +52,7 @@
 
 <script>
 import modelItemToolbar from '_com/MxGraphBars/ModelItemToolbar';
-import dataItemToolbar from '_com/MxGraphBars/DataItemToolbar';
+import dataItemToolbar from '_com/MxGraphDialogs/ModelItemConfiguration';
 import generalToolbar from '_com/MxGraphBars/GeneralToolbar';
 import dataServiceToolbar from '_com/MxGraphBars/DataServiceToolbar';
 import dataCellInfo from '_com/DataCellInfo/Info';
@@ -60,12 +60,12 @@ import { initSetTimeOut } from '@/utils/utils';
 import { generalList } from '_com/MxGraphBars/toolbar';
 import { differCellStyle, getCellStyle } from './configuration';
 import mxgraph from '_com/MxGraph/index';
-import dataServiceConfiguration from './DataServiceConfiguration';
+import dataServiceCodeConfiguration from '_com/MxGraphDialogs/DataServiceCodeConfiguration';
 
 const { mxUtils, mxEvent } = mxgraph;
 
 export default {
-  components: { modelItemToolbar, dataItemToolbar, generalToolbar, dataServiceToolbar, dataCellInfo, dataServiceConfiguration },
+  components: { modelItemToolbar, dataItemToolbar, generalToolbar, dataServiceToolbar, dataCellInfo, dataServiceCodeConfiguration },
 
   computed: {
     rhombusList: () => {
@@ -79,7 +79,7 @@ export default {
   data() {
     return {
       //collapse
-      activeNames: ['general', 'models'],
+      activeNames: ['general', 'models', 'dataServices'],
 
       //modelbar
       modelItemList: [],

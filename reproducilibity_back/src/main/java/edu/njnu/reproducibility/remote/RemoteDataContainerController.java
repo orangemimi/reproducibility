@@ -151,13 +151,9 @@ public class RemoteDataContainerController {
     }
 
     @RequestMapping(value = "/dataService/getData", method = RequestMethod.POST)
-    public JsonResult getDataService(@RequestBody JSONObject jsonObject) {
-        String id = jsonObject.getStr("serverId");
-        String token = jsonObject.getStr("token");
-        String type = jsonObject.getStr("type");
-        return ResultUtils.success( dataContainerService.getDataService(id,token,type));
+    public JsonResult getDataService( @PathVariable("serviceId") String serviceId, @PathVariable("token") String token, @PathVariable("type") String type) {
+        return ResultUtils.success( dataContainerService.getDataService(serviceId,token,type));
     }
-
 
 
 

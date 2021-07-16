@@ -2,11 +2,8 @@ package edu.njnu.reproducibility.domain.integratetaskInstance;
 
 import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.domain.integratetaskInstance.dto.AddIntegrateTaskInstanceDTO;
-<<<<<<< HEAD
 import edu.njnu.reproducibility.domain.integratetaskInstance.dto.UpdateIntegrateTaskInstanceDTO;
 import edu.njnu.reproducibility.domain.integratetaskInstance.dto.UpdateNoteTaskInstanceDTO;
-=======
->>>>>>> parent of f11cd19 (mxgraph)
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -51,7 +48,6 @@ public class IntegrateTaskInstanceService {
     public void delete(String actionId) {
         integrateTaskInstanceRepository.deleteById(actionId);
     }
-<<<<<<< HEAD
 
     public Object updateById(String id, UpdateIntegrateTaskInstanceDTO update, String userId) {
         IntegrateTaskInstance integrateTaskInstance = integrateTaskInstanceRepository.findById(id).orElseThrow(MyException::noObject);
@@ -64,6 +60,4 @@ public class IntegrateTaskInstanceService {
         update.updateTo(integrateTaskInstance);
         return integrateTaskInstanceRepository.save(integrateTaskInstance);
     }
-=======
->>>>>>> parent of f11cd19 (mxgraph)
 }

@@ -4,11 +4,8 @@ import edu.njnu.reproducibility.annotation.JwtTokenParser;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
 import edu.njnu.reproducibility.domain.integratetaskInstance.dto.AddIntegrateTaskInstanceDTO;
-<<<<<<< HEAD
 import edu.njnu.reproducibility.domain.integratetaskInstance.dto.UpdateIntegrateTaskInstanceDTO;
 import edu.njnu.reproducibility.domain.integratetaskInstance.dto.UpdateNoteTaskInstanceDTO;
-=======
->>>>>>> parent of f11cd19 (mxgraph)
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,7 +42,6 @@ public class IntegrateTaskInstanceController {
         return ResultUtils.success(integrateTaskInstanceService.create(userId,add));
     }
 
-<<<<<<< HEAD
     @RequestMapping(value = "/{id}", produces = {"application/json;charset=UTF-8"}, method = RequestMethod.PATCH)
     public JsonResult update(@PathVariable("id") String id, @RequestBody UpdateIntegrateTaskInstanceDTO update, @JwtTokenParser(key = "userId") String userId) {
         return ResultUtils.success(integrateTaskInstanceService.updateById(id, update, userId));
@@ -56,8 +52,6 @@ public class IntegrateTaskInstanceController {
         return ResultUtils.success(integrateTaskInstanceService.updateByNoteId(id, update, userId));
     }
 
-=======
->>>>>>> parent of f11cd19 (mxgraph)
 
     @RequestMapping (value = "/{actionId}", method = RequestMethod.DELETE)
     public JsonResult delete(@PathVariable("actionId") String actionId) {

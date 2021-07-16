@@ -12,6 +12,6 @@ import java.util.Optional;
  * @Version 1.0.0
  */
 public interface IntegrateTaskRepository extends MongoRepository<IntegrateTask,String> {
-    Optional<IntegrateTask> findFirstById(String id);
+    Optional<IntegrateTask> findById(String id);
     List<IntegrateTask> findAllByProjectId(String userId);
 }

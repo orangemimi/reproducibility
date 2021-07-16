@@ -3,7 +3,7 @@
   <div class="leftContainer">
     <div class="card-contain">
       <vue-scroll :ops="ops" style="height: 390px">
-        <div v-for="(model, index) in dataProcessing" :key="index" ref="modelItemList">
+        <div v-for="(model, index) in dataProcessing" :key="index" ref="dataServiceItemList">
           <div class="choose-model-contain">
             <model-card :modelFrom="model" @click.native="getModelInfo(model)"></model-card>
           </div>
@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import modelCard from './ModelCard';
+import modelCard from '_com/Cards/MxModelCard';
 import { getDataServices } from '@/api/request';
 
 export default {
@@ -47,7 +47,7 @@ export default {
     },
 
     getModelInfo() {
-      return this.$refs['modelItemList'];
+      return this.$refs['dataServiceItemList'];
       // this.$emit('chooseModel',model)
     }
   },
