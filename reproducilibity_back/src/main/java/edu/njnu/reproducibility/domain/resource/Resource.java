@@ -31,7 +31,7 @@ public class Resource extends BaseEntity {
     String projectId;
     String userId;//creatorId
 
-    //    Restriction restriction;
+//    Restriction restriction;
     String version;
     String state;//published ;
 

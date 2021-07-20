@@ -27,7 +27,7 @@
 
     <div class="dialogs">
       <el-dialog :visible.sync="modelDoubleClick" width="50%" title="Configuration" destroy-on-close :close-on-click-modal="false">
-        <data-item-toolbar :cell="cell" @selectItemListToGraph="selectItemListToGraph"></data-item-toolbar>
+        <data-item-toolbar :cell="currentCell" @selectItemListToGraph="selectItemListToGraph"></data-item-toolbar>
       </el-dialog>
       <el-dialog :visible.sync="dataDoubleClick" width="50%" title="Configuration" destroy-on-close :close-on-click-modal="false">
         <!-- Configuration -->
@@ -37,7 +37,7 @@
         <data-service-code-configuration></data-service-code-configuration>
       </el-dialog>
       <el-dialog :visible.sync="dataServiceDoubleClick" width="50%" title="Configuration" destroy-on-close :close-on-click-modal="false">
-        <data-service-configuration></data-service-configuration>
+        <data-service-configuration :cell="currentCell" @selectServiceListToGraph="selectServiceListToGraph"></data-service-configuration>
       </el-dialog>
       <!-- <el-drawer title="Configuration" :visible.sync="codeDoubleClick" size="45%">
         <el-col :span="22" :offset="1">
@@ -61,11 +61,19 @@ import { generalList } from '_com/MxGraphBars/toolbar';
 import { differCellStyle, getCellStyle } from './configuration';
 import mxgraph from '_com/MxGraph/index';
 import dataServiceCodeConfiguration from '_com/MxGraphDialogs/DataServiceCodeConfiguration';
-
+import dataServiceConfiguration from '_com/MxGraphDialogs/DataServiceConfiguration';
 const { mxUtils, mxEvent } = mxgraph;
 
 export default {
-  components: { modelItemToolbar, dataItemToolbar, generalToolbar, dataServiceToolbar, dataCellInfo, dataServiceCodeConfiguration },
+  components: {
+    modelItemToolbar,
+    dataItemToolbar,
+    generalToolbar,
+    dataServiceToolbar,
+    dataCellInfo,
+    dataServiceCodeConfiguration,
+    dataServiceConfiguration
+  },
 
   computed: {
     rhombusList: () => {
@@ -114,7 +122,7 @@ export default {
           disable: false
         }
       },
-      cell: {}
+      currentCell: {}
     };
   },
 
@@ -159,7 +167,7 @@ export default {
         }
         let styleIn = differCellStyle(panel);
         let cellStyle = getCellStyle(styleIn, item);
-        this.addCell(item, this.cell.geometry.x - 100 + 200 * index, this.cell.geometry.y - 120, panel, cellStyle);
+        this.addCell(item, this.currentCell.geometry.x - 100 + 200 * index, this.currentCell.geometry.y - 120, panel, cellStyle);
       });
     },
 
@@ -255,6 +263,13 @@ export default {
         if (type == 'generalBar') {
           vertex.type = 'general';
         }
+        if (type == 'dataServiceBar') {
+          vertex.type = 'dataService';
+          vertex.name = item.name;
+          vertex.dataServiceId = item.dataServiceId;
+          vertex.token = item.token;
+          vertex.dataServiceType = item.type;
+        }
         if (type == 'inputBar' || type == 'outputBar') {
           if (this.selectionCells.length == 0) {
             this.$notify.error({
@@ -305,14 +320,20 @@ export default {
           this.modelDoubleClick = true;
           this.domFlag++;
           await initSetTimeOut();
-          this.cell = cell;
+          this.currentCell = cell;
+          this.$set(this, 'currentCell', cell);
           this.activeNames.push('modelRelatedDatas');
-          this.dataDoubleClick = this.dataClick = this.modelClick = this.codeDoubleClick = false;
+          this.dataDoubleClick = this.dataClick = this.modelClick = this.codeDoubleClick = this.dataServiceDoubleClick = false;
+        } else if (clickModelType == 'dataService') {
+          await initSetTimeOut();
+          this.currentCell = cell;
+          this.modelDoubleClick = this.modelClick = this.dataClick = this.dataDoubleClick = this.codeDoubleClick = false;
+          this.dataServiceDoubleClick = true;
         } else if (clickModelType == 'code') {
-          this.modelDoubleClick = this.modelClick = this.dataClick = this.dataDoubleClick = false;
+          this.modelDoubleClick = this.modelClick = this.dataClick = this.dataDoubleClick = this.dataServiceDoubleClick = false;
           this.codeDoubleClick = true;
         } else {
-          this.modelDoubleClick = this.modelClick = this.dataClick = this.codeDoubleClick = false;
+          this.modelDoubleClick = this.modelClick = this.dataClick = this.codeDoubleClick = this.dataServiceDoubleClick = false;
           this.dataDoubleClick = true;
           // console.log(cell);
           this.dataNode = cell;
@@ -330,7 +351,7 @@ export default {
 
           if (clickModelType == 'model') {
             // 使用 mxGraph 事件中心，触发自定义事件
-            // this.cell = cell;
+            // this.currentCell = cell;
             this.modelClick = true;
             this.modelDoubleClick = this.dataClick = this.dataDoubleClick = this.codeClick = false;
           } else if (clickModelType == 'code') {
@@ -344,7 +365,7 @@ export default {
           }
         } else {
           //单击空白处
-          this.cell = {};
+          this.currentCell = {};
         }
       });
 
@@ -392,6 +413,9 @@ export default {
       } finally {
         this.graph.getModel().endUpdate();
       }
+    },
+    selectServiceListToGraph(val) {
+      console.log(val);
     }
   },
 

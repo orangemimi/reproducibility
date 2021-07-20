@@ -175,8 +175,8 @@ export default {
       getXml: this.sendXml,
 
       doi: '',
-      cell: {}, //双击事件 cell
-      state: {},
+      // cell: {}, //双击事件 cell
+      // state: {},
 
       modelListInGraph: [],
       dataInputInGraph: [],

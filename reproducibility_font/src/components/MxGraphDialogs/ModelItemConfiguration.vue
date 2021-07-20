@@ -57,15 +57,14 @@ export default {
   components: { selectCard },
   watch: {
     cell: {
-      handler(val, oldVla) {
-        if (val != undefined && val != oldVla) {
-          console.log('cell', val);
-          debugger;
+      handler(val) {
+        if (hasProperty(val, 'id') && val.type == 'model') {
           this.doi = val.doi;
           this.init();
         }
       },
-      deep: true
+      deep: true,
+      immediate: false
     }
   },
 
@@ -91,7 +90,7 @@ export default {
 
     async getModelInfo() {
       let data = await getModelInfo(this.doi); //获得模型所有信息
-      console.log(data);
+      console.log('getModelInfo', data);
       this.md5 = data.md5;
       this.modelIntroduction = data;
       this.stateList = data.convertMdlJson;

@@ -91,7 +91,7 @@ public class DataContainerService {
 
     public Object getDataService(String id, String token, String type) {
         RestTemplate restTemplate = new RestTemplate();
-        String urlStr = "http://111.229.14.128:8898/capability?id=" + id + "&type="+type+"&token="+ URLEncoder.encode(token);
+        String urlStr = "http://111.229.14.128:8898/capability?id=" + id + "&type="+type+"&token="+ token;
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type","application/json");
         HttpEntity<MultiValueMap> requestEntity = new HttpEntity<MultiValueMap>(null, headers);
@@ -101,7 +101,7 @@ public class DataContainerService {
             throw new MyException(ResultEnum.REMOTE_SERVICE_ERROR);
         }
 
-        JSONObject  result = jsonObjectResponseEntity.getBody();//获得上传数据的URL
-        return ResultUtils.success(result);
+        JSONObject  result = jsonObjectResponseEntity.getBody().getJSONObject("capability");//获得上传数据的URL
+        return result;
     }
 }

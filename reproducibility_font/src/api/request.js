@@ -369,8 +369,8 @@ export async function saveDataService(form) {
   return await post(`/dataServices`, form);
 }
 
-export async function getDataServiceInfo(serviceId, token, type) {
-  return await get(`/dataContainer/dataService/getData/${serviceId}/${token}/${type}`);
+export async function getDataServiceInfo(dataServiceId, token, type) {
+  return await get(`/dataContainer/dataService/getData/${dataServiceId}/${token}/${type}`);
 }
 
 //------------------------------------------dataServiceCode------------------------------------

@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div class="info">
-      <div>Information:</div>
+      <div>123Information:</div>
       {{ modelIntroduction.name }}
     </div>
     <div class="event">
@@ -45,7 +45,7 @@
 
 <script>
 import selectCard from '_com/Cards/SelectCard';
-import { getServiceInfo } from '@/api/request';
+import { getDataServiceInfo } from '@/api/request';
 import { hasProperty } from '@/utils/utils';
 // import { initSetTimeOut } from '@/utils/utils';
 export default {
@@ -57,15 +57,13 @@ export default {
   components: { selectCard },
   watch: {
     cell: {
-      handler(val, oldVla) {
-        if (val != undefined && val != oldVla) {
-          console.log('cell', val);
-          debugger;
-          this.doi = val.doi;
+      handler(val) {
+        if (hasProperty(val, 'id') && val.type == 'dataService') {
           this.init();
         }
       },
-      deep: true
+      deep: true,
+      immediate: true
     }
   },
 
@@ -90,31 +88,14 @@ export default {
     },
 
     async getServiceInfo() {
-      let data = await getServiceInfo(this.doi); //获得模型所有信息
-      console.log(data);
-      this.md5 = data.md5;
-      this.modelIntroduction = data;
-      this.stateList = data.convertMdlJson;
-      await this.getInAndOut();
+      // ${serviceId}/${token}/${type}
+      let { data } = await getDataServiceInfo(this.cell.dataServiceId, this.cell.token, this.cell.dataServiceType); //获得模型所有信息
+      let metaData = data.metaDetail;
+      this.stateListInput = metaData.input;
+      this.stateListOutput = metaData.output;
+      this.stateListParameter = metaData.parameter;
     },
-    async getInAndOut() {
-      let stateList = this.stateList;
-      let input = [];
-      let output = [];
-      stateList.forEach(state => {
-        state.Event.forEach(event => {
-          if (event.type == 'input') {
-            input.push(event);
-          } else if (event.type == 'output') {
-            output.push(event);
-          }
-        });
-      });
-      this.stateListInput = input;
-      this.stateListOutput = output;
-      // await initSetTimeOut();
-      // this.$emit('getInAndOut', this.stateListInput, this.stateListOutput);
-    },
+
     addSelectItem(item) {
       if (hasProperty(item, 'isSelect') && item.isSelect) {
         this.selectItemListToGraph.splice(this.selectItemListToGraph.findIndex(arrItem => arrItem.eventId == item.eventId));
