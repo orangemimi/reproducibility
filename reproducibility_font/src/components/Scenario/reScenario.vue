@@ -73,7 +73,7 @@ import {
 import { generateAction, generateXml, getCellStyle } from './components/configuration';
 import { initSetTimeOut, hasProperty } from '@/utils/utils';
 
-import dataCellInfo from '_com/DataCellInfo/Info';
+import dataCellInfo from '_com/MxGraphDialogs/DataCellInfo';
 
 import instanceCard from '_com/Cards/InstanceCard';
 
@@ -125,9 +125,9 @@ export default {
       dataDoubleClick: false,
 
       modelListInGraph: [],
-      dataInputInGraph: [],
-      dataLinkInGraph: [], //下一模型的输入数据
-      dataOutputInGraph: [],
+      modelInputInGraph: [],
+      modelLinkInGraph: [], //下一模型的输入数据
+      modelOutputInGraph: [],
       linkEdgeList: [],
 
       stateList: [],
@@ -248,34 +248,34 @@ export default {
 
     getCells() {
       let modelListInGraph = [];
-      let dataOutputInGraph = [];
-      let dataInputInGraph = [];
-      let dataLinkInGraph = [];
+      let modelOutputInGraph = [];
+      let modelInputInGraph = [];
+      let modelLinkInGraph = [];
 
       Object.values(this.graph.getModel().cells).forEach(cell => {
         if (cell.style != undefined) {
           if (cell.type == 'model') {
             modelListInGraph.push(cell);
           } else if (cell.type == 'output') {
-            dataOutputInGraph.push(cell);
+            modelOutputInGraph.push(cell);
           } else if (cell.type == 'input') {
-            dataInputInGraph.push(cell);
+            modelInputInGraph.push(cell);
           } else if (cell.type == 'link') {
-            dataLinkInGraph.push(cell);
+            modelLinkInGraph.push(cell);
           }
         }
       });
       let links = Object.values(this.graph.getModel().cells).filter(cell => Object.prototype.hasOwnProperty.call(cell, 'edge'));
       this.linkEdgeList = links;
       this.modelListInGraph = modelListInGraph;
-      this.dataOutputInGraph = dataOutputInGraph;
-      this.dataInputInGraph = dataInputInGraph;
-      this.dataLinkInGraph = dataLinkInGraph;
+      this.modelOutputInGraph = modelOutputInGraph;
+      this.modelInputInGraph = modelInputInGraph;
+      this.modelLinkInGraph = modelLinkInGraph;
     },
 
     judgeInputList() {
-      let dataInputInGraph = this.dataInputInGraph;
-      dataInputInGraph.forEach(input => {
+      let modelInputInGraph = this.modelInputInGraph;
+      modelInputInGraph.forEach(input => {
         if (!hasProperty(input, 'value')) {
           this.$notify.error({
             title: 'Error',
@@ -294,7 +294,7 @@ export default {
     },
 
     getInstanceAction(action) {
-      let outputList = this.dataOutputInGraph;
+      let outputList = this.modelOutputInGraph;
       let dataItem = action.dataItemList;
       outputList.forEach(out => {
         let dataOutputValue = dataItem.filter(item => item.id == out.fileId);
@@ -312,7 +312,14 @@ export default {
         return;
       }
 
-      let xml = generateXml(this.currentTask.taskName, this.modelListInGraph, this.dataInputInGraph, this.dataLinkInGraph, this.dataOutputInGraph, this.linkEdgeList);
+      let xml = generateXml(
+        this.currentTask.taskName,
+        this.modelListInGraph,
+        this.modelInputInGraph,
+        this.modelLinkInGraph,
+        this.modelOutputInGraph,
+        this.linkEdgeList
+      );
       let file = new File([xml], this.currentTask.taskName + '.xml', {
         type: 'text/xml'
       });
@@ -382,9 +389,9 @@ export default {
     },
 
     changeDataCellByStatus(status, modelCell) {
-      let list = [...this.dataInputInGraph, ...this.dataLinkInGraph];
+      let list = [...this.modelInputInGraph, ...this.modelLinkInGraph];
       let inputList = list.filter(event => event.md5 == modelCell.md5);
-      let outputList = this.dataOutputInGraph.filter(event => event.md5 == modelCell.md5);
+      let outputList = this.modelOutputInGraph.filter(event => event.md5 == modelCell.md5);
       inputList.forEach(item => {
         this.changeCellStyleByStatus(status, item, true);
       });
@@ -425,8 +432,8 @@ export default {
 
     async putOutputToCell() {
       let actionResponse = this.record.taskInfo.modelActionList.completed;
-      // console.log(this.dataOutputInGraph);
-      this.dataOutputInGraph.forEach(async eventCell => {
+      // console.log(this.modelOutputInGraph);
+      this.modelOutputInGraph.forEach(async eventCell => {
         let outputActionList = actionResponse.filter(response => eventCell.linkModelCellId == response.id);
         let outputValueJson = outputActionList[0].outputData.outputs.filter(out => out.dataId == eventCell.eventId && out.state == eventCell.stateName);
         let content = outputValueJson[0].dataContent;
@@ -453,7 +460,15 @@ export default {
       let postJson = {
         name: this.currentTask.taskName + '-Instance',
         taskId: this.currentTask.id,
-        action: generateAction(this.currentTask.id, this.modelListInGraph, this.dataInputInGraph, this.dataLinkInGraph, this.dataOutputInGraph, this.linkEdgeList, 'taskInstance'),
+        action: generateAction(
+          this.currentTask.id,
+          this.modelListInGraph,
+          this.modelInputInGraph,
+          this.modelLinkInGraph,
+          this.modelOutputInGraph,
+          this.linkEdgeList,
+          'taskInstance'
+        ),
         status: 0,
         tid: tid
       };
@@ -463,7 +478,15 @@ export default {
 
     async updateTaskInstances() {
       let postJson = {
-        action: generateAction(this.currentTask.id, this.modelListInGraph, this.dataInputInGraph, this.dataLinkInGraph, this.dataOutputInGraph, this.linkEdgeList, 'taskInstance'),
+        action: generateAction(
+          this.currentTask.id,
+          this.modelListInGraph,
+          this.modelInputInGraph,
+          this.modelLinkInGraph,
+          this.modelOutputInGraph,
+          this.linkEdgeList,
+          'taskInstance'
+        ),
         status: 1
       };
       // console.log(postJson, this.currentTaskInstance.id);

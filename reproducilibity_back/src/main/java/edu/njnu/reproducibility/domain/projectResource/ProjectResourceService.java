@@ -6,10 +6,10 @@ import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
 import edu.njnu.reproducibility.domain.file.FileItemRepository;
 import edu.njnu.reproducibility.domain.file.FileItem;
-import edu.njnu.reproducibility.domain.projectResource.dto.AddResourceDTO;
-import edu.njnu.reproducibility.domain.projectResource.dto.UpdateResourceDataDTO;
-import edu.njnu.reproducibility.domain.projectResource.dto.UpdateResourceModelDTO;
-import edu.njnu.reproducibility.domain.projectResource.dto.UpdateResourceRelatedDataDTO;
+import edu.njnu.reproducibility.domain.projectResource.dto.AddProjectResourceDTO;
+import edu.njnu.reproducibility.domain.projectResource.dto.UpdateProjectResourceDataDTO;
+import edu.njnu.reproducibility.domain.projectResource.dto.UpdateProjectResourceModelDTO;
+import edu.njnu.reproducibility.domain.projectResource.dto.UpdateProjectResourceRelatedDataDTO;
 import edu.njnu.reproducibility.utils.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,26 +55,26 @@ public class ProjectResourceService {
         return fileItemList;
     }
 
-    public ProjectResource updateResourceData(String pid, UpdateResourceDataDTO updateResourceDataDTO) {
+    public ProjectResource updateResourceData(String pid, UpdateProjectResourceDataDTO updateProjectResourceDataDTO) {
         ProjectResource projectResource = projectResourceRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
-        updateResourceDataDTO.updateTo(projectResource);
+        updateProjectResourceDataDTO.updateTo(projectResource);
         return projectResourceRepository.save(projectResource);
     }
 
-    public ProjectResource updateResourceRelatedData(String pid, UpdateResourceRelatedDataDTO update) {
+    public ProjectResource updateResourceRelatedData(String pid, UpdateProjectResourceRelatedDataDTO update) {
         ProjectResource projectResource = projectResourceRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
         update.updateTo(projectResource);
         return projectResourceRepository.save(projectResource);
     }
 
-    public ProjectResource updateResourceModel(String pid, UpdateResourceModelDTO updateResourceModelDTO) {
+    public ProjectResource updateResourceModel(String pid, UpdateProjectResourceModelDTO updateProjectResourceModelDTO) {
         ProjectResource projectResource = projectResourceRepository.findFirstByProjectId(pid).orElseThrow(MyException::noObject);
-        updateResourceModelDTO.updateTo(projectResource);
+        updateProjectResourceModelDTO.updateTo(projectResource);
         return projectResourceRepository.save(projectResource);
     }
 
 
-    public ProjectResource saveResources(AddResourceDTO add, String userId) {
+    public ProjectResource saveResources(AddProjectResourceDTO add, String userId) {
         ProjectResource projectResource = new ProjectResource();
         add.convertTo(projectResource);
         projectResource.setUserId(userId);

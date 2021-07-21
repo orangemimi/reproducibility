@@ -58,8 +58,8 @@ export default {
   watch: {
     cell: {
       handler(val) {
-        if (hasProperty(val, 'id') && val.type == 'model') {
-          this.doi = val.doi;
+        if (hasProperty(val, 'id') && val.type == 'modelService') {
+          this.doi = val.nodeAttribute.doi;
           this.init();
         }
       },

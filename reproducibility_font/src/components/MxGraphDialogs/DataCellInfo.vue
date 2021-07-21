@@ -68,7 +68,14 @@
             </div>
             <div v-else>
               <!-- {{ dataItemList }} -->
-              <el-select v-if="role == 'builder'" v-model="selectDataId" clearable placeholder="Please select data" class="uploadContent" @change="changeSelectResource">
+              <el-select
+                v-if="role == 'builder'"
+                v-model="selectDataId"
+                clearable
+                placeholder="Please select data"
+                class="uploadContent"
+                @change="changeSelectResource"
+              >
                 <el-option v-for="(item, dataIndex) in dataItemList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
               </el-select>
               <div v-else>
@@ -78,7 +85,14 @@
           </vue-scroll>
         </div>
         <div v-else>
-          <el-select v-if="role == 'builder'" v-model="selectDataId" clearable placeholder="Please select data" class="uploadContent" @change="changeSelectResource">
+          <el-select
+            v-if="role == 'builder'"
+            v-model="selectDataId"
+            clearable
+            placeholder="Please select data"
+            class="uploadContent"
+            @change="changeSelectResource"
+          >
             <el-option v-for="(item, dataIndex) in dataItemList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
           </el-select>
           <div v-else>
@@ -95,7 +109,7 @@
 
 <script>
 import { mapState } from 'vuex';
-import { getProjectResourcesById } from '@/api/request';
+import { getDataItemsByProjectId } from '@/api/request';
 
 export default {
   props: {
@@ -109,7 +123,6 @@ export default {
       handler(val) {
         if (val != '') {
           this.currentEvent = val;
-          console.log(this.currentEvent);
           this.selectDataId = this.currentEvent.fileId;
           this.selectDataItem = {
             id: this.currentEvent.fileId,
@@ -166,7 +179,7 @@ export default {
     },
 
     async getResources() {
-      let data = await getProjectResourcesById(this.projectId);
+      let data = await getDataItemsByProjectId(this.projectId);
       console.log('resource', data);
       this.dataItemList = data; //id list
     },

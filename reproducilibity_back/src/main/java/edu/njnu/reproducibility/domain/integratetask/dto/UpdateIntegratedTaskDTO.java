@@ -16,8 +16,8 @@ public class UpdateIntegratedTaskDTO implements ToDomainConverter<IntegrateTask>
     String taskName;
     String taskDescription;
 
-    String xml;
-    String content;
+    String configuration;
+    String taskContent;
 
     Action action;
     String selectInstanceId;

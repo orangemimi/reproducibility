@@ -20,7 +20,16 @@
             </div>
           </div>
           <div class="drag" v-else>
-            <el-upload drag action :auto-upload="true" :show-file-list="false" ref="upload" :http-request="submitUpload" :on-remove="handleRemove" :on-success="handleSuccess">
+            <el-upload
+              drag
+              action
+              :auto-upload="true"
+              :show-file-list="false"
+              ref="upload"
+              :http-request="submitUpload"
+              :on-remove="handleRemove"
+              :on-success="handleSuccess"
+            >
               <i class="el-icon-upload"></i>
               <div class="el-upload__text">
                 Drag a file here to upload or
@@ -92,7 +101,14 @@
 
       <el-form-item label="Organization">
         <div class="tree">
-          <vue-tree-list @click="onClick" @delete-node="onDel" :model="treeData" default-tree-node-name="new node" default-leaf-node-name="new leaf" v-bind:default-expanded="false">
+          <vue-tree-list
+            @click="onClick"
+            @delete-node="onDel"
+            :model="treeData"
+            default-tree-node-name="new node"
+            default-leaf-node-name="new leaf"
+            v-bind:default-expanded="false"
+          >
             <template v-slot:leafNameDisplay="slotProps" class="content">
               <div class="name">
                 {{ slotProps.model.name }}

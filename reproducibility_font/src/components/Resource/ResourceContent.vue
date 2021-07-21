@@ -41,16 +41,8 @@
     </div>
 
     <!-- upload data -->
-    <el-dialog
-      :title="'Upload data to ' + projectInfo.name"
-      :visible.sync="uploadDataDialogShow"
-      width="40%"
-      :close-on-click-modal="false"
-    >
-      <data-upload-info
-        :projectInfo="projectInfo"
-        @uploadSuccess="uploadSuccess"
-      ></data-upload-info>
+    <el-dialog :title="'Upload data to ' + projectInfo.name" :visible.sync="uploadDataDialogShow" width="40%" :close-on-click-modal="false">
+      <data-upload-info :projectInfo="projectInfo" @uploadSuccess="uploadSuccess"></data-upload-info>
     </el-dialog>
   </div>
 </template>
@@ -99,11 +91,7 @@ export default {
   },
   computed: {
     dataItemListDirect() {
-      if (
-        this.dataItemList.length != 0 ||
-        this.dataItemList != null ||
-        this.dataItemList != undefined
-      ) {
+      if (this.dataItemList.length != 0 || this.dataItemList != null || this.dataItemList != undefined) {
         return this.dataItemList.filter(item => item.isDirect == true);
       } else {
         return [];
@@ -136,9 +124,7 @@ export default {
     async getSelectedData() {
       let data = await getResourcesById(this.projectId);
       let dataSelected = data;
-      this.multipleSelection = this.dataItemListDirect.filter(item =>
-        dataSelected.some(selection => selection.id == item.id)
-      );
+      this.multipleSelection = this.dataItemListDirect.filter(item => dataSelected.some(selection => selection.id == item.id));
       this.toggleSelection(this.multipleSelection);
     },
 

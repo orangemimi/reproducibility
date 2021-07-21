@@ -12,10 +12,10 @@
           <general-toolbar ref="codeBar" :showType="'rectangle'"></general-toolbar>
         </el-collapse-item>
         <el-collapse-item title="Models" name="models">
-          <model-item-toolbar ref="modelBar" @getModels="getModels"></model-item-toolbar>
+          <model-item-toolbar ref="modelService" @getModels="getModels"></model-item-toolbar>
         </el-collapse-item>
         <el-collapse-item title="Data Service Methods" name="dataServices">
-          <data-service-toolbar ref="dataServiceBar" @getDataServices="getDataServices"></data-service-toolbar>
+          <data-service-toolbar ref="dataService" @getDataServices="getDataServices"></data-service-toolbar>
         </el-collapse-item>
         <!-- <el-collapse-item title="Related Datas" name="modelRelatedDatas">
           <div v-if="modelDoubleClick">
@@ -34,10 +34,10 @@
         <data-cell-info :cell="dataNode" @currentEventWithFile="currentEventWithFile"></data-cell-info>
       </el-dialog>
       <el-dialog :visible.sync="codeDoubleClick" width="50%" title="Configuration" destroy-on-close :close-on-click-modal="false">
-        <data-service-code-configuration></data-service-code-configuration>
+        <data-service-code-configuration @selectItemListToGraph="selectItemListToGraph"></data-service-code-configuration>
       </el-dialog>
       <el-dialog :visible.sync="dataServiceDoubleClick" width="50%" title="Configuration" destroy-on-close :close-on-click-modal="false">
-        <data-service-configuration :cell="currentCell" @selectServiceListToGraph="selectServiceListToGraph"></data-service-configuration>
+        <data-service-configuration :cell="currentCell" @selectItemListToGraph="selectItemListToGraph"></data-service-configuration>
       </el-dialog>
       <!-- <el-drawer title="Configuration" :visible.sync="codeDoubleClick" size="45%">
         <el-col :span="22" :offset="1">
@@ -55,13 +55,14 @@ import modelItemToolbar from '_com/MxGraphBars/ModelItemToolbar';
 import dataItemToolbar from '_com/MxGraphDialogs/ModelItemConfiguration';
 import generalToolbar from '_com/MxGraphBars/GeneralToolbar';
 import dataServiceToolbar from '_com/MxGraphBars/DataServiceToolbar';
-import dataCellInfo from '_com/DataCellInfo/Info';
-import { initSetTimeOut } from '@/utils/utils';
+
+import { initSetTimeOut, hasProperty } from '@/utils/utils';
 import { generalList } from '_com/MxGraphBars/toolbar';
 import { differCellStyle, getCellStyle } from './configuration';
 import mxgraph from '_com/MxGraph/index';
 import dataServiceCodeConfiguration from '_com/MxGraphDialogs/DataServiceCodeConfiguration';
 import dataServiceConfiguration from '_com/MxGraphDialogs/DataServiceConfiguration';
+import dataCellInfo from '_com/MxGraphDialogs/DataCellInfo';
 const { mxUtils, mxEvent } = mxgraph;
 
 export default {
@@ -132,8 +133,8 @@ export default {
 
       this.initLeftBar('generalBar');
       this.initLeftBar('codeBar');
-      this.initLeftBar('modelBar');
-      this.initLeftBar('dataServiceBar');
+      this.initLeftBar('modelService');
+      this.initLeftBar('dataService');
     },
 
     getModels(val) {
@@ -147,63 +148,70 @@ export default {
     },
 
     //--------------初始化 bar的dataItem的内容--由 data-item-toolbar组件返回
-    getInAndOut(input, output) {
-      // this.state = val;
+    // getInAndOut(input, output) {
+    //   // this.state = val;
 
-      this.inputItemList = input;
-      this.outputItemList = output;
-      this.initLeftBar('inputBar');
-      this.initLeftBar('outputBar');
-    },
+    //   this.inputItemList = input;
+    //   this.outputItemList = output;
+    //   this.initLeftBar('modelServiceInput');
+    //   this.initLeftBar('modelServiceOutput');
+    // },
 
     selectItemListToGraph(val) {
+      console.log(val);
       val.forEach((item, index) => {
-        let panel = 'inputBar';
+        let panel = 'modelServiceInput';
         if (item.type == 'input') {
-          panel = 'inputBar';
+          panel = 'modelServiceInput';
+          this.getSelectItemStyleAddToGraph(panel, item, this.currentCell.geometry.x - 100 + 200 * index, this.currentCell.geometry.y - 120);
         }
         if (item.type == 'output') {
-          panel = 'outputBar';
+          panel = 'modelServiceOutput';
+          this.getSelectItemStyleAddToGraph(panel, item, this.currentCell.geometry.x - 100 + 200 * index, this.currentCell.geometry.y + 120);
         }
-        let styleIn = differCellStyle(panel);
-        let cellStyle = getCellStyle(styleIn, item);
-        this.addCell(item, this.currentCell.geometry.x - 100 + 200 * index, this.currentCell.geometry.y - 120, panel, cellStyle);
+        if (hasProperty(item, 'nodeType') && (item.nodeType == 'input' || item.nodeType == 'parameter')) {
+          panel = 'dataServiceInput';
+          this.getSelectItemStyleAddToGraph(panel, item, this.currentCell.geometry.x - 100 + 200 * index, this.currentCell.geometry.y - 120);
+        }
+        if (hasProperty(item, 'nodeType') && item.nodeType == 'output') {
+          panel = 'dataServiceOutput';
+          this.getSelectItemStyleAddToGraph(panel, item, this.currentCell.geometry.x - 100 + 200 * index, this.currentCell.geometry.y + 120);
+        }
       });
     },
 
+    getSelectItemStyleAddToGraph(panel, item, x, y) {
+      let styleIn = differCellStyle(panel);
+      let cellStyle = getCellStyle(styleIn, item);
+      this.addCell(item, x, y, panel, cellStyle);
+    },
+
     initLeftBar(panel) {
-      let refType;
       let barRef; //对应各个Bar组件中的ref
       let barItemList = [];
       let styleIn = differCellStyle(panel);
 
-      if (panel == 'modelBar') {
-        refType = 'modelBar';
+      if (panel == 'modelService') {
         barRef = 'modelItemList';
         barItemList = this.modelItemList;
-      } else if (panel == 'dataServiceBar') {
-        refType = 'dataServiceBar';
+      } else if (panel == 'dataService') {
         barRef = 'dataServiceItemList';
         barItemList = this.dataServiceItemList;
-      } else if (panel == 'inputBar') {
-        refType = 'dataItemBar';
+      } else if (panel == 'modelServiceInput') {
         barRef = 'inputItemList';
         barItemList = this.inputItemList;
-      } else if (panel == 'outputBar') {
-        refType = 'dataItemBar';
+      } else if (panel == 'modelServiceOutput') {
         barRef = 'outputItemList';
         barItemList = this.outputItemList;
       } else if (panel == 'generalBar') {
-        refType = 'generalBar';
         barRef = 'general';
         barItemList = this.rhombusList;
       } else if (panel == 'codeBar') {
-        refType = 'codeBar';
         barRef = 'code';
         barItemList = this.rectangleList;
       }
 
-      const domArray = this.$refs[refType].$refs[barRef];
+      const domArray = this.$refs[panel].$refs[barRef];
 
       if (!(domArray instanceof Array) || domArray.length <= 0) {
         return;
@@ -250,12 +258,15 @@ export default {
           this.graph.getModel().setStyle(vertex, styleObj);
         }, 1000);
 
-        if (type == 'modelBar') {
+        vertex.nodeAttribute = {};
+
+        if (type == 'modelService') {
           vertex.name = item.name;
-          vertex.doi = item.doi;
-          vertex.type = 'model';
+          vertex.type = type;
           vertex.iterationNum = '1';
-          vertex.md5 = item.md5;
+          vertex.nodeAttribute.doi = item.doi;
+          vertex.nodeAttribute.md5 = item.md5;
+          vertex.nodeAttribute.type = item.type; //service
         }
         if (type == 'codeBar') {
           vertex.type = 'code';
@@ -263,14 +274,14 @@ export default {
         if (type == 'generalBar') {
           vertex.type = 'general';
         }
-        if (type == 'dataServiceBar') {
-          vertex.type = 'dataService';
+        if (type == 'dataService') {
+          vertex.type = type;
           vertex.name = item.name;
-          vertex.dataServiceId = item.dataServiceId;
-          vertex.token = item.token;
-          vertex.dataServiceType = item.type;
+          vertex.nodeAttribute.dataServiceId = item.dataServiceId;
+          vertex.nodeAttribute.token = item.token;
+          vertex.nodeAttribute.type = item.type; //Processing
         }
-        if (type == 'inputBar' || type == 'outputBar') {
+        if (type == 'modelServiceInput' || type == 'modelServiceOutput') {
           if (this.selectionCells.length == 0) {
             this.$notify.error({
               title: 'Error',
@@ -283,21 +294,49 @@ export default {
           let selectionCell = this.selectionCells[0];
 
           vertex.name = item.name;
-          vertex.eventId = item.eventId;
+          vertex.type = type; //modelServiceInput or modelServiceOutput
           vertex.description = item.description; //event description
-          vertex.datasetItem = item.datasetItem;
-          vertex.stateId = item.stateId; //event description
-          vertex.stateName = item.stateName;
-          vertex.stateDescription = item.stateDescription;
-          vertex.md5 = item.md5;
-          vertex.doi = item.doi;
-          vertex.optional = item.optional;
+          vertex.nodeAttribute.eventId = item.eventId;
+          vertex.nodeAttribute.eventDescription = item.description;
+          vertex.nodeAttribute.eventName = item.name;
+          vertex.nodeAttribute.datasetItem = item.datasetItem;
+          vertex.nodeAttribute.stateId = item.stateId; //event description
+          vertex.nodeAttribute.stateName = item.stateName;
+          vertex.nodeAttribute.stateDescription = item.stateDescription;
+          vertex.nodeAttribute.md5 = item.md5;
+          vertex.nodeAttribute.doi = item.doi;
+          vertex.nodeAttribute.optional = item.optional;
+          vertex.nodeAttribute.type = item.type;
           vertex.linkModelCellId = selectionCell.id; //放置输入输出node时 与其关联的model的nodeId
-          vertex.type = item.type; //input or output
 
-          if (type == 'inputBar') {
+          if (type == 'modelServiceInput') {
             this.addEdge(vertex, selectionCell);
-          } else if (type == 'outputBar') {
+          } else if (type == 'modelServiceOutput') {
+            this.addEdge(selectionCell, vertex);
+          }
+        }
+        if (type == 'dataServiceInput' || type == 'dataServiceOutput') {
+          if (this.selectionCells.length == 0) {
+            this.$notify.error({
+              title: 'Error',
+              message: 'You have not select any model'
+            });
+            return;
+          }
+
+          let selectionCell = this.selectionCells[0];
+
+          vertex.name = item.name;
+          vertex.type = type; //panel
+          vertex.description = item.description;
+          vertex.nodeAttribute.dataServiceId = item.dataServiceId;
+          vertex.nodeAttribute.token = item.token;
+          vertex.nodeAttribute.type = item.type; //Processing
+          vertex.linkModelCellId = selectionCell.id; //放置输入输出node时 与其关联的model的nodeId
+
+          if (type == 'dataServiceInput') {
+            this.addEdge(vertex, selectionCell);
+          } else if (type == 'dataServiceOutput') {
             this.addEdge(selectionCell, vertex);
           }
         }
@@ -316,12 +355,11 @@ export default {
         // DOUBLE_CLICK
         let cell = evt.properties.cell;
         let clickModelType = cell.type;
-        if (clickModelType == 'model') {
+        if (clickModelType == 'modelService') {
           this.modelDoubleClick = true;
           this.domFlag++;
           await initSetTimeOut();
           this.currentCell = cell;
-          this.$set(this, 'currentCell', cell);
           this.activeNames.push('modelRelatedDatas');
           this.dataDoubleClick = this.dataClick = this.modelClick = this.codeDoubleClick = this.dataServiceDoubleClick = false;
         } else if (clickModelType == 'dataService') {
@@ -349,7 +387,7 @@ export default {
 
           const clickModelType = cell.type;
 
-          if (clickModelType == 'model') {
+          if (clickModelType == 'modelService') {
             // 使用 mxGraph 事件中心，触发自定义事件
             // this.currentCell = cell;
             this.modelClick = true;
@@ -377,17 +415,20 @@ export default {
         } else if (cell.edge) {
           //判断是否是link to next dataitem
           let linkCell = cell.target;
-          if (linkCell.type == 'input') {
-            this.graph.getModel().beginUpdate();
-            try {
-              linkCell.type = 'link';
 
-              let style = getCellStyle(differCellStyle(linkCell.type), linkCell);
-
-              this.graph.getModel().setStyle(linkCell, style);
-            } finally {
-              this.graph.getModel().endUpdate();
+          this.graph.getModel().beginUpdate();
+          try {
+            if (linkCell.type == 'modelServiceInput') {
+              linkCell.type = 'modelServiceLink';
             }
+            if (linkCell.type == 'dataServiceInput') {
+              linkCell.type = 'dataServiceLink';
+            }
+            let style = getCellStyle(differCellStyle(linkCell.type), linkCell);
+
+            this.graph.getModel().setStyle(linkCell, style);
+          } finally {
+            this.graph.getModel().endUpdate();
           }
         }
       });
@@ -413,9 +454,6 @@ export default {
       } finally {
         this.graph.getModel().endUpdate();
       }
-    },
-    selectServiceListToGraph(val) {
-      console.log(val);
     }
   },
 

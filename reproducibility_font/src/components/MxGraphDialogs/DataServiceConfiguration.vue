@@ -89,16 +89,38 @@ export default {
 
     async getServiceInfo() {
       // ${serviceId}/${token}/${type}
-      let { data } = await getDataServiceInfo(this.cell.dataServiceId, this.cell.token, this.cell.dataServiceType); //获得模型所有信息
+      let { data } = await getDataServiceInfo(this.cell.nodeAttribute.dataServiceId, this.cell.nodeAttribute.token, this.cell.nodeAttribute.type); //获得模型所有信息
       let metaData = data.metaDetail;
-      this.stateListInput = metaData.input;
-      this.stateListOutput = metaData.output;
-      this.stateListParameter = metaData.parameter;
+      this.stateListInput = metaData.input.map(element => {
+        element.nodeType = 'input';
+        element.dataServiceId = this.cell.nodeAttribute.dataServiceId;
+        element.token = this.cell.nodeAttribute.token;
+        element.type = this.cell.nodeAttribute.type; //Processing
+        element.stateName = this.cell.name;
+        return element;
+      });
+      this.stateListOutput = metaData.output.map(element => {
+        element.nodeType = 'output';
+        element.dataServiceId = this.cell.nodeAttribute.dataServiceId;
+        element.token = this.cell.nodeAttribute.token;
+        element.type = this.cell.nodeAttribute.type; //Processing
+        element.stateName = this.cell.name;
+        return element;
+      });
+      this.stateListParameter = metaData.parameter.map(element => {
+        element.nodeType = 'parameter';
+        element.dataServiceId = this.cell.nodeAttribute.dataServiceId;
+        element.token = this.cell.nodeAttribute.token;
+        element.type = this.cell.nodeAttribute.type; //Processing
+        element.stateName = this.cell.name;
+        return element;
+      });
     },
 
     addSelectItem(item) {
+      console.log('selecty', item);
       if (hasProperty(item, 'isSelect') && item.isSelect) {
-        this.selectItemListToGraph.splice(this.selectItemListToGraph.findIndex(arrItem => arrItem.eventId == item.eventId));
+        this.selectItemListToGraph.splice(this.selectItemListToGraph.findIndex(arrItem => arrItem.name == item.name));
       } else {
         item.isSelect = true;
         this.selectItemListToGraph.push(item);

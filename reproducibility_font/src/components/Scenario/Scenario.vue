@@ -65,7 +65,7 @@ export default {
       isIntegrateTaskShow: false,
       isNoteTaskShow: false,
       taskInfo: { type: 'integrateTask' },
-      taskInfoInit: {},
+      taskInfoInit: { content: '' },
       taskList: [],
       content: '', //task selected mxgraph
       typeOptions: [
@@ -90,7 +90,9 @@ export default {
         if (data.type == 'integrateTask') {
           this.isNoteTaskShow = this.isNewTaskShow = false;
           this.isIntegrateTaskShow = true;
-          this.taskInfoInit = await getIntegrateTaskByTaskId(data.selectTaskId);
+          let data2 = await getIntegrateTaskByTaskId(data.selectTaskId);
+          console.log(' this.taskInfoInit2', data2);
+          this.$set(this, 'taskInfoInit', data2);
           console.log(' this.taskInfoInit', this.taskInfoInit);
         }
         if (data.type == 'notebook') {

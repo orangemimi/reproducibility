@@ -5,7 +5,7 @@ import mxgraph from '_com/MxGraph/index';
 
 const { mxConstants } = mxgraph;
 
-export function generateAction(currentTaskId, models, dataInputInGraph, dataLinkInGraph, dataOutputInGraph, linkEdgeList, type) {
+export function generateAction(currentTaskId, models, modelInputInGraph, modelLinkInGraph, modelOutputInGraph, linkEdgeList, type) {
   let action = {
     taskId: currentTaskId,
     modelItemList: [],
@@ -16,21 +16,21 @@ export function generateAction(currentTaskId, models, dataInputInGraph, dataLink
   };
 
   //get same model input & output
-  let allInputList = [...dataInputInGraph, ...dataLinkInGraph];
-  action.modelItemList = generateModelItemList(models, allInputList, dataOutputInGraph, linkEdgeList);
+  let allInputList = [...modelInputInGraph, ...modelLinkInGraph];
+  action.modelItemList = generateModelItemList(models, allInputList, modelOutputInGraph, linkEdgeList);
   //dataItemList
   if (type == 'task') {
-    action.dataItemList = generateInputDataItemList(dataInputInGraph);
+    action.dataItemList = generateInputDataItemList(modelInputInGraph);
   }
   if (type == 'taskInstance') {
-    action.dataItemList = [...generateInputDataItemList(dataInputInGraph), ...generateOutputDataItemList(dataOutputInGraph)];
+    action.dataItemList = [...generateInputDataItemList(modelInputInGraph), ...generateOutputDataItemList(modelOutputInGraph)];
   }
 
   action.dependencyList = generateDependencyList(linkEdgeList);
   return action;
 }
 
-function generateModelItemList(models, allInputList, dataOutputInGraph, linkEdgeList) {
+function generateModelItemList(models, allInputList, modelOutputInGraph, linkEdgeList) {
   let modelList = [];
   //拼接集成模型中的models部分
   // debugger;
@@ -46,7 +46,7 @@ function generateModelItemList(models, allInputList, dataOutputInGraph, linkEdge
     };
 
     let inputList = allInputList.filter(event => event.md5 == model.md5);
-    let outputList = dataOutputInGraph.filter(event => event.md5 == model.md5);
+    let outputList = modelOutputInGraph.filter(event => event.md5 == model.md5);
 
     let stateIdList = [];
     if (inputList.length != 0) {
@@ -117,8 +117,8 @@ function generateModelItemList(models, allInputList, dataOutputInGraph, linkEdge
   return modelList;
 }
 
-function generateInputDataItemList(dataInputInGraph) {
-  let inputList = dataInputInGraph.filter(event => Object.prototype.hasOwnProperty.call(event, 'value') && event.value != '' && event.value != undefined);
+function generateInputDataItemList(modelInputInGraph) {
+  let inputList = modelInputInGraph.filter(event => Object.prototype.hasOwnProperty.call(event, 'value') && event.value != '' && event.value != undefined);
   let dataItemList = [];
 
   inputList.forEach(item => {
@@ -135,8 +135,8 @@ function generateInputDataItemList(dataInputInGraph) {
   return dataItemList;
 }
 
-function generateOutputDataItemList(dataOutputInGraph) {
-  let outputList = dataOutputInGraph.filter(event => Object.prototype.hasOwnProperty.call(event, 'value') && event.value != '' && event.value != undefined);
+function generateOutputDataItemList(modelOutputInGraph) {
+  let outputList = modelOutputInGraph.filter(event => Object.prototype.hasOwnProperty.call(event, 'value') && event.value != '' && event.value != undefined);
   let dataItemList = [];
 
   outputList.forEach(item => {
@@ -201,7 +201,18 @@ function generateDependencyList(linkEdgeList) {
   });
 }
 
-export function generateXml(taskName, modelListInGraph, dataInputInGraph, dataLinkInGraph, dataOutputInGraph, linkEdgeList) {
+export function generateXml(
+  taskName,
+  modelListInGraph,
+  modelInputInGraph,
+  modelLinkInGraph,
+  modelOutputInGraph,
+  linkEdgeList,
+  dataServiceListInGraph,
+  dataServiceInputInGraph,
+  dataServiceLinkInGraph,
+  dataServiceOutputListInGraph
+) {
   let version = '1.0';
   let uid = generateGUID();
   let name = taskName;
@@ -212,7 +223,7 @@ export function generateXml(taskName, modelListInGraph, dataInputInGraph, dataLi
 
   //没有md5-->只有doi  xml += `<Model name='${model.name}' pid='${model.md5}' description='' doi='${model.doi}'/>`;
   modelListInGraph.forEach(model => {
-    xml += `<Model name='${model.name}' description='' pid='${model.md5}'/>`;
+    xml += `<Model name='${model.name}' description='' pid='${model.nodeAttribute.md5}'/>`;
   });
   xml += `</Models>`;
 
@@ -221,21 +232,21 @@ export function generateXml(taskName, modelListInGraph, dataInputInGraph, dataLi
 
   modelListInGraph.forEach(model => {
     xml += `<ModelAction id='${model.id}' name = '${model.name}' description = ''
-    model='${model.md5}' iterationNum='${model.iterationNum}'>`;
+    model='${model.nodeAttribute.md5}' iterationNum='${model.iterationNum}'>`;
 
-    let list = [...dataInputInGraph, ...dataLinkInGraph];
-    let inputList = list.filter(event => event.md5 == model.md5);
-    let outputList = dataOutputInGraph.filter(event => event.md5 == model.md5);
+    let list = [...modelInputInGraph, ...modelLinkInGraph];
+    let inputList = list.filter(event => event.nodeAttribute.md5 == model.nodeAttribute.md5);
+    let outputList = modelOutputInGraph.filter(event => event.nodeAttribute.md5 == model.nodeAttribute.md5);
 
     xml += `<Inputs>`;
     inputList.forEach(item => {
-      xml += `<DataConfiguration id='${item.eventId}' state='${item.stateName}' event='${item.name}'>`;
+      xml += `<DataConfiguration id='${item.nodeAttribute.eventId}' state='${item.nodeAttribute.stateName}' event='${item.name}'>`;
 
-      if (item.type == 'input') {
+      if (item.type == 'modelServiceInput') {
         xml += `<Data value='${item.value}' type="url"/>`;
-      } else if (item.type == 'link') {
-        let link = linkEdgeList.filter(el => el.target.eventId == item.eventId);
-        xml += `<Data link='${link[0].source.eventId}' type="link"/>`;
+      } else if (item.type == 'modelServiceLink') {
+        let link = linkEdgeList.filter(el => el.target.nodeAttribute.eventId == item.nodeAttribute.eventId);
+        xml += `<Data link='${link[0].source.nodeAttribute.eventId}' type="link"/>`;
       }
       xml += `</DataConfiguration>`;
     });
@@ -244,12 +255,56 @@ export function generateXml(taskName, modelListInGraph, dataInputInGraph, dataLi
     xml += `<Outputs>`;
 
     outputList.forEach(item => {
-      xml += `<DataConfiguration id='${item.eventId}' state='${item.stateName}' event='${item.name}' />`;
+      xml += `<DataConfiguration id='${item.nodeAttribute.eventId}' state='${item.nodeAttribute.stateName}' event='${item.name}' />`;
     });
 
     xml += '</Outputs></ModelAction>';
   });
-  xml += '</ModelActions></TaskConfiguration>';
+
+  //data service
+  //data service
+  //data service
+  //data service
+  //data service
+  xml += '</ModelActions><ProcessingTools>';
+  dataServiceListInGraph.forEach(service => {
+    xml += `<ProcessingTool name='${service.name}' description='${service.description}' service='${service.nodeAttribute.dataServiceId}'  source='internal'/>`;
+  });
+  xml += `</ProcessingTools><DataProcessings>`;
+
+  dataServiceListInGraph.forEach(service => {
+    xml += `<DataProcessing id='${service.id}' name = '${service.name}' description = ''
+    type='dataService' service='${service.nodeAttribute.dataServiceId}'>`;
+
+    let list = [...dataServiceInputInGraph, ...dataServiceLinkInGraph];
+    let inputList = list.filter(event => event.nodeAttribute.dataServiceId == service.nodeAttribute.dataServiceId);
+    let outputList = dataServiceOutputListInGraph.filter(event => event.nodeAttribute.dataServiceId == service.nodeAttribute.dataServiceId);
+
+    xml += `<Inputs>`;
+    inputList.forEach(item => {
+      xml += `<DataConfiguration id='${item.id}' state='${item.nodeAttribute.stateName}' event='${item.name}'>`;
+
+      if (item.type == 'dataServiceInput') {
+        xml += `<Data value='${item.value}' type="url"/>`;
+      } else if (item.type == 'dataServiceLink') {
+        let link = linkEdgeList.filter(el => el.target.id == item.id);
+        xml += `<Data link='${link[0].source.id}' type="link"/>`;
+      }
+      xml += `</DataConfiguration>`;
+    });
+
+    xml += `</Inputs>`;
+    xml += `<Outputs>`;
+
+    outputList.forEach(item => {
+      xml += `<DataConfiguration id='${item.id}' state='${item.nodeAttribute.stateName}' event='${item.name}' />`;
+    });
+
+    xml += '</Outputs></DataProcessing>';
+  });
+  xml += '</DataProcessings>';
+
+  xml += '</TaskConfiguration>';
   console.log(xml);
   return xml;
 }
@@ -268,7 +323,7 @@ function generateGUID() {
 }
 
 export function differCellStyle(type) {
-  if (type == 'modelBar' || type == 'dataServiceBar') {
+  if (type == 'modelService' || type == 'dataService') {
     return {
       fontColor: '#f6f6f6',
       fillColor: '#07689f',
@@ -276,16 +331,16 @@ export function differCellStyle(type) {
       shape: 'rectangle'
     };
   }
-  if (type == 'inputBar') {
+  if (type == 'modelServiceInput' || type == 'dataServiceInput') {
     return {
-      fillColor: '#fff8f8',
+      fillColor: '#FFF0F0',
       fontColor: '#24292E',
       strokeColor: '',
       shape: 'parallelogram',
       fixedSize: 1
     };
   }
-  if (type == 'link') {
+  if (type == 'modelServiceLink' || type == 'dataServiceLink') {
     return {
       fillColor: 'rgb(255, 220, 220)',
       fontColor: '#24292E',
@@ -294,7 +349,7 @@ export function differCellStyle(type) {
       fixedSize: 1
     };
   }
-  if (type == 'outputBar') {
+  if (type == 'modelServiceOutput' || type == 'dataServiceOutput') {
     return {
       fillColor: '#b9e6d3', //b9e6d3 f4d160
       fontColor: '#24292E',

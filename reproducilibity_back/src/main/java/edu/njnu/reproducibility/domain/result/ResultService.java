@@ -2,24 +2,13 @@ package edu.njnu.reproducibility.domain.result;
 
 
 import edu.njnu.reproducibility.common.exception.MyException;
-import edu.njnu.reproducibility.common.untils.JsonResult;
-import edu.njnu.reproducibility.common.untils.ResultUtils;
-import edu.njnu.reproducibility.domain.file.FileItem;
 import edu.njnu.reproducibility.domain.file.FileItemRepository;
-import edu.njnu.reproducibility.domain.projectResource.ProjectResource;
-import edu.njnu.reproducibility.domain.projectResource.dto.AddResourceDTO;
-import edu.njnu.reproducibility.domain.projectResource.dto.UpdateResourceDataDTO;
-import edu.njnu.reproducibility.domain.projectResource.dto.UpdateResourceModelDTO;
-import edu.njnu.reproducibility.domain.projectResource.dto.UpdateResourceRelatedDataDTO;
 import edu.njnu.reproducibility.domain.result.dto.AddResultCollectionDTO;
 import edu.njnu.reproducibility.utils.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @Author Zhiyi

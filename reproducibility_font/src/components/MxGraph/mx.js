@@ -2,16 +2,7 @@ import mxgraph from './index';
 import FileSaver from 'file-saver';
 // import _ from 'lodash';
 
-const {
-  mxConstants,
-  mxCellState,
-  mxCellEditor,
-  mxEvent,
-  mxRubberband,
-  mxUndoManager,
-  mxCodec,
-  mxUtils
-} = mxgraph;
+const { mxConstants, mxCellState, mxCellEditor, mxEvent, mxRubberband, mxUndoManager, mxCodec, mxUtils } = mxgraph;
 
 export default {
   data() {
@@ -221,11 +212,11 @@ export default {
     },
 
     _getCells() {
-      // this.modelListInGraph = this.dataOutputInGraph = this.dataInputInGraph = this.dataLinkInGraph = [];
+      // this.modelListInGraph = this.modelOutputInGraph = this.modelInputInGraph = this.modelLinkInGraph = [];
       let modelListInGraph = [];
-      let dataOutputInGraph = [];
-      let dataInputInGraph = [];
-      let dataLinkInGraph = [];
+      let modelOutputInGraph = [];
+      let modelInputInGraph = [];
+      let modelLinkInGraph = [];
       // let dataLineInputInGrapg = [];
 
       Object.values(this.graph.getModel().cells).forEach(cell => {
@@ -234,24 +225,22 @@ export default {
             modelListInGraph.push(cell);
           } else if (cell.style.includes('dataOutputType')) {
             cell.type = 'output';
-            dataOutputInGraph.push(cell);
+            modelOutputInGraph.push(cell);
           } else if (cell.style.includes('dataInputType')) {
             cell.type = 'input';
-            dataInputInGraph.push(cell);
+            modelInputInGraph.push(cell);
           }
         }
       });
 
       // console.log(this.graph.getModel().cells);
-      let links = Object.values(this.graph.getModel().cells).filter(cell =>
-        Object.prototype.hasOwnProperty.call(cell, 'edge')
-      );
+      let links = Object.values(this.graph.getModel().cells).filter(cell => Object.prototype.hasOwnProperty.call(cell, 'edge'));
       this.linkEdgeList = links;
 
       this.modelListInGraph = modelListInGraph;
-      this.dataOutputInGraph = dataOutputInGraph;
-      this.dataInputInGraph = dataInputInGraph;
-      this.dataLinkInGraph = dataLinkInGraph;
+      this.modelOutputInGraph = modelOutputInGraph;
+      this.modelInputInGraph = modelInputInGraph;
+      this.modelLinkInGraph = modelLinkInGraph;
     }
   }
 };

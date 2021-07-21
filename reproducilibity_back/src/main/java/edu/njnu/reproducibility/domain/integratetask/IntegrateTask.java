@@ -23,8 +23,8 @@ public class IntegrateTask extends BaseEntity {
     String projectId;//project id
     String creator;//creator
 
-    String xml;//wzh配置文件
-    String content;//mxgraph or html
+    String configuration;//wzh配置文件
+    String taskContent;//mxgraph or html
     Action action;
 
     String selectInstanceId; //mxgraph+note

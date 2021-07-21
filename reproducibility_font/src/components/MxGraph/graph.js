@@ -2,16 +2,7 @@ import mxgraph from './index';
 import FileSaver from 'file-saver';
 // import _ from 'lodash';
 
-const {
-  mxConstants,
-  mxCellState,
-  mxCellEditor,
-  mxEvent,
-  mxRubberband,
-  mxUndoManager,
-  mxCodec,
-  mxUtils
-} = mxgraph;
+const { mxConstants, mxCellState, mxCellEditor, mxEvent, mxRubberband, mxUndoManager, mxCodec, mxUtils } = mxgraph;
 
 function _setDefaultConfig(vueItem) {
   //允许连线
@@ -204,11 +195,11 @@ export function exportGraph(vueItem) {
 }
 
 export function _getCells(vueItem) {
-  // vueItem.modelListInGraph = vueItem.dataOutputInGraph = vueItem.dataInputInGraph = vueItem.dataLinkInGraph = [];
+  // vueItem.modelListInGraph = vueItem.modelOutputInGraph = vueItem.modelInputInGraph = vueItem.modelLinkInGraph = [];
   let modelListInGraph = [];
-  let dataOutputInGraph = [];
-  let dataInputInGraph = [];
-  let dataLinkInGraph = [];
+  let modelOutputInGraph = [];
+  let modelInputInGraph = [];
+  let modelLinkInGraph = [];
   // let dataLineInputInGrapg = [];
 
   Object.values(vueItem.graph.getModel().cells).forEach(cell => {
@@ -217,24 +208,22 @@ export function _getCells(vueItem) {
         modelListInGraph.push(cell);
       } else if (cell.style.includes('dataOutputType')) {
         cell.type = 'output';
-        dataOutputInGraph.push(cell);
+        modelOutputInGraph.push(cell);
       } else if (cell.style.includes('dataInputType')) {
         cell.type = 'input';
-        dataInputInGraph.push(cell);
+        modelInputInGraph.push(cell);
       }
     }
   });
 
   // console.log(vueItem.graph.getModel().cells);
-  let links = Object.values(vueItem.graph.getModel().cells).filter(cell =>
-    Object.prototype.hasOwnProperty.call(cell, 'edge')
-  );
+  let links = Object.values(vueItem.graph.getModel().cells).filter(cell => Object.prototype.hasOwnProperty.call(cell, 'edge'));
   vueItem.linkEdgeList = links;
 
   vueItem.modelListInGraph = modelListInGraph;
-  vueItem.dataOutputInGraph = dataOutputInGraph;
-  vueItem.dataInputInGraph = dataInputInGraph;
-  vueItem.dataLinkInGraph = dataLinkInGraph;
+  vueItem.modelOutputInGraph = modelOutputInGraph;
+  vueItem.modelInputInGraph = modelInputInGraph;
+  vueItem.modelLinkInGraph = modelLinkInGraph;
 }
 
 // function importGraph(xmlTxt) {
