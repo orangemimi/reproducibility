@@ -28,18 +28,17 @@
       <el-divider class="eventDivider"></el-divider>
     </el-row>
     <el-row>
-      <div v-if="currentEvent.type == 'output'">
+      <div v-if="currentEvent.type == 'modelServiceOutput' || currentEvent.type == 'dataServiceOutput'">
         <div v-if="currentEvent.value != '' && currentEvent.value != undefined">
           <el-button>DownLoad</el-button>
         </div>
         <div v-else>Please run this task to get the output!</div>
       </div>
-      <div v-else-if="currentEvent.type == 'link'">
+      <div v-else-if="currentEvent.type == 'modelServiceLink'">
         Link to the output
       </div>
-      <div v-else-if="currentEvent.type == 'input'">
-        {{ selectDataId }}
-        <div v-if="currentEvent.datasetItem != undefined && currentEvent.datasetItem.type == `internal`" class="uploadContent">
+      <div v-else-if="currentEvent.type == 'modelServiceInput'">
+        <div v-if="currentEvent.nodeAttribute.datasetItem != undefined && currentEvent.nodeAttribute.datasetItem.type == `internal`" class="uploadContent">
           <vue-scroll style="height: 100%" :ops="ops">
             <div v-if="filterEvent">
               <el-table border :data="filterEvent[0].UdxNode" size="mini" class="table" style="width: 100%">
@@ -103,6 +102,26 @@
           <el-button size="small" type="success" round @click="submitResource">Submit</el-button>
         </div> -->
       </div>
+
+      <div v-else-if="currentEvent.type == 'dataServiceInput'">
+        <el-select
+          v-if="role == 'builder'"
+          v-model="selectDataId"
+          clearable
+          placeholder="Please select data"
+          class="uploadContent"
+          @change="changeSelectResource"
+        >
+          <el-option v-for="(item, dataIndex) in dataItemList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
+        </el-select>
+        <div v-else>
+          <el-button>{{ selectDataItem.name }}</el-button>
+        </div>
+
+        <!-- <div>
+          <el-button size="small" type="success" round @click="submitResource">Submit</el-button>
+        </div> -->
+      </div>
     </el-row>
   </div>
 </template>
@@ -110,6 +129,7 @@
 <script>
 import { mapState } from 'vuex';
 import { getDataItemsByProjectId } from '@/api/request';
+import { hasProperty } from '@/utils/utils';
 
 export default {
   props: {
@@ -123,12 +143,10 @@ export default {
       handler(val) {
         if (val != '') {
           this.currentEvent = val;
-          this.selectDataId = this.currentEvent.fileId;
-          this.selectDataItem = {
-            id: this.currentEvent.fileId,
-            name: this.currentEvent.fileName,
-            url: this.currentEvent.value
-          };
+          if (hasProperty(val, 'dataResourceRelated')) {
+            this.selectDataId = this.currentEvent.dataResourceRelated.dataSelectId;
+            this.selectDataItem = this.currentEvent.dataResourceRelated;
+          }
           this.init();
         }
       },
@@ -180,32 +198,18 @@ export default {
 
     async getResources() {
       let data = await getDataItemsByProjectId(this.projectId);
-      console.log('resource', data);
       this.dataItemList = data; //id list
     },
 
     async changeSelectResource(id) {
       this.selectDataId = id;
-      let dataSelect = this.dataItemList.filter(e => e.id == id);
-      this.selectDataItem = dataSelect[0];
+      let dataSelect = this.dataItemList.find(e => e.id == id);
+      // this.currentEvent.dataResourceRelated = { name: dataSelect.name, value: dataSelect.value, id: dataSelect.id };
+      this.currentEvent.dataResourceRelated = dataSelect;
+      this.currentEvent.dataResourceRelated.dataSelectId = id;
       // this.selectDataId = this.selectDataItem.fileName;
 
       this.$forceUpdate();
-      await this.submitResource();
-    },
-
-    async submitResource() {
-      // console.log(this.currentEvent);
-
-      this.currentEvent.fileName = this.selectDataItem.name;
-      this.currentEvent.fileId = this.selectDataItem.id;
-      this.currentEvent.value = this.selectDataItem.address;
-      this.currentEvent.fileDescription = this.selectDataItem.description;
-      // console.log(this. currentEvent);
-      this.currentEvent.datasetItem = this.currentDatasetItem;
-      // this. currentEvent.name = this.currentEvent.name;
-
-      this.$emit('currentEventWithFile', this.currentEvent);
     }
   }
 };

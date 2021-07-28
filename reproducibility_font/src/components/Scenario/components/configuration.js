@@ -122,12 +122,7 @@ function generateInputDataItemList(modelInputInGraph) {
   let dataItemList = [];
 
   inputList.forEach(item => {
-    let inputData = {
-      id: item.fileId,
-      name: item.fileName,
-      description: item.fileDescription,
-      value: item.value
-    };
+    let inputData = item.dataResourceRelated;
 
     dataItemList.push(inputData);
   });
@@ -243,7 +238,7 @@ export function generateXml(
       xml += `<DataConfiguration id='${item.nodeAttribute.eventId}' state='${item.nodeAttribute.stateName}' event='${item.name}'>`;
 
       if (item.type == 'modelServiceInput') {
-        xml += `<Data value='${item.value}' type="url"/>`;
+        xml += `<Data value='${item.dataResourceRelated.value}' type="url"/>`;
       } else if (item.type == 'modelServiceLink') {
         let link = linkEdgeList.filter(el => el.target.nodeAttribute.eventId == item.nodeAttribute.eventId);
         xml += `<Data link='${link[0].source.nodeAttribute.eventId}' type="link"/>`;
@@ -273,7 +268,7 @@ export function generateXml(
   xml += `</ProcessingTools><DataProcessings>`;
 
   dataServiceListInGraph.forEach(service => {
-    xml += `<DataProcessing id='${service.id}' name = '${service.name}' description = ''
+    xml += `<DataProcessing id='${service.id}' token='${service.nodeAttribute.token}' name = '${service.name}' description = ''
     type='dataService' service='${service.nodeAttribute.dataServiceId}'>`;
 
     let list = [...dataServiceInputInGraph, ...dataServiceLinkInGraph];
@@ -282,10 +277,10 @@ export function generateXml(
 
     xml += `<Inputs>`;
     inputList.forEach(item => {
-      xml += `<DataConfiguration id='${item.id}' state='${item.nodeAttribute.stateName}' event='${item.name}'>`;
+      xml += `<DataConfiguration id='${item.id}'  state='${item.nodeAttribute.stateName}' event='${item.name}'>`;
 
       if (item.type == 'dataServiceInput') {
-        xml += `<Data value='${item.value}' type="url"/>`;
+        xml += `<Data value='${item.dataResourceRelated.value}' type="url"/>`;
       } else if (item.type == 'dataServiceLink') {
         let link = linkEdgeList.filter(el => el.target.id == item.id);
         xml += `<Data link='${link[0].source.id}' type="link"/>`;

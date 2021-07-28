@@ -294,6 +294,9 @@ export default {
     },
 
     getInstanceAction(action) {
+      //
+      //
+      // 考虑dataitemcollection 改变
       let outputList = this.modelOutputInGraph;
       let dataItem = action.dataItemList;
       outputList.forEach(out => {

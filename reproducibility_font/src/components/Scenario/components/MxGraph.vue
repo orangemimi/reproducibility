@@ -583,8 +583,12 @@ export default {
         this.modelLinkInGraph,
         this.modelOutputInGraph,
         this.linkEdgeList,
-        this.dataServiceListInGraph
+        this.dataServiceListInGraph,
+        this.dataServiceInputInGraph,
+        this.dataServiceLinkInGraph,
+        this.dataServiceOutputListInGraph
       );
+
       let file = new File([xml], this.currentTask.taskName + '.xml', {
         type: 'text/xml'
       });

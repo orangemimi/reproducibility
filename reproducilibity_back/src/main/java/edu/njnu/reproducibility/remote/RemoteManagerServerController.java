@@ -37,6 +37,9 @@ public class RemoteManagerServerController {
     @Value("${managerServerIpAndPort}")
     private String managerServerIpAndPort;
 
+    @Value("${wzpIpAndPort}:8084")
+    String wzpIpAndPort;
+
     @RequestMapping(value = "/getServiceTask/{pid}", method = RequestMethod.GET)
     JsonResult getServiceTask(@PathVariable String pid){
         return ResultUtils.success(managerServerFeign.getServiceTask(pid));
@@ -67,7 +70,7 @@ public class RemoteManagerServerController {
         FileSystemResource resource = new FileSystemResource(temp);
 
         RestTemplate restTemplate = new RestTemplate();
-        String urlStr ="http://"+managerServerIpAndPort +"/GeoModeling/task/runTask";
+        String urlStr ="http://"+wzpIpAndPort +"/GeoModeling/task/runTask";
 //        JSONObject form = new JSONObject();
         MultiValueMap<String, Object> param = new LinkedMultiValueMap<>();
         param.add("file", resource);
