@@ -357,7 +357,10 @@ export default {
     },
 
     async returnResourceUrl(value) {
-      this.selectItem.value = value;
+      this.selectItem.value = value[0];
+      if (value[1] != '') {
+        this.selectItem.token = value[1];
+      }
       // let json ={value:value}
       let data = await updateDataItemById(this.selectItem.id, this.selectItem);
       console.log('updateData', data);

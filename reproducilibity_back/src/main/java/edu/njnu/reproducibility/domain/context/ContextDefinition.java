@@ -24,8 +24,10 @@ public class ContextDefinition extends BaseEntity {
     String purpose;
     String objects;//sumulation object
     String methods;
-    List<TemporalInfo> temporalInfoList;
-    List<SpatialInfo> spatialInfoList;
+    TemporalInfo temporalInfo;
+    SpatialInfo spatialInfo;
+//    List<TemporalInfo> temporalInfoList;
+//    List<SpatialInfo> spatialInfoList;
     String boundary;
     String discussion;
 }

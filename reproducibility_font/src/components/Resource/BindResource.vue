@@ -6,12 +6,20 @@
     </div>
 
     <div v-if="resourceType == 'shared_file'">
-      <el-input v-model="value"></el-input>
+      <el-form :inline="false" :model="form" label-width="50px" size="small">
+        <el-form-item label="Value">
+          <el-input v-model="form.value" placeholder="value"></el-input>
+        </el-form-item>
+        <el-form-item label="Token">
+          <el-input v-model="form.token" placeholder="token"></el-input>
+        </el-form-item>
+      </el-form>
       Please enter the url in data container!
     </div>
 
     <div v-if="resourceType == 'parameter'">
-      <el-input v-model="value"></el-input>
+      <el-input v-model="form.value"></el-input>
+
       Please enter the url in data container!
     </div>
 
@@ -54,20 +62,21 @@ export default {
   data() {
     return {
       activeName: 'file',
-      value: ''
+
+      form: {}
     };
   },
 
   methods: {
     returnFileUrl(value) {
-      this.value = value.address;
+      this.form.value = value.address;
     },
 
     handleClick() {
       this.value = '';
     },
     submitBtn() {
-      this.$emit('returnResourceUrl', this.value);
+      this.$emit('returnResourceUrl', this.form.value, this.form.token);
     }
     //get all the file
   },

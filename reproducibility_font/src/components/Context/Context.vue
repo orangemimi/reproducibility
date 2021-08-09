@@ -8,7 +8,14 @@
               <el-input v-if="tagInputVisible" v-model="themeTag" ref="tagInput" @keyup.enter.native="addTags" @blur="addTags" style="width: 300px"></el-input>
               <el-button v-else @click="showTagInput" type="text" size="small">+ New Tag</el-button>
               <div v-if="contextForm != null">
-                <el-tag :key="tagIndex" v-for="(tag, tagIndex) in contextForm.themes" closable :disable-transitions="false" @close="delTags(tag)" style="margin: 0 2px">
+                <el-tag
+                  :key="tagIndex"
+                  v-for="(tag, tagIndex) in contextForm.themes"
+                  closable
+                  :disable-transitions="false"
+                  @close="delTags(tag)"
+                  style="margin: 0 2px"
+                >
                   {{ tag }}
                 </el-tag>
               </div>
@@ -97,8 +104,8 @@ export default {
         themes: [],
         purpose: '',
         objects: '',
-        spatialInfoList: [],
-        temporalInfoList: [],
+        spatialInfo: {},
+        temporalInfo: {},
         methods: '',
         discussion: ''
       },
@@ -169,12 +176,12 @@ export default {
       // console.log('context', data);
       this.contextForm = data;
       // console.log(data);
-      if (data.spatialInfoList != null) {
-        this.spatialInfoForm = data.spatialInfoList[0];
+      if (data.spatialInfo != null) {
+        this.spatialInfoForm = data.spatialInfo;
       }
-      if (data.temporalInfoList != null) {
-        this.temporalInfoForm = data.temporalInfoList[0];
-        this.temporalExtentList = data.temporalInfoList.temporalExtentList[0];
+      if (data.temporalInfo != null) {
+        this.temporalInfoForm = data.temporalInfo;
+        this.temporalExtentList = data.temporalInfo.temporalExtentList[0];
       }
 
       this.$forceUpdate();

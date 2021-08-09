@@ -22,8 +22,8 @@ public class AddContextDefinitionDTO implements ToDomainConverter<ContextDefinit
     String purpose;
     String objects;//sumulation object
     String methods;
-    List<TemporalInfo> temporalInfoList;
-    List<SpatialInfo> spatialInfoList;
+    TemporalInfo temporalInfo;
+    SpatialInfo spatialInfo;
     String boundary;
     String discussion;
 }
