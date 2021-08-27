@@ -85,7 +85,7 @@ public class UserService {
             json.put("avatar", userFromDB.getAvatar());
             json.put("joinedProjects", userFromDB.getJoinedProjects());
             json.put("createdProjects", userFromDB.getCreatedProjects());
-            json.put("token", "Bearer" + " " + jwtToken);
+//            json.put("token", "Bearer" + " " + jwtToken);
 
 //            JSONObject jsonObject = new JSONObject();
 //            jsonObject.put("token","Bearer" + " " + jwtToken);
