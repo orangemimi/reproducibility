@@ -42,7 +42,9 @@ export default {
     }
   },
 
-  mounted() {}
+  mounted() {
+    // console.log(this.initFormData)
+  }
 };
 </script>
 <style lang="scss" scoped>

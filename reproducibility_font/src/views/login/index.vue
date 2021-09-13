@@ -1,37 +1,32 @@
 <template>
-  <div>
+  <div class="main">
     <div class="login-box">
       <div class="radio-group">
-        <div class="radio-btn" :class="{ active: tab == 'login' }" @click="tab = 'login'">
-          Login
-        </div>
-        <div class="radio-btn" :class="{ active: tab == 'register' }" @click="tab = 'register'">
-          Register
-        </div>
+        <div class="radio-btn" :class="{ active: tab == 'login' }" @click="tab = 'login'">Login</div>
+        <div class="radio-btn" :class="{ active: tab == 'register' }" @click="tab = 'register'">Register</div>
       </div>
       <el-form :model="formItem" status-icon ref="formItem" label-width="80px">
         <el-form-item label="E-mail" prop="pass">
-          <el-input v-model="formItem.email" placeholder="Please enter your name"></el-input>
+          <el-input v-model="formItem.email" placeholder="Please enter your email"></el-input>
         </el-form-item>
         <el-form-item label="Password" prop="pass">
-          <el-input
-            v-model="formItem.password"
-            type="password"
-            placeholder="Please enter the passward"
-          ></el-input>
+          <el-input v-model="formItem.password" type="password" placeholder="Please enter the passward"></el-input>
         </el-form-item>
       </el-form>
+      <SendEmailAndChangePWD v-bind:f_email="formItem.email" style="text-align: center;"/>
     </div>
 
     <div class="btn-wrapper">
       <span class="btn" @click="handleClick">Enter</span>
     </div>
+    
   </div>
 </template>
 
 <script>
 // import { post } from '@/axios';
 import { mapActions } from 'vuex';
+import SendEmailAndChangePWD from './components/SendEmailAndChangePWD.vue';
 // import md5 from 'js-md5';
 // import jwtDecode from 'jwt-decode';
 export default {
@@ -40,10 +35,11 @@ export default {
       tab: 'login',
       formItem: {
         email: '',
-        password: ''
-      }
+        password: '',
+      },
     };
   },
+  components: { SendEmailAndChangePWD },
   methods: {
     ...mapActions({ logout: 'user/handleLogOut' }),
     async handleClick() {
@@ -55,7 +51,7 @@ export default {
         let redirect = decodeURIComponent(this.$route.query.redirect || '/');
         if (redirect != undefined) {
           this.$router.push({
-            path: redirect
+            path: redirect,
           });
         } else {
           this.$router.push({ name: 'Home' });
@@ -63,12 +59,25 @@ export default {
       } catch (error) {
         this.$throw(error);
       }
-    }
-  }
+    },
+    submit() {
+      this.handleClick();
+    },
+  },
+  created: function () {
+    var _this = this;
+    document.onkeydown = function () {
+      let key = window.event.keyCode;
+      if (key == 13) {
+        _this.submit();
+      }
+    };
+  },
 };
 </script>
 
 <style lang="scss" scoped>
+
 .login-box {
   background: #ffffff;
   width: 400px;

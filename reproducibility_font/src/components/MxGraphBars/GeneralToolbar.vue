@@ -4,16 +4,16 @@
     <div v-show="showType == 'rhombus'">
       <div v-for="(item, index) in rhombusList" :key="index" ref="general">
         <div class="tool">
-          <img :src="item.icon" :alt="item['name']" class="image" />
-          <div class="name">{{ item['name'] }}</div>
+          <img :src="item.icon" :alt="item['name']" class="image" :title="item['name']" />
+          <!-- <div class="name">{{ item['name'] }}</div> -->
         </div>
       </div>
     </div>
     <div v-show="showType == 'rectangle'">
       <div v-for="(item, index) in rectangleList" :key="index" ref="code">
         <div class="tool">
-          <img :src="item.icon" :alt="item['name']" class="image" />
-          <div class="name">{{ item['name'] }}</div>
+          <img :src="item.icon" :alt="item['name']" class="image" :title="item['name']" />
+          <!-- <div class="name">{{ item['name'] }}</div> -->
         </div>
       </div>
     </div>
@@ -48,7 +48,10 @@ export default {
 
   methods: {},
 
-  mounted() {}
+  mounted() {
+    // console.log(this.rhombusList)
+    // console.log(this.rectangleList)
+  }
 };
 </script>
 <style lang="scss" scoped>

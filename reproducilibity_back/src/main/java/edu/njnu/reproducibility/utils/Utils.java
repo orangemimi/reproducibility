@@ -88,8 +88,8 @@ public class Utils {
         JSONArray userList = new JSONArray();
         for (User user : users) {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("value", user.getName());
-            jsonObject.put("userId", user.getUserId());
+//            jsonObject.put("value", user.getName());
+//            jsonObject.put("userId", user.getUserId());
             jsonObject.put("email", user.getEmail());
             userList.add(jsonObject);
         }

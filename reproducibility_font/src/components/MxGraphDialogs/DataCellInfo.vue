@@ -3,24 +3,24 @@
     <el-row class="dataInfo">
       <div class="data">
         <div class="dataTitle">State name:</div>
-        <div class="dataDetail">{{ currentEvent.stateName }}</div>
+        <div class="dataDetail">{{ currentEvent.nodeAttribute.stateName }}</div>
       </div>
       <div class="data">
         <div class="dataTitle">State description:</div>
-        <div class="dataDetail">{{ currentEvent.stateDescription }}</div>
+        <div class="dataDetail">{{ currentEvent.nodeAttribute.stateDescription }}</div>
       </div>
 
       <div class="data">
         <div class="dataTitle">Event name:</div>
-        <div class="dataDetail">{{ currentEvent.name }}</div>
+        <div class="dataDetail">{{ currentEvent.nodeAttribute.eventName }}</div>
       </div>
       <div class="data">
         <div class="dataTitle">Event description:</div>
-        <div class="dataDetail">{{ currentEvent.description }}</div>
+        <div class="dataDetail">{{ currentEvent.nodeAttribute.eventDescription }}</div>
       </div>
       <div class="data">
         <div class="dataTitle">Event type:</div>
-        <div class="dataDetail">{{ currentEvent.type }}</div>
+        <div class="dataDetail">{{ currentEvent.nodeAttribute.type }}</div>
       </div>
     </el-row>
 
@@ -34,14 +34,12 @@
         </div>
         <div v-else>Please run this task to get the output!</div>
       </div>
-      <div v-else-if="currentEvent.type == 'modelServiceLink'">
-        Link to the output
-      </div>
+      <div v-else-if="currentEvent.type == 'modelServiceLink'">Link to the output</div>
       <div v-else-if="currentEvent.type == 'modelServiceInput'">
         <div v-if="currentEvent.nodeAttribute.datasetItem != undefined && currentEvent.nodeAttribute.datasetItem.type == `internal`" class="uploadContent">
           <vue-scroll style="height: 100%" :ops="ops">
             <div v-if="filterEvent">
-              <el-table border :data="filterEvent[0].UdxNode" size="mini" class="table" style="width: 100%">
+              <!-- <el-table border :data="filterEvent[0].UdxNode" size="mini" class="table" style="width: 100%">
                 <el-table-column type="expand" width="20">
                   <template slot-scope="props">
                     <el-form label-position="top" inline class="table-expand" size="mini">
@@ -63,19 +61,30 @@
                     <el-input v-model="scope.row.value"></el-input>
                   </template>
                 </el-table-column>
-              </el-table>
+              </el-table> -->
+              <el-select
+                v-if="role == 'builder'"
+                v-model="selectDataItem.name"
+                placeholder="Please select data"
+                class="uploadContent"
+                @change="changeSelectResource"
+              >
+                <el-option v-for="(item, dataIndex) in paramsDataList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
+              </el-select>
+              <div v-else>
+                <el-button>{{ selectDataItem.name }}</el-button>
+              </div>
             </div>
             <div v-else>
               <!-- {{ dataItemList }} -->
               <el-select
                 v-if="role == 'builder'"
-                v-model="selectDataId"
-                clearable
+                v-model="selectDataItem.name"
                 placeholder="Please select data"
                 class="uploadContent"
                 @change="changeSelectResource"
               >
-                <el-option v-for="(item, dataIndex) in dataItemList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
+                <el-option v-for="(item, dataIndex) in fileDataList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
               </el-select>
               <div v-else>
                 <el-button>{{ selectDataItem.name }}</el-button>
@@ -86,13 +95,12 @@
         <div v-else>
           <el-select
             v-if="role == 'builder'"
-            v-model="selectDataId"
-            clearable
+            v-model="selectDataItem.name"
             placeholder="Please select data"
             class="uploadContent"
             @change="changeSelectResource"
           >
-            <el-option v-for="(item, dataIndex) in dataItemList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
+            <el-option v-for="(item, dataIndex) in fileDataList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
           </el-select>
           <div v-else>
             <el-button>{{ selectDataItem.name }}</el-button>
@@ -107,7 +115,6 @@
         <el-select
           v-if="role == 'builder'"
           v-model="selectDataId"
-          clearable
           placeholder="Please select data"
           class="uploadContent"
           @change="changeSelectResource"
@@ -134,64 +141,83 @@ import { hasProperty } from '@/utils/utils';
 export default {
   props: {
     cell: {
-      type: Object
-    }
+      type: Object,
+    },
   },
   watch: {
     cell: {
       // immediate: true,
-      handler(val) {
-        if (val != '') {
+      handler(val, oldVal) {
+        // console.log('watch');
+        if (val != '' && val != oldVal) {
+          // this.currentEvent = val;
+          // console.log(val);
+          // console.log(oldVal);
           this.currentEvent = val;
+          this.selectDataId = ''
+          this.selectDataItem = {}
+          //this.init();
           if (hasProperty(val, 'dataResourceRelated')) {
             this.selectDataId = this.currentEvent.dataResourceRelated.dataSelectId;
             this.selectDataItem = this.currentEvent.dataResourceRelated;
           }
-          this.init();
+          // this.init();
         }
       },
       deep: true,
-      immediate: true
-    }
+      immediate: true,
+    },
   },
 
   computed: {
     filterEvent() {
-      let datasetItem = this.currentEvent.datasetItem;
+      let datasetItem = this.currentEvent.nodeAttribute.datasetItem;
       if (Object.prototype.hasOwnProperty.call(datasetItem, 'UdxDeclaration')) {
-        if (datasetItem.UdxDeclaration[0].UdxNode != '') {
-          return false;
-        } else {
-          let udxNode = datasetItem.UdxDeclaration[0].UdxNode;
-          return udxNode;
-        }
+        console.log(datasetItem.UdxDeclaration[0].UdxNode);
+        return datasetItem.UdxDeclaration[0].UdxNode;
+        // if (datasetItem.UdxDeclaration[0].UdxNode != '') {
+        //   return false;
+        // } else {
+        //   let udxNode = datasetItem.UdxDeclaration[0].UdxNode;
+
+        //   return udxNode;
+        // }
       } else {
         return false;
       }
     },
     ...mapState({
-      role: state => state.permission.role
-    })
+      role: (state) => state.permission.role,
+    }),
   },
 
   data() {
     return {
-      currentEvent: this.cell,
+      currentEvent: { nodeAttribute: '' },
       dataItemList: [],
+      fileDataList: [],
+      paramsDataList: [],
       projectId: this.$route.params.id,
 
       ops: {
         bar: {
           background: '#808695',
-          keepShow: true
-        }
+          keepShow: true,
+        },
       },
       selectDataId: '',
-      selectDataItem: {}
+      selectDataItem: {},
     };
   },
 
   methods: {
+    click() {
+      console.log(this.currentEvent);
+      console.log(this.cell);
+      console.log(this.filterEvent);
+      console.log(this.fileDataList);
+      console.log(this.paramsDataList)
+    },
     async init() {
       await this.getResources();
     },
@@ -199,19 +225,32 @@ export default {
     async getResources() {
       let data = await getDataItemsByProjectId(this.projectId);
       this.dataItemList = data; //id list
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].format == 'file') {
+          this.fileDataList.push(data[i]);
+        } else {
+          // data[i].numValue =data[i].value;
+          this.paramsDataList.push(data[i]);
+        }
+      }
     },
 
     async changeSelectResource(id) {
       this.selectDataId = id;
-      let dataSelect = this.dataItemList.find(e => e.id == id);
+      let dataSelect = this.dataItemList.find((e) => e.id == id);
+      this.selectDataItem = dataSelect
+      // console.log(dataSelect)
       // this.currentEvent.dataResourceRelated = { name: dataSelect.name, value: dataSelect.value, id: dataSelect.id };
       this.currentEvent.dataResourceRelated = dataSelect;
       this.currentEvent.dataResourceRelated.dataSelectId = id;
       // this.selectDataId = this.selectDataItem.fileName;
 
       this.$forceUpdate();
-    }
-  }
+    },
+  },
+  mounted() {
+    this.init();
+  },
 };
 </script>
 

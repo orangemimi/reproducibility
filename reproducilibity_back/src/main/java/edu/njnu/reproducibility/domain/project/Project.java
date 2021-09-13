@@ -30,7 +30,7 @@ public class Project extends BaseEntity {
 
 //    Creator creator;
     String creator;
-    List<Member> members;//role: ['builder', 'rebuilder_explorer','rebuilder_operator', 'visitor']
+    List<Member> members;//role: ['builder', 'rebuilder_explorer','rebuilder_operator']
     Integer level=0;
 
     Integer starCount;

@@ -30,4 +30,9 @@ public class DataServiceController {
     public JsonResult saveService(@JwtTokenParser(key = "userId") String userId,@RequestBody AddDataServiceDTO add) {
         return ResultUtils.success(dataServiceService.save(userId,add));
     }
+
+    @RequestMapping(value = "/getmydataservices", method = RequestMethod.GET)
+    public JsonResult getMyDataServices(@JwtTokenParser(key = "userId") String userId) {
+        return ResultUtils.success(dataServiceService.getMyDataService(userId));
+    }
 }

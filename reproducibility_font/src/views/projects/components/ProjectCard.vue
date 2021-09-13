@@ -74,7 +74,7 @@ export default {
       });
     },
     async joinProjectCommand() {
-      let notice = { recipientId: this.project.creator, type: 'apply', content: { type: 'joinProject', role: 'rebuilder_operator', projectId: this.project.id } };
+      let notice = { recipientId: this.project.creator, type: 'apply', content: { type: 'joinProject', role: 'rebuilder_operator', projectId: this.project.id, projectName: this.project.name} };
       await saveNotice(notice);
     },
 
@@ -85,6 +85,7 @@ export default {
         userId: this.userId
       });
       console.log(this.role);
+    
       this.$router.push({ path: `/project/${project.id}/info` });
     }
   },

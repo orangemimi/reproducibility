@@ -60,7 +60,7 @@ public class ModelItemService {
         return modelItemList;
     }
 
-    public Object getModelsByProvider(String userId, String privacy, int currentPage, int pagesize) {
+    public Object getModelsByProvider(String userId, int currentPage, int pagesize) {
         PageRequest pageable = PageRequest.of(currentPage, pagesize);
         Page<ModelItemColletion> modelItemList = modelItemRepository.findAllByUserId(userId, pageable);
         return modelItemList;

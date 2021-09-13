@@ -65,9 +65,13 @@ export default {
     return { spatialInfo: this.spatialInfoForm };
   },
 
-  methods: {},
+  methods: {
+    
+  },
 
-  mounted() {}
+  mounted() {
+    // console.log(this.spatialInfoForm)
+  }
 };
 </script>
 <style lang="scss" scoped>

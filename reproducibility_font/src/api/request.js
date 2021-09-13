@@ -45,6 +45,26 @@ export async function saveUser(form) {
   return data;
 }
 
+//发送验证码邮件
+export async function sendCodeEmail(email) {
+  return await get(`/users/sendEmail/${email}`)
+}
+
+//通过验证码修改密码
+export async function changePWDbyCode(email, code, password) {
+  return await patch(`/users/${email}/${code}/${password}`)
+}
+
+//通过原密码修改密码
+export async function changePassword(oldPWD, newPWD) {
+  return await patch(`/users/changePWD/${oldPWD}/${newPWD}`)
+}
+
+//调用远程服务器获取用户信息
+export async function getUserinfo() {
+  return await get(`/users/getuserinfo`)
+}
+
 //----------------------------------------------------projects-----------------------------------------
 
 export async function getProjectAndUsers(projectId) {
@@ -91,6 +111,11 @@ export async function forkProject(form) {
   //   successNotification('create', 'project');
   // }
   return data;
+}
+
+//获取个人所有的projects
+export async function getMyProjects() {
+  return await get(`/projects/getmyprojects`)
 }
 
 //---------------------------------------------------contextDefinition------------------------------------------
@@ -199,7 +224,7 @@ export async function updateDataItemById(id, form) {
 }
 
 export async function deleteDataItemById(id) {
-  await del(`/dataItems/${id}`);
+  await del(`/dataItems/del/${id}`);
 }
 
 export async function getDataItemsByJwtUserId() {
@@ -348,8 +373,35 @@ export async function getNoticesBySenderId() {
   return await get(`/notices/sender`);
 }
 
+//获取可见的消息
+export async function getNoticesByRecipientIdTrue() {
+  return await get(`/notices/recipientTrue`);
+}
+//获取可见的消息
+export async function getNoticesBySenderIdTrue() {
+  return await get(`/notices/senderTrue`);
+}
+
 export async function changeNoticeState(id, state) {
   return await patch(`/notices/${id}/${state}`);
+}
+
+export async function deleteNotice(noticeId) {
+  return await del(`/notices/${noticeId}`)
+}
+
+//使recipient的消息不可见，即删除
+export async function changeRecState(noticeId) {
+  return await patch(`/notices/delrec/${noticeId}`)
+}
+//使sender的消息不可见,即删除
+export async function changeSenState(noticeId) {
+  return await patch(`/notices/delsen/${noticeId}`)
+}
+
+//改变回复消息是否已读的状态，只要用户点击到回复消息的页面，即认为回复消息已读了
+export async function changeAllReplyisread() {
+  return await patch(`/notices/changeallreply`)
 }
 
 //------------------------------------------emails------------------------------------
@@ -360,6 +412,8 @@ export async function saveEmails(form) {
   }
   return data;
 }
+
+
 
 //------------------------------------------records------------------------------------
 
@@ -393,6 +447,11 @@ export async function saveDataService(form) {
 
 export async function getDataServiceInfo(dataServiceId, token, type) {
   return await get(`/dataContainer/dataService/getData/${dataServiceId}/${token}/${type}`);
+}
+
+//获取自己的dataService
+export async function getMyDataService() {
+  return await get(`/dataServices/getmydataservices`)
 }
 
 //------------------------------------------dataServiceCode------------------------------------

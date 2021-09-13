@@ -13,4 +13,6 @@ import lombok.Data;
 @Data
 public class ParameterFormat extends DataItemCollection {
     ParameterRestriction restriction;
+
+
 }

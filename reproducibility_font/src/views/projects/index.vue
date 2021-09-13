@@ -1,7 +1,7 @@
 <!--  -->
 <template>
   <div class="project">
-    <div>projects</div>
+    <div>projectssss</div>
     <el-row :gutter="20">
       <el-col :span="4" v-for="(project, index) in projectList" :key="index">
         <div class="project-card">

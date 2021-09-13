@@ -19,7 +19,7 @@
         </span>
       </div>
     </el-upload>
-    <el-dialog :visible.sync="dialogVisible" style="z-index:9999">
+    <el-dialog :visible.sync="dialogVisible" style="z-index: 9999">
       <img width="100%" :src="dialogImageUrl" alt="" />
     </el-dialog>
   </div>
@@ -32,11 +32,11 @@ import { mapState } from 'vuex';
 export default {
   props: {
     fileUrl: {
-      type: String
+      type: String,
     },
     uploadPath: {
-      type: String
-    }
+      type: String,
+    },
   },
 
   components: {},
@@ -48,14 +48,14 @@ export default {
           this.fileList = [{ url: this.fileUrl }];
         }
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
 
   computed: {
     ...mapState({
-      userId: state => state.user.userId
-    })
+      userId: (state) => state.user.userId,
+    }),
   },
 
   data() {
@@ -66,7 +66,7 @@ export default {
       uploadFileForm: new FormData(), //上传文件的form
       fileList: [], //el-upload上传的文件列表,
       dataItemList: [],
-      file: {}
+      file: {},
       // ordinaryFileUrl:
     };
   },
@@ -104,12 +104,12 @@ export default {
     clear() {
       this.file = {};
       this.fileUrl = '';
-    }
+    },
   },
 
   mounted() {
     // this.clear();
-  }
+  },
 };
 </script>
 <style scoped lang="scss">

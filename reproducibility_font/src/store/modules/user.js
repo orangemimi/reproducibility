@@ -6,7 +6,10 @@ const state = {
   name: localStorage.getItem('name'),
   token: localStorage.getItem('token'),
   avatar: localStorage.getItem('avatar'),
-  userId: localStorage.getItem('userId')
+  userId: localStorage.getItem('userId'),
+  email: localStorage.getItem('email'),
+  unreadApplynum: localStorage.getItem('unreadApplynum'),
+  unreadReplynum: localStorage.getItem('unreadReplynum')
 };
 //commit mutation ,同步
 const mutations = {
@@ -32,7 +35,23 @@ const mutations = {
   setToken(state, token) {
     state.token = token;
     localStorage.setItem('token', token);
+  },
+
+  setEmail(state, email) {
+    state.email = email;
+    localStorage.setItem('email', email);
+  },
+
+  setUnreadApplynum(state, unreadApplynum) {
+    state.unreadApplynum = unreadApplynum
+    localStorage.setItem('unreadApplynum', unreadApplynum)
+  },
+
+  setUnreadReplynum(state, unreadReplynum) {
+    state.unreadReplynum = unreadReplynum
+    localStorage.setItem('unreadReplynum', unreadReplynum)
   }
+
 };
 //dispatch action ，异步
 const actions = {
@@ -42,6 +61,9 @@ const actions = {
     commit('setName', '');
     commit('setAvatar', '');
     commit('setUserId', '');
+    commit('setEmail', '')
+    commit('setUnreadApplynum', '')
+    commit('setUnreadReplynum', '')
     localStorage.clear();
   },
 
@@ -60,6 +82,9 @@ const actions = {
           commit('setName', response.name);
           commit('setAvatar', response.avatar);
           commit('setUserId', response.userId);
+          commit('setEmail', response.email)
+          commit('setUnreadApplynum', response.unreadApply)
+          commit('setUnreadReplynum', response.unreadReply)
           resolve();
         })
         .catch(error => {

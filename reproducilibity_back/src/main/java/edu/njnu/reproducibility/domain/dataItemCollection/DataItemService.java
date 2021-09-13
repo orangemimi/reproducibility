@@ -1,6 +1,7 @@
 package edu.njnu.reproducibility.domain.dataItemCollection;
 
 
+import edu.njnu.reproducibility.common.enums.ResultEnum;
 import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
@@ -71,5 +72,12 @@ public class DataItemService {
         }
     }
 
-
+    public int delDataItem(String ID) {
+        try{
+            dataItemRepository.deleteById(ID);
+            return 0;
+        }catch (Exception e){
+            throw new MyException(ResultEnum.NO_OBJECT);
+        }
+    }
 }

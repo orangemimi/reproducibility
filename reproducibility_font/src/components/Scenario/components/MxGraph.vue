@@ -20,6 +20,9 @@
         <el-button @click="updateGraph" type="warning" size="mini">Save Task</el-button>
         <el-button @click="runGraph" size="mini">Run Task</el-button>
         <el-button @click="compareResult" size="mini">Compare Result</el-button>
+        {{ currentTask.taskName }}
+        <el-button @click="clear" size="mini">clear</el-button>
+        <!-- <img src="/static/images/calcModel.png" alt=""> -->
 
         <transition name="fade" mode="out-in">
           <div class="bell" @click="setAsSelectTaskInConstruction">
@@ -27,7 +30,7 @@
           </div>
         </transition>
 
-        <integrate-tasks @selectTask="selectTask" style="float:right"></integrate-tasks>
+        <integrate-tasks @selectTask="selectTask" style="float: right"></integrate-tasks>
       </div>
       <vue-scroll style="height: 900px; width: calc(100%)" :ops="ops">
         <div class="graphContainer" ref="container"></div>
@@ -72,12 +75,34 @@
 
     <div class="dialogs">
       <el-dialog :visible.sync="comparisonDialogShow" width="80%" title="Comparison">
-        <div style="height:500px">
+        <div style="height: 500px">
           <!-- Configuration -->
           <comparison />
         </div>
       </el-dialog>
     </div>
+
+    <el-dialog title="New Task" :visible.sync="isNewTaskContainerShow" :close-on-click-modal="false">
+      <el-form :model="newTaskForm">
+        <el-form-item label="TaskName" :label-width="formLabelWidth">
+          <el-input v-model="newTaskForm.taskName" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="TaskDescription" :label-width="formLabelWidth">
+          <el-input v-model="newTaskForm.taskDescription" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="Task Type">
+          <el-select v-model="newTaskForm.type" placeholder="Please select">
+            <el-option v-for="item in newTaskForm.typeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="isNewTaskContainerShow = false">Cancel</el-button>
+          <el-button type="primary" @click="confirmNewTask">Confirm</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
   <!-- </div> -->
 </template>
@@ -97,10 +122,10 @@ import {
   runtask,
   checkTaskStatus,
   updatePerformanceById,
-  updateScenarioByProjectId
+  updateScenarioByProjectId,
 } from '@/api/request';
-import { generateAction, generateXml, getCellStyle } from './configuration';
-import { initSetTimeOut, hasProperty } from '@/utils/utils';
+import { generateAction, generateXml1, getCellStyle } from './configuration';
+import { hasProperty } from '@/utils/utils';
 
 import integrateTasks from '_com/IntegrateTasks';
 import instanceCard from '_com/Cards/InstanceCard';
@@ -112,52 +137,79 @@ const {
   // mxGraph,
   // mxEvent,
   mxUtils,
-  mxCodec
+  mxCodec,
 } = mxgraph;
 
 export default {
   props: {
     taskInfoInit: {
-      type: Object
-    }
+      type: Object,
+    },
   },
 
   components: {
     integrateTasks,
     instanceCard,
     comparison,
-    leftToolbar
+    leftToolbar,
   },
 
   watch: {
     taskInfoInit: {
       async handler(val, oldVal) {
+        // console.log(val)
+        // console.log(val.id)
+        // console.log(oldVal)
+        // console.log('执行watch')
         if (val.id != undefined && val.id != oldVal.id) {
-          await initSetTimeOut();
+          // await initSetTimeOut();
           // debugger;
           this.currentTask = val;
 
-          // this.init();
+          this.init();
           this.$refs.leftToolbar.init();
           this.$refs.leftToolbar.listenGraphEvent();
 
           await this.getAllIntegrateTaskInstances(0);
           this.graph.importGraph(val.taskContent);
         }
+        // console.log('watch执行完')
       },
       deep: true,
-      immediate: true
-    }
+      immediate: true,
+    },
+    // currentTask: {
+    //   async handler(val, oldVal) {
+    //     console.log(val);
+    //     console.log(oldVal);
+    //     if (oldVal != '' && val != oldVal) {
+    //       this.init();
+    //       await this.getAllIntegrateTaskInstances(0);
+    //       this.graph.importGraph(val.taskContent);
+    //       console.log('执行currentTask');
+    //     }
+    //   },
+    //   deep: true,
+    //   immediate: true,
+    // },
   },
 
   computed: {
     ...mapState({
-      role: state => state.permission.role
-    })
+      role: (state) => state.permission.role,
+    }),
   },
 
   data() {
     return {
+      newTaskForm: {
+        taskName: '',
+        taskDescription: '',
+        type: 'integrateTask',
+        typeOptions: [{ label: 'Integrate Task', value: 'integrateTask' }],
+      },
+      formLabelWidth: '120px',
+      selectId: '',
       projectId: this.$route.params.id,
 
       graph: null,
@@ -169,7 +221,7 @@ export default {
       undoMng: null,
 
       cellForm: {
-        name: ''
+        name: '',
       },
 
       getXml: this.sendXml,
@@ -194,12 +246,12 @@ export default {
 
       taskInfo: {
         taskName: '',
-        taskDescription: ''
+        taskDescription: '',
       },
 
-      isNewTaskContainerShow: true,
+      isNewTaskContainerShow: false, //暂未用到
 
-      currentTask: {},
+      currentTask: '',
 
       //document
       nodeList: [],
@@ -219,8 +271,8 @@ export default {
           specifyBorderRadius: false,
           minSize: 0,
           size: '6px',
-          disable: false
-        }
+          disable: false,
+        },
       },
 
       record: {}, //task -->get output record
@@ -236,31 +288,74 @@ export default {
       //INSTANCE LIST
       instancePageFilter: {
         pageSize: 8,
-        page: 0
+        page: 0,
       },
       instanceList: [],
 
-      comparisonDialogShow: false
+      comparisonDialogShow: false,
       // selectInstanceId:''
     };
   },
 
   methods: {
+    clear() {
+      this.graph.removeCells(this.graph.getChildVertices(this.graph.getDefaultParent()));
+      const codec = new mxCodec();
+      const encodedModel = codec.encode(this.graph.getModel());
+      const xml = mxUtils.getXml(encodedModel);
+      const json = this.$x2js.xml2js(xml);
+      console.log(xml);
+      console.log(json);
+    },
+
+    async confirmNewTask() {
+      let postJson = {
+        projectId: this.projectId,
+        taskContent: '',
+        taskName: this.newTaskForm.taskName,
+        taskDescription: this.newTaskForm.taskDescription,
+        creator: this.currentTask.creator,
+      };
+      if (this.newTaskForm.type == 'integrateTask') {
+        postJson.taskContent = '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/></root></mxGraphModel>';
+      }
+      let data = await saveIntegrateTask(postJson);
+      this.taskInfo = data;
+      this.currentTask = data;
+      this.graph.removeCells(this.graph.getChildVertices(this.graph.getDefaultParent()));
+      this.isNewTaskContainerShow = false;
+      if (data.id == this.selectId) {
+        this.isSelectTaskInConsruction = true;
+      } else {
+        this.isSelectTaskInConsruction = false;
+      }
+    },
+
     compareResult() {
       this.comparisonDialogShow = true;
     },
 
     async setAsSelectTaskInConstruction() {
-      this.isSelectTaskInConsruction = !this.isSelectTaskInConsruction;
-      let taskId = '';
-      //已经取消了选择的Task
-      if (this.isSelectTaskInConsruction) {
-        taskId = '';
+      if (!this.isSelectTaskInConsruction) {
+        let taskId = this.currentTask.id;
+        await updateScenarioByProjectId(this.projectId, { selectTaskId: taskId });
+        this.isSelectTaskInConsruction = true;
       } else {
-        taskId = this.currentTask.id;
+        this.$notify({
+          message: 'It is already the SelectTask',
+          type: 'warning',
+        });
       }
+      // this.isSelectTaskInConsruction = !this.isSelectTaskInConsruction;
+      // let taskId = '';
+      // //已经取消了选择的Task
+      // if (this.isSelectTaskInConsruction) {
+      //   taskId = '';
+      // } else {
+      //   taskId = this.currentTask.id;
+      // }
 
-      await updateScenarioByProjectId(this.projectId, { selectTaskId: taskId });
+      // await updateScenarioByProjectId(this.projectId, { selectTaskId: taskId });
       // console.log('!!!');
     },
     //--------------初始化 bar的modelItem的内容--由 AllModels组件返回
@@ -271,17 +366,22 @@ export default {
 
     //初始化mxgraph
     init() {
+      //创建画布
       this.container = this.$refs.container;
       this.createGraph();
+
       this.getScenario();
     },
 
     async getScenario() {
       let data = await getScenarioByProjectId(this.projectId);
       // console.log(data.selectTaskId, this.currentTask.id);
+      this.selectId = data.selectTaskId;
       let flag = data.selectTaskId == this.currentTask.id;
-      this.$set(this, 'isSelectTaskInConsruction', flag);
+      // this.$set(this, 'isSelectTaskInConsruction', flag);
+      this.isSelectTaskInConsruction = flag;
       // console.log(this.isSelectTaskInConsruction);
+      this.graph.removeCells(this.graph.getChildVertices(this.graph.getDefaultParent()));
     },
 
     // Creates the graph inside the given container
@@ -300,7 +400,7 @@ export default {
       let dataServiceLinkInGraph = [];
       let dataServiceOutputListInGraph = [];
 
-      Object.values(this.graph.getModel().cells).forEach(cell => {
+      Object.values(this.graph.getModel().cells).forEach((cell) => {
         if (cell.style != undefined) {
           if (cell.type == 'modelService') {
             modelListInGraph.push(cell);
@@ -321,7 +421,7 @@ export default {
           }
         }
       });
-      let links = Object.values(this.graph.getModel().cells).filter(cell => Object.prototype.hasOwnProperty.call(cell, 'edge'));
+      let links = Object.values(this.graph.getModel().cells).filter((cell) => Object.prototype.hasOwnProperty.call(cell, 'edge'));
       this.linkEdgeList = links;
       this.modelListInGraph = modelListInGraph;
       this.modelOutputInGraph = modelOutputInGraph;
@@ -336,11 +436,13 @@ export default {
 
     judgeInputList() {
       let modelInputInGraph = this.modelInputInGraph;
-      modelInputInGraph.forEach(input => {
-        if (!hasProperty(input, 'value')) {
+      // console.log(modelInputInGraph)
+      modelInputInGraph.forEach((input) => {
+        // console.log(input)
+        if (!hasProperty(input.dataResourceRelated, 'value')) {
           this.$notify.error({
             title: 'Error',
-            message: 'You have not bind the data'
+            message: 'You have not bind the data',
           });
           return false;
         }
@@ -353,14 +455,14 @@ export default {
     },
 
     submitCellForm(form) {
-      this.$refs[form].validate(valid => {
+      this.$refs[form].validate((valid) => {
         if (valid) {
           this.graph.getModel().beginUpdate();
           let cell = this.graph.getSelectionCell();
           if (cell.name == this.cellForm.name) {
             this.$message({
               message: 'Name changed is as same as before',
-              type: 'warning'
+              type: 'warning',
             });
           } else {
             try {
@@ -368,7 +470,7 @@ export default {
               this.graph.refresh(cell); // 刷新cell
               this.$message({
                 message: 'Refresh the node successfully!',
-                type: 'success'
+                type: 'success',
               });
             } finally {
               this.graph.getModel().endUpdate();
@@ -394,7 +496,7 @@ export default {
       let cells = this.selectionCells;
       let tmpSet = new Set(this.selectionCells);
 
-      cells.forEach(cell => {
+      cells.forEach((cell) => {
         this.findDeleteCell(cell, tmpSet);
       });
       this.deleteCellsVisible = false;
@@ -405,7 +507,7 @@ export default {
     findDeleteCell(cell, deleteSet) {
       deleteSet.add(cell);
       if (cell.edges) {
-        cell.edges.forEach(tmpEdge => {
+        cell.edges.forEach((tmpEdge) => {
           if (tmpEdge.target !== cell) {
             deleteSet.add(tmpEdge.target);
             this.findDeleteCell(tmpEdge.target, deleteSet);
@@ -420,7 +522,7 @@ export default {
         let undoIndex = this.undoMng.indexOfNextAdd - 1;
 
         if (this.undoMng.history[undoIndex]) {
-          cells = this.undoMng.history[undoIndex].changes.map(change => {
+          cells = this.undoMng.history[undoIndex].changes.map((change) => {
             if (change.child) {
               return change.child;
             } else {
@@ -449,17 +551,17 @@ export default {
 
     //创建一个新的画布
     showCreateNewTask() {
-      this.currentTask = {
-        taskName: '',
-        taskDescription: ''
-      };
+      // this.currentTask = {
+      //   taskName: '',
+      //   taskDescription: '',
+      // };
       this.isNewTaskContainerShow = true;
     },
 
     async createNewTask() {
       let postJson = {
         projectId: this.projectId,
-        ...this.taskInfo
+        ...this.taskInfo,
       };
       // console.log(postJson);
       // let data = await post(`/integrateTasks`, postJson);
@@ -472,15 +574,16 @@ export default {
 
     //保存task
     async updateGraph() {
-      if (this.graph.getModel().cells.length < 1) {
+      if (Object.keys(this.graph.getModel().cells).length < 1) {
         this.$message.error('Please select at least one model.');
         return;
       }
 
       this.getCells();
+      console.log(this.modelInputInGraph);
 
       //王梓欢配置文件
-      let xml = generateXml(
+      let xml = generateXml1(
         this.currentTask.taskName,
         this.modelListInGraph,
         this.modelInputInGraph,
@@ -492,7 +595,7 @@ export default {
         this.dataServiceLinkInGraph,
         this.dataServiceOutputListInGraph
       );
-
+      console.log(1);
       //mxgraph xml文件
       let graphXml = this.graph.getGraphXml();
 
@@ -513,7 +616,7 @@ export default {
         // modelActions: modelActions,modelACTIONlIST
         taskName: this.currentTask.taskName,
         taskDescription: this.currentTask.taskDescription,
-        action: action
+        action: action,
       };
 
       await updateIntegrateTask(this.currentTask.id, postJson);
@@ -521,7 +624,7 @@ export default {
         content: 'Simulation Scenario',
         degree: '100%',
         type: 'success',
-        icon: 'el-icon-sunny'
+        icon: 'el-icon-sunny',
       };
 
       await updatePerformanceById('context', this.projectId, content);
@@ -531,11 +634,18 @@ export default {
 
     selectTask(val) {
       this.currentTask = val;
-      // this.taskInfo = val;
-      let note = val.note;
-      this.importModelXML(note);
-      this.isNewTaskContainerShow = false;
-      // console.log(val);
+      this.taskInfo = val;
+      if (val.id == this.selectId) {
+        this.isSelectTaskInConsruction = true;
+      } else {
+        this.isSelectTaskInConsruction = false;
+      }
+      this.graph.removeCells(this.graph.getChildVertices(this.graph.getDefaultParent()));
+      this.graph.importGraph(val.taskContent);
+
+      // let note = val.note;
+      // this.importModelXML(note);
+      // this.isNewTaskContainerShow = false;
     },
 
     importModelXML(xmlTxt) {
@@ -560,8 +670,8 @@ export default {
     getInstanceAction(action) {
       let outputList = this.modelOutputInGraph;
       let dataItem = action.dataItemList;
-      outputList.forEach(out => {
-        let dataOutputValue = dataItem.filter(item => item.id == out.fileId);
+      outputList.forEach((out) => {
+        let dataOutputValue = dataItem.filter((item) => item.id == out.fileId);
         if (dataOutputValue.length != 0) {
           out.value = dataOutputValue.value;
         }
@@ -576,7 +686,7 @@ export default {
         return;
       }
 
-      let xml = generateXml(
+      let xml = generateXml1(
         this.currentTask.taskName,
         this.modelListInGraph,
         this.modelInputInGraph,
@@ -589,9 +699,12 @@ export default {
         this.dataServiceOutputListInGraph
       );
 
+      console.log(xml);
+
       let file = new File([xml], this.currentTask.taskName + '.xml', {
-        type: 'text/xml'
+        type: 'text/xml',
       });
+
       let formData = new FormData();
       formData.append('file', file);
 
@@ -632,15 +745,15 @@ export default {
       this.getCells();
       let modelListInGraph = this.modelListInGraph;
 
-      modelListInGraph.forEach(modelCell => {
+      modelListInGraph.forEach((modelCell) => {
         //判断runnign里面是否有model
-        if (runningTask.some(task => task.id == modelCell.id)) {
+        if (runningTask.some((task) => task.id == modelCell.id)) {
           //change color
           this.changeCellStyleByStatus(0, modelCell, false);
           this.changeDataCellByStatus(0, modelCell, false);
         }
         //判断completedTask里面是否有model
-        if (completedTask.some(task => task.id == modelCell.id)) {
+        if (completedTask.some((task) => task.id == modelCell.id)) {
           //change color
 
           this.changeCellStyleByStatus(1, modelCell, false);
@@ -648,7 +761,7 @@ export default {
           this.changeDataCellByStatus(1, modelCell, false);
         }
         //判断failedTask里面是否有model
-        if (failedTask.some(task => task.id == modelCell.id)) {
+        if (failedTask.some((task) => task.id == modelCell.id)) {
           //change color
           this.changeCellStyleByStatus(2, modelCell, false);
 
@@ -659,12 +772,12 @@ export default {
 
     changeDataCellByStatus(status, modelCell) {
       let list = [...this.modelInputInGraph, ...this.modelLinkInGraph];
-      let inputList = list.filter(event => event.md5 == modelCell.md5);
-      let outputList = this.modelOutputInGraph.filter(event => event.md5 == modelCell.md5);
-      inputList.forEach(item => {
+      let inputList = list.filter((event) => event.md5 == modelCell.md5);
+      let outputList = this.modelOutputInGraph.filter((event) => event.md5 == modelCell.md5);
+      inputList.forEach((item) => {
         this.changeCellStyleByStatus(status, item, true);
       });
-      outputList.forEach(item => {
+      outputList.forEach((item) => {
         this.changeCellStyleByStatus(status, item, true);
       });
     },
@@ -675,20 +788,20 @@ export default {
       if (status == 0) {
         style = {
           fontColor: '#f6f6f6',
-          fillColor: '#E6A23C'
+          fillColor: '#E6A23C',
         };
       }
       //finish
       if (status == 1) {
         style = {
           fillColor: '#67C23A',
-          fontColor: '#24292E'
+          fontColor: '#24292E',
         };
       } //error
       if (status == 2) {
         style = {
           fillColor: '#ce1212',
-          fontColor: '#f6f6f6'
+          fontColor: '#f6f6f6',
         };
       }
       if (isData) {
@@ -702,9 +815,9 @@ export default {
     async putOutputToCell() {
       let actionResponse = this.record.taskInfo.modelActionList.completed;
       // console.log(this.modelOutputInGraph);
-      this.modelOutputInGraph.forEach(async eventCell => {
-        let outputActionList = actionResponse.filter(response => eventCell.linkModelCellId == response.id);
-        let outputValueJson = outputActionList[0].outputData.outputs.filter(out => out.dataId == eventCell.eventId && out.state == eventCell.stateName);
+      this.modelOutputInGraph.forEach(async (eventCell) => {
+        let outputActionList = actionResponse.filter((response) => eventCell.linkModelCellId == response.id);
+        let outputValueJson = outputActionList[0].outputData.outputs.filter((out) => out.dataId == eventCell.eventId && out.state == eventCell.stateName);
         let content = outputValueJson[0].dataContent;
 
         //upload
@@ -713,7 +826,7 @@ export default {
           address: content.value,
           suffix: content.suffix,
           description: '',
-          userUpload: false //--false是中间数据
+          userUpload: false, //--false是中间数据
         };
 
         let data = await saveFileItem(dataJson);
@@ -739,7 +852,7 @@ export default {
           'taskInstance'
         ),
         status: 0,
-        tid: tid
+        tid: tid,
       };
       let data = await saveIntegrateTaskInstance(postJson);
       this.instanceList.push(data);
@@ -756,7 +869,7 @@ export default {
           this.linkEdgeList,
           'taskInstance'
         ),
-        status: 1
+        status: 1,
       };
       // console.log(postJson, this.currentTaskInstance.id);
       await updateIntegrateTaskInstanceById(this.currentTaskInstance.id, postJson);
@@ -778,12 +891,10 @@ export default {
 
     async handleCurrentChange(val) {
       await this.getAllIntegrateTaskInstances(val++);
-    }
+    },
   },
 
-  mounted() {
-    this.init();
-  }
+  mounted() {},
 };
 </script>
 

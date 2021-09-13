@@ -17,11 +17,13 @@
         <i class="el-icon-arrow-down el-icon--right"></i>
       </span>
       <!-- {{ taskList }} -->
-      <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item v-for="(task, index) in taskList" :key="index" :command="task">
-          {{ task.taskName }}
-        </el-dropdown-item>
-      </el-dropdown-menu>
+      <template #dropdown>
+        <el-dropdown-menu>
+          <el-dropdown-item v-for="(task, index) in taskList" :key="index" :command="task">
+            {{ task.taskName }}
+          </el-dropdown-item>
+        </el-dropdown-menu>
+      </template>
     </el-dropdown>
   </div>
 </template>
@@ -32,7 +34,7 @@ export default {
   data() {
     return {
       projectId: this.$route.params.id,
-      taskList: []
+      taskList: [],
     };
   },
 
@@ -51,12 +53,12 @@ export default {
 
     selectTask(task) {
       this.$emit('selectTask', task);
-    }
+    },
   },
 
   async mounted() {
     await this.init();
-  }
+  },
 };
 </script>
 <style lang="scss" scoped></style>

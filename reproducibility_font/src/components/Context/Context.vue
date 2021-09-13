@@ -13,7 +13,7 @@
                   v-for="(tag, tagIndex) in contextForm.themes"
                   closable
                   :disable-transitions="false"
-                  @close="delTags(tag)"
+                  @close="delTags(tagIndex)"
                   style="margin: 0 2px"
                 >
                   {{ tag }}
@@ -175,15 +175,13 @@ export default {
       let data = await getContextByProjectId(this.projectId);
       // console.log('context', data);
       this.contextForm = data;
-      // console.log(data);
       if (data.spatialInfo != null) {
         this.spatialInfoForm = data.spatialInfo;
       }
       if (data.temporalInfo != null) {
         this.temporalInfoForm = data.temporalInfo;
-        this.temporalExtentList = data.temporalInfo.temporalExtentList[0];
+        // this.temporalInfoForm.temporalExtentList = data.temporalInfo.temporalExtentList[0];
       }
-
       this.$forceUpdate();
     },
     async submitContext() {
@@ -234,8 +232,8 @@ export default {
       this.tagInputVisible = false;
       this.themeTag = '';
     },
-    delTags(tag) {
-      this.contextForm.themes.splice(this.contextForm.themes.indexOf(tag), 1);
+    delTags(tagIndex) {
+      this.contextForm.themes.splice(tagIndex, 1);
     },
 
     //设置表格行的样式

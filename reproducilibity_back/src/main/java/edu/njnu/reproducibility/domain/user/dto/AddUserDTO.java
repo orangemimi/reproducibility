@@ -18,23 +18,10 @@ public class AddUserDTO implements ToDomainConverter<User> {
     String name;
     String password;    //MD5
     String email;   //used for registration
-
-    /**
-     * User server
-     */
-    String avatar;
-    String phone;
-    String title;
-    String country;
-    String province;    // County / State / Province
-    String city;
-    String homepage;
-    String introduction;
-    String createdTime;
-    List<String> organizations;
-    List<String> domain;
-    List<String> loginIp;
+    String userId;
 
     List<String> joinedProjects;
     List<String> createdProjects;
+    List<String> forkedProjects;
+
 }

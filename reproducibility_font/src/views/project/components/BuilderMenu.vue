@@ -1,6 +1,6 @@
 <!-- BUilder Menu -->
 <template>
-  <div style="height:100%">
+  <div style="height: 100%">
     <!-- <el-menu :default-active="1" class="el-menu-demo" mode="horizontal" @select="handleClick">
       <el-menu-item index="1">处理中心</el-menu-item>
       <el-menu-item index="3">消息中心</el-menu-item>
@@ -10,15 +10,15 @@
         <i class="el-icon-info"></i>
         Information
       </div>
-      <div class="construction  menu-item" @click="handleClick('Construction')" :class="{ isActive: isConstructionActive }">
+      <div class="construction menu-item" @click="handleClick('Construction')" :class="{ isActive: isConstructionActive }">
         <i class="el-icon-info"></i>
         Construction
       </div>
-      <div class="contributor  menu-item" @click="handleClick('Contributor')" :class="{ isActive: isContributorActive }">
+      <div class="contributor menu-item" @click="handleClick('Contributor')" :class="{ isActive: isContributorActive }">
         <i class="el-icon-info"></i>
         Contributor
       </div>
-      <div class="settings  menu-item" @click="handleClick('Settings')" :class="{ isActive: isSettingsActive }">
+      <div class="settings menu-item" @click="handleClick('Settings')" :class="{ isActive: isSettingsActive }">
         <i class="el-icon-info"></i>
         Settings
       </div>
@@ -39,7 +39,7 @@ export default {
       isInfoActive: true,
       isConstructionActive: false,
       isContributorActive: false,
-      isSettingsActive: false
+      isSettingsActive: false,
     };
   },
 
@@ -59,10 +59,35 @@ export default {
         this.isInfoActive = this.isConstructionActive = this.isContributorActive = false;
       }
       this.$emit('toRouterType', type);
-    }
+    },
+
+    init() {
+      switch (this.$router.currentRoute.name) {
+        case 'Information': {
+          this.isInfoActive = true;
+          this.isConstructionActive = this.isContributorActive = this.isSettingsActive = false;
+          break;
+        }
+        case 'Construction': {
+          this.isConstructionActive = true;
+          this.isInfoActive = this.isContributorActive = this.isSettingsActive = false;
+          break;
+        }
+        case 'Contributor': {
+          this.isContributorActive = true;
+          this.isInfoActive = this.isConstructionActive = this.isSettingsActive = false;
+          break;
+        }
+        case 'Settings': {
+          this.isSettingsActive = true;
+          this.isInfoActive = this.isConstructionActive = this.isContributorActive = false;
+          break;
+        }
+      }
+    },
   },
 
-  mounted() {}
+  mounted() { this.init() },
 };
 </script>
 <style lang="scss" scoped>

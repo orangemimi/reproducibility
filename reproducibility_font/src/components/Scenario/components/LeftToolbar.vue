@@ -26,12 +26,12 @@
     </vue-scroll>
 
     <div class="dialogs">
-      <el-dialog :visible.sync="modelDoubleClick" width="50%" title="Configuration" destroy-on-close :close-on-click-modal="false">
+      <el-dialog :visible.sync="modelDoubleClick" width="50%" title="Configuration" :destroy-on-close="true" :close-on-click-modal="false">
         <data-item-toolbar :cell="currentCell" @selectItemListToGraph="selectItemListToGraph"></data-item-toolbar>
       </el-dialog>
-      <el-dialog :visible.sync="dataDoubleClick" width="50%" title="Configuration" destroy-on-close :close-on-click-modal="false">
+      <el-dialog :visible.sync="dataDoubleClick" width="50%" title="Configuration" :destroy-on-close="true" :close-on-click-modal="false">
         <!-- Configuration -->
-        <data-cell-info :cell="dataNode" @currentEventWithFile="currentEventWithFile"></data-cell-info>
+        <data-cell-info :cell="dataNode"></data-cell-info>
       </el-dialog>
       <el-dialog :visible.sync="codeDoubleClick" width="50%" title="Configuration" destroy-on-close :close-on-click-modal="false">
         <data-service-code-configuration @selectItemListToGraph="selectItemListToGraph"></data-service-code-configuration>
@@ -56,7 +56,7 @@ import dataItemToolbar from '_com/MxGraphDialogs/ModelItemConfiguration';
 import generalToolbar from '_com/MxGraphBars/GeneralToolbar';
 import dataServiceToolbar from '_com/MxGraphBars/DataServiceToolbar';
 
-import { initSetTimeOut, hasProperty } from '@/utils/utils';
+import { hasProperty } from '@/utils/utils';
 import { generalList } from '_com/MxGraphBars/toolbar';
 import { differCellStyle, getCellStyle } from './configuration';
 import mxgraph from '_com/MxGraph/index';
@@ -73,16 +73,16 @@ export default {
     dataServiceToolbar,
     dataCellInfo,
     dataServiceCodeConfiguration,
-    dataServiceConfiguration
+    dataServiceConfiguration,
   },
 
   computed: {
     rhombusList: () => {
-      return generalList.filter(item => item.style.shape == 'rhombus');
+      return generalList.filter((item) => item.style.shape == 'rhombus');
     }, // general toolbar
     rectangleList: () => {
-      return generalList.filter(item => item.style.shape == 'rectangle');
-    }
+      return generalList.filter((item) => item.style.shape == 'rectangle');
+    },
   },
 
   data() {
@@ -120,10 +120,10 @@ export default {
           specifyBorderRadius: false,
           minSize: 0,
           size: '6px',
-          disable: false
-        }
+          disable: false,
+        },
       },
-      currentCell: {}
+      currentCell: {},
     };
   },
 
@@ -143,7 +143,7 @@ export default {
     },
 
     getDataServices(val) {
-      console.log('dataService', val);
+      // console.log('dataService', val);
       this.$set(this, 'dataServiceItemList', val);
     },
 
@@ -158,9 +158,18 @@ export default {
     // },
 
     selectItemListToGraph(val) {
-      console.log(val);
+      if (this.modelDoubleClick == true) {
+        console.log('hah');
+        this.modelDoubleClick = false;
+      } else if (this.dataDoubleClick == true) {
+        this.dataDoubleClick = false;
+      } else if (this.codeDoubleClick == true) {
+        this.codeDoubleClick = false;
+      } else if (this.dataServiceDoubleClick == true) {
+        this.dataServiceDoubleClick = false;
+      }
       val.forEach((item, index) => {
-        let panel = 'modelServiceInput';
+        let panel = '';
         if (item.type == 'input') {
           panel = 'modelServiceInput';
           this.getSelectItemStyleAddToGraph(panel, item, this.currentCell.geometry.x - 100 + 200 * index, this.currentCell.geometry.y - 120);
@@ -285,7 +294,7 @@ export default {
           if (this.selectionCells.length == 0) {
             this.$notify.error({
               title: 'Error',
-              message: 'You have not select any model'
+              message: 'You have not select any model',
             });
 
             return;
@@ -319,7 +328,7 @@ export default {
           if (this.selectionCells.length == 0) {
             this.$notify.error({
               title: 'Error',
-              message: 'You have not select any model'
+              message: 'You have not select any model',
             });
             return;
           }
@@ -353,28 +362,31 @@ export default {
       // 监听双击事件
       this.graph.addListener(mxEvent.DOUBLE_CLICK, async (graph, evt) => {
         // DOUBLE_CLICK
-        let cell = evt.properties.cell;
-        let clickModelType = cell.type;
-        if (clickModelType == 'modelService') {
-          this.modelDoubleClick = true;
-          this.domFlag++;
-          await initSetTimeOut();
-          this.currentCell = cell;
-          this.activeNames.push('modelRelatedDatas');
-          this.dataDoubleClick = this.dataClick = this.modelClick = this.codeDoubleClick = this.dataServiceDoubleClick = false;
-        } else if (clickModelType == 'dataService') {
-          await initSetTimeOut();
-          this.currentCell = cell;
-          this.modelDoubleClick = this.modelClick = this.dataClick = this.dataDoubleClick = this.codeDoubleClick = false;
-          this.dataServiceDoubleClick = true;
-        } else if (clickModelType == 'code') {
-          this.modelDoubleClick = this.modelClick = this.dataClick = this.dataDoubleClick = this.dataServiceDoubleClick = false;
-          this.codeDoubleClick = true;
-        } else {
-          this.modelDoubleClick = this.modelClick = this.dataClick = this.codeDoubleClick = this.dataServiceDoubleClick = false;
-          this.dataDoubleClick = true;
-          // console.log(cell);
-          this.dataNode = cell;
+        if (evt.properties.cell != undefined) {
+          let cell = evt.properties.cell;
+          let clickModelType = cell.type;
+          if (clickModelType == 'modelService') {
+            this.currentCell = cell;
+            this.modelDoubleClick = true;
+            this.domFlag++;
+            // await initSetTimeOut();
+            this.activeNames.push('modelRelatedDatas');
+            this.dataDoubleClick = this.dataClick = this.modelClick = this.codeDoubleClick = this.dataServiceDoubleClick = false;
+          } else if (clickModelType == 'dataService') {
+            // await initSetTimeOut();
+            this.currentCell = cell;
+            this.modelDoubleClick = this.modelClick = this.dataClick = this.dataDoubleClick = this.codeDoubleClick = false;
+            this.dataServiceDoubleClick = true;
+          } else if (clickModelType == 'code') {
+            this.modelDoubleClick = this.modelClick = this.dataClick = this.dataDoubleClick = this.dataServiceDoubleClick = false;
+            this.codeDoubleClick = true;
+          } else {
+            this.modelDoubleClick = this.modelClick = this.dataClick = this.codeDoubleClick = this.dataServiceDoubleClick = false;
+
+            // console.log(cell);
+            this.dataNode = cell;
+            this.dataDoubleClick = true;
+          }
         }
       });
 
@@ -397,9 +409,10 @@ export default {
             this.modelDoubleClick = this.dataClick = this.dataDoubleClick = this.modelClick = false;
           } else {
             this.modelDoubleClick = this.modelClick = this.dataDoubleClick = this.codeClick = false;
-            this.dataClick = true;
+
             // console.log(cell);
             this.dataNode = cell;
+            this.dataClick = true;
           }
         } else {
           //单击空白处
@@ -434,30 +447,32 @@ export default {
       });
 
       // 监听 mxGraph 事件
-      this.mxGraphSelectionModel = this.graph.getSelectionModel();
-      this.mxGraphSelectionModel.addListener(mxEvent.CHANGE, this.handleSelectionChange);
+      console.log(this.mxGraphSelectionModel);
+      // this.mxGraphSelectionModel = this.graph.getSelectionModel();
+      // this.mxGraphSelectionModel.addListener(mxEvent.CHANGE, this.handleSelectionChange);
+      console.log(this.mxGraphSelectionModel);
     },
 
     currentEventWithFile(val) {
       this.graph.getModel().beginUpdate();
 
       try {
-        Object.values(this.graph.getModel().cells).forEach(cell => {
+        Object.values(this.graph.getModel().cells).forEach((cell) => {
           if (cell.id == val.id) {
             cell.value = val.value;
             this.$message({
               message: 'You have submit the file successfully',
-              type: 'success'
+              type: 'success',
             });
           }
         });
       } finally {
         this.graph.getModel().endUpdate();
       }
-    }
+    },
   },
 
-  mounted() {}
+  mounted() {},
 };
 </script>
 <style lang="scss" scoped>

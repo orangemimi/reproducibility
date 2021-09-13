@@ -28,6 +28,10 @@ export default {
         path: `/resource/${id}/${this.type}`
       });
     }
+  },
+  mounted() {
+    // console.log(this.item)
+    // console.log(this.item.snapshot)
   }
 };
 </script>

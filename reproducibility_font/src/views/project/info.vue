@@ -189,7 +189,7 @@ export default {
     async getAllUsers() {},
 
     async editProjectInfoResponse(val) {
-      if (val) {
+      if (val.flag) {
         this.editProjectInfoDialogShow = false;
         await this.getProjectInfo();
 

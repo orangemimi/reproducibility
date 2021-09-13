@@ -24,7 +24,7 @@ public class AddProjectDTO implements ToDomainConverter<Project> {
     List<String> tag;
 
     String creator;
-//    List<String> members;
+    List<String> members;
     Integer level=0;
     String citation;
 

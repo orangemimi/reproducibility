@@ -71,6 +71,7 @@ export default {
     },
 
     getModelInfo() {
+      console.log(this.$refs['modelItemList'])
       return this.$refs['modelItemList'];
       // this.$emit('chooseModel',model)
     }

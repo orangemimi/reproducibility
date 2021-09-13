@@ -62,16 +62,16 @@ public class RemoteManagerServerController {
 
     @SneakyThrows
     @RequestMapping(value = "/runtask", method = RequestMethod.POST)
-    JsonResult runTask(@RequestParam("file") MultipartFile file){
+    JsonResult runTask(@RequestParam("file") MultipartFile file,@JwtTokenParser(key="userId") String userId){
 //       return ResultUtils.success(managerServerFeign.runtask(file, "111"));
-        String userId="123";
+//        String userId="123";
         String suffix="."+ FilenameUtils.getExtension(file.getOriginalFilename());
         File temp= File.createTempFile("temp",suffix);
         file.transferTo(temp);
         FileSystemResource resource = new FileSystemResource(temp);
 
         RestTemplate restTemplate = new RestTemplate();
-        String urlStr ="http://localhost:8084/GeoModeling/task/runTask";
+        String urlStr ="https://geomodeling.njnu.edu.cn/managerServer/GeoModeling/task/runTask";
 //        JSONObject form = new JSONObject();
         MultiValueMap<String, Object> param = new LinkedMultiValueMap<>();
         param.add("file", resource);

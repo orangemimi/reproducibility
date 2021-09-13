@@ -90,8 +90,8 @@ export default {
       console.log(this.form);
       let data = await updateProject(this.projectInfo.id, this.form);
       console.log(data);
-
-      this.$emit('editProjectInfoResponse', true);
+      let result = {data: data, flag: true}
+      this.$emit('editProjectInfoResponse', result);
     },
 
     handleClose(val) {

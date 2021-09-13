@@ -1,12 +1,14 @@
 package edu.njnu.reproducibility.aspect;
 
 
+import cn.hutool.json.JSONObject;
 import edu.njnu.reproducibility.common.enums.ResultEnum;
 import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.common.untils.JwtUtils;
 import edu.njnu.reproducibility.domain.user.User;
 import edu.njnu.reproducibility.domain.user.UserRepository;
 import edu.njnu.reproducibility.domain.user.UserService;
+import edu.njnu.reproducibility.remote.UserServiceServie;
 import io.jsonwebtoken.Claims;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -38,6 +40,7 @@ public class NeedAuthAspect {
 
     @Autowired
     UserRepository userRepository;
+
 
     @Pointcut("@annotation(edu.njnu.reproducibility.annotation.NeedAuth)")
     public void point() {

@@ -58,9 +58,12 @@ export default {
   watch: {
     cell: {
       handler(val) {
+        // console.log(val)
+        // console.log(oldval)
         if (hasProperty(val, 'id') && val.type == 'modelService') {
           this.doi = val.nodeAttribute.doi;
           this.init();
+          // console.log("执行watch")
         }
       },
       deep: true,
@@ -116,6 +119,7 @@ export default {
       // this.$emit('getInAndOut', this.stateListInput, this.stateListOutput);
     },
     addSelectItem(item) {
+      console.log(item)
       if (hasProperty(item, 'isSelect') && item.isSelect) {
         this.selectItemListToGraph.splice(this.selectItemListToGraph.findIndex(arrItem => arrItem.eventId == item.eventId));
       } else {
@@ -130,12 +134,20 @@ export default {
       item.isSelect = false;
     },
     submit() {
+      console.log(this.selectItemListToGraph)
+      
       this.$emit('selectItemListToGraph', this.selectItemListToGraph);
     }
+  },
+  mounted() {
+    if(this.cell != undefined) {
+      this.doi = this.cell.nodeAttribute.doi;
+      this.init()
+      console.log('haha')
+    } else {
+      console.log(this.cell)
+    }
   }
-  // created() {
-  //   this.$set(this.cell);
-  // }
 };
 </script>
 

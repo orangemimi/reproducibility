@@ -36,6 +36,7 @@
         </el-row>
       </div>
     </div>
+
     <div class="main">
       <div class="main-container">
         <el-row
@@ -64,7 +65,7 @@
 </template>
 
 <script>
-import { getAllModels } from '@/api/request';
+import { getAllModelItems } from '@/api/request';
 import serviceCard from '_com/common/ServiceCard';
 import createModel from './create';
 export default {
@@ -95,12 +96,11 @@ export default {
     },
 
     async getData() {
-      let { content } = await getAllModels(this.pageFilter.page, this.pageFilter.pageSize);
+      let { content } = await getAllModelItems(this.pageFilter.page, this.pageFilter.pageSize);
       // let { content } = await get(
       //   `/modelItems/${this.pageFilter.page}/${this.pageFilter.pageSize}`
       // );
       // console.log(content);
-
       if (content.length == 0) {
         this.is_extending = false;
         return;
@@ -108,6 +108,7 @@ export default {
         this.data = content;
         this.is_extending = true;
       }
+      console.log(this.data)
     },
 
     extendData() {

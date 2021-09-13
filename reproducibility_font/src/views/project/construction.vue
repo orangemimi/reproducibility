@@ -23,7 +23,7 @@
         <div class="block">
           <el-timeline>
             <el-timeline-item
-              :icon="completion.context.icon == null ? 'el-icon-upload' : completion.context.icon"
+              :icon="completion.context.icon"
               :type="completion.context.type"
               size="large"
               :timestamp="dateFormat(completion.context.updateTime)"
@@ -69,7 +69,12 @@ export default {
     return {
       projectId: this.$route.params.id,
       projectInfo: {},
-      completion: [],
+      completion:{
+          context:{icon: '',type: '',updateTime:''},
+          resource:{icon: '',type: '',updateTime:''},
+          scenario:{icon: '',type: '',updateTime:''},
+          results:{icon: '',type: '',updateTime:''}
+      },
       context: {},
       resource: {},
       scenario: {},
@@ -83,6 +88,7 @@ export default {
       await this.getProjectInfo();
       await this.getPerformance();
       // await this.judgeRole(this.projectInfo);
+      console.log(this.completion)
     },
 
     async getProjectInfo() {
@@ -104,7 +110,7 @@ export default {
       return dateFormat(time);
     }
   },
-  mounted() {
+  created() {
     this.init();
   }
 };

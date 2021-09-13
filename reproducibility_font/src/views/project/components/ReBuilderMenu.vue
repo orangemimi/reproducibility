@@ -1,6 +1,6 @@
 <!-- reBUilder Menu -->
 <template>
-  <div style="height:100%">
+  <div style="height: 100%">
     <!-- <el-menu :default-active="1" class="el-menu-demo" mode="horizontal" @select="handleClick">
       <el-menu-item index="1">处理中心</el-menu-item>
       <el-menu-item index="3">消息中心</el-menu-item>
@@ -10,11 +10,11 @@
         <i class="el-icon-info"></i>
         Information
       </div>
-      <div class="scenario  menu-item" @click="handleClick('Reproduction')" :class="{ isActive: isReproductionActive }">
+      <div class="scenario menu-item" @click="handleClick('Reproduction')" :class="{ isActive: isReproductionActive }">
         <i class="el-icon-info"></i>
         Reproduction
       </div>
-      <div class="contributor  menu-item" @click="handleClick('Contributor')" :class="{ isActive: isContributorActive }">
+      <div class="contributor menu-item" @click="handleClick('Contributor')" :class="{ isActive: isContributorActive }">
         <i class="el-icon-info"></i>
         Contributor
       </div>
@@ -35,7 +35,7 @@ export default {
       isInfoActive: true,
       isReproductionActive: false,
       isContributorActive: false,
-      isSettingsActive: false
+      isSettingsActive: false,
     };
   },
 
@@ -52,10 +52,30 @@ export default {
         this.isInfoActive = this.isReproductionActive = this.isSettingsActive = false;
       }
       this.$emit('toRouterType', type);
-    }
+    },
+
+    init() {
+      switch (this.$router.currentRoute.name) {
+        case 'Information': {
+          this.isInfoActive = true;
+          this.isReproductionActive = this.isContributorActive = this.isSettingsActive = false;
+          break;
+        }
+        case 'Reproduction': {
+          this.isReproductionActive = true;
+          this.isInfoActive = this.isContributorActive = this.isSettingsActive = false;
+          break;
+        }
+        case 'Contributor': {
+          this.isContributorActive = true;
+          this.isInfoActive = this.isReproductionActive = this.isSettingsActive = false;
+          break;
+        }
+      }
+    },
   },
 
-  mounted() {}
+  mounted() {},
 };
 </script>
 <style lang="scss" scoped>

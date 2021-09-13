@@ -4,6 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.List;
+
 /**
  * @Author ：Zhiyi
  * @Date ：2021/4/16 20:14
@@ -12,4 +14,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  */
 public interface DataServiceRepositroy  extends MongoRepository<DataService,String> {
     Page<DataService> findAll(Pageable pageable);
+    List<DataService> findAllByUserId(String userId);
 }

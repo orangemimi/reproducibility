@@ -1,6 +1,8 @@
 package edu.njnu.reproducibility.domain.user;
 
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,4 +20,5 @@ public interface UserRepository extends MongoRepository<User,String> {
     Optional<User> findByEmail(String email);
     Optional<User> findByUserId(String userId);
     List<User> findByEmailLike(String value);
+
 }

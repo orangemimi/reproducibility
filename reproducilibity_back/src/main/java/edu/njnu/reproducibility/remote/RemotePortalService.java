@@ -57,14 +57,19 @@ public class RemotePortalService {
 //        JSONObject result = jsonObjectResponseEntity.getBody().getJSONObject("data");
 
         RestTemplate restTemplate = new RestTemplate();
-        String urlStr ="http://172.21.212.167:8080/repository/getUnits/?asc="+1+"&page="+currentPage+"&size="+pagesize;
+        String urlStr ="http://geomodeling.njnu.edu.cn/repository/getUnits/?asc="+1+"&page="+currentPage+"&size="+pagesize;
 //        MultiValueMap<String, Object> form = new LinkedMultiValueMap<>();
 //        form.add("page",currentPage);
 //        form.add("size",pagesize);
 //        form.add("asc",1);
 
         HttpEntity<MultiValueMap> httpEntity = new HttpEntity<MultiValueMap>(headers);
-        ResponseEntity<JSONObject> jsonObjectResponseEntity = restTemplate.exchange(urlStr, HttpMethod.GET, httpEntity, JSONObject.class);
+        ResponseEntity<JSONObject> jsonObjectResponseEntity;
+        try {
+            jsonObjectResponseEntity = restTemplate.exchange(urlStr, HttpMethod.GET, httpEntity, JSONObject.class);
+        } catch(Exception e) {
+            throw new MyException(ResultEnum.REMOTE_SERVICE_ERROR);
+        }
 
         if (!jsonObjectResponseEntity.getStatusCode().is2xxSuccessful()) {
             throw new MyException(ResultEnum.REMOTE_SERVICE_ERROR);

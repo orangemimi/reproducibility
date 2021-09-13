@@ -63,7 +63,10 @@ export default {
     return {
       activeName: 'file',
 
-      form: {}
+      form: {
+        value: '',
+        token: ''
+      }
     };
   },
 
@@ -76,7 +79,11 @@ export default {
       this.value = '';
     },
     submitBtn() {
-      this.$emit('returnResourceUrl', this.form.value, this.form.token);
+      let result = {
+        url: this.form.value,
+        token: this.form.token
+      }
+      this.$emit('returnResourceUrl', result);
     }
     //get all the file
   },

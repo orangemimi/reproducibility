@@ -41,6 +41,15 @@ public class NoticeController {
         return ResultUtils.success(noticeService.getAllNoticeBySender(userId));
     }
 
+    @RequestMapping (value = "/recipientTrue", method = RequestMethod.GET)
+    public JsonResult getAllNoticeByRecipientTrue(@JwtTokenParser(key = "userId") String userId) {
+        return ResultUtils.success(noticeService.getAllNoticeByRecipientTrue(userId));
+    }
+
+    @RequestMapping (value = "/senderTrue", method = RequestMethod.GET)
+    public JsonResult getAllNoticeBySenderTrue(@JwtTokenParser(key = "userId") String userId) {
+        return ResultUtils.success(noticeService.getAllNoticeBySenderTrue(userId));
+    }
 
     @RequestMapping (value = "", method = RequestMethod.POST)
     public JsonResult save(@JwtTokenParser(key="userId") String userId, @RequestBody AddNoticeDTO add) {
@@ -59,5 +68,28 @@ public class NoticeController {
         return ResultUtils.success();
     }
 
+    @RequestMapping (value = "/delrec/{noticeId}", method = RequestMethod.PATCH)
+    public JsonResult changeRecState(@PathVariable("noticeId") String noticeId) {
+        return ResultUtils.success(noticeService.changeRecState(noticeId));
+    }
 
+    @RequestMapping (value = "/delsen/{noticeId}", method = RequestMethod.PATCH)
+    public JsonResult changeSenState(@PathVariable("noticeId") String noticeId) {
+        return ResultUtils.success(noticeService.changeSenState(noticeId));
+    }
+
+    @RequestMapping(value = "/getnumforapply/", method = RequestMethod.GET)
+    public JsonResult getNumForApply(@JwtTokenParser(key = "userId") String userId) {
+        return ResultUtils.success(noticeService.getNumForApply(userId));
+    }
+
+    @RequestMapping(value = "/getnumforreply", method = RequestMethod.GET)
+    public JsonResult getNumForReply(@JwtTokenParser(key = "userId") String userId) {
+        return ResultUtils.success(noticeService.getNumForReply(userId));
+    }
+
+    @RequestMapping(value = "/changeallreply", method = RequestMethod.PATCH)
+    public JsonResult changeAllReplyisread(@JwtTokenParser(key="userId") String userId) {
+        return ResultUtils.success(noticeService.changeAllReplyisread(userId));
+    }
 }

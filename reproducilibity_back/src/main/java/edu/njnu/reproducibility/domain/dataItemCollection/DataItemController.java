@@ -62,4 +62,9 @@ public class DataItemController {
 //        MultipartFile upload = multiRequest.getFile("pictureFile");
         return ResultUtils.success(dataItemService.uploadPicture(upload,userId));
     }
+
+    @RequestMapping(value = "/del/{Id}", method = RequestMethod.DELETE)
+    public JsonResult delDataItem(@PathVariable String Id) {
+        return ResultUtils.success(dataItemService.delDataItem(Id));
+    }
 }

@@ -28,5 +28,8 @@ public class Notice extends BaseEntity {
     String senderId;
     String type;    //notice|reply|apply
     JSONObject content;
-    String state;   //read|unread|approve|refuse
+    String state;   //read|unread|approve|refuse|ignore
+    String recstate;        //true/false    recipient是否对此可见
+    String senstate;        //true/false    sender是否对此可见
+    String replyisread;     //true/false/unknown    回复是否已读,回复在等待对方回复的时候处在unknown状态
 }

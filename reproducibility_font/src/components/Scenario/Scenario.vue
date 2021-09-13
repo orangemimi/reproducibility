@@ -61,7 +61,7 @@ export default {
     return {
       projectId: this.$route.params.id,
       scenario: {},
-      isNewTaskShow: true,
+      isNewTaskShow: false,
       isIntegrateTaskShow: false,
       isNoteTaskShow: false,
       taskInfo: { type: 'integrateTask' },
@@ -83,6 +83,7 @@ export default {
 
     async getScenario() {
       let data = await getScenarioByProjectId(this.projectId);
+      console.log(data)
       if (data == null || data.selectTaskId == '' || data.selectTaskId == null) {
         this.isNewTaskShow = true;
         return;
@@ -108,11 +109,11 @@ export default {
       this.isNewTaskShow = false;
       let postJson = {
         projectId: this.projectId,
-        content: '',
+        taskContent: '',
         ...this.taskInfo
       };
       if (this.taskInfo.type == 'integrateTask') {
-        postJson.content = '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/></root></mxGraphModel>';
+        postJson.taskContent = '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/></root></mxGraphModel>';
         this.isIntegrateTaskShow = true;
       }
       if (this.taskInfo.type == 'notebook') {
@@ -128,6 +129,7 @@ export default {
       //选择task之后的回调
       this.taskInfoInit = val;
       this.isIntegrateTaskShow = false;
+      console.log(val)
     }
   },
 

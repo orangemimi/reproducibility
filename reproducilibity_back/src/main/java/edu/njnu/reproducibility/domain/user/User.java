@@ -23,30 +23,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User extends BaseEntity {
+public class User {
     @Id
-    String userId;  //UUID
-    String name;
+    String id;  //UUID
+
     String password;    //MD5
     String email;   //used for registration
-
-    /**
-     * User server
-     */
-    String avatar;
-    String phone;
-    String title;
-    String country;
-    String province;    // County / State / Province
-    String city;
-    String homepage;
-    String introduction;
-    String createdTime;
-    List<String> organizations;
-    List<String> domain;
-    List<String> loginIp;
-    //private ArrayList<String> resource;
-
     /**
      * Unique
      * adi
@@ -54,4 +36,28 @@ public class User extends BaseEntity {
     List<String> joinedProjects;
     List<String> createdProjects;
     List<String> forkedProjects;
+
+
+    /**
+     * User server
+     */
+    String name;
+    String userId;
+//
+//    String avatar;
+//    String phone;
+//    String title;
+//    String country;
+//    String province;    // County / State / Province
+//    String city;
+//    String homepage;
+//    String introduction;
+//    String createdTime;
+//    List<String> organizations;
+//    List<String> domain;
+//    List<String> loginIp;
+
+    //private ArrayList<String> resource;
+
+
 }

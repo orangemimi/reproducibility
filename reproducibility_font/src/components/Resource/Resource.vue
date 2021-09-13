@@ -28,41 +28,12 @@
           Please upload a data
         </template>
         <el-table-column type="expand">
-          <template slot-scope="scope">
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="Name">
-                <span>{{ scope.row.name }}</span>
-              </el-form-item>
-              <el-form-item label="Description">
-                <span>{{ scope.row.description }}</span>
-              </el-form-item>
-              <el-form-item label="keywords">
-                <span>{{ scope.row.keywords }}</span>
-              </el-form-item>
-              <el-form-item label="Format">
-                <span>{{ scope.row.format }}</span>
-              </el-form-item>
-              <div v-if="scope.row.format != 'parameter'">
-                <el-form-item label="Spatial Info">
-                  <span>{{ scope.row.restriction.spatialInfo }}</span>
-                </el-form-item>
-                <el-form-item label="Temporal Info">
-                  <span>{{ scope.row.restriction.temporalInfo }}</span>
-                </el-form-item>
-              </div>
-              <div v-else>
-                <el-form-item label="Spatial Info">
-                  <span>{{ scope.row.restriction.type }}</span>
-                </el-form-item>
-                <el-form-item label="Temporal Info">
-                  <span>{{ scope.row.restriction.unit }}</span>
-                </el-form-item>
-              </div>
-            </el-form>
+          <template #default="scope">
+            <edit-resource :initFormData="scope.row"/>
           </template>
         </el-table-column>
 
-        <el-table-column label="Name" width="160">
+        <el-table-column label="Name" width="130">
           <template #default="scope">{{ scope.row.name }}</template>
         </el-table-column>
         <el-table-column label="Format" width="100">
@@ -70,17 +41,18 @@
             <span>{{ scope.row.format }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Upload time" width="160">
+        <el-table-column label="Upload time" width="130">
           <template #default="scope">{{ scope.row.createTime }}</template>
         </el-table-column>
-        <el-table-column label="Value" fixed="right">
+        <el-table-column label="Operate" fixed="right">
           <template #default="scope">
-            <div v-if="scope.row.value != null">
+            <div v-if="scope.row.format != 'parameter'">
               <el-button size="mini">Download</el-button>
+              <el-button size="mini" @click="delDataItem(scope)">Del</el-button>
             </div>
             <div v-else>
-              <el-button size="mini" @click="bindResource(scope.row)">Bind</el-button>
-              <el-button size="mini" @click="editDataItem">Edit</el-button>
+              <!-- <el-button size="mini" @click="bindResource(scope.row)">Bind</el-button> -->
+              <el-button size="mini" @click="delDataItem(scope)">Del</el-button>
             </div>
           </template>
         </el-table-column>
@@ -90,10 +62,6 @@
     <!-- upload data -->
     <el-dialog title="Upload resource" :visible.sync="uploadDataDialogShow" width="40%" :close-on-click-modal="false" :append-to-body="true">
       <data-upload-info @uploadSuccess="uploadSuccess"></data-upload-info>
-    </el-dialog>
-
-    <el-dialog title="Upload resource" :visible.sync="editDataDialogShow" width="40%" :close-on-click-modal="false" :append-to-body="true">
-      <data-upload-info @uploadSuccess="uploadSuccess" :initFormData="currentRow"></data-upload-info>
     </el-dialog>
 
     <el-dialog title="Bind value" :visible.sync="bindResourceDialogShow" width="40%" :close-on-click-modal="false" :append-to-body="true">
@@ -107,11 +75,12 @@
 </template>
 
 <script>
-import { getDataItemsByProjectId, updateDataItemById, saveFileItem, postDataContainer } from '@/api/request';
+import { getDataItemsByProjectId, updateDataItemById, saveFileItem, postDataContainer, deleteDataItemById } from '@/api/request';
 // import dataUpload from './DataUpload'; //dialogcontent
 import dataUploadInfo from './DataUploadInfo'; //dialogcontent
 import bindResource from './BindResource';
 import fileUpload from './FileUpload';
+import editResource from './EditResource.vue'
 import { getUuid, getSuffix, renderSize, getTime } from '@/utils/utils';
 import { mapState } from 'vuex';
 
@@ -119,7 +88,8 @@ export default {
   components: {
     dataUploadInfo,
     bindResource,
-    fileUpload
+    fileUpload,
+    editResource
   },
 
   data() {
@@ -136,6 +106,8 @@ export default {
 
       //table
       multipleSelection: [],
+
+      initFormData: {},
 
       //add folder
       isAddFolder: false,
@@ -163,9 +135,17 @@ export default {
     },
     //close the dialog
     uploadSuccess(val) {
-      if (val) {
+      if (val.flag) {
         this.uploadDataDialogShow = false;
+        this.dataItemList.push(val.data)
       }
+    },
+
+    async delDataItem(scope) {
+      console.log(scope)
+      await deleteDataItemById(scope.row.id)
+      this.dataItemList.splice(scope.$index, 1)
+      this.dataItemList
     },
 
     downloadDataResource(data) {
@@ -341,15 +321,13 @@ export default {
       return params.folder === true ? 'el-icon-folder' : 'el-icon-document';
     },
     getRowKeys(row) {
-      console.log('row', row);
+      // console.log('row', row);
       return row.id;
     },
     clickTable(row) {
       this.$refs.multipleTable.toggleRowExpansion(row);
     },
-    editDataItem() {
-      this.editDataDialogShow = true;
-    },
+
     bindResource(selectItem) {
       this.bindResourceDialogShow = true;
       this.selectItem = this.dataItemList.find(item => item.id == selectItem.id);
@@ -357,9 +335,10 @@ export default {
     },
 
     async returnResourceUrl(value) {
-      this.selectItem.value = value[0];
+      console.log(value)
+      this.selectItem.value = value.url;
       if (value[1] != '') {
-        this.selectItem.token = value[1];
+        this.selectItem.token = value.token;
       }
       // let json ={value:value}
       let data = await updateDataItemById(this.selectItem.id, this.selectItem);

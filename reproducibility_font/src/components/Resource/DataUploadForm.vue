@@ -2,8 +2,8 @@
 <template>
   <div class="main">
     <!-- {{ formType }} -->
-    <el-form class="resource" ref="form" :model="form" label-width="100px" size="mini">
-      <el-form-item label="Name">
+    <el-form class="resource" ref="form" :model="form" label-width="100px" size="mini" :rules="Rules">
+      <el-form-item label="Name" prop="name">
         <el-input v-model="form.name"></el-input>
       </el-form-item>
 
@@ -11,32 +11,24 @@
         <el-input v-model="form.description"></el-input>
       </el-form-item>
 
-      <el-form-item label="Data">
+      <el-form-item label="Data" prop="value">
         <div v-if="formType == 'file'">
-          <div v-if="currentFile.name != null || currentFile.name != undefined" class="select_data">
+          <!-- <div v-if="currentFile.name != null || currentFile.name != undefined" class="select_data">
             <div class="select-data select-data-line">
               <div class="data-name">{{ currentFile.name }}</div>
               <i class="el-icon-close" @click="remove"></i>
             </div>
           </div>
           <div class="drag" v-else>
-            <el-upload
-              drag
-              action
-              :auto-upload="true"
-              :show-file-list="false"
-              ref="upload"
-              :http-request="submitUpload"
-              :on-remove="handleRemove"
-              :on-success="handleSuccess"
-            >
+            <el-upload drag action :auto-upload="true" :show-file-list="false" ref="upload" :http-request="submitUpload" :on-success="handleSuccess">
               <i class="el-icon-upload"></i>
               <div class="el-upload__text">
                 Drag a file here to upload or
                 <em>Click to upload</em>
               </div>
             </el-upload>
-          </div>
+          </div> -->
+          <file-upload @returnFileUrl="returnFileUrl"></file-upload>
         </div>
 
         <div v-else-if="formType == 'parameter'">
@@ -46,7 +38,7 @@
           </el-radio-group>
 
           <div v-if="form.type == 'Input'"><el-input v-model="form.value"></el-input></div>
-          <div v-else><el-date-picker v-model="value1" type="date" placeholder="Select the date"></el-date-picker></div>
+          <div v-else><el-date-picker v-model="form.value" type="date" placeholder="Select the date"></el-date-picker></div>
         </div>
 
         <div v-else>
@@ -54,34 +46,39 @@
         </div>
       </el-form-item>
 
-      <el-form-item label="Keywords">
-        <el-input v-model="form.keywords[0]"></el-input>
+      <el-form-item label="Token" v-show="formType == 'shared_file'" :prop="formType == 'shared_file' ? 'token' : ''">
+        <el-input v-model="form.token"></el-input>
       </el-form-item>
 
-      <el-form-item label="Spatial Info" v-show="formType != 'parameter'">
+      <!-- <el-form-item label="Keywords">
+        <el-input v-model="form.keywords[0]"></el-input>
+      </el-form-item> -->
+
+      <!-- <el-form-item label="Spatial Info" v-show="formType != 'parameter'">
         <el-button @click="addSpatialInfodialogVisible = true" size="mini" class="spatioEdit">Edit</el-button>
         <spatial-info-table :spatialInfoForm="spatialInfoForm"></spatial-info-table>
       </el-form-item>
       <el-form-item label="Temporal Info" v-show="formType != 'parameter'">
         <el-button @click="addTemporalInfodialogVisible = true" size="mini" class="temporalEdit">Edit</el-button>
         <temporal-info-table :temporalInfoForm="temporalInfoForm"></temporal-info-table>
-      </el-form-item>
+      </el-form-item> -->
 
       <!-- <el-form ref="formRestriction" :model="form" label-width="100px" size="mini"> -->
 
-      <el-form-item label="Type" v-show="formType == 'parameter'">
+      <el-form-item label="Type" v-show="formType == 'parameter'" prop="type">
         <el-radio-group v-model="form.restriction.type" v-for="(item, index) in typeEnums" :key="index">
           <el-radio :label="item"></el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="Decimal" v-show="formType == 'parameter'">
+      <!-- <el-form-item label="Decimal" v-show="formType == 'parameter'">
         <el-input v-model="form.restriction.decimal"></el-input>
-      </el-form-item>
+      </el-form-item> -->
       <!-- <el-form-item v-model="form.restriction.content"></el-form-item> -->
-      <el-form-item label="Unit" v-show="formType == 'parameter'">
+      <!-- <el-form-item label="Unit" v-show="formType == 'parameter'">
         {{ form.restriction.unit.value }}
+
         <el-button size="mini" @click="drawer = true">Add Unit</el-button>
-      </el-form-item>
+      </el-form-item> -->
 
       <!-- </el-form> -->
 
@@ -92,7 +89,7 @@
         </el-radio-group>
       </el-form-item>
 
-      <el-form-item label="Version">
+      <el-form-item label="Version" prop="version">
         <el-input v-model="form.version"></el-input>
       </el-form-item>
       <el-form-item label="Reference">
@@ -144,25 +141,26 @@
 
 <script>
 // import { post } from '@/axios';
-import { saveDataItem, saveFileItem, postDataContainer } from '@/api/request';
+import { saveDataItem, postDataContainer } from '@/api/request';
 // import addImage from '_com/AddImage';
 import { VueTreeList, Tree, TreeNode } from '_com/TreeDescription';
 import { getSuffix, renderSize } from '@/utils/utils';
 
-import temporalInfoTable from '_com/ContextTable/TemporalInfoTable';
+// import temporalInfoTable from '_com/ContextTable/TemporalInfoTable';
 import temporalInfoDialog from '_com/ContextTable/TemporalInfoDialog';
-import spatialInfoTable from '_com/ContextTable/SpatialInfoTable';
+// import spatialInfoTable from '_com/ContextTable/SpatialInfoTable';
 import spatialInfoDialog from '_com/ContextTable/SpatialInfoDialog';
 import unitDrawer from '_com/UnitDrawer/UnitDrawer';
+import fileUpload from './FileUpload';
 
 export default {
   props: {
     formType: {
-      type: String
+      type: String,
     },
     initFormData: {
-      type: Object
-    }
+      type: Object,
+    },
   },
 
   watch: {
@@ -172,57 +170,67 @@ export default {
           this.form = val;
         }
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   components: {
     // addImage,
     VueTreeList,
-    temporalInfoTable,
-    spatialInfoTable,
+    // temporalInfoTable,
+    // spatialInfoTable,
     temporalInfoDialog,
     spatialInfoDialog,
-    unitDrawer
+    unitDrawer,
+    fileUpload,
     // addChildValue
   },
 
   data() {
     return {
       projectId: this.$route.params.id,
-
+      value1: '',
       form: {
         name: '',
         type: 'Input',
+        value: '',
+        token: '',
         description: '',
         keywords: [],
         agentAttribute: {
           organization: {},
-          reference: ''
+          reference: '',
         },
         activityAttribute: {
           relatedActivity: {
             name: '',
-            description: ''
+            description: '',
           },
           relatedResource: {
             name: '',
-            description: ''
+            description: '',
           },
           relationshipLink: {
-            description: ''
-          }
+            description: '',
+          },
         },
         state: 'Public',
         version: '1.0',
         format: this.formType,
         restriction: {
-          type: '',
+          type: 'String',
           decimal: '',
           content: '',
           unit: { value: '' },
           spatialInfo: {},
-          temporalInfo: {}
-        }
+          temporalInfo: {},
+        },
+      },
+
+      Rules: {
+        name: [{ required: true, message: 'Name cannot be empty', trigg: 'blur' }],
+        value: [{ required: true, message: 'Data cannot be empty'}],
+        version: [{ required: true, message: 'Version cannot be empty', trigg: 'blur' }],
+        token: [{ required: true, message: 'Token cannot be empty', trigg: 'blur' }]
       },
 
       fileForm: {
@@ -235,7 +243,7 @@ export default {
         source: '',
         thumbnail: '',
         userUpload: '',
-        address: ''
+        address: '',
       },
 
       typeEnums: ['String', 'Number', 'Date'],
@@ -246,8 +254,8 @@ export default {
       //   file: {},
       ops: {
         bar: {
-          background: '#808695'
-        }
+          background: '#808695',
+        },
       },
       nodeInfo: this.nodeInformation,
 
@@ -257,8 +265,8 @@ export default {
           name: 'Name',
           value: 'Description',
           id: 1,
-          pid: 0
-        }
+          pid: 0,
+        },
       ]),
       // addChildDialogShow: false
 
@@ -266,28 +274,28 @@ export default {
         enable: false,
         spatialReference: {
           general: '',
-          wkt: ''
+          wkt: '',
         },
         spatialDimension: '',
         spatialScale: {
           type: '',
-          description: ''
+          description: '',
         },
         spatialExtentList: [],
-        resolutionConstraintList: []
+        resolutionConstraintList: [],
       },
 
       temporalInfoForm: {
         enable: false,
         temporalScale: {
           type: '',
-          description: ''
+          description: '',
         },
         temporalReference: {
-          value: ''
+          value: '',
         },
         temporalExtentList: [],
-        stepConstraintList: []
+        stepConstraintList: [],
       },
 
       //unit drawer
@@ -297,7 +305,7 @@ export default {
       addTemporalInfodialogVisible: false,
 
       //file uolad related
-      currentFile: {}
+      currentFile: {},
     };
   },
 
@@ -306,33 +314,29 @@ export default {
       this.form.picture = val;
     },
 
-    handleRemove(file) {
-      this.dataItemList = this.dataItemList.filter(item => {
-        return item.name != file.name;
-      });
-    },
-
     remove() {
       // await del(`/fileItems/${resource.id}`);
-      this.form = {
-        alia: '',
-        name: '',
-        type: '',
-        description: '',
-        privacy: 'discoverable',
-        source: '',
-        thumbnail: '',
-        userUpload: '',
-        address: ''
-      };
+      // this.form = {
+      //   alia: '',
+      //   name: '',
+      //   type: '',
+      //   description: '',
+      //   privacy: 'discoverable',
+      //   source: '',
+      //   thumbnail: '',
+      //   userUpload: '',
+      //   address: '',
+      // };
+      this.currentFile = {};
     },
 
     //上传文件到服务器
     async submitUpload(param) {
+      console.log(param.file);
+
       this.uploadFileForm = new FormData();
       this.uploadFileForm.append('file', param.file);
       // console.log(this.uploadFileForm.get('file'));
-
       let data = await postDataContainer(this.uploadFileForm);
 
       this.fileForm.name = data.file_name;
@@ -355,22 +359,53 @@ export default {
 
     //data item保存到数据库
     //上传数据直接保存到fileItems,即用户的资源可全部显示，之后选择所需的数据，之后保存选择的数据之后 保存到resource数据表里面去
-    async submit() {
-      console.log('getFile', this.uploadFileForm.get('file'));
-      if (this.uploadFileForm.get('file') != null) {
-        this.fileForm.description = this.form.description;
-        await saveFileItem(this.fileForm);
-      }
+    submit() {
+      this.$refs['form'].validate(async (valid) => {
+        if (!valid) {
+          this.$notify.error({
+            title: 'Error',
+            message: 'Validation failed',
+          });
+          return;
+        }
 
-      // console.log('orgasnizaion', this.treeData);
-      this.form.restriction.spatialInfo = this.spatialInfoForm;
-      this.form.restriction.temporalInfo = this.temporalInfoForm;
-      this.form.projectId = this.projectId;
-      await saveDataItem(this.form);
-      // let data = await post(`/fileItems`, this.form);
-      // console.log(data);
+        // console.log('getFile', this.uploadFileForm.get('file'));
+        // if (this.uploadFileForm.get('file') != null) {
+        //   this.fileForm.description = this.form.description;
+        //   await saveFileItem(this.fileForm);
+        // }
+        this.form.restriction.spatialInfo = this.spatialInfoForm;
+        this.form.restriction.temporalInfo = this.temporalInfoForm;
+        this.form.projectId = this.projectId;
+        console.log(this.form)
+        let data = await saveDataItem(this.form);
+        console.log(data)
+        let result = {
+          data: data,
+          flag: true,
+        };
+        this.$emit('uploadSuccess', result);
+      });
+      // if (formType == 'file') {
 
-      this.$emit('uploadSuccess', true);
+      // } else if (formType == 'parameter') {
+      //   let jsonObj = {
+      //     Dataset: {
+      //       XDO: {
+      //         _name: this.form.name,
+      //         _kernelType: this.form.restriction.type,
+      //         _value: this.form.value
+      //       }
+      //     },
+      //   };
+      //   // let file = new File(this.$x2js.js2xml(jsonObj), 'test.xml', {type: 'textain'})
+      //   console.log(this.$x2js.js2xml(jsonObj));
+      // }
+    },
+
+    returnFileUrl(val) {
+      console.log(val);
+      this.form.value = val.address
     },
 
     //tree
@@ -392,11 +427,15 @@ export default {
       this.drawer = false;
     },
     selectUnit(val) {
+      console.log(val);
       this.form.restriction.unit = val.name;
-    }
+    },
   },
 
-  mounted() {}
+  mounted() {
+    // console.log(this.formType)
+    // console.log(this.initFormData)
+  },
 };
 </script>
 <style lang="scss" scoped>

@@ -4,25 +4,31 @@
       <el-col :span="3" class="logo">
         <div @click="handleSelect('1')">Reproducibility</div>
       </el-col>
-      <el-col class="nav-bar" :span="5" :offset="5">
+      <el-col class="nav-bar" :span="6" :offset="4">
         <el-menu default-active="activeIndex" mode="horizontal" @select="handleSelect">
           <el-menu-item index="1">Home</el-menu-item>
           <el-menu-item index="2">Projects</el-menu-item>
-          <el-menu-item index="3">
-            Resources
-          </el-menu-item>
-          <el-menu-item index="4">Help</el-menu-item>
+          <el-menu-item index="3">Model</el-menu-item>
+          <el-menu-item index="4">Dataservice</el-menu-item>
+          <el-menu-item index="5">Help</el-menu-item>
         </el-menu>
       </el-col>
-      <el-col v-if="user.name == null || user.name == undefined" class="user" :span="3" :offset="7">
+      <el-col v-if="user.name == null || user.name == undefined" class="user" :span="3" :offset="7" style="margin-top: 10px">
         <el-button @click="register" type="text">Regisiter</el-button>
         <el-button @click="login" type="text">Login</el-button>
       </el-col>
 
-      <el-col v-else class="user" :span="1" :offset="9">
+      <el-col v-else class="user" :span="2" :offset="8">
+        <el-badge :is-dot="this.$store.state.user.unreadApplynum == 0 && this.$store.state.user.unreadReplynum == 0 ? false : true" class="item">
+          <i class="el-icon-message-solid" @click="toNotice"></i>
+        </el-badge>
         <el-dropdown placement="bottom-start" @command="handleCommond">
           <div @click="toUserPage">
-            <avatar :username="user.avatar != 'undefined' && user.avatar != 'null' && user.avatar != undefined ? user.avatar : user.name" :size="40" style="margin-top: 10px"></avatar>
+            <avatar
+              :username="user.avatar != 'undefined' && user.avatar != 'null' && user.avatar != undefined && user.avatar != '' ? user.avatar : user.name"
+              :size="40"
+              style="margin-top: 10px"
+            ></avatar>
           </div>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="logout">logout</el-dropdown-item>
@@ -38,11 +44,11 @@ import { mapState, mapActions } from 'vuex';
 export default {
   data() {
     return {
-      activeIndex: 1
+      activeIndex: 1,
     };
   },
   computed: {
-    ...mapState(['user'])
+    ...mapState(['user']),
   },
   methods: {
     ...mapActions({ handleLogOut: 'user/handleLogOut' }),
@@ -51,30 +57,43 @@ export default {
       switch (key) {
         case '1':
           {
-            this.$router.push({
-              name: 'Home'
-            });
+            if (this.$router.currentRoute.name != 'Home') {
+              this.$router.push({
+                name: 'Home',
+              });
+            }
           }
           break;
         case '2':
           {
-            this.$router.push({
-              name: 'Projects'
-            });
+            if (this.$router.currentRoute.name != 'Projects') {
+              this.$router.push({
+                name: 'Projects',
+              });
+            }
           }
           break;
         case '3':
           {
-            this.$router.push({
-              name: 'Models'
-            });
+            if (this.$router.currentRoute.name != 'Models') {
+              this.$router.push({
+                name: 'Models',
+              });
+            }
           }
           break;
         case '4':
           {
-            //TOD
+            if (this.$router.currentRoute.name != 'DataServices') {
+              this.$router.push({
+                name: 'DataServices',
+              });
+            }
           }
           break;
+        case '5': {
+          break;
+        }
       }
     },
     async handleCommond(command) {
@@ -85,28 +104,43 @@ export default {
     },
     register() {
       this.$router.push({
-        name: 'Register'
+        name: 'Register',
       });
     },
     login() {
       this.$router.push({
-        name: 'Login'
+        name: 'Login',
       });
+    },
+    toNotice() {
+      if (this.$router.currentRoute.name != 'UserMessage') {
+        this.$router.push({
+          name: 'UserMessage',
+        });
+      }
     },
 
     toUserPage() {
-      this.$router.push({
-        name: 'UserInfo'
-      });
-    }
+      // console.log(this.$router.currentRoute.name)
+      if (this.$router.currentRoute.name != 'UserHome') {
+        this.$router.push({
+          name: 'UserHome',
+        });
+      }
+    },
   },
   components: {
-    Avatar
-  }
+    Avatar,
+  },
 };
 </script>
 
 <style scoped lang="scss">
+.item {
+  font-size: 18px;
+  margin-right: 10px;
+}
+
 .app-head {
   background-color: $headerBackground;
   text-align: center;
@@ -124,7 +158,7 @@ export default {
   }
   .user {
     vertical-align: middle;
-    line-height: 60px;
+    // line-height: 60px;
   }
 
   .nav-bar {

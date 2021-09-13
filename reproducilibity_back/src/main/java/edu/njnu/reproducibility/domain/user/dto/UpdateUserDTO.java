@@ -18,24 +18,24 @@ import java.util.List;
 public class UpdateUserDTO implements ToDomainConverter<User> {
 
     String name;
-    String password;
+//    String password;
 
     /**
      * User server
      */
-    String avatar;
+//    String avatar;
     String phone;
     String title;
     String country;
-    String province;    // County / State / Province
+    String state;    // County / State / Province
     String city;
-    String homepage;
-    String introduction;
-    String createdTime;
-    List<String> organizations;
-    List<String> domain;
-    List<String> loginIp;
-
-    List<String> joinedProjects;
-    List<String> createdProjects;
+//    String homepage;
+//    String introduction;
+//    String createdTime;
+//    List<String> organizations;
+//    List<String> domain;
+//    List<String> loginIp;
+//
+//    List<String> joinedProjects;
+//    List<String> createdProjects;
 }

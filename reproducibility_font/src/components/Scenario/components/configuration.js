@@ -1,4 +1,5 @@
 import mxgraph from '_com/MxGraph/index';
+import X2js from 'x2js'
 // import Shapes from './Shapes';
 // import { init } from 'echarts';
 // import _ from 'lodash';
@@ -302,6 +303,173 @@ export function generateXml(
   xml += '</TaskConfiguration>';
   console.log(xml);
   return xml;
+}
+
+export function generateXml1(
+  taskName,
+  modelListInGraph,
+  modelInputInGraph,
+  modelLinkInGraph,
+  modelOutputInGraph,
+  linkEdgeList,
+  dataServiceListInGraph,
+  dataServiceInputInGraph,
+  dataServiceLinkInGraph,
+  dataServiceOutputListInGraph
+) {
+  let jsonObj = {
+    TaskConfiguration: {
+      _uid: generateGUID(),
+      _name: taskName,
+      _version: "1.0"
+    }
+  }
+
+  let Models = {
+    Model: []
+  }
+  modelListInGraph.forEach(model => {
+    Models.Model.push({
+      _name: model.name,
+      _description: "",
+      _pid: model.nodeAttribute.md5
+    })
+  });
+
+  let ModelActions = {
+    ModelAction: []
+  }
+  modelListInGraph.forEach((model, index) => {
+    let list = [...modelInputInGraph, ...modelLinkInGraph];
+    let inputList = list.filter(event => event.nodeAttribute.md5 == model.nodeAttribute.md5);
+    let outputList = modelOutputInGraph.filter(event => event.nodeAttribute.md5 == model.nodeAttribute.md5);
+    ModelActions.ModelAction.push({
+      _id: model.id,
+      _name: model.name,
+      _description: "",
+      _model: model.nodeAttribute.md5,
+      _iterationNum: model.iterationNum,
+      Inputs: {
+        DataConfiguration: []
+      },
+      Outputs: {
+        DataConfiguration: []
+      }
+    })
+    inputList.forEach(item => {
+      if (item.type == 'modelServiceInput') {
+        ModelActions.ModelAction[index].Inputs.DataConfiguration.push({
+          _id: item.nodeAttribute.eventId,
+          _state: item.nodeAttribute.stateName,
+          _event: item.name,
+          Data: {
+            _value: item.dataResourceRelated.value,
+            _type: "url"
+          }
+        })
+      } else if (item.type == 'modelServiceLink') {
+        let link = linkEdgeList.filter(el => el.target.nodeAttribute.eventId == item.nodeAttribute.eventId);
+        ModelActions.ModelAction[index].Inputs.DataConfiguration.push({
+          _id: item.nodeAttribute.eventId,
+          _state: item.nodeAttribute.stateName,
+          _event: item.name,
+          Data: {
+            _link: link[0].source.nodeAttribute.eventId,
+            _type: "link"
+          }
+        })
+      }
+    });
+    outputList.forEach(item => {
+      ModelActions.ModelAction[index].Outputs.DataConfiguration.push({
+        _id: item.nodeAttribute.eventId,
+        _state: item.nodeAttribute.stateName,
+        _event: item.name
+      })
+    });
+  });
+  
+  let ProcessingTools = {
+    ProcessingTool: []
+  }
+  dataServiceListInGraph.forEach(service => {
+    ProcessingTools.ProcessingTool.push({
+      _name: service.name,
+      _description: service.description,
+      _service: service.nodeAttribute.dataServiceId,
+      _source: "internal"
+    })
+  });
+
+  let DataProcessings = {
+    DataProcessing: []
+  }
+  dataServiceListInGraph.forEach((service, index) => {
+    let list = [...dataServiceInputInGraph, ...dataServiceLinkInGraph];
+    let inputList = list.filter(event => event.nodeAttribute.dataServiceId == service.nodeAttribute.dataServiceId);
+    let outputList = dataServiceOutputListInGraph.filter(event => event.nodeAttribute.dataServiceId == service.nodeAttribute.dataServiceId);
+    DataProcessings.DataProcessing.push({
+      _id: service.id,
+      _token: service.nodeAttribute.token,
+      _name: service.name,
+      _description: "",
+      _type: "dataService",
+      _service: service.nodeAttribute.dataServiceId,
+      Inputs: {
+        DataConfiguration: []
+      },
+      Outputs: {
+        DataConfiguration: []
+      }
+    })
+    inputList.forEach(item => {
+      if (item.type == 'dataServiceInput') {
+        DataProcessings.DataProcessing[index].Inputs.DataConfiguration.push({
+          _id: item.id,
+          _state: item.nodeAttribute.stateName,
+          _event: item.name,
+          Data: {
+            _value: item.dataResourceRelated.value,
+            _type: "url"
+          }
+        })
+      } else if (item.type == 'dataServiceLink') {
+        let link = linkEdgeList.filter(el => el.target.id == item.id);
+        DataProcessings.DataProcessing[index].Inputs.DataConfiguration.push({
+          _id: item.id,
+          _state: item.nodeAttribute.stateName,
+          _event: item.name,
+          Data: {
+            _link: link[0].source.id,
+            _type: link
+          }
+        })
+      }
+    });
+    outputList.forEach(item => {
+      DataProcessings.DataProcessing[index].Outputs.DataConfiguration.push({
+        _id: item.id,
+        _state: item.nodeAttribute.stateName,
+        _item: item.name
+      })
+    });
+  });
+  if(Models.Model.length > 0) {
+    jsonObj.TaskConfiguration.Models = Models
+  }
+  if(ModelActions.ModelAction.length > 0) {
+    jsonObj.TaskConfiguration.ModelActions = ModelActions
+  }
+  if(ProcessingTools.ProcessingTool.length > 0) {
+    jsonObj.TaskConfiguration.ProcessingTools = ProcessingTools
+  }
+  if(DataProcessings.DataProcessing.length > 0) {
+    jsonObj.TaskConfiguration.DataProcessings = DataProcessings
+  }
+  let x2js = new X2js()
+  // console.log(x2js.js2xml(jsonObj))
+  return x2js.js2xml(jsonObj)
+  
 }
 
 function generateGUID() {

@@ -52,6 +52,20 @@ public class ProjectService {
         return projectRepository.findById(projectId).orElse(null);
     }
 
+    public List<Project> getMyProjects(String userId) {
+        JSONObject userProjectInfo = userService.getUserProjectInfo(userId);
+        List<String> createdProjects = (List<String>) userProjectInfo.get("createdProjects");
+        List<String> joinedProjects = (List<String>) userProjectInfo.get("joinedProjects");
+        List<Project> projectList = new ArrayList<>();
+        for(String projectId : createdProjects) {
+            projectList.add(get(projectId));
+        }
+        for(String projectId : joinedProjects) {
+            projectList.add(get(projectId));
+        }
+        return projectList;
+    }
+
     public Object getProjectAndUsers(String projectId) {
         Project project = projectRepository.findById(projectId).orElse(null);
         String creatorId = project.getCreator();
@@ -90,6 +104,9 @@ public class ProjectService {
 
     public Project updateMembers(String userId, String projectId, Member update) {
         Project project = projectRepository.findByIdAndCreator(projectId, userId).orElseThrow(MyException::noObject);
+//        if(project.getMembers().isEmpty()){
+//            project.getMembers()= new ArrayList<>();
+//        }
         project.getMembers().add(update);
 
 
@@ -117,13 +134,13 @@ public class ProjectService {
 //        creator.setName(userName);
 //        creator.setId(userId);
         project.setCreator(userId);
-
+        Project result = projectRepository.insert(project);
         User user = userService.getUserInfoById(userId);
-        user.getCreatedProjects().add(project.getId());
+        user.getCreatedProjects().add(result.getId());
 
         userService.update(user);
 
-        return projectRepository.insert(project);
+        return result;
     }
 
     public Project fork(String userId, String userName, AddProjectDTO add) {

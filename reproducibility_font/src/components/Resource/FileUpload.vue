@@ -248,6 +248,10 @@ export default {
 
       let form = {
         name: data.file_name,
+        alia: '',
+        source: '',
+        thumbnail: '',
+        privacy: '',
         suffix: getSuffix(param.file.name),
         fileSize: renderSize(param.file.size),
         address: `http://221.226.60.2:8082/data/${data.id}`,

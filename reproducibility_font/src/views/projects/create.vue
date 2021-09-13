@@ -46,7 +46,7 @@
 
 <script>
 import addImage from '_com/AddImage';
-import { saveMethod, saveScenario, saveProjectResource, saveContext, saveProject, getUserProjectInfo, updateUserByJwtUserId, savePerformance } from '@/api/request';
+import { saveMethod, saveScenario, saveProjectResource, saveContext, saveProject, getUserProjectInfo, savePerformance } from '@/api/request';
 export default {
   components: { addImage },
 
@@ -62,7 +62,8 @@ export default {
         privacy: '',
         tags: [],
         picture: '',
-        userInfo: {}
+        userInfo: {},
+        members:[]
       }
     };
   },
@@ -92,7 +93,7 @@ export default {
       await savePerformance(completionJson);
 
       this.userInfo.createdProjects.push(data.id);
-      await updateUserByJwtUserId({ createdProjects: this.userInfo.createdProjects });
+      
     },
 
     //为了获得创建的项目信息

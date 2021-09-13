@@ -36,7 +36,7 @@
 
 <script>
 import md5 from 'js-md5';
-import { saveUsers } from '@/api/request';
+import { saveUser } from '@/api/request';
 export default {
   components: {},
 
@@ -96,7 +96,7 @@ export default {
             joinedProjects: [],
             createdProjects: []
           };
-          await saveUsers(form);
+          await saveUser(form);
           this.$notify({
             title: 'Success',
             message: 'Register successfully!',

@@ -55,17 +55,17 @@ export default {
     }
   },
   components: { selectCard },
-  watch: {
-    cell: {
-      handler(val) {
-        if (hasProperty(val, 'id') && val.type == 'dataService') {
-          this.init();
-        }
-      },
-      deep: true,
-      immediate: true
-    }
-  },
+  // watch: {
+  //   cell: {
+  //     handler(val) {
+  //       if (hasProperty(val, 'id') && val.type == 'dataService') {
+  //         this.init();
+  //       }
+  //     },
+  //     deep: true,
+  //     immediate: true
+  //   }
+  // },
 
   computed: {},
   data() {
@@ -135,10 +135,13 @@ export default {
     submit() {
       this.$emit('selectItemListToGraph', this.selectItemListToGraph);
     }
+  },
+  mounted() {
+    if(this.cell != undefined) {
+      console.log('哈哈')
+      this.init();
+    }
   }
-  // created() {
-  //   this.$set(this.cell);
-  // }
 };
 </script>
 

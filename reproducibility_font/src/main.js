@@ -22,7 +22,7 @@ import { codemirror } from 'vue-codemirror';
 import 'codemirror/lib/codemirror.css';
 
 // import Descriptions from '_com/Description/index.js';
-
+Vue.config.devtools = true;
 Vue.config.productionTip = false;
 Vue.use(ElementUI, { locale: enLocale });
 // Vue.use(ElementPlus, { enLocale });
@@ -41,6 +41,9 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount('#app');
+
+import x2js from 'x2js' // xml数据处理插件
+Vue.prototype.$x2js = new x2js() // 创建x2js对象，挂到vue原型上
 
 // const app = createApp(App)
 // app.use(mavonEditor),

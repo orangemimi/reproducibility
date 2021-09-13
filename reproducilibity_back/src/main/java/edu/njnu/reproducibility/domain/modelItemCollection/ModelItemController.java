@@ -37,8 +37,8 @@ public class ModelItemController {
     }
 
     @RequestMapping(value = "/provider/{currentPage}/{pagesize}", method = RequestMethod.GET)
-    public JsonResult getModelsByProviderAndPrivacy(@JwtTokenParser(key = "userId") String userId, @PathVariable("privacy") String privacy, @PathVariable("currentPage") int currentPage, @PathVariable("pagesize") int pagesize) {
-        return ResultUtils.success(modelItemService.getModelsByProvider(userId,privacy, currentPage, pagesize));
+    public JsonResult getModelsByProviderAndPrivacy(@JwtTokenParser(key = "userId") String userId, @PathVariable("currentPage") int currentPage, @PathVariable("pagesize") int pagesize) {
+        return ResultUtils.success(modelItemService.getModelsByProvider(userId, currentPage, pagesize));
     }
 
 

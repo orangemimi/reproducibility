@@ -1,10 +1,14 @@
 package edu.njnu.reproducibility.domain.dataService;
 
+import edu.njnu.reproducibility.common.enums.ResultEnum;
+import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.domain.dataService.dto.AddDataServiceDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @Author ：Zhiyi
@@ -30,5 +34,15 @@ public class DataServiceService {
         add.convertTo(dataService);
         dataService.setUserId(userId);
         return dataServiceRepositroy.insert(dataService);
+    }
+
+    public List<DataService> getMyDataService(String userId) {
+        try{
+            List<DataService> allByUserId = dataServiceRepositroy.findAllByUserId(userId);
+            return allByUserId;
+        }catch (Exception e){
+            throw new MyException(ResultEnum.NO_OBJECT);
+        }
+
     }
 }

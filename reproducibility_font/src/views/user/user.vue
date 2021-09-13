@@ -37,6 +37,7 @@ export default {
   }
 };
 </script>
+
 <style lang="scss" scoped>
 .user {
   padding: 0 20px; // for col

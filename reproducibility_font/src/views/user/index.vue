@@ -2,7 +2,7 @@
 <template>
   <div class="user">
     <div class="menu_left">
-      <el-menu default-active="1" class="el-menu-vertical-demo" @select="handleSelect">
+      <el-menu :default-active="index" @select="handleSelect">
         <el-menu-item index="1">
           <i class="el-icon-location"></i>
           <template #title>Home</template>
@@ -13,17 +13,25 @@
         </el-menu-item>
         <el-menu-item index="3">
           <i class="el-icon-document"></i>
-          <template #title>Models</template>
+          <template #title>Projects</template>
         </el-menu-item>
         <el-menu-item index="4">
+          <i class="el-icon-document"></i>
+          <template #title>Models</template>
+        </el-menu-item>
+        <el-menu-item index="5">
+          <i class="el-icon-document"></i>
+          <template #title>DataServices</template>
+        </el-menu-item>
+        <el-menu-item index="6">
           <i class="el-icon-setting"></i>
           <template #title>Account</template>
         </el-menu-item>
-        <el-menu-item index="5">
+        <el-menu-item index="7">
           <i class="el-icon-setting"></i>
           <template #title>Message</template>
         </el-menu-item>
-        <el-menu-item index="6">
+        <el-menu-item index="8">
           <i class="el-icon-setting"></i>
           <template #title>Feedback</template>
         </el-menu-item>
@@ -44,19 +52,50 @@ export default {
 
   computed: {
     ...mapState({
-      userId: state => state.user.userId,
-      role: state => state.permission.role,
-      token: state => state.user.token
-    })
+      userId: (state) => state.user.userId,
+      role: (state) => state.permission.role,
+      token: (state) => state.user.token,
+    }),
   },
 
+  //state用来跟踪状态
   data() {
-    return { recipientNoticeList: [], senderNoticeList: [], userInfo: {} };
+    return { recipientNoticeList: [], senderNoticeList: [], userInfo: {}, index: "1" };
   },
 
   methods: {
     async init() {
       await this.getUserInfo();
+      switch(this.$router.currentRoute.name) {
+        case 'UserHome': {
+          this.index = '1'
+          break
+        }
+        case 'UserResource': {
+          this.index = '2'
+          break
+        }
+        case 'UserProject': {
+          this.index = '3'
+          break
+        }
+        case 'UserModel': {
+          this.index = '4'
+          break
+        }
+        case 'UserDataService': {
+          this.index = '5'
+          break
+        }
+        case 'UserAccount': {
+          this.index = '6'
+          break
+        }
+        case 'UserMessage': {
+          this.index = '7'
+          break
+        }
+      }
     },
     async getUserInfo() {
       // this.userInfo = await getUserByJwtUserId();
@@ -64,49 +103,84 @@ export default {
       this.senderNoticeList = await getNoticesBySenderId();
     },
     handleSelect(key) {
+      //对重复选中的push会报错，加上if判断是否重复点击
       switch (key) {
         case '1':
           {
-            this.$router.push({
-              name: 'UserHome'
-            });
+            if (this.$router.currentRoute.name != 'UserHome') {
+              this.$router.push({
+                name: 'UserHome',
+              });
+            }
           }
           break;
         case '2':
           {
-            this.$router.push({
-              name: 'UserResource'
-            });
+            if (this.$router.currentRoute.name != 'UserResource') {
+              this.$router.push({
+                name: 'UserResource',
+              });
+            }
           }
           break;
         case '3':
           {
-            this.$router.push({
-              name: 'UserModel'
-            });
+            if (this.$router.currentRoute.name != 'UserProject') {
+              this.$router.push({
+                name: 'UserProject',
+              });
+            }
           }
           break;
         case '4':
           {
             //TOD
+            if (this.$router.currentRoute.name != 'UserModel') {
+              this.$router.push({
+                name: 'UserModel',
+              });
+            }
+          }
+          break;
+        case '5': {
+          if (this.$router.currentRoute.name != 'UserDataService') {
             this.$router.push({
-              name: 'UserAccount'
+              name: 'UserDataService',
             });
           }
           break;
+        }
+        case '6': {
+          if (this.$router.currentRoute.name != 'UserAccount') {
+            this.$router.push({
+              name: 'UserAccount',
+            });
+          }
+          break;
+        }
+        case '7': {
+          if (this.$router.currentRoute.name != 'UserMessage') {
+            this.$router.push({
+              name: 'UserMessage',
+            });
+          }
+        }
       }
-    }
+    },
   },
 
   mounted() {
     this.init();
-  }
+    
+  },
 };
 </script>
 <style lang="scss" scoped>
 .user {
   // padding: 0 20px; // for col
   height: 100%;
+  display: flex;
+
   .menu_left {
     width: 200px;
     height: 100%;

@@ -76,6 +76,11 @@ export const constantRoutes = [
         },
         children: [
           {
+            path: '/',
+            name: 'UserHome',
+            component: () => import('@/views/user/components/Home')
+          },
+          {
             path: 'home',
             name: 'UserHome',
             component: () => import('@/views/user/components/Home')
@@ -91,9 +96,24 @@ export const constantRoutes = [
             component: () => import('@/views/user/components/Model')
           },
           {
+            path: 'project',
+            name: 'UserProject',
+            component: () => import('@/views/user/components/Project')
+          },
+          {
+            path: 'dataservice',
+            name: 'UserDataService',
+            component: () => import('@/views/user/components/DataService')
+          },
+          {
             path: 'account',
             name: 'UserAccount',
             component: () => import('@/views/user/components/Account')
+          },
+          {
+            path: 'message',
+            name: 'UserMessage',
+            component: () => import('@/views/user/components/Message')
           }
         ]
       },
@@ -210,6 +230,19 @@ export const constantRoutes = [
         components: {
           header: () => import('_com/layout/MyHeader.vue'),
           main: () => import('@/views/models/index.vue'),
+          footer: () => import('_com/layout/MyFooter.vue')
+        }
+      },
+      {
+        path: '/dataservices',
+        name: 'DataServices',
+        meta: {
+          title: 'dataservices',
+          requireAuth: true
+        },
+        components: {
+          header: () => import('_com/layout/MyHeader.vue'),
+          main: () => import('@/views/data-service/index.vue'),
           footer: () => import('_com/layout/MyFooter.vue')
         }
       }

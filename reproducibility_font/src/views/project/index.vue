@@ -42,10 +42,10 @@ export default {
 
   computed: {
     ...mapState({
-      role: state => state.permission.role,
-      name: state => state.user.name,
-      userId: state => state.user.userId
-    })
+      role: (state) => state.permission.role,
+      name: (state) => state.user.name,
+      userId: (state) => state.user.userId,
+    }),
   },
 
   watch: {},
@@ -55,7 +55,7 @@ export default {
       projectId: this.$route.params.id,
       projectInfo: {},
       creator: {},
-      members: []
+      members: [],
     };
   },
 
@@ -81,14 +81,16 @@ export default {
     async judgeRole(project) {
       await this.$store.dispatch('permission/getRole', {
         project: project,
-        userId: this.userId
+        userId: this.userId,
       });
     },
 
     toRouterType(val) {
-      this.$router.push({
-        name: val
-      });
+      if (val != this.$router.currentRoute.name) {
+        this.$router.push({
+          name: val,
+        });
+      }
     },
 
     async forkProject() {
@@ -105,18 +107,18 @@ export default {
         purpose: this.projectInfo.purpose,
         privacy: this.projectInfo.privacy,
         picture: this.projectInfo.picture,
-        forkingProjectId: this.projectInfo.id
+        forkingProjectId: this.projectInfo.id,
       };
       let data = await forkProject(form);
 
       this.userInfo.folkedProjects.push(data.id);
       // await updateUserByJwtUserId({ createdProjects: this.userInfo.createdProjects });
-    }
+    },
   },
 
   mounted() {
     this.init();
-  }
+  },
 };
 </script>
 <style lang="scss" scoped>
