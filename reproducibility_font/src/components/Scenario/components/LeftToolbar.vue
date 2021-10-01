@@ -5,7 +5,7 @@
       <el-button slot="append" icon="el-icon-search"></el-button>
     </el-input>
 
-    <vue-scroll style="height: calc(86vh); width: 100%" :ops="ops">
+    <vue-scroll style="height: 850px; width: 100%" :ops="ops">
       <el-collapse v-model="activeNames" class="collapse">
         <el-collapse-item title="General" name="general">
           <general-toolbar ref="generalBar" :showType="'rhombus'"></general-toolbar>
@@ -31,7 +31,7 @@
       </el-dialog>
       <el-dialog :visible.sync="dataDoubleClick" width="50%" title="Configuration" :destroy-on-close="true" :close-on-click-modal="false">
         <!-- Configuration -->
-        <data-cell-info :cell="dataNode"></data-cell-info>
+        <data-cell-info :cell="dataNode" @isUpload="isUpload"></data-cell-info>
       </el-dialog>
       <el-dialog :visible.sync="codeDoubleClick" width="50%" title="Configuration" destroy-on-close :close-on-click-modal="false">
         <data-service-code-configuration @selectItemListToGraph="selectItemListToGraph"></data-service-code-configuration>
@@ -159,7 +159,6 @@ export default {
 
     selectItemListToGraph(val) {
       if (this.modelDoubleClick == true) {
-        console.log('hah');
         this.modelDoubleClick = false;
       } else if (this.dataDoubleClick == true) {
         this.dataDoubleClick = false;
@@ -168,6 +167,7 @@ export default {
       } else if (this.dataServiceDoubleClick == true) {
         this.dataServiceDoubleClick = false;
       }
+      console.log(val);
       val.forEach((item, index) => {
         let panel = '';
         if (item.type == 'input') {
@@ -244,6 +244,29 @@ export default {
         };
 
         mxUtils.makeDraggable(dom, this.graph, dropHandler, createDragPreview(), 0, 0, false, true);
+
+        //         makeDraggable: function(	element,
+        //                                   graphF,
+        //                                    funct,
+        //                              dragElement,
+        //                                       dx,
+        //                                       dy,
+        //                               autoscroll,
+        //                             scalePreview,
+        //                     highlightDropTargets,
+        //                            getDropTarget	)
+
+        // Parameters
+        //   element	DOM element to make draggable.
+        //   graphF	mxGraph that acts as the drop target or a function that takes a mouse event and returns the current mxGraph.
+        //   funct	Function to execute on a successful drop.
+        //   dragElement	Optional DOM node to be used for the drag preview.
+        //   dx	Optional horizontal offset between the cursor and the drag preview.
+        //   dy	Optional vertical offset between the cursor and the drag preview.
+        //   autoscroll	Optional boolean that specifies if autoscroll should be used.  Default is mxGraph.autoscroll.
+        //   scalePreview	Optional boolean that specifies if the preview element should be scaled according to the graph scale.  If this is true, then the offsets will also be scaled.  Default is false.
+        //   highlightDropTargets	Optional boolean that specifies if dropTargets should be highlighted.  Default is true.
+        //   getDropTarget	Optional function to return the drop target for a given location (x, y).  Default is mxGraph.getCellAt.
       });
     },
 
@@ -263,9 +286,10 @@ export default {
           50, //height
           styleObj
         );
-        setTimeout(() => {
-          this.graph.getModel().setStyle(vertex, styleObj);
-        }, 1000);
+        console.log(vertex);
+        // setTimeout(() => {
+        //   this.graph.getModel().setStyle(vertex, styleObj);
+        // }, 1000);
 
         vertex.nodeAttribute = {};
 
@@ -304,6 +328,7 @@ export default {
 
           vertex.name = item.name;
           vertex.type = type; //modelServiceInput or modelServiceOutput
+          vertex.isParameter = item.nodeType == 'parameter' ? true : false;
           vertex.description = item.description; //event description
           vertex.nodeAttribute.eventId = item.eventId;
           vertex.nodeAttribute.eventDescription = item.description;
@@ -322,6 +347,7 @@ export default {
             this.addEdge(vertex, selectionCell);
           } else if (type == 'modelServiceOutput') {
             this.addEdge(selectionCell, vertex);
+            vertex.upload = false
           }
         }
         if (type == 'dataServiceInput' || type == 'dataServiceOutput') {
@@ -335,6 +361,7 @@ export default {
 
           let selectionCell = this.selectionCells[0];
 
+          vertex.isParameter = item.nodeType == 'parameter' ? true : false;
           vertex.name = item.name;
           vertex.type = type; //panel
           vertex.description = item.description;
@@ -347,6 +374,7 @@ export default {
             this.addEdge(vertex, selectionCell);
           } else if (type == 'dataServiceOutput') {
             this.addEdge(selectionCell, vertex);
+            vertex.upload = false
           }
         }
       } finally {
@@ -356,6 +384,10 @@ export default {
 
     addEdge(source, target) {
       this.graph.insertEdge(this.graph.getDefaultParent(), null, null, source, target, null);
+    },
+
+    isUpload(val) {
+      this.dataNode.upload = val
     },
 
     listenGraphEvent() {
@@ -375,6 +407,7 @@ export default {
           } else if (clickModelType == 'dataService') {
             // await initSetTimeOut();
             this.currentCell = cell;
+            console.log(cell);
             this.modelDoubleClick = this.modelClick = this.dataClick = this.dataDoubleClick = this.codeDoubleClick = false;
             this.dataServiceDoubleClick = true;
           } else if (clickModelType == 'code') {
@@ -382,8 +415,7 @@ export default {
             this.codeDoubleClick = true;
           } else {
             this.modelDoubleClick = this.modelClick = this.dataClick = this.codeDoubleClick = this.dataServiceDoubleClick = false;
-
-            // console.log(cell);
+            
             this.dataNode = cell;
             this.dataDoubleClick = true;
           }

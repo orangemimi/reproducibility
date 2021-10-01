@@ -123,6 +123,7 @@ import {
   checkTaskStatus,
   updatePerformanceById,
   updateScenarioByProjectId,
+  postDataContainer
 } from '@/api/request';
 import { generateAction, generateXml1, getCellStyle } from './configuration';
 import { hasProperty } from '@/utils/utils';
@@ -422,6 +423,7 @@ export default {
         }
       });
       let links = Object.values(this.graph.getModel().cells).filter((cell) => Object.prototype.hasOwnProperty.call(cell, 'edge'));
+
       this.linkEdgeList = links;
       this.modelListInGraph = modelListInGraph;
       this.modelOutputInGraph = modelOutputInGraph;
@@ -580,7 +582,15 @@ export default {
       }
 
       this.getCells();
-      console.log(this.modelInputInGraph);
+      console.log('modelListInGraph', this.modelListInGraph)
+      console.log('modelInputInGraph', this.modelInputInGraph)
+      console.log('modelLinkInGraph', this.modelLinkInGraph)
+      console.log('modelOutputInGraph', this.modelOutputInGraph)
+      console.log('linkEdgeList', this.linkEdgeList)
+      console.log('dataServiceListInGraph', this.dataServiceListInGraph)
+      console.log('dataServiceInputInGraph', this.dataServiceInputInGraph)
+      console.log('dataServiceLinkInGraph', this.dataServiceLinkInGraph)
+      console.log('dataServiceOutputListInGraph', this.dataServiceOutputListInGraph)
 
       //王梓欢配置文件
       let xml = generateXml1(
@@ -595,7 +605,6 @@ export default {
         this.dataServiceLinkInGraph,
         this.dataServiceOutputListInGraph
       );
-      console.log(1);
       //mxgraph xml文件
       let graphXml = this.graph.getGraphXml();
 
@@ -680,6 +689,52 @@ export default {
 
     async runGraph() {
       this.getCells();
+
+      this.modelInputInGraph.forEach(async (input) => {
+        console.log(input);
+
+        if (input.nodeAttribute.datasetItem.isParams == 'true') {
+          let Dataset = {
+            Dataset: {
+              XDO: {
+                _name: input.nodeAttribute.datasetItem.UdxDeclaration[0].UdxNode[0].UdxNode[0].name,
+                _kernelType: input.nodeAttribute.datasetItem.UdxDeclaration[0].UdxNode[0].UdxNode[0].name,
+                _value: input.dataResourceRelated.value,
+              },
+            },
+          };
+          let xml = this.$x2js.js2xml(Dataset);
+          let file = new File([xml],  input.dataResourceRelated.name + ".xml", { type: "text/xml" });
+          let uploadFileForm = new FormData();
+          uploadFileForm.append("file", file);
+          let data = await postDataContainer(uploadFileForm);
+          console.log(data)
+          input.dataResourceRelated.value = `http://221.226.60.2:8082/data/${data.id}`;
+          
+        }
+      });
+
+      // this.dataServiceInputInGraph.forEach((input) => {
+      //   console.log(input);
+      //   debugger;
+      //   if (input.isParameter) {
+      //     let Dataset = {
+      //       Dataset: {
+      //         XDO: {
+      //           _name: input.nodeAttribute.datasetItem.UdxDeclaration[0].UdxNode[0].UdxNode[0].name,
+      //           _kernelType: input.nodeAttribute.datasetItem.UdxDeclaration[0].UdxNode[0].UdxNode[0].name,
+      //           _value: input.dataResourceRelated.value,
+      //         },
+      //       },
+      //     };
+      //     let xml = this.$x2js.js2xml(Dataset);
+      //     let file = new File([xml], input.dataResourceRelated.name + '.xml', { type: 'text/xml' });
+      //     let uploadFileForm = new FormData();
+      //     uploadFileForm.append('file', file);
+      //     let data = await postDataContainer(uploadFileForm);
+      //     console.log(data);
+      //   }
+      // });
 
       //是否有input中有空 无法run
       if (!this.judgeInputList()) {
@@ -854,6 +909,7 @@ export default {
         status: 0,
         tid: tid,
       };
+      console.log(postJson);
       let data = await saveIntegrateTaskInstance(postJson);
       this.instanceList.push(data);
     },

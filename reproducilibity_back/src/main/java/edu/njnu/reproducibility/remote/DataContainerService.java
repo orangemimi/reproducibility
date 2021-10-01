@@ -19,6 +19,8 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @ClassName dataItemService
@@ -103,5 +105,31 @@ public class DataContainerService {
 
         JSONObject  result = jsonObjectResponseEntity.getBody().getJSONObject("capability");//获得上传数据的URL
         return result;
+    }
+
+    public String findData(String token, String name) {
+        String url = "http://111.229.14.128:8898/findData";
+        Map<String, Object> param = new HashMap<>();
+//        JSONObject param = new JSONObject();
+        param.put("token", token);
+        param.put("modelName", "instances");
+        JSONObject searchCont = new JSONObject();
+        searchCont.put("type", "Processing");
+        searchCont.put("name", name);
+        param.put("searchCont", searchCont);
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
+        headers.add("Content-Type", "application/json");
+        HttpEntity<Map<String, Object>> httpEntity = new HttpEntity(param);
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> result = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
+            String body = result.getBody();
+
+            return body;
+        }catch (Exception e) {
+            throw new MyException(ResultEnum.REMOTE_SERVICE_ERROR);
+        }
     }
 }

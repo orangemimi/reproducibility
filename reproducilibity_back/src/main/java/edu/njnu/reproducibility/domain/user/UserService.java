@@ -11,10 +11,17 @@ import edu.njnu.reproducibility.domain.notice.NoticeService;
 import edu.njnu.reproducibility.domain.user.dto.AddUserDTO;
 import edu.njnu.reproducibility.domain.user.dto.UpdateUserDTO;
 import edu.njnu.reproducibility.remote.UserServiceServie;
+import edu.njnu.reproducibility.utils.Utils;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -56,13 +63,13 @@ public class UserService {
     public User register(AddUserDTO add) {
         JSONObject remoteUserJson = userServiceServie.register(add);    //用户数据库注册，注册成功时code值返回0
         //用户邮箱已经被注册的情况,抛出自定义异常
-        if((int) remoteUserJson.get("code") != 0) {
-            throw new MyException(ResultEnum.EXIST_OBJECT);
-        }
         if (userRepository.findByEmail(add.getEmail()).isPresent()) {
             throw new MyException(ResultEnum.EXIST_OBJECT);
         }
-        System.out.println(add.toString());
+        if((int) remoteUserJson.get("code") != 0) {
+            throw new MyException(ResultEnum.REMOTE_SERVICE_ERROR);
+        }
+        add.setPassword(DigestUtils.sha256Hex(add.getPassword().getBytes()));
         add.setUserId(((JSONObject) remoteUserJson.get("data")).getStr("userId"));
         add.setForkedProjects(new ArrayList<String>());
         User user = new User();
@@ -106,6 +113,8 @@ public class UserService {
         return userRepository.save(userFromDB);
     }
 
+
+
     /*
     * 目的：检验登录，登录成功时将数据传送给前端
     * 1.检验本地和用户服务器有无注册
@@ -113,7 +122,10 @@ public class UserService {
     * 3.注册了将数据传送给前端
     * */
     public JSONObject login(String email, String password) {
-        JSONObject userJson= userServiceServie.login(email, password, "123");
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String IP = Utils.getIpAddr(request);
+        password = DigestUtils.sha256Hex(password.getBytes());
+        JSONObject userJson= userServiceServie.login(email, password, IP);
         if(!userRepository.findByEmail(email).isPresent() && userJson != null){
             // 本地没有记录，远程数据库有记录
             // 字段插入数据库

@@ -1,7 +1,7 @@
 <template>
   <div class="main">
-    <vue-scroll style="height: calc(42vh) " :ops="ops">
-      <el-form ref="contextForm" :model="contextForm" @submit.native.prevent size="mini" label="top" style="margin:0 10px">
+    <vue-scroll style="height: calc(42vh)" :ops="ops">
+      <el-form ref="contextForm" :model="contextForm" @submit.native.prevent size="mini" label="top" style="margin: 0 10px">
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="Theme">
@@ -32,7 +32,7 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="12" style="margin-top:50px">
+          <el-col :span="12" style="margin-top: 50px">
             <el-form-item label="Temporal scale">
               <el-button @click="addTemporalInfodialogVisible = true" size="mini" class="temporalEdit">Edit</el-button>
               <!-- {{ temporalInfoForm }} -->
@@ -82,16 +82,16 @@ import { hasProperty } from '@/utils/utils';
 export default {
   computed: {
     ...mapState({
-      userId: state => state.user.userId,
-      userName: state => state.user.name,
-      role: state => state.permission.role
-    })
+      userId: (state) => state.user.userId,
+      userName: (state) => state.user.name,
+      role: (state) => state.permission.role,
+    }),
   },
   components: {
     temporalInfoTable,
     spatialInfoTable,
     temporalInfoDialog,
-    spatialInfoDialog
+    spatialInfoDialog,
 
     // descriptionComp
     // timeExtentVertical
@@ -107,7 +107,7 @@ export default {
         spatialInfo: {},
         temporalInfo: {},
         methods: '',
-        discussion: ''
+        discussion: '',
       },
 
       themeTag: '',
@@ -120,28 +120,28 @@ export default {
         enable: false,
         spatialReference: {
           general: '',
-          wkt: ''
+          wkt: '',
         },
         spatialDimension: '',
         spatialScale: {
           type: '',
-          description: ''
+          description: '',
         },
         spatialExtentList: [],
-        resolutionConstraintList: []
+        resolutionConstraintList: [],
       },
 
       temporalInfoForm: {
         enable: false,
         temporalScale: {
           type: '',
-          description: ''
+          description: '',
         },
         temporalReference: {
-          value: ''
+          value: '',
         },
         temporalExtentList: [],
-        stepConstraintList: []
+        stepConstraintList: [],
       },
 
       // updateContext: true
@@ -156,9 +156,9 @@ export default {
           specifyBorderRadius: false,
           minSize: 0,
           size: '6px',
-          disable: false
-        }
-      }
+          disable: false,
+        },
+      },
     };
   },
 
@@ -168,7 +168,7 @@ export default {
       if (this.projectId == null) {
         this.$message({
           message: 'Get information error!',
-          type: 'error'
+          type: 'error',
         });
         return;
       }
@@ -187,6 +187,8 @@ export default {
     async submitContext() {
       // this.$refs.contextForm.validate(async valid => {
       //   if (valid) {
+      this.contextForm.spatialInfo = this.spatialInfoForm;
+      this.contextForm.temporalInfo = this.temporalInfoForm;
 
       let data = await updateContexByProjectId(this.projectId, this.contextForm);
       await this.saveRecord(data, 'updated');
@@ -220,7 +222,6 @@ export default {
       });
     },
     addTags() {
-      console.log('5555555555555555');
       let tag = this.themeTag;
       if (!hasProperty(this.contextForm, 'themes') || this.contextForm.themes == null) {
         this.contextForm.themes = [];
@@ -246,16 +247,18 @@ export default {
     getSpatialInfoReturn(value) {
       console.log('spatialInfo', value);
       this.spatialInfoForm = value;
+      // this.contextForm.spatialInfo = this.spatialInfoForm;
       this.addSpatialInfodialogVisible = false;
     },
     getTemporalInfoReturn(value) {
       this.temporalInfoForm = value;
+      // this.contextForm.temporalInfo = this.temporalInfoForm;
       this.addTemporalInfodialogVisible = false;
-    }
+    },
   },
   created() {
     this.getContext();
-  }
+  },
 };
 </script>
 <style lang="scss" scoped>

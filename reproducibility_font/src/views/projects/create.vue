@@ -30,7 +30,7 @@
               </template>
             </el-input>
 
-            <el-tag :key="tag" v-for="tag in form.tags" closable :disable-transitions="false" @close="handleClose(tag)">
+            <el-tag :key="tagIndex" v-for="(tag, tagIndex) in form.tags" closable :disable-transitions="false" @close="handleClose(tagIndex)">
               {{ tag }}
             </el-tag>
           </el-form-item>
@@ -64,7 +64,8 @@ export default {
         picture: '',
         userInfo: {},
         members:[]
-      }
+      },
+      inputTagValue: ''
     };
   },
 
@@ -93,7 +94,7 @@ export default {
       await savePerformance(completionJson);
 
       this.userInfo.createdProjects.push(data.id);
-      
+      this.$router.push({name: 'Projects'})
     },
 
     //为了获得创建的项目信息
@@ -105,6 +106,16 @@ export default {
 
     uploadImgResponse(val) {
       this.form.picture = val;
+    },
+
+    handleInputConfirm() {
+      if(this.inputTagValue != '') {
+        this.form.tags.push(this.inputTagValue)
+        this.inputTagValue = ''
+      }
+    },
+    handleClose(index) {
+      this.form.tags.splice(index, 1);
     }
   },
 

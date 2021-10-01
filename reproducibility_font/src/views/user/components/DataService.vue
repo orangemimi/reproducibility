@@ -17,7 +17,7 @@
     </div>
     <div class="main-container">
       <el-row class="infinite-list" style="overflow: auto">
-        <el-col :span="5" v-for="(item, index) in dataServices" :key="index">
+        <el-col :span="4" v-for="(item, index) in dataServices" :key="index">
           <div v-if="item.privacy == 'public'">
             <data-service-card :dataService="item" type="model" v-show="publicType"></data-service-card>
           </div>

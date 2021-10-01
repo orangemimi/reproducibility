@@ -104,7 +104,8 @@ export default {
     },
     register() {
       this.$router.push({
-        name: 'Register',
+        name: 'Login',
+        params: {tab: 'register'}
       });
     },
     login() {

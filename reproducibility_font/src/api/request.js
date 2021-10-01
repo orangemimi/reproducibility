@@ -445,8 +445,15 @@ export async function saveDataService(form) {
   return await post(`/dataServices`, form);
 }
 
-export async function getDataServiceInfo(dataServiceId, token, type) {
-  return await get(`/dataContainer/dataService/getData/${dataServiceId}/${token}/${type}`);
+export async function getDataServiceInfo(form) {
+  debugger;
+
+  return await post(`/dataContainer/dataService/getData`, form);
+}
+
+export async function getDataServiceInfo1(form) {
+
+  return await post(`/dataContainer/dataService/findData`, form);
 }
 
 //获取自己的dataService

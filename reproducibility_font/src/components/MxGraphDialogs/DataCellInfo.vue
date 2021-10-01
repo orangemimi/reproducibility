@@ -33,12 +33,13 @@
           <el-button>DownLoad</el-button>
         </div>
         <div v-else>Please run this task to get the output!</div>
+        <el-switch v-model="value1.upload" active-text="Upload" inactive-text="Don't upload" @change="changeSwitch"></el-switch>
       </div>
       <div v-else-if="currentEvent.type == 'modelServiceLink'">Link to the output</div>
       <div v-else-if="currentEvent.type == 'modelServiceInput'">
         <div v-if="currentEvent.nodeAttribute.datasetItem != undefined && currentEvent.nodeAttribute.datasetItem.type == `internal`" class="uploadContent">
           <vue-scroll style="height: 100%" :ops="ops">
-            <div v-if="filterEvent">
+            <div v-if="currentEvent.nodeAttribute.datasetItem.isParams">
               <!-- <el-table border :data="filterEvent[0].UdxNode" size="mini" class="table" style="width: 100%">
                 <el-table-column type="expand" width="20">
                   <template slot-scope="props">
@@ -112,14 +113,11 @@
       </div>
 
       <div v-else-if="currentEvent.type == 'dataServiceInput'">
-        <el-select
-          v-if="role == 'builder'"
-          v-model="selectDataId"
-          placeholder="Please select data"
-          class="uploadContent"
-          @change="changeSelectResource"
-        >
-          <el-option v-for="(item, dataIndex) in dataItemList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
+        <el-select v-if="role == 'builder'" v-model="selectDataId" placeholder="Please select data" class="uploadContent" @change="changeSelectResource" v-show="currentEvent.isParameter">
+          <el-option v-for="(item, dataIndex) in paramsDataList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
+        </el-select>
+        <el-select v-if="role == 'builder'" v-model="selectDataId" placeholder="Please select data" class="uploadContent" @change="changeSelectResource" v-show="currentEvent.isParameter == false">
+          <el-option v-for="(item, dataIndex) in fileDataList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
         </el-select>
         <div v-else>
           <el-button>{{ selectDataItem.name }}</el-button>
@@ -148,14 +146,12 @@ export default {
     cell: {
       // immediate: true,
       handler(val, oldVal) {
-        // console.log('watch');
         if (val != '' && val != oldVal) {
-          // this.currentEvent = val;
-          // console.log(val);
-          // console.log(oldVal);
+          console.log(val)
           this.currentEvent = val;
-          this.selectDataId = ''
-          this.selectDataItem = {}
+          this.selectDataId = '';
+          this.selectDataItem = {};
+          this.$set(this.value1, 'upload', val.upload)
           //this.init();
           if (hasProperty(val, 'dataResourceRelated')) {
             this.selectDataId = this.currentEvent.dataResourceRelated.dataSelectId;
@@ -193,6 +189,8 @@ export default {
 
   data() {
     return {
+      value1: {},
+
       currentEvent: { nodeAttribute: '' },
       dataItemList: [],
       fileDataList: [],
@@ -211,12 +209,8 @@ export default {
   },
 
   methods: {
-    click() {
-      console.log(this.currentEvent);
-      console.log(this.cell);
-      console.log(this.filterEvent);
-      console.log(this.fileDataList);
-      console.log(this.paramsDataList)
+    changeSwitch() {
+      this.$emit("isUpload", this.value1.upload)
     },
     async init() {
       await this.getResources();
@@ -226,7 +220,7 @@ export default {
       let data = await getDataItemsByProjectId(this.projectId);
       this.dataItemList = data; //id list
       for (let i = 0; i < data.length; i++) {
-        if (data[i].format == 'file') {
+        if (data[i].format != 'parameter') {
           this.fileDataList.push(data[i]);
         } else {
           // data[i].numValue =data[i].value;
@@ -236,15 +230,17 @@ export default {
     },
 
     async changeSelectResource(id) {
-      this.selectDataId = id;
+      
       let dataSelect = this.dataItemList.find((e) => e.id == id);
-      this.selectDataItem = dataSelect
+      this.selectDataId = dataSelect.name;
+      dataSelect.id = id + this.cell.id
+      dataSelect.dataSelectId = id
+      this.selectDataItem = dataSelect;
       // console.log(dataSelect)
       // this.currentEvent.dataResourceRelated = { name: dataSelect.name, value: dataSelect.value, id: dataSelect.id };
+      
       this.currentEvent.dataResourceRelated = dataSelect;
-      this.currentEvent.dataResourceRelated.dataSelectId = id;
       // this.selectDataId = this.selectDataItem.fileName;
-
       this.$forceUpdate();
     },
   },

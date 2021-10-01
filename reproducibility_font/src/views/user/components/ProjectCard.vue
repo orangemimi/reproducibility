@@ -5,12 +5,12 @@
         <div class="card-header">
           <el-link type="primary">{{ projectInfo.name }}</el-link>
           <div>
-            <el-button type="primary" icon="el-icon-edit" circle @click="editProjectInfoDialogShow = true"></el-button>
+            <el-button type="primary" icon="el-icon-edit" circle @click.native="editProjectInfoDialogShow = true"></el-button>
             <el-button type="danger" icon="el-icon-delete" circle></el-button>
           </div>
         </div>
       </template>
-      <div class="body">
+      <div class="body" @click="clickProjectCard">
         <div class="text item">
           <label>Description：</label>
           {{ projectInfo.description }}
@@ -51,13 +51,20 @@ export default {
     async editProjectInfoResponse(val) {
       if (val) {
         this.editProjectInfoDialogShow = false;
-        this.projectInfo = val.data
+        this.projectInfo = val.data;
         this.$notify({
           title: 'Success',
           message: 'You have update the project successfully!',
           type: 'success',
         });
       }
+    },
+    async clickProjectCard() {
+      await this.$store.dispatch('permission/getRole', {
+        project: this.project,
+        userId: this.$store.userId,
+      });
+      this.$router.push({ path: `/project/${this.projectInfo.id}/info` });
     },
   },
   created() {
@@ -68,7 +75,7 @@ export default {
 
 <style scoped lang="scss">
 .el-card {
-  width: 300px;
+  width: 250px;
   .text {
     font-size: 16px;
   }

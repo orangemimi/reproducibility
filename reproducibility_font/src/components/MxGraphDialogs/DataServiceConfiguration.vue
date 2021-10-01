@@ -10,9 +10,20 @@
         <div class="event-desc" v-for="(modelInEvent, inEventIndex) in stateListInput" :key="inEventIndex" ref="inputItemList">
           <el-col :span="6" :class="modelInEvent.isSelect != undefined && modelInEvent.isSelect ? 'selectCard' : 'unselectCard'">
             <el-card :title="modelInEvent.name" @click.native="addSelectItem(modelInEvent)">
-              <div v-show="modelInEvent.optional == 'false'" class="event_option">
-                *
+              <div v-show="modelInEvent.optional == 'false'" class="event_option">*</div>
+              <div class="event_name">
+                {{ modelInEvent.name }}
               </div>
+            </el-card>
+          </el-col>
+        </div>
+      </el-row>
+      <div>Parameter:</div>
+      <el-row :gutter="10">
+        <div class="event-desc" v-for="(modelInEvent, inEventIndex) in stateListParameter" :key="inEventIndex" ref="inputItemList">
+          <el-col :span="6" :class="modelInEvent.isSelect != undefined && modelInEvent.isSelect ? 'selectCard' : 'unselectCard'">
+            <el-card :title="modelInEvent.name" @click.native="addSelectItem(modelInEvent)">
+              <div v-show="modelInEvent.optional == 'false'" class="event_option">*</div>
               <div class="event_name">
                 {{ modelInEvent.name }}
               </div>
@@ -45,27 +56,27 @@
 
 <script>
 import selectCard from '_com/Cards/SelectCard';
-import { getDataServiceInfo } from '@/api/request';
+import { getDataServiceInfo1 } from '@/api/request';
 import { hasProperty } from '@/utils/utils';
 // import { initSetTimeOut } from '@/utils/utils';
 export default {
   props: {
     cell: {
-      type: Object
-    }
+      type: Object,
+    },
   },
   components: { selectCard },
-  // watch: {
-  //   cell: {
-  //     handler(val) {
-  //       if (hasProperty(val, 'id') && val.type == 'dataService') {
-  //         this.init();
-  //       }
-  //     },
-  //     deep: true,
-  //     immediate: true
-  //   }
-  // },
+  watch: {
+    cell: {
+      handler(val) {
+        if (hasProperty(val, 'id') && val.type == 'dataService') {
+          this.init();
+        }
+      },
+      deep: true,
+      immediate: true
+    }
+  },
 
   computed: {},
   data() {
@@ -77,8 +88,9 @@ export default {
       stateList: [],
       stateListInput: [],
       stateListOutput: [],
+      stateListParameter: [],
       activeName: 'input',
-      selectItemListToGraph: []
+      selectItemListToGraph: [],
     };
   },
 
@@ -88,10 +100,21 @@ export default {
     },
 
     async getServiceInfo() {
-      // ${serviceId}/${token}/${type}
-      let { data } = await getDataServiceInfo(this.cell.nodeAttribute.dataServiceId, this.cell.nodeAttribute.token, this.cell.nodeAttribute.type); //获得模型所有信息
-      let metaData = data.metaDetail;
-      this.stateListInput = metaData.input.map(element => {
+      let form = {
+        // dataServiceId:this.cell.nodeAttribute.dataServiceId,
+        token: this.cell.nodeAttribute.token,
+        name: this.cell.name,
+        // type: this.cell.nodeAttribute.type
+      };
+      let data = await getDataServiceInfo1(form); //获得模型所有信息
+
+      let json = JSON.parse(data);
+
+      let stateListInput = json[0].list.metaDetailJSON.Input;
+      let stateListOutput = json[0].list.metaDetailJSON.Output;
+      let stateListParameter = json[0].list.metaDetailJSON.Parameter;
+
+      this.stateListInput = stateListInput.map((element) => {
         element.nodeType = 'input';
         element.dataServiceId = this.cell.nodeAttribute.dataServiceId;
         element.token = this.cell.nodeAttribute.token;
@@ -99,7 +122,7 @@ export default {
         element.stateName = this.cell.name;
         return element;
       });
-      this.stateListOutput = metaData.output.map(element => {
+      this.stateListOutput = stateListOutput.map((element) => {
         element.nodeType = 'output';
         element.dataServiceId = this.cell.nodeAttribute.dataServiceId;
         element.token = this.cell.nodeAttribute.token;
@@ -107,7 +130,7 @@ export default {
         element.stateName = this.cell.name;
         return element;
       });
-      this.stateListParameter = metaData.parameter.map(element => {
+      this.stateListParameter = stateListParameter.map((element) => {
         element.nodeType = 'parameter';
         element.dataServiceId = this.cell.nodeAttribute.dataServiceId;
         element.token = this.cell.nodeAttribute.token;
@@ -120,28 +143,27 @@ export default {
     addSelectItem(item) {
       console.log('selecty', item);
       if (hasProperty(item, 'isSelect') && item.isSelect) {
-        this.selectItemListToGraph.splice(this.selectItemListToGraph.findIndex(arrItem => arrItem.name == item.name));
+        this.selectItemListToGraph.splice(this.selectItemListToGraph.findIndex((arrItem) => arrItem.name == item.name));
       } else {
         item.isSelect = true;
         this.selectItemListToGraph.push(item);
       }
     },
     removeItem(item) {
-      let index = this.selectItemListToGraph.findIndex(arrItem => arrItem.eventId == item.eventId);
+      let index = this.selectItemListToGraph.findIndex((arrItem) => arrItem.eventId == item.eventId);
       console.log('index', index);
       this.selectItemListToGraph.splice(index, 1);
       item.isSelect = false;
     },
     submit() {
       this.$emit('selectItemListToGraph', this.selectItemListToGraph);
-    }
+    },
   },
   mounted() {
-    if(this.cell != undefined) {
-      console.log('哈哈')
-      this.init();
-    }
-  }
+    // if (this.cell != undefined) {
+    //   this.init();
+    // }
+  },
 };
 </script>
 

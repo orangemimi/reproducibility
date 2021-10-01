@@ -19,7 +19,7 @@
 
     <div class="main-container">
       <el-row class="infinite-list" style="overflow: auto">
-        <el-col :span="5" v-for="(item, index) in models" :key="index">
+        <el-col :span="4" v-for="(item, index) in models" :key="index">
           <div v-if="item.privacy == 'public'">
             <div v-show="publicType">
               <model-card :model="item"/>

@@ -1,3 +1,4 @@
+import { errorNotification } from '@/utils/notification';
 function ExtendableBuiltin(cls) {
     function ExtendableBuiltin() {
         cls.apply(this, arguments);
@@ -15,5 +16,6 @@ export class ResError extends ExtendableBuiltin(Error) {
         super(message);
         this.message = message;
         this.name = "ResError";
+        errorNotification(message)
     }
 }

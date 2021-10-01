@@ -6,6 +6,9 @@ import edu.njnu.reproducibility.domain.project.Project;
 import edu.njnu.reproducibility.domain.user.User;
 import org.springframework.data.domain.Page;
 
+import javax.servlet.http.HttpServletRequest;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.UUID;
 
@@ -51,6 +54,10 @@ public class Utils {
                     String datasetReference = ((JSONObject) event.getJSONArray("ResponseParameter").get(0)).getStr("datasetReference");
                     for (int a = 0; a < datasetItem.size(); a++) {
                         JSONObject item = (JSONObject) datasetItem.get(a);
+
+                        //新增是否为参数or文件
+                        item = Utils.judgeIsParam(item);
+
                         if (item.getStr("name").equals(datasetReference)) {
                             event.put("datasetItem", item);
                         }
@@ -82,6 +89,16 @@ public class Utils {
 
         data.put("convertMdlJson", jsonStates);
         return data;
+    }
+
+    public static JSONObject judgeIsParam(JSONObject datasetItem){
+        boolean flag = datasetItem.containsKey("UdxDeclaration");
+        if(flag) {
+            datasetItem.put("isParams", "true");
+        } else {
+            datasetItem.put("isParams", "false");
+        }
+        return datasetItem;
     }
 
     public static JSONArray filterUserInfo(List<User> users) {
@@ -131,6 +148,44 @@ public class Utils {
             projectList1.add(newProject);
         }
         return projectList1;
+    }
+
+    //获取请求 ip 地址
+    public static String getIpAddr(HttpServletRequest request) {
+        String ipAddress = null;
+        try {
+            ipAddress = request.getHeader("x-forwarded-for");
+            if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
+                ipAddress = request.getHeader("Proxy-Client-IP");
+            }
+            if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
+                ipAddress = request.getHeader("WL-Proxy-Client-IP");
+            }
+            if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
+                ipAddress = request.getRemoteAddr();
+                if (ipAddress.equals("127.0.0.1")) {
+                    // 根据网卡取本机配置的IP
+                    InetAddress inet = null;
+                    try {
+                        inet = InetAddress.getLocalHost();
+                    } catch (UnknownHostException e) {
+                        e.printStackTrace();
+                    }
+                    ipAddress = inet.getHostAddress();
+                }
+            }
+            // 对于通过多个代理的情况，第一个IP为客户端真实IP,多个IP按照','分割
+            if (ipAddress != null && ipAddress.length() > 15) { // "***.***.***.***".length()
+                // = 15
+                if (ipAddress.indexOf(",") > 0) {
+                    ipAddress = ipAddress.substring(0, ipAddress.indexOf(","));
+                }
+            }
+        } catch (Exception e) {
+            ipAddress = "";
+        }
+        // ipAddress = this.getRequest().getRemoteAddr();
+        return ipAddress;
     }
 
 

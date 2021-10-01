@@ -4,7 +4,7 @@
       <div class="top-container">
         <div class="backgroud">
           <picture class="bg-img">
-            <img src="@/assets/images/orange1.jpg" />
+            <img src="@/assets/images/orange2.jpg" />
           </picture>
         </div>
         <el-row class="top-info">

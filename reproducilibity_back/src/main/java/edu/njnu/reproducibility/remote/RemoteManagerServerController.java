@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
@@ -62,7 +63,7 @@ public class RemoteManagerServerController {
 
     @SneakyThrows
     @RequestMapping(value = "/runtask", method = RequestMethod.POST)
-    JsonResult runTask(@RequestParam("file") MultipartFile file,@JwtTokenParser(key="userId") String userId){
+    JsonResult runTask(@RequestParam("file") MultipartFile file,@JwtTokenParser(key="name") String name){
 //       return ResultUtils.success(managerServerFeign.runtask(file, "111"));
 //        String userId="123";
         String suffix="."+ FilenameUtils.getExtension(file.getOriginalFilename());
@@ -71,20 +72,26 @@ public class RemoteManagerServerController {
         FileSystemResource resource = new FileSystemResource(temp);
 
         RestTemplate restTemplate = new RestTemplate();
-        String urlStr ="https://geomodeling.njnu.edu.cn/managerServer/GeoModeling/task/runTask";
+        String urlStr ="http://172.21.212.167:8084/GeoModeling/task/runTask";
 //        JSONObject form = new JSONObject();
         MultiValueMap<String, Object> param = new LinkedMultiValueMap<>();
         param.add("file", resource);
-        param.add("userName",userId);
-        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(param);
-        ResponseEntity<JSONObject> jsonObjectResponseEntity = restTemplate.exchange(urlStr, HttpMethod.POST, httpEntity, JSONObject.class);
+        param.add("userName",name);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("User-Agent", "Mozilla/5.0");
+        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(param, headers);
 
-        if (!jsonObjectResponseEntity.getStatusCode().is2xxSuccessful()) {
+        try {
+            ResponseEntity<JSONObject> jsonObjectResponseEntity = restTemplate.exchange(urlStr, HttpMethod.POST, httpEntity, JSONObject.class);
+            if (!jsonObjectResponseEntity.getStatusCode().is2xxSuccessful()) {
+                throw new MyException(ResultEnum.REMOTE_SERVICE_ERROR);
+            }
+            String result = jsonObjectResponseEntity.getBody().getStr("data");
+            return ResultUtils.success(result);
+        }catch (Exception e) {
+            System.out.println(e);
             throw new MyException(ResultEnum.REMOTE_SERVICE_ERROR);
         }
-        String result = jsonObjectResponseEntity.getBody().getStr("data");
-
-        return ResultUtils.success(result);
     }
 
     @RequestMapping(value = "/checkTaskStatus/{taskId}", method = RequestMethod.GET)

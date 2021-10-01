@@ -12,3 +12,11 @@ export function successNotification(behavior, message) {
     type: 'success'
   });
 }
+
+export function errorNotification(message) {
+  ElementUI.Notification({
+    title: 'Error',
+    message: message,
+    type: 'error'
+  });
+}

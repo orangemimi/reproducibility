@@ -47,6 +47,7 @@
 
 <script>
 import { sendCodeEmail, changePWDbyCode } from '@/api/request';
+import { successNotification, errorNotification } from '@/utils/notification';
 import md5 from 'js-md5';
 export default {
   data() {
@@ -62,6 +63,10 @@ export default {
   props: ['f_email'],
   methods: {
     send_email() {
+      if(this.email == '') {
+        errorNotification('Mailbox cannot be empty!')
+        return
+      }
       this.$confirm('send verification code to this mailbox ?', 'prompt', {
         confirmButtonText: 'confirm',
         cancelButtonText: 'cancel',
@@ -69,19 +74,15 @@ export default {
         .then(async () => {
           try {
             await sendCodeEmail(this.email);
-            this.$message({
-              type: 'success',
-              message: 'The message has been sent, pay attention to check!',
-            });
+            successNotification("send", "email")
             this.flag = 0;
           } catch {
-            this.$message({
-              type: 'error',
-              message: 'Mailbox does not exist!',
-            });
+            // this.$message({
+            //   type: 'error',
+            //   message: 'Mailbox does not exist!',
+            // });
           }
         })
-        .catch(() => {});
     },
 
     async changePWDbyCode(code, password) {

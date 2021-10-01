@@ -9,6 +9,7 @@ import edu.njnu.reproducibility.common.untils.ResultUtils;
 import edu.njnu.reproducibility.domain.dataServiceCode.dto.AddDataServiceCodeDTO;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.omg.CORBA.PUBLIC_MEMBER;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
@@ -150,12 +151,20 @@ public class RemoteDataContainerController {
         return ResultUtils.success();
     }
 
-    @RequestMapping(value = "/dataService/getData/{dataServiceId}/{token}/{type}", method = RequestMethod.GET)
-    public JsonResult getDataService( @PathVariable("dataServiceId") String serviceId, @PathVariable("token") String token, @PathVariable("type") String type) {
+    @RequestMapping(value = "/dataService/getData", method = RequestMethod.POST)
+    public JsonResult getDataService( @RequestBody JSONObject jsonObject) {
+        String serviceId = jsonObject.getStr("dataServiceId");
+        String token = jsonObject.getStr("token");
+        String type = jsonObject.getStr("type");
         return ResultUtils.success( dataContainerService.getDataService(serviceId,token,type));
     }
 
 
-
+    @RequestMapping(value = "/dataService/findData", method = RequestMethod.POST)
+    public JsonResult findData(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getStr("token");
+        String name = jsonObject.getStr("name");
+        return ResultUtils.success(dataContainerService.findData(token, name));
+    }
 
 }

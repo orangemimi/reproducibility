@@ -350,7 +350,8 @@ export function generateXml1(
       _model: model.nodeAttribute.md5,
       _iterationNum: model.iterationNum,
       Inputs: {
-        DataConfiguration: []
+        DataConfiguration: [],
+        Parameter: []
       },
       Outputs: {
         DataConfiguration: []
@@ -358,37 +359,55 @@ export function generateXml1(
     })
     inputList.forEach(item => {
       if (item.type == 'modelServiceInput') {
-        ModelActions.ModelAction[index].Inputs.DataConfiguration.push({
-          _id: item.nodeAttribute.eventId,
-          _state: item.nodeAttribute.stateName,
-          _event: item.name,
-          Data: {
+        let type = "url"
+        if (item.dataResourceRelated.format == 'shared_file') {
+          type = 'insituData'
+        }
+        if (item.dataResourceRelated.format == 'parameter') {
+          ModelActions.ModelAction[index].Inputs.Parameter.push({
+            _id: item.nodeAttribute.eventId,
+            _event: item.name,
             _value: item.dataResourceRelated.value,
-            _type: "url"
-          }
-        })
+            _type: "param",
+          })
+        } else {
+          ModelActions.ModelAction[index].Inputs.DataConfiguration.push({
+            _id: item.nodeAttribute.eventId,
+            _state: model.name,
+            _event: item.name,
+            Data: {
+              _value: item.dataResourceRelated.value,
+              _type: type
+            }
+          })
+        }
       } else if (item.type == 'modelServiceLink') {
         let link = linkEdgeList.filter(el => el.target.nodeAttribute.eventId == item.nodeAttribute.eventId);
         ModelActions.ModelAction[index].Inputs.DataConfiguration.push({
           _id: item.nodeAttribute.eventId,
-          _state: item.nodeAttribute.stateName,
+          _state: model.name,
           _event: item.name,
           Data: {
-            _link: link[0].source.nodeAttribute.eventId,
+            _link: link[0].source.id,
             _type: "link"
           }
         })
       }
     });
-    outputList.forEach(item => {
+    outputList.forEach((item, n) => {
       ModelActions.ModelAction[index].Outputs.DataConfiguration.push({
         _id: item.nodeAttribute.eventId,
-        _state: item.nodeAttribute.stateName,
+        _state: model.name,
         _event: item.name
       })
+      if (!item.upload) {
+        DataProcessings.DataProcessing[index].Outputs.DataConfiguration[n].Data = {
+          _type: "insituData"
+        }
+      }
     });
   });
-  
+
   let ProcessingTools = {
     ProcessingTool: []
   }
@@ -416,7 +435,8 @@ export function generateXml1(
       _type: "dataService",
       _service: service.nodeAttribute.dataServiceId,
       Inputs: {
-        DataConfiguration: []
+        DataConfiguration: [],
+        Parameter: []
       },
       Outputs: {
         DataConfiguration: []
@@ -424,52 +444,72 @@ export function generateXml1(
     })
     inputList.forEach(item => {
       if (item.type == 'dataServiceInput') {
-        DataProcessings.DataProcessing[index].Inputs.DataConfiguration.push({
-          _id: item.id,
-          _state: item.nodeAttribute.stateName,
-          _event: item.name,
-          Data: {
+        let type = "url"
+        if (item.dataResourceRelated.format == 'shared_file') {
+          type = 'insituData'
+        }
+        if (item.dataResourceRelated.format == 'parameter') {
+          DataProcessings.DataProcessing[index].Inputs.Parameter.push({
+            _id: item.nodeAttribute.eventId,
+            _event: item.name,
             _value: item.dataResourceRelated.value,
-            _type: "url"
-          }
-        })
+            _type: "param",
+          })
+        } else {
+          DataProcessings.DataProcessing[index].Inputs.DataConfiguration.push({
+            _id: item.id,
+            _state: service.name,
+            _event: item.name,
+            Data: {
+              _value: item.dataResourceRelated.value,
+              _type: type
+            }
+          })
+        }
+        
+
       } else if (item.type == 'dataServiceLink') {
         let link = linkEdgeList.filter(el => el.target.id == item.id);
         DataProcessings.DataProcessing[index].Inputs.DataConfiguration.push({
           _id: item.id,
-          _state: item.nodeAttribute.stateName,
+          _state: service.name,
           _event: item.name,
           Data: {
             _link: link[0].source.id,
-            _type: link
+            _type: "link"
           }
         })
       }
     });
-    outputList.forEach(item => {
+    outputList.forEach((item, n) => {
       DataProcessings.DataProcessing[index].Outputs.DataConfiguration.push({
         _id: item.id,
-        _state: item.nodeAttribute.stateName,
-        _item: item.name
+        _state: service.name,
+        _event: item.name,
       })
+      if (!item.upload) {
+        DataProcessings.DataProcessing[index].Outputs.DataConfiguration[n].Data = {
+          _type: "insituData"
+        }
+      }
     });
   });
-  if(Models.Model.length > 0) {
+  if (Models.Model.length > 0) {
     jsonObj.TaskConfiguration.Models = Models
   }
-  if(ModelActions.ModelAction.length > 0) {
+  if (ModelActions.ModelAction.length > 0) {
     jsonObj.TaskConfiguration.ModelActions = ModelActions
   }
-  if(ProcessingTools.ProcessingTool.length > 0) {
+  if (ProcessingTools.ProcessingTool.length > 0) {
     jsonObj.TaskConfiguration.ProcessingTools = ProcessingTools
   }
-  if(DataProcessings.DataProcessing.length > 0) {
+  if (DataProcessings.DataProcessing.length > 0) {
     jsonObj.TaskConfiguration.DataProcessings = DataProcessings
   }
   let x2js = new X2js()
   // console.log(x2js.js2xml(jsonObj))
   return x2js.js2xml(jsonObj)
-  
+
 }
 
 function generateGUID() {

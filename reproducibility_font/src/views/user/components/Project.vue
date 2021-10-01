@@ -18,7 +18,7 @@
 
     <div class="project">
       <el-row>
-        <el-col :span="5" v-for="(project, index) in projectList" :key="index">
+        <el-col :span="4" v-for="(project, index) in projectList" :key="index">
           <div v-if="project.creator == userId">
             <div class="project-card" v-show="create">
               <project-card :project="project"></project-card>

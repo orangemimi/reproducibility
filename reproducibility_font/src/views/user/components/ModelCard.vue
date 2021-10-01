@@ -44,7 +44,7 @@ export default {
 
 <style scoped lang="scss">
 .el-card {
-  width: 300px;
+  width: 250px;
   .text {
     font-size: 16px;
   }
