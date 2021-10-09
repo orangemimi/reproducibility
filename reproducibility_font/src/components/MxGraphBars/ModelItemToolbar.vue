@@ -9,6 +9,7 @@
       <el-switch v-model="switchValue" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
     </div>
     <div v-show="switchValue" class="card-contain">
+      
       <vue-scroll :ops="ops" style="height: 390px">
         <div v-for="(model, index) in publicModels" :key="index" ref="modelItemList">
           <div class="choose-model-contain">
@@ -18,7 +19,7 @@
       </vue-scroll>
     </div>
     <div v-show="!switchValue" class="card-contain">
-      <vue-scroll :ops="ops" style="height: 390px">
+      <vue-scroll :ops="ops" style="height: 300px">
         <div v-for="(model, index) in personalModels" :key="index" ref="modelItemList">
           <div class="choose-model-contain">
             <model-card :modelFrom="model" @click.native="getModelInfo(model)"></model-card>
@@ -46,14 +47,14 @@ export default {
       ops: {
         bar: {
           background: '#808695',
-          keepShow: true
-        }
+          keepShow: true,
+        },
       },
 
       publicModelFilter: { page: 0, pageSize: 8 },
       personalModelFilter: { page: 0, pageSize: 8 },
 
-      switchValue: true
+      switchValue: true,
     };
   },
 
@@ -71,15 +72,15 @@ export default {
     },
 
     getModelInfo() {
-      console.log(this.$refs['modelItemList'])
+      console.log(this.$refs['modelItemList']);
       return this.$refs['modelItemList'];
       // this.$emit('chooseModel',model)
-    }
+    },
   },
   created() {
     this.getPublicModels();
     // this.getPersonalModels();
-  }
+  },
 };
 </script>
 <style lang="scss" scoped>
@@ -111,7 +112,7 @@ export default {
   }
 
   .card-contain {
-    height: 300px;
+    height: 390px;
     width: 100%;
     clear: both;
 

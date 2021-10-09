@@ -86,7 +86,7 @@ export default {
   }
 
   .card-contain {
-    height: 300px;
+    height: 390px;
     width: 100%;
     clear: both;
 

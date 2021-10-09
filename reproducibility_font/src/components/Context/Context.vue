@@ -276,7 +276,6 @@ export default {
   //   top: 30px;
   // }
 
-  .temporalDialog {
-  }
+  
 }
 </style>
