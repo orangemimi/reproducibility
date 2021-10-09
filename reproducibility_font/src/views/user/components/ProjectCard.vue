@@ -3,7 +3,7 @@
     <el-card class="box-card">
       <template #header>
         <div class="card-header">
-          <el-link type="primary">{{ projectInfo.name }}</el-link>
+          <div class="title" :title="projectInfo.name">{{ projectInfo.name }}</div>
           <div>
             <el-button type="primary" icon="el-icon-edit" circle @click.native="editProjectInfoDialogShow = true"></el-button>
             <el-button type="danger" icon="el-icon-delete" circle></el-button>
@@ -11,15 +11,15 @@
         </div>
       </template>
       <div class="body" @click="clickProjectCard">
-        <div class="text item">
+        <div class="text item" :title="projectInfo.description">
           <label>Description：</label>
           {{ projectInfo.description }}
         </div>
-        <div class="text item">
+        <div class="text item" :title="projectInfo.createTime">
           <label>Create Time：</label>
           {{ projectInfo.createTime }}
         </div>
-        <div class="text item">
+        <div class="text item" :title="projectInfo.privacy">
           <label>Privacy：</label>
           {{ projectInfo.privacy }}
         </div>
@@ -80,6 +80,22 @@ export default {
     font-size: 16px;
   }
 
+  .title:hover {
+    cursor: pointer;
+  }
+  .title {
+    width: 100px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 20px;
+    font-weight: 500;
+    color: #409EFF;
+  }
+
+  .item, label:hover {
+    cursor: pointer;
+  }
   .item {
     margin-bottom: 18px;
     text-overflow: ellipsis;
