@@ -32,8 +32,17 @@
 
         <integrate-tasks @selectTask="selectTask" style="float: right"></integrate-tasks>
       </div>
-      <vue-scroll style="height: 900px; width: calc(100%)" :ops="ops">
-        <div class="graphContainer" ref="container"></div>
+      <vue-scroll style="height: 850px; width: calc(100%)" :ops="ops" ref="scroll">
+        <div
+          class="graphContainer"
+          ref="container"
+          :style="{ 'min-height': scrollerHeight, 'min-width': scrollerWidth }"
+          @mousedown.right="rightDown($event)"
+          @mouseup.right="rightUp($event)"
+          @mousemove="rightMove($event)"
+          :class="rightflag ? 'moving' : ''"
+          @contextmenu.prevent
+        ></div>
       </vue-scroll>
     </div>
 
@@ -123,7 +132,7 @@ import {
   checkTaskStatus,
   updatePerformanceById,
   updateScenarioByProjectId,
-  postDataContainer
+  postDataContainer,
 } from '@/api/request';
 import { generateAction, generateXml1, getCellStyle } from './configuration';
 import { hasProperty } from '@/utils/utils';
@@ -136,7 +145,7 @@ import leftToolbar from './LeftToolbar.vue';
 
 const {
   // mxGraph,
-  // mxEvent,
+  mxEvent,
   mxUtils,
   mxCodec,
 } = mxgraph;
@@ -170,6 +179,7 @@ export default {
           this.init();
           this.$refs.leftToolbar.init();
           this.$refs.leftToolbar.listenGraphEvent();
+          this.initUndoMng();
 
           await this.getAllIntegrateTaskInstances(0);
           this.graph.importGraph(val.taskContent);
@@ -203,6 +213,14 @@ export default {
 
   data() {
     return {
+      rightflag: false,
+      scrollerHeight: '850px',
+      scrollerWidth: 'calc(100%)',
+      oldHeight: '',
+      oldWidth: '',
+      oldX: '',
+      oldY: '',
+
       newTaskForm: {
         taskName: '',
         taskDescription: '',
@@ -274,6 +292,9 @@ export default {
           size: '6px',
           disable: false,
         },
+        rail: {
+          keepShow: true,
+        },
       },
 
       record: {}, //task -->get output record
@@ -307,6 +328,45 @@ export default {
       const json = this.$x2js.xml2js(xml);
       console.log(xml);
       console.log(json);
+    },
+
+    rightDown(e) {
+      this.rightflag = true;
+      console.log(e.offsetX, e.offsetY);
+      // console.log(this.$refs['scroll'])
+      // console.log(this.$refs['scroll'].scrollPanelElm.scrollLeft, this.$refs['scroll'].scrollPanelElm.scrollTop)
+      // console.log(this.$refs['scroll'].scrollPanelElm.scrollHeight)
+      // console.log(this.$refs['scroll'].scrollPanelElm.scrollWidth)
+      this.oldHeight = this.$refs['scroll'].scrollPanelElm.scrollHeight;
+      this.oldWidth = this.$refs['scroll'].scrollPanelElm.scrollWidth;
+      this.oldX = e.offsetX;
+      this.oldY = e.offsetY;
+      // this.scrollerHeight = '1200px'
+      // this.scrollerWidth = '1200px'
+      // this.$refs['scroll'].scrollPanelElm.scrollLeft = 30
+      // this.$refs['scroll'].scrollPanelElm.scrollTop = 30
+      // console.log(this.$refs['scroll'].scrollPanelElm.scrollLeft)
+      // console.log(this.$refs['scroll'].scrollPanelElm.scrollTop)
+    },
+    rightMove(e) {
+      if (this.rightflag) {
+        console.log(e.offsetX, e.offsetY);
+        let tempX = e.offsetX - this.oldX;
+        let tempY = e.offsetY - this.oldY;
+        this.scrollerHeight = this.oldHeight + tempX + 'px';
+        this.scrollerWidth = this.oldWidth + tempY + 'px';
+        console.log('scrollerHeight', this.scrollerHeight);
+        this.$refs['scroll'].scrollPanelElm.scrollLeft = this.$refs['scroll'].scrollPanelElm.scrollLeft + tempX;
+        this.$refs['scroll'].scrollPanelElm.scrollTop = this.$refs['scroll'].scrollPanelElm.scrollTop + tempY;
+        this.oldHeight = this.oldHeight + tempX;
+        this.oldWidth = this.oldWidth + tempY;
+        this.oldX = e.offsetX;
+        this.oldY = e.offsetY;
+      }
+    },
+    rightUp(e) {
+      this.rightflag = false;
+      console.log(e.offsetX, e.offsetY);
     },
 
     async confirmNewTask() {
@@ -535,8 +595,21 @@ export default {
       }
       return cells;
     },
+    //mxUndoManager初始化
+    initUndoMng() {
+      let undoMng = new mxgraph.mxUndoManager();
+      let listener = function (sender, evt) {
+        undoMng.undoableEditHappened(evt.getProperty('edit'));
+      };
+      // console.log(this.graph.getModel());
+      this.graph.getModel().addListener(mxEvent.UNDO, listener);
+      this.graph.getView().addListener(mxEvent.UNDO, listener);
+      this.undoMng = undoMng
+      console.log(this.undoMng)
+    },
     //撤销
     undo() {
+      // console.log(this.undoMng);
       if (!this.undoMng) {
         throw new Error('mxUndoManager 没有初始化');
       }
@@ -582,15 +655,15 @@ export default {
       }
 
       this.getCells();
-      console.log('modelListInGraph', this.modelListInGraph)
-      console.log('modelInputInGraph', this.modelInputInGraph)
-      console.log('modelLinkInGraph', this.modelLinkInGraph)
-      console.log('modelOutputInGraph', this.modelOutputInGraph)
-      console.log('linkEdgeList', this.linkEdgeList)
-      console.log('dataServiceListInGraph', this.dataServiceListInGraph)
-      console.log('dataServiceInputInGraph', this.dataServiceInputInGraph)
-      console.log('dataServiceLinkInGraph', this.dataServiceLinkInGraph)
-      console.log('dataServiceOutputListInGraph', this.dataServiceOutputListInGraph)
+      console.log('modelListInGraph', this.modelListInGraph);
+      console.log('modelInputInGraph', this.modelInputInGraph);
+      console.log('modelLinkInGraph', this.modelLinkInGraph);
+      console.log('modelOutputInGraph', this.modelOutputInGraph);
+      console.log('linkEdgeList', this.linkEdgeList);
+      console.log('dataServiceListInGraph', this.dataServiceListInGraph);
+      console.log('dataServiceInputInGraph', this.dataServiceInputInGraph);
+      console.log('dataServiceLinkInGraph', this.dataServiceLinkInGraph);
+      console.log('dataServiceOutputListInGraph', this.dataServiceOutputListInGraph);
 
       //王梓欢配置文件
       let xml = generateXml1(
@@ -704,13 +777,12 @@ export default {
             },
           };
           let xml = this.$x2js.js2xml(Dataset);
-          let file = new File([xml],  input.dataResourceRelated.name + ".xml", { type: "text/xml" });
+          let file = new File([xml], input.dataResourceRelated.name + '.xml', { type: 'text/xml' });
           let uploadFileForm = new FormData();
-          uploadFileForm.append("file", file);
+          uploadFileForm.append('file', file);
           let data = await postDataContainer(uploadFileForm);
-          console.log(data)
+          console.log(data);
           input.dataResourceRelated.value = `http://221.226.60.2:8082/data/${data.id}`;
-          
         }
       });
 
@@ -1000,10 +1072,13 @@ export default {
       overflow: hidden;
       height: 100%;
       width: 100%;
-      min-width: calc(100%);
-      min-height: 850px;
+      // min-width: calc(100%);
+      // min-height: 850px;
       background: rgb(251, 251, 251) url('./../../../assets/images/mxgraph/point.gif') 0 0 repeat;
       border-radius: 4px;
+    }
+    .moving {
+      cursor: pointer;
     }
   }
 
