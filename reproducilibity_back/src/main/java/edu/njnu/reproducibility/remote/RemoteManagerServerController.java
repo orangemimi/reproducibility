@@ -97,7 +97,8 @@ public class RemoteManagerServerController {
     @RequestMapping(value = "/checkTaskStatus/{taskId}", method = RequestMethod.GET)
     JsonResult checkTaskStatus(@PathVariable("taskId") String taskId){
 
-        String urlStr ="http://"+managerServerIpAndPort +"/GeoModeling/task/checkTaskStatus?=taskId="+taskId;
+//        String urlStr ="http://"+managerServerIpAndPort +"/GeoModeling/task/checkTaskStatus?taskId="+taskId;
+        String urlStr ="http://172.21.212.167:8084/GeoModeling/task/checkTaskStatus?taskId="+taskId;
 //        JSONObject form = new JSONObject();
 //        MultiValueMap<String, Object> param = new LinkedMultiValueMap<>();
 //        param.add("taskId", taskId);

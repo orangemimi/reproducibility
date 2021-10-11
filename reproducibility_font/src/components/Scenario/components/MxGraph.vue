@@ -9,6 +9,7 @@
         <!-- <el-button @click="exportGraph" type="text" size="mini">Export as XML</el-button>
         <input @change="readFile" ref="importInput" class="hide" type="file" />
         <el-button @click="importGraphFile" type="text" size="mini">Import mxGraph</el-button> -->
+        <!-- <el-button @click="checked ? deleteCells() : deleteCellsConfirmDialog()" type="text" size="mini" :disabled="this.graph.getSelectionCells().length == 0"> -->
         <el-button @click="checked ? deleteCells() : deleteCellsConfirmDialog()" type="text" size="mini" :disabled="selectionCells.length == 0">
           Delete
         </el-button>
@@ -117,6 +118,7 @@
 </template>
 
 <script>
+import bus from './bus'
 import { mapState } from 'vuex';
 import mxgraph from '_com/MxGraph/index';
 import { genGraph } from '_com/MxGraph/initMx';
@@ -180,6 +182,7 @@ export default {
           this.$refs.leftToolbar.init();
           this.$refs.leftToolbar.listenGraphEvent();
           this.initUndoMng();
+          this.getSelectionCells()
 
           await this.getAllIntegrateTaskInstances(0);
           this.graph.importGraph(val.taskContent);
@@ -328,6 +331,12 @@ export default {
       const json = this.$x2js.xml2js(xml);
       console.log(xml);
       console.log(json);
+    },
+
+    getSelectionCells() {
+      bus.$on('go', data => {
+        this.selectionCells = data
+      })
     },
 
     rightDown(e) {
@@ -551,7 +560,9 @@ export default {
     },
 
     deleteCellsConfirmDialog() {
-      this.deleteCellsVisible = true;
+      // this.deleteCellsVisible = true;
+      console.log(this.selectionCells)
+      this.graph.removeCells(this.selectionCells)
     },
 
     deleteCells() {

@@ -51,6 +51,7 @@
 </template>
 
 <script>
+import bus from './bus'
 import modelItemToolbar from '_com/MxGraphBars/ModelItemToolbar';
 import dataItemToolbar from '_com/MxGraphDialogs/ModelItemConfiguration';
 import generalToolbar from '_com/MxGraphBars/GeneralToolbar';
@@ -428,7 +429,8 @@ export default {
         let isCell = Object.prototype.hasOwnProperty.call(evt.properties, 'cell');
         if (isCell) {
           let cell = evt.properties.cell;
-
+          this.graph.addSelectionCell(cell)
+          bus.$emit('go', this.graph.getSelectionCells())
           const clickModelType = cell.type;
 
           if (clickModelType == 'modelService') {
@@ -449,6 +451,8 @@ export default {
         } else {
           //单击空白处
           this.currentCell = {};
+          // console.log(this.graph.getSelectionCells())
+          bus.$emit('go', [])
         }
       });
 
