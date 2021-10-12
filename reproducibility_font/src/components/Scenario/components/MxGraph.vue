@@ -76,7 +76,7 @@
           :page-size="instancePageFilter.pageSize"
           background
           layout="prev, pager, next"
-          :total="instanceList.length + 1"
+          :total="allInstanceList.length + 1"
         ></el-pagination>
       </div>
     </div>
@@ -193,7 +193,9 @@ export default {
           this.initUndoMng();
           this.getSelectionCells();
 
-          await this.getAllIntegrateTaskInstances(0);
+
+          await this.getAllInstances(0)
+          await this.getAllIntegrateTaskInstances(this.instancePageFilter.page);
           this.graph.importGraph(val.taskContent);
         }
         // console.log('watch执行完')
@@ -220,7 +222,8 @@ export default {
   computed: {
     ...mapState({
       role: (state) => state.permission.role,
-    }),
+    })
+    
   },
 
   data() {
@@ -328,6 +331,7 @@ export default {
         page: 0,
       },
       instanceList: [],
+      allInstanceList: [],
 
       comparisonDialogShow: false,
       // selectInstanceId:''
@@ -1033,6 +1037,23 @@ export default {
       await updateIntegrateTaskInstanceById(this.currentTaskInstance.id, postJson);
     },
 
+    async getAllInstances(page) {
+      if(this.currentTask.selectInstanceId == null) {
+        this.instancePageFilter.page = 0
+      }
+      let data = await getAllIntegrateTaskInstancesByTaskId(this.currentTask.id, page, this.instancePageFilter.pageSize);
+      while(data != null && data.content.length != 0) {
+        for(let i = 0;i < data.content.length;i++) {
+          this.allInstanceList.push(data.content[i])
+          if(data.content[i].id == this.currentTask.selectInstanceId) {
+            this.instancePageFilter.page = page
+          }
+        }
+        page++
+        data = await getAllIntegrateTaskInstancesByTaskId(this.currentTask.id, page, this.instancePageFilter.pageSize);
+      }
+    },
+
     //instance list
     async getAllIntegrateTaskInstances(page) {
       let data = await getAllIntegrateTaskInstancesByTaskId(this.currentTask.id, page, this.instancePageFilter.pageSize);
@@ -1043,12 +1064,15 @@ export default {
 
       this.instanceList = data.content;
 
-      this.instancePageFilter.page++;
+      // this.instancePageFilter.page++;
+
+      // console.log(this.instanceList)
+      // console.log(this.instancePageFilter)
       // console.log('instances', data);
     },
 
     async handleCurrentChange(val) {
-      await this.getAllIntegrateTaskInstances(val++);
+      await this.getAllIntegrateTaskInstances(val - 1);
     },
   },
 
