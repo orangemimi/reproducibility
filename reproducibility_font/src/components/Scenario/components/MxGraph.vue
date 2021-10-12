@@ -13,16 +13,25 @@
         <el-button @click="checked ? deleteCells() : deleteCellsConfirmDialog()" type="text" size="mini" :disabled="selectionCells.length == 0">
           Delete
         </el-button>
-        <el-button @click="undo" type="text" size="mini">Undo</el-button>
-        <el-button @click="redo" type="text" size="mini">Redo</el-button>
+        <el-button @click="undo" type="text" size="mini" :disabled="undoMng.indexOfNextAdd > 1 ? false : true">Undo</el-button>
+        <el-button @click="redo" type="text" size="mini" :disabled="undoMng.indexOfNextAdd < undoMng.history.length ? false : true">Redo</el-button>
         <!-- 创建一个新的画布  均为create-->
         <el-button @click="showCreateNewTask" type="success" size="mini">New Task</el-button>
         <!-- 保存现有的画布 均为update-->
-        <el-button @click="updateGraph" type="warning" size="mini">Save Task</el-button>
+        <el-button
+          @click="updateGraph"
+          :type="undoMng.history.length == 1 ? 'success' : 'warning'"
+          size="mini"
+          icon="el-icon-collection"
+        >
+          {{ currentTask.taskName }}
+        </el-button>
         <el-button @click="runGraph" size="mini">Run Task</el-button>
         <el-button @click="compareResult" size="mini">Compare Result</el-button>
-        {{ currentTask.taskName }}
+        
+        <!-- <el-badge is-dot class="item">{{ currentTask.taskName }}</el-badge> -->
         <el-button @click="clear" size="mini">clear</el-button>
+        <!-- <el-button @click="test" size="mini">hahaha</el-button> -->
         <!-- <img src="/static/images/calcModel.png" alt=""> -->
 
         <transition name="fade" mode="out-in">
@@ -118,7 +127,7 @@
 </template>
 
 <script>
-import bus from './bus'
+import bus from './bus';
 import { mapState } from 'vuex';
 import mxgraph from '_com/MxGraph/index';
 import { genGraph } from '_com/MxGraph/initMx';
@@ -182,7 +191,7 @@ export default {
           this.$refs.leftToolbar.init();
           this.$refs.leftToolbar.listenGraphEvent();
           this.initUndoMng();
-          this.getSelectionCells()
+          this.getSelectionCells();
 
           await this.getAllIntegrateTaskInstances(0);
           this.graph.importGraph(val.taskContent);
@@ -240,7 +249,10 @@ export default {
       selectionCells: [],
       deleteCellsVisible: false,
       checked: false,
-      undoMng: null,
+      undoMng: {
+        indexOfNextAdd: 1,
+        history: [{}],
+      },
 
       cellForm: {
         name: '',
@@ -323,6 +335,7 @@ export default {
   },
 
   methods: {
+    
     clear() {
       this.graph.removeCells(this.graph.getChildVertices(this.graph.getDefaultParent()));
       const codec = new mxCodec();
@@ -334,9 +347,9 @@ export default {
     },
 
     getSelectionCells() {
-      bus.$on('go', data => {
-        this.selectionCells = data
-      })
+      bus.$on('go', (data) => {
+        this.selectionCells = data;
+      });
     },
 
     rightDown(e) {
@@ -399,6 +412,8 @@ export default {
       } else {
         this.isSelectTaskInConsruction = false;
       }
+      this.undoMng.history = [this.undoMng.history[this.undoMng.indexOfNextAdd - 1]]
+      this.undoMng.indexOfNextAdd = 1
     },
 
     compareResult() {
@@ -561,8 +576,9 @@ export default {
 
     deleteCellsConfirmDialog() {
       // this.deleteCellsVisible = true;
-      console.log(this.selectionCells)
-      this.graph.removeCells(this.selectionCells)
+      console.log(this.selectionCells);
+      this.graph.removeCells(this.selectionCells);
+      this.selectionCells = [];
     },
 
     deleteCells() {
@@ -615,8 +631,7 @@ export default {
       // console.log(this.graph.getModel());
       this.graph.getModel().addListener(mxEvent.UNDO, listener);
       this.graph.getView().addListener(mxEvent.UNDO, listener);
-      this.undoMng = undoMng
-      console.log(this.undoMng)
+      this.undoMng = undoMng;
     },
     //撤销
     undo() {
@@ -723,6 +738,8 @@ export default {
       await updatePerformanceById('context', this.projectId, content);
       // await patch(`/integrateTasks/${this.currentTask.id}`, postJson);
       // console.log(data);
+      this.undoMng.history = [this.undoMng.history[this.undoMng.indexOfNextAdd - 1]]
+      this.undoMng.indexOfNextAdd = 1
     },
 
     selectTask(val) {
@@ -735,6 +752,8 @@ export default {
       }
       this.graph.removeCells(this.graph.getChildVertices(this.graph.getDefaultParent()));
       this.graph.importGraph(val.taskContent);
+      this.undoMng.history = [this.undoMng.history[this.undoMng.indexOfNextAdd - 1]]
+      this.undoMng.indexOfNextAdd = 1
 
       // let note = val.note;
       // this.importModelXML(note);
