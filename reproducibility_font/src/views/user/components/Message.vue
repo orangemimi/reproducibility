@@ -65,6 +65,9 @@ p {
     height: 50px;
     display: flex;
     flex-direction: row;
+    .sel:hover {
+      cursor: pointer
+    }
     .sel {
       flex: 1;
       text-align: center;

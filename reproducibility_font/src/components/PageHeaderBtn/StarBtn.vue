@@ -2,26 +2,27 @@
 <template>
   <div class="btn">
     <div class="btn-left">
-      <div>
-        <i class="el-icon-edit"></i>
+      <div @click="star" v-show="isStar == false">
+        <i class="el-icon-star-off"></i>
         Star
+      </div>
+      <div @click="unStar" v-show="isStar">
+        <i class="el-icon-star-on"></i>
+        UnStar
       </div>
     </div>
     <div class="btn-right">
       <div>
-        {{ count }}
+        {{ starNumber }}
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { starProject, isStarProject, getStarCount, unStarProject } from '@/api/request';
 export default {
-  props: {
-    count: {
-      type: Number
-    }
-  },
+  
   components: {},
 
   watch: {},
@@ -29,12 +30,45 @@ export default {
   computed: {},
 
   data() {
-    return {};
+    return {
+      projectId: this.$route.params.id,
+      isStar: false,
+      starNumber: 0
+    };
   },
 
-  methods: {},
+  methods: {
 
-  mounted() {}
+    async init() {
+      let data = await isStarProject(this.projectId)
+      console.log(data)
+      if(data == 1) {
+        this.isStar = true
+      }else {
+        this.isStar = false
+      }
+      this.starNumber = await getStarCount(this.projectId)
+    },
+
+    async star() {
+      let data = await starProject(this.projectId)
+      console.log(data) 
+      this.isStar = true
+      this.starNumber = data.starCount
+    },
+
+    async unStar() {
+      let data = await unStarProject(this.projectId)
+      console.log(data)
+      this.isStar = false
+      this.starNumber = data.starCount
+    }
+  },
+
+  mounted() {
+    console.log(this.$store.state.user.userId)
+    this.init()
+  }
 };
 </script>
 <style lang="scss" scoped>

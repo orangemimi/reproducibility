@@ -95,4 +95,10 @@ public class UserController {
     public JsonResult getUserinfo(@JwtTokenParser(key = "email") String email, @JwtTokenParser(key = "password") String password) {
         return ResultUtils.success(userService.getUserinfoByUserService(email, password));
     }
+
+    //判断用户是否star了项目
+    @RequestMapping(value = "/isSart/{projectId}", method = RequestMethod.GET)
+    public JsonResult isStarProject(@JwtTokenParser(key = "userId") String userId, @PathVariable String projectId) {
+        return ResultUtils.success(userService.isSartedProject(userId, projectId));
+    }
 }

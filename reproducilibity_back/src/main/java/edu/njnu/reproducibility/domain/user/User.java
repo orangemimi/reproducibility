@@ -37,6 +37,8 @@ public class User {
     List<String> createdProjects;
     List<String> forkedProjects;
 
+    List<String> watchingProjects;
+    List<String> staredProjects;
 
     /**
      * User server

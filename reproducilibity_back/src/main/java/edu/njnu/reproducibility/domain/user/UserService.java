@@ -244,6 +244,49 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public User star(String userId, String projectId) {
+        User user = userRepository.findByUserId(userId).orElseThrow(MyException::noObject);
+        List<String> temp = user.getStaredProjects();
+        if(temp == null) {
+            List<String> list = new ArrayList<>();
+            list.add(projectId);
+            user.setStaredProjects(list);
+        } else {
+            user.getStaredProjects().add(projectId);
+        }
+        return userRepository.save(user);
+    }
+
+    public User unStar(String userId, String projectId) {
+        User user = userRepository.findByUserId(userId).orElseThrow(MyException::noObject);
+        List<String> temp = user.getStaredProjects();
+        int flag = 0;
+        for(String str : temp) {
+            if(str.equals(projectId)) {
+                break;
+            }
+            flag++;
+        }
+        if(flag != temp.size()) {
+            user.getStaredProjects().remove(flag);
+        }
+        return userRepository.save(user);
+    }
+
+    public int isSartedProject(String userId, String projectId) {
+        User user = userRepository.findByUserId(userId).orElseThrow(MyException::noObject);
+        List<String> temp = user.getStaredProjects();
+        if(temp == null) {
+            return 0;
+        } else {
+            for(String str : temp) {
+                if(str.equals(projectId)) {
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
 
 
 }

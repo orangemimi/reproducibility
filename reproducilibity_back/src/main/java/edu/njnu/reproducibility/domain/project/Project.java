@@ -33,9 +33,13 @@ public class Project extends BaseEntity {
     List<Member> members;//role: ['builder', 'rebuilder_explorer','rebuilder_operator']
     Integer level=0;
 
-    Integer starCount;
-    Integer watchCount;
-    Integer folkCount;
+    //why???
+//    Integer starCount;
+//    Integer watchCount;
+//    Integer folkCount;
+    int starCount;
+    int watchCount;
+    int folkCount;
     String citation;
 
     //fork detail

@@ -191,5 +191,27 @@ public class ProjectService {
         return FileUtil.deleteFile(filePath);
     }
 
+    public Project Star(String projectId, String userId) {
+        Project project = projectRepository.findById(projectId).orElse(null);
+        int count = project.getStarCount();
+        project.setStarCount(count + 1);
+
+        userService.star(userId, projectId);
+        return projectRepository.save(project);
+    }
+
+    public Project unStar(String projectId, String userId) {
+        Project project = projectRepository.findById(projectId).orElseThrow(MyException::noObject);
+        project.setStarCount(project.getStarCount() - 1);
+        userService.unStar(userId, projectId);
+        return projectRepository.save(project);
+    }
+
+    public int getStarCount(String projectId) {
+        Project project = projectRepository.findById(projectId).orElseThrow(MyException::noObject);
+        return project.getStarCount();
+    }
+
+
 
 }

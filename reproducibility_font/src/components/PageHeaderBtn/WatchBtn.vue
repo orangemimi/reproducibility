@@ -3,8 +3,9 @@
   <div class="btn">
     <div class="btn-left">
       <div>
-        <i class="el-icon-edit"></i>
+        <i class="el-icon-view"></i>
         Watch
+        <i class="el-icon-arrow-down el-icon--right"></i>
       </div>
     </div>
     <div class="btn-right">
@@ -16,11 +17,14 @@
 </template>
 
 <script>
+
+
+
 export default {
   props: {
     count: {
-      type: Number
-    }
+      type: Number,
+    },
   },
   components: {},
 
@@ -29,12 +33,16 @@ export default {
   computed: {},
 
   data() {
-    return {};
+    return {
+      
+    };
   },
 
-  methods: {},
+  methods: {
+    
+  },
 
-  mounted() {}
+  mounted() {},
 };
 </script>
 <style lang="scss" scoped>

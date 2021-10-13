@@ -2,6 +2,11 @@ import { get, post, patch, del } from '@/axios';
 import { successNotification } from '@/utils/notification';
 //-------------------------------------------------users--------------------------------------
 
+//判断是否是已经Star的项目
+export async function isStarProject(projectId) {
+  return await get(`/users/isSart/${projectId}`)
+}
+
 export async function getUserByEmailLike(email) {
   return await get(`/users/like/${email}`);
 }
@@ -67,6 +72,11 @@ export async function getUserinfo() {
 
 //----------------------------------------------------projects-----------------------------------------
 
+//获取project的star数
+export async function getStarCount(projectId) {
+  return await get(`/projects/getStarCount/${projectId}`)
+}
+
 export async function getProjectAndUsers(projectId) {
   return await get(`/projects/user/${projectId}`);
 }
@@ -116,6 +126,17 @@ export async function forkProject(form) {
 //获取个人所有的projects
 export async function getMyProjects() {
   return await get(`/projects/getmyprojects`)
+}
+
+
+//star项目
+export async function starProject(projectId) {
+  return await patch(`/projects/star/${projectId}`)
+}
+
+//unstar项目
+export async function unStarProject(projectId) {
+  return await patch(`/projects/unStar/${projectId}`)
 }
 
 //---------------------------------------------------contextDefinition------------------------------------------

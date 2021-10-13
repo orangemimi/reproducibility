@@ -93,4 +93,19 @@ public class ProjectController {
         return ResultUtils.success(projectService.deletePicture(fileName, userId));
     }
 
+    @RequestMapping(value = "/star/{projectId}", method = RequestMethod.PATCH)
+    public JsonResult starProject(@PathVariable("projectId") String projectId, @JwtTokenParser(key = "userId") String userId) {
+        return ResultUtils.success(projectService.Star(projectId, userId));
+    }
+
+    @RequestMapping(value = "/unStar/{projectId}", method = RequestMethod.PATCH)
+    public JsonResult unStarProject(@PathVariable String projectId, @JwtTokenParser(key = "userId") String userId) {
+        return ResultUtils.success(projectService.unStar(projectId, userId));
+    }
+
+    @RequestMapping(value = "/getStarCount/{projectId}", method = RequestMethod.GET)
+    public JsonResult getStarCount(@PathVariable String projectId) {
+        return ResultUtils.success(projectService.getStarCount(projectId));
+    }
+
 }

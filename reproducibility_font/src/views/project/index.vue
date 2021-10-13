@@ -13,7 +13,7 @@
         </el-col>
         <el-col class="info-btn" :span="12">
           <folk-btn :count="3" class="folk" :isDisable="this.role == 'builder' ? true : false" @click="forkProject"></folk-btn>
-          <star-btn :count="2" class="star"></star-btn>
+          <star-btn class="star"></star-btn>
           <watch-btn :count="1" class="watch"></watch-btn>
         </el-col>
       </div>
@@ -67,6 +67,7 @@ export default {
       await this.getProjectInfo();
       await this.judgeRole(this.projectInfo);
     },
+
 
     async getProjectInfo() {
       // let data = await getProjectById(this.projectId);
