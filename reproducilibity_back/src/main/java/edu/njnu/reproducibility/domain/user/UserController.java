@@ -101,4 +101,10 @@ public class UserController {
     public JsonResult isStarProject(@JwtTokenParser(key = "userId") String userId, @PathVariable String projectId) {
         return ResultUtils.success(userService.isSartedProject(userId, projectId));
     }
+
+    //获取本地和远程数据库的用户信息
+    @RequestMapping(value = "/getAllInfo/{userId}", method = RequestMethod.GET)
+    public JsonResult getAllUserInfo(@PathVariable String userId) {
+        return ResultUtils.success(userService.getUserInfoOfLocalhostAndRemote(userId));
+    }
 }

@@ -61,6 +61,7 @@ public class UserService {
     * 2.注册
     * */
     public User register(AddUserDTO add) {
+        add.setPassword(DigestUtils.sha256Hex(add.getPassword().getBytes()));
         JSONObject remoteUserJson = userServiceServie.register(add);    //用户数据库注册，注册成功时code值返回0
         //用户邮箱已经被注册的情况,抛出自定义异常
         if (userRepository.findByEmail(add.getEmail()).isPresent()) {
@@ -69,7 +70,7 @@ public class UserService {
         if((int) remoteUserJson.get("code") != 0) {
             throw new MyException(ResultEnum.REMOTE_SERVICE_ERROR);
         }
-        add.setPassword(DigestUtils.sha256Hex(add.getPassword().getBytes()));
+//        add.setPassword(DigestUtils.sha256Hex(add.getPassword().getBytes()));
         add.setUserId(((JSONObject) remoteUserJson.get("data")).getStr("userId"));
         add.setForkedProjects(new ArrayList<String>());
         User user = new User();
@@ -188,6 +189,7 @@ public class UserService {
     * 3.本地有记录用户服务器一定有记录，用户服务器有记录本地不一定有记录，注意做判断处理
     * */
     public User forgetPassword(String email, String password, String code) {
+        password = DigestUtils.sha256Hex(password.getBytes());
         JSONObject jsonObj = userServiceServie.changePWDbyEmail(email, code, password);
         if((int) jsonObj.get("code") == 0) {
             //用户服务器修改成功时
@@ -288,5 +290,15 @@ public class UserService {
         return 0;
     }
 
-
+    //获取本地和远程数据库的用户信息
+    public JSONObject getUserInfoOfLocalhostAndRemote(String userId) {
+        User user = userRepository.findByUserId(userId).orElseThrow(MyException::noObject);
+        String password = user.getPassword();
+        String email = user.getEmail();
+        JSONObject remoteUser = getUserinfoByUserService(email, password);
+        JSONObject result = new JSONObject();
+        result.put("localhost", user);
+        result.put("remote", remoteUser);
+        return result;
+    }
 }

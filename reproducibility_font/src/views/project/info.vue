@@ -20,9 +20,9 @@
                   Reproduction
                 </div>
                 <div class="content">
-                  <strong style="float:left">Tag:</strong>
+                  <strong style="float: left">Tag:</strong>
                   <div v-for="(item, index) in projectInfo.tag" :key="index">
-                    <el-tag type="info" style="float:left">{{ item }}</el-tag>
+                    <el-tag type="info" style="float: left">{{ item }}</el-tag>
                   </div>
                 </div>
 
@@ -37,11 +37,9 @@
               </div>
 
               <div class="info-img">
-                <div style="float:right">
+                <div style="float: right">
                   <!-- <el-button-group> -->
-                  <el-button type="info" plain size="small" @click="editProjectInfoDialog" v-show="role == 'builder'">
-                    Edit
-                  </el-button>
+                  <el-button type="info" plain size="small" @click="editProjectInfoDialog" v-show="role == 'builder'">Edit</el-button>
                   <!-- </el-button-group> -->
                   <el-button-group>
                     <el-button type="info" plain size="small">
@@ -53,7 +51,14 @@
                   </el-button-group>
                 </div>
                 <div>
-                  <avatar username="projectInfo.name" :src="projectInfo.picture" :size="150" style="margin-top: 10px" :rounded="false" class="avatar-img"></avatar>
+                  <avatar
+                    username="projectInfo.name"
+                    :src="projectInfo.picture"
+                    :size="150"
+                    style="margin-top: 10px"
+                    :rounded="false"
+                    class="avatar-img"
+                  ></avatar>
                 </div>
               </div>
             </div>
@@ -79,18 +84,35 @@
               <div class="info">
                 <div class="title">Participants</div>
                 <div class="add-participant">
-                  <el-button size="small" @click="addParticipantDialogShow = true">
-                    + Add participant
-                  </el-button>
+                  <el-button size="small" @click="addParticipantDialogShow = true">+ Add participant</el-button>
                 </div>
               </div>
 
               <div class="content">
-                <vue-scroll :ops="ops" class="scroll" style="height: calc(100vh - 554px);">
+                <vue-scroll :ops="ops" class="scroll" style="height: calc(100vh - 554px)">
                   <user-card :user="{ name: creator.name, role: 'builder' }" class=""></user-card>
-                  <div v-for="(member, index) in members" :key="index">
-                    <user-card :user="member"></user-card>
-                  </div>
+                  <el-row>
+                    <!-- <div v-for="(item, index) in 103" :key="index">
+                      <el-col :span="3"><user-card :user="members[0]"></user-card></el-col>
+                    </div>
+                    <el-col :span="3">
+                      <el-avatar :size="50" icon="el-icon-more"></el-avatar>
+                    </el-col> -->
+                    <div v-if="members.length > 103">
+                      <div v-for="(item, index) in 103" :key="index">
+                        <el-col :span="3"><user-card :user="members[index]"></user-card></el-col>
+                      </div>
+                      <el-col :span="3">
+                        <el-avatar :size="50" icon="el-icon-more">
+                        </el-avatar>
+                      </el-col>
+                    </div>
+                    <div v-else>
+                      <div v-for="(member, index) in members" :key="index">
+                        <el-col :span="3"><user-card :user="member"></user-card></el-col>
+                      </div>
+                    </div>
+                  </el-row>
                 </vue-scroll>
               </div>
             </div>
@@ -138,7 +160,7 @@ export default {
     Avatar,
     userCard,
     editInfoForm,
-    shareProject
+    shareProject,
     // reBuilderCard
   },
 
@@ -147,9 +169,9 @@ export default {
   computed: {
     ...mapState({
       // userId: state => state.user.userId,
-      role: state => state.permission.role
+      role: (state) => state.permission.role,
       // token: state => state.user.token
-    })
+    }),
   },
 
   data() {
@@ -160,11 +182,11 @@ export default {
       members: [],
       ops: {
         bar: {
-          background: '#808695'
-        }
+          background: '#808695',
+        },
       },
       editProjectInfoDialogShow: false,
-      addParticipantDialogShow: false
+      addParticipantDialogShow: false,
     };
   },
 
@@ -176,7 +198,7 @@ export default {
 
     async getProjectInfo() {
       let data = await getProjectAndUsers(this.projectId);
-      // console.log(data);
+      console.log(data);
       this.projectInfo = data.project;
       this.creator = data.creator;
       this.members = data.members;
@@ -196,19 +218,19 @@ export default {
         this.$notify({
           title: 'Success',
           message: 'You have update the project successfully!',
-          type: 'success'
+          type: 'success',
         });
       }
     },
 
     dateFormat(time) {
       return dateFormat(time);
-    }
+    },
   },
 
   mounted() {
     this.init();
-  }
+  },
 };
 </script>
 <style lang="scss" scoped>

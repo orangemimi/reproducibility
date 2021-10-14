@@ -23,7 +23,7 @@
           <i class="el-icon-message-solid" @click="toNotice"></i>
         </el-badge>
         <el-dropdown placement="bottom-start" @command="handleCommond">
-          <div @click="toUserPage">
+          <div class="personal">
             <avatar
               :username="user.avatar != 'undefined' && user.avatar != 'null' && user.avatar != undefined && user.avatar != '' ? user.avatar : user.name"
               :size="40"
@@ -31,7 +31,12 @@
             ></avatar>
           </div>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="logout">logout</el-dropdown-item>
+            
+            <el-dropdown-item command="homepage"><i class="el-icon-monitor"/>homepage</el-dropdown-item>
+            <el-dropdown-item command="space"><i class="el-icon-menu"/>individual space</el-dropdown-item>
+            <el-dropdown-item command="setting"><i class="el-icon-setting"/>setting</el-dropdown-item>
+            <el-dropdown-item command="logout"><i class="el-icon-location"/>logout</el-dropdown-item>
+
           </el-dropdown-menu>
         </el-dropdown>
       </el-col>
@@ -100,6 +105,10 @@ export default {
       if (command == 'logout') {
         await this.handleLogOut();
         location.reload();
+      } else if (command == 'space') {
+        this.toUserPage()
+      } else if (command == 'homepage') {
+        this.toHomePage()
       }
     },
     register() {
@@ -122,13 +131,19 @@ export default {
     },
 
     toUserPage() {
-      // console.log(this.$router.currentRoute.name)
       if (this.$router.currentRoute.name != 'UserHome') {
         this.$router.push({
           name: 'UserHome',
         });
       }
     },
+    toHomePage() {
+      if(this.$router.currentRoute.name != 'Homepage') {
+        this.$router.push({
+          path: `/Homepage/${this.$store.state.user.userId}`,
+        });
+      }
+    }
   },
   components: {
     Avatar,
@@ -137,6 +152,12 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.personal:hover {
+  cursor: pointer;
+}
+.el-badge:hover {
+  cursor: pointer;
+}
 .item {
   font-size: 18px;
   margin-right: 10px;

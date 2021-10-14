@@ -70,6 +70,11 @@ export async function getUserinfo() {
   return await get(`/users/getuserinfo`)
 }
 
+//获取本地和远程所有用户信息
+export async function getAllUserInfo(userId) {
+  return await get(`/users/getAllInfo/${userId}`)
+}
+
 //----------------------------------------------------projects-----------------------------------------
 
 //获取project的star数

@@ -245,6 +245,15 @@ export const constantRoutes = [
           main: () => import('@/views/data-service/index.vue'),
           footer: () => import('_com/layout/MyFooter.vue')
         }
+      },
+      {
+        path: '/homepage/:userId',
+        name: 'Homepage',
+        components: {
+          header: () => import('_com/layout/MyHeader.vue'),
+          main: () => import('@/views/homepage'),
+          footer: () => import('_com/layout/MyFooter.vue')
+        },
       }
     ]
   }
