@@ -144,6 +144,11 @@ export async function unStarProject(projectId) {
   return await patch(`/projects/unStar/${projectId}`)
 }
 
+//获取project的Privacy
+export async function getPrivacy(projectId) {
+  return await get(`/projects/getPrivacy/${projectId}`)
+}
+
 //---------------------------------------------------contextDefinition------------------------------------------
 
 // export async function updateContexByProjectId(projectId) {

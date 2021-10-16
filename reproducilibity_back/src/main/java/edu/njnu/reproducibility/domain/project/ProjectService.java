@@ -212,6 +212,9 @@ public class ProjectService {
         return project.getStarCount();
     }
 
-
+    public String getPrivacyOfProject(String projectId) {
+        Project project = projectRepository.findById(projectId).orElseThrow(MyException::noObject);
+        return project.getPrivacy();
+    }
 
 }

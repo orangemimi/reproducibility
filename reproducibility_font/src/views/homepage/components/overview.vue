@@ -3,10 +3,10 @@
     <div class="top">
       Popular projects
       <div class="card">
-        <div v-if="joinedProjects.length <= 6">
+        <div v-if="publicProjects.length <= 6">
           <el-row :gutter="20">
-            <div v-for="(item, index) in joinedProjects" :key="index">
-              <el-col :span="12"><overview-card :projectId="item" /></el-col>
+            <div v-for="(item, index) in publicProjects" :key="index">
+              <el-col :span="12"><project-card :projectId="item" :type="'overview'" /></el-col>
             </div>
           </el-row>
         </div>
@@ -14,7 +14,7 @@
         <div v-else>
           <el-row :gutter="20">
             <div v-for="(item, index) in 6" :key="index">
-              <el-col :span="12"><overview-card :projectId="joinedProjects[index]" /></el-col>
+              <el-col :span="12"><project-card :projectId="publicProjects[index]" :type="'overview'" /></el-col>
             </div>
           </el-row>
         </div>
@@ -25,16 +25,26 @@
 </template>
 
 <script>
-import overviewCard from './overviewCard/overviewCard.vue';
+import projectCard from './Card/projectCard.vue';
 export default {
+  data() {
+    return {
+    
+    };
+  },
   props: {
-    joinedProjects: {
+    publicProjects: {
       type: Array,
     },
   },
+
   components: {
-    overviewCard,
+    projectCard,
   },
+  methods: {
+
+  },
+  mounted() {},
 };
 </script>
 

@@ -108,4 +108,9 @@ public class ProjectController {
         return ResultUtils.success(projectService.getStarCount(projectId));
     }
 
+    @RequestMapping(value = "/getPrivacy/{projectId}", method = RequestMethod.GET)
+    public JsonResult getPrivacy(@PathVariable String projectId) {
+        return ResultUtils.success(projectService.getPrivacyOfProject(projectId));
+    }
+
 }

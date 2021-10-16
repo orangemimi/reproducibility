@@ -90,7 +90,7 @@
 
               <div class="content">
                 <vue-scroll :ops="ops" class="scroll" style="height: calc(100vh - 554px)">
-                  <user-card :user="{ name: creator.name, role: 'builder' }" class=""></user-card>
+                  <user-card :user="{ name: creator.name, role: 'builder', id: $store.state.user.userId }" class=""></user-card>
                   <el-row>
                     <!-- <div v-for="(item, index) in 103" :key="index">
                       <el-col :span="3"><user-card :user="members[0]"></user-card></el-col>
@@ -201,7 +201,9 @@ export default {
       console.log(data);
       this.projectInfo = data.project;
       this.creator = data.creator;
-      this.members = data.members;
+      if(data.members != null) {
+        this.members = data.members;
+      }
     },
 
     editProjectInfoDialog() {

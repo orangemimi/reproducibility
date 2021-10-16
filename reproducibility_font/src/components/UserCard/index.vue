@@ -3,16 +3,16 @@
   <div class="user">
     <div v-if="user.role == 'builder'" class="builder">
       <div class="block">
-        <el-avatar :size="50" src="https://t7.baidu.com/it/u=1595072465,3644073269&fm=193&f=GIF" :title="user.name"></el-avatar>
+        <el-avatar :size="50" src="https://t7.baidu.com/it/u=1595072465,3644073269&fm=193&f=GIF" :title="user.name" @click.native="click"></el-avatar>
       </div>
-      <div class="text" :title="user.name">{{ user.name }}</div>
+      <div class="text" :title="user.name" @click="click">{{ user.name }}</div>
     </div>
     <div v-else class="member">
-    <!-- <div class="member"> -->
+      <!-- <div class="member"> -->
       <div class="block">
-        <el-avatar :size="50" src="https://t7.baidu.com/it/u=1595072465,3644073269&fm=193&f=GIF" :title="user.name"></el-avatar>
+        <el-avatar :size="50" src="https://t7.baidu.com/it/u=1595072465,3644073269&fm=193&f=GIF" :title="user.name" @click.native="click"></el-avatar>
       </div>
-      <div class="text" :title="user.name">{{ user.name }}</div>
+      <div class="text" :title="user.name" @click="click">{{ user.name }}</div>
     </div>
   </div>
 </template>
@@ -31,10 +31,17 @@ export default {
     return {};
   },
 
-  methods: {},
+  methods: {
+    click() {
+      console.log(1)
+      this.$router.push({
+        path: `/Homepage/${this.user.id}`,
+      });
+    },
+  },
 
   mounted() {
-    console.log(this.user)
+    console.log(this.user);
   },
 };
 </script>

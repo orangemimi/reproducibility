@@ -28,24 +28,17 @@
       <el-col :span="13">
         <div class="right">
           <el-tabs v-model="activeName" @tab-click="handleClick">
-            <!-- <el-tab-pane>
-              <template #label>
-                <span>
-                  <i class="el-icon-date"></i>
-                  我的行程
-                </span>
-              </template>
-              我的行程
-            </el-tab-pane> -->
-            <el-tab-pane label="Overview" name="first"><over-view :joinedProjects="localuser.joinedProjects"/></el-tab-pane>
+            
+            <el-tab-pane label="Overview" name="first"><over-view :publicProjects="publicProjects" /></el-tab-pane>
             <el-tab-pane name="second">
               <template #label>
                 <span>
                   Projects
-                  <el-avatar :size="20">{{ localuser.joinedProjects.length }}</el-avatar>
+                  <el-avatar :size="20" v-if="$route.params.userId == $store.state.user.userId">{{ joinedProjects.length }}</el-avatar>
+                  <el-avatar :size="20" v-else>{{ publicProjects.length }}</el-avatar>
                 </span>
               </template>
-              {{ localuser.joinedProjects.length }}
+              <projects :joinedProjects="joinedProjects" :publicProjects="publicProjects" />
             </el-tab-pane>
             <el-tab-pane name="third">
               <template #label>
@@ -73,15 +66,16 @@
 </template>
 
 <script>
-import { getAllUserInfo } from '@/api/request';
+import { getAllUserInfo, getPrivacy } from '@/api/request';
 import overView from './components/overview.vue';
+import projects from './components/projects.vue';
 export default {
   data() {
     return {
       userId: this.$route.params.userId,
-      localuser: {
-        joinedProjects: [],
-      },
+      joinedProjects: [],
+      publicProjects: [],
+      localuser: {},
       remoteuser: {},
       size: document.body.clientWidth / 8,
       activeName: 'first',
@@ -89,15 +83,32 @@ export default {
   },
   components: {
     overView,
+    projects,
   },
   methods: {
     async init() {
       let data = await getAllUserInfo(this.userId);
       this.localuser = data.localhost;
       this.remoteuser = data.remote;
-      console.log(data);
+      if (data.localhost.joinedProjects != null) {
+        for (let i = 0; i < data.localhost.joinedProjects.length; i++) {
+          this.joinedProjects.push(data.localhost.joinedProjects[i]);
+        }
+      }
+      if (data.localhost.createdProjects != null) {
+        for (let i = 0; i < data.localhost.createdProjects.length; i++) {
+          this.joinedProjects.push(data.localhost.createdProjects[i]);
+        }
+      }
+      for (let i = 0; i < this.joinedProjects.length; i++) {
+        if ((await getPrivacy(this.joinedProjects[i])) == 'public') {
+          this.publicProjects.push(this.joinedProjects[i]);
+        }
+      }
     },
+
     handleClick() {},
+
   },
   mounted() {
     this.init();

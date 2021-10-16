@@ -39,11 +39,10 @@
 import { getMyProjects } from '@/api/request';
 import projectCard from './ProjectCard.vue';
 
-
 export default {
   data() {
     return {
-      projectList: {},
+      projectList: [],
       checkList: [],
       userId: this.$store.state.user.userId,
       create: true,
@@ -73,10 +72,10 @@ export default {
       }
     },
     createProject() {
-      console.log(this.$router)
-      this.$router.push('/newproject')
+      console.log(this.$router);
+      this.$router.push('/newproject');
       // this.$router.currentRoute.fullPath = '/newproject'
-    }
+    },
   },
   mounted() {
     this.getprojects();
@@ -108,7 +107,6 @@ export default {
   padding: 20px 20px; // for col
   .project-card:hover {
     cursor: pointer;
-    
   }
 }
 </style>

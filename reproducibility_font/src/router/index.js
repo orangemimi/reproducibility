@@ -249,6 +249,10 @@ export const constantRoutes = [
       {
         path: '/homepage/:userId',
         name: 'Homepage',
+        meta: {
+          // title: 'User Info',
+          requireAuth: true
+        },
         components: {
           header: () => import('_com/layout/MyHeader.vue'),
           main: () => import('@/views/homepage'),
