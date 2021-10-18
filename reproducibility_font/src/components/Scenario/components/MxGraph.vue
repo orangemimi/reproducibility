@@ -18,17 +18,12 @@
         <!-- 创建一个新的画布  均为create-->
         <el-button @click="showCreateNewTask" type="success" size="mini">New Task</el-button>
         <!-- 保存现有的画布 均为update-->
-        <el-button
-          @click="updateGraph"
-          :type="undoMng.history.length == 1 ? 'success' : 'warning'"
-          size="mini"
-          icon="el-icon-collection"
-        >
+        <el-button @click="updateGraph" :type="undoMng.history.length == 1 ? 'success' : 'warning'" size="mini" icon="el-icon-collection">
           {{ currentTask.taskName }}
         </el-button>
         <el-button @click="runGraph" size="mini">Run Task</el-button>
         <el-button @click="compareResult" size="mini">Compare Result</el-button>
-        
+
         <!-- <el-badge is-dot class="item">{{ currentTask.taskName }}</el-badge> -->
         <el-button @click="clear" size="mini">clear</el-button>
         <!-- <el-button @click="test" size="mini">hahaha</el-button> -->
@@ -193,8 +188,7 @@ export default {
           this.initUndoMng();
           this.getSelectionCells();
 
-
-          await this.getAllInstances(0)
+          await this.getAllInstances(0);
           await this.getAllIntegrateTaskInstances(this.instancePageFilter.page);
           this.graph.importGraph(val.taskContent);
         }
@@ -222,8 +216,7 @@ export default {
   computed: {
     ...mapState({
       role: (state) => state.permission.role,
-    })
-    
+    }),
   },
 
   data() {
@@ -339,7 +332,6 @@ export default {
   },
 
   methods: {
-    
     clear() {
       this.graph.removeCells(this.graph.getChildVertices(this.graph.getDefaultParent()));
       const codec = new mxCodec();
@@ -416,8 +408,8 @@ export default {
       } else {
         this.isSelectTaskInConsruction = false;
       }
-      this.undoMng.history = [this.undoMng.history[this.undoMng.indexOfNextAdd - 1]]
-      this.undoMng.indexOfNextAdd = 1
+      this.undoMng.history = [this.undoMng.history[this.undoMng.indexOfNextAdd - 1]];
+      this.undoMng.indexOfNextAdd = 1;
     },
 
     compareResult() {
@@ -742,8 +734,8 @@ export default {
       await updatePerformanceById('context', this.projectId, content);
       // await patch(`/integrateTasks/${this.currentTask.id}`, postJson);
       // console.log(data);
-      this.undoMng.history = [this.undoMng.history[this.undoMng.indexOfNextAdd - 1]]
-      this.undoMng.indexOfNextAdd = 1
+      this.undoMng.history = [this.undoMng.history[this.undoMng.indexOfNextAdd - 1]];
+      this.undoMng.indexOfNextAdd = 1;
     },
 
     selectTask(val) {
@@ -756,8 +748,8 @@ export default {
       }
       this.graph.removeCells(this.graph.getChildVertices(this.graph.getDefaultParent()));
       this.graph.importGraph(val.taskContent);
-      this.undoMng.history = [this.undoMng.history[this.undoMng.indexOfNextAdd - 1]]
-      this.undoMng.indexOfNextAdd = 1
+      this.undoMng.history = [this.undoMng.history[this.undoMng.indexOfNextAdd - 1]];
+      this.undoMng.indexOfNextAdd = 1;
 
       // let note = val.note;
       // this.importModelXML(note);
@@ -871,7 +863,7 @@ export default {
 
       //get tid from manager server
       let tid = await runtask(formData);
-
+      console.log(tid);
       await this.addTaskInstance(tid);
 
       await this.getOutputs(tid);
@@ -892,6 +884,7 @@ export default {
         } else {
           let data = await checkTaskStatus(tid);
           this.record = data;
+          console.log(data);
           this.changeCellColor(data);
         }
       }, 3000);
@@ -903,8 +896,14 @@ export default {
       let failedTask = modelActions.failed; //red
       let completedTask = modelActions.completed;
 
+      let dataProcessing = data.taskInfo.dataProcessingList;
+      let processingRunningTask = dataProcessing.running;
+      let processingFailedTask = dataProcessing.failed;
+      let processingCompleteTask = dataProcessing.completed;
+
       this.getCells();
       let modelListInGraph = this.modelListInGraph;
+      let dataServiceListInGraph = this.dataServiceListInGraph;
 
       modelListInGraph.forEach((modelCell) => {
         //判断runnign里面是否有model
@@ -927,6 +926,27 @@ export default {
           this.changeCellStyleByStatus(2, modelCell, false);
 
           this.changeDataCellByStatus(2, modelCell, false);
+        }
+      });
+
+      dataServiceListInGraph.forEach((cell) => {
+        if (processingRunningTask.some((task) => task.id == cell.id)) {
+          this.changeCellStyleByStatus(0, cell, false);
+          this.changeDataCellByStatus(0, cell, false);
+        }
+        if (processingCompleteTask.some((task) => task.id == cell.id)) {
+          //change color
+
+          this.changeCellStyleByStatus(1, cell, false);
+
+          this.changeDataCellByStatus(1, cell, false);
+        }
+        //判断failedTask里面是否有model
+        if (processingFailedTask.some((task) => task.id == cell.id)) {
+          //change color
+          this.changeCellStyleByStatus(2, cell, false);
+
+          this.changeDataCellByStatus(2, cell, false);
         }
       });
     },
@@ -974,10 +994,11 @@ export default {
     },
 
     async putOutputToCell() {
-      let actionResponse = this.record.taskInfo.modelActionList.completed;
+      let modelActionResponse = this.record.taskInfo.modelActionList.completed;
+      let processingActionResponse = this.record.taskInfo.dataProcessingList.completed;
       // console.log(this.modelOutputInGraph);
       this.modelOutputInGraph.forEach(async (eventCell) => {
-        let outputActionList = actionResponse.filter((response) => eventCell.linkModelCellId == response.id);
+        let outputActionList = modelActionResponse.filter((response) => eventCell.linkModelCellId == response.id);
         let outputValueJson = outputActionList[0].outputData.outputs.filter((out) => out.dataId == eventCell.eventId && out.state == eventCell.stateName);
         let content = outputValueJson[0].dataContent;
 
@@ -989,14 +1010,38 @@ export default {
           description: '',
           userUpload: false, //--false是中间数据
         };
-
+        console.log(dataJson);
         let data = await saveFileItem(dataJson);
+        console.log(data);
         eventCell.fileId = data.id;
         eventCell.value = data.address;
         eventCell.fileName = data.name;
+        await this.updateTaskInstances('model');
       });
+      this.dataServiceOutputListInGraph.forEach(async (eventCell) => {
+        let outputActionList = processingActionResponse.filter((response) => eventCell.linkModelCellId == response.id);
+        // console.log(outputActionList)
+        let outputValueJson = outputActionList[0].outputData.outputs.filter((out) => out.dataId == eventCell.id);
+        console.log(eventCell)
+        console.log(outputValueJson)
+        let content = outputValueJson[0].dataContent;
 
-      await this.updateTaskInstances();
+        //upload
+        let dataJson = {
+          name: content.fileName,
+          address: content.value,
+          suffix: content.suffix,
+          description: '',
+          userUpload: false, //--false是中间数据
+        };
+        console.log(dataJson);
+        let data = await saveFileItem(dataJson);
+        console.log(data);
+        eventCell.fileId = data.id;
+        eventCell.value = data.address;
+        eventCell.fileName = data.name;
+        await this.updateTaskInstances('dataProcessing');
+      });
     },
 
     async addTaskInstance(tid) {
@@ -1015,41 +1060,60 @@ export default {
         status: 0,
         tid: tid,
       };
-      console.log(postJson);
       let data = await saveIntegrateTaskInstance(postJson);
+      console.log(data);
+      this.currentTaskInstance = data
       this.instanceList.push(data);
     },
 
-    async updateTaskInstances() {
-      let postJson = {
-        action: generateAction(
-          this.currentTask.id,
-          this.modelListInGraph,
-          this.modelInputInGraph,
-          this.modelLinkInGraph,
-          this.modelOutputInGraph,
-          this.linkEdgeList,
-          'taskInstance'
-        ),
-        status: 1,
-      };
+    async updateTaskInstances(type) {
+      let postJson = {}
+      if (type == 'model') {
+        postJson = {
+          action: generateAction(
+            this.currentTask.id,
+            this.modelListInGraph,
+            this.modelInputInGraph,
+            this.modelLinkInGraph,
+            this.modelOutputInGraph,
+            this.linkEdgeList,
+            'taskInstance'
+          ),
+          status: 1,
+        };
+      } else if(type == 'dataProcessing') {
+        postJson = {
+          action: generateAction(
+            this.currentTask.id,
+            this.dataServiceListInGraph,
+            this.dataServiceInputInGraph,
+            this.dataServiceLinkInGraph,
+            this.dataServiceOutputListInGraph,
+            this.linkEdgeList,
+            'taskInstance'
+          ),
+          status: 1,
+        };
+      }
+
       // console.log(postJson, this.currentTaskInstance.id);
+
       await updateIntegrateTaskInstanceById(this.currentTaskInstance.id, postJson);
     },
 
     async getAllInstances(page) {
-      if(this.currentTask.selectInstanceId == null) {
-        this.instancePageFilter.page = 0
+      if (this.currentTask.selectInstanceId == null) {
+        this.instancePageFilter.page = 0;
       }
       let data = await getAllIntegrateTaskInstancesByTaskId(this.currentTask.id, page, this.instancePageFilter.pageSize);
-      while(data != null && data.content.length != 0) {
-        for(let i = 0;i < data.content.length;i++) {
-          this.allInstanceList.push(data.content[i])
-          if(data.content[i].id == this.currentTask.selectInstanceId) {
-            this.instancePageFilter.page = page
+      while (data != null && data.content.length != 0) {
+        for (let i = 0; i < data.content.length; i++) {
+          this.allInstanceList.push(data.content[i]);
+          if (data.content[i].id == this.currentTask.selectInstanceId) {
+            this.instancePageFilter.page = page;
           }
         }
-        page++
+        page++;
         data = await getAllIntegrateTaskInstancesByTaskId(this.currentTask.id, page, this.instancePageFilter.pageSize);
       }
     },
