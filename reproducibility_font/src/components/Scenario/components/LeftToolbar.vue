@@ -316,6 +316,7 @@ export default {
           vertex.nodeAttribute.type = item.type; //Processing
         }
         if (type == 'modelServiceInput' || type == 'modelServiceOutput') {
+          console.log(item)
           if (this.selectionCells.length == 0) {
             this.$notify.error({
               title: 'Error',

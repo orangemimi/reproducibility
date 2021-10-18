@@ -39,7 +39,7 @@
       <div v-else-if="currentEvent.type == 'modelServiceInput'">
         <div v-if="currentEvent.nodeAttribute.datasetItem != undefined && currentEvent.nodeAttribute.datasetItem.type == `internal`" class="uploadContent">
           <vue-scroll style="height: 100%" :ops="ops">
-            <div v-if="currentEvent.nodeAttribute.datasetItem.isParams">
+            <div v-if="currentEvent.isParameter">
               <!-- <el-table border :data="filterEvent[0].UdxNode" size="mini" class="table" style="width: 100%">
                 <el-table-column type="expand" width="20">
                   <template slot-scope="props">

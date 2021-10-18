@@ -7,7 +7,7 @@
             <el-avatar :size="size">user</el-avatar>
           </div>
           <p>{{ localuser.name }}</p>
-          <div>
+          <div v-if="userId == $route.params.userId">
             <el-button round>Edit Profile</el-button>
           </div>
           <div>

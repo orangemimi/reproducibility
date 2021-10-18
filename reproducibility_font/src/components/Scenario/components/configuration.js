@@ -401,7 +401,7 @@ export function generateXml1(
         _event: item.name
       })
       if (!item.upload) {
-        DataProcessings.DataProcessing[index].Outputs.DataConfiguration[n].Data = {
+        ModelActions.ModelAction[index].Outputs.DataConfiguration[n].Data = {
           _type: "insituData"
         }
       }
