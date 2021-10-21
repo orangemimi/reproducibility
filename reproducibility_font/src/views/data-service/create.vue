@@ -11,7 +11,18 @@
             <el-input v-model="form.token" />
           </el-form-item>
           <el-form-item label="Data Serice Id">
-            <el-input v-model="form.dataServiceId" />
+            <el-input v-model="form.dataServiceId">
+              <el-dropdown slot="append" @click="handclick">
+                <el-button icon="el-icon-more-outline"></el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <div v-for="(item, index) in dataServiceInfo" :key="index">
+                    <el-dropdown-item :command="index">{{item.name}}</el-dropdown-item>
+                  </div>
+                  
+                  
+                </el-dropdown-menu>
+              </el-dropdown>
+            </el-input>
           </el-form-item>
           <el-form-item label="Type">
             <el-radio-group v-model="form.type">
@@ -27,10 +38,15 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item label="Tags">
-            <el-input v-model="inputTagValue" ref="addTagRef" size="small" @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm" style="margin-bottom:5px">
-              <template slot="append">
-                + New Tag
-              </template>
+            <el-input
+              v-model="inputTagValue"
+              ref="addTagRef"
+              size="small"
+              @keyup.enter.native="handleInputConfirm"
+              @blur="handleInputConfirm"
+              style="margin-bottom: 5px"
+            >
+              <template slot="append">+ New Tag</template>
             </el-input>
 
             <el-tag :key="tag" v-for="tag in form.tags" closable :disable-transitions="false" @close="handleClose(tag)">
@@ -52,7 +68,7 @@
 
 <script>
 import addImage from '_com/AddImage';
-import { saveDataService } from '@/api/request';
+import { saveDataService, getAllProcessing } from '@/api/request';
 export default {
   components: { addImage },
 
@@ -64,15 +80,15 @@ export default {
     return {
       form: {
         name: '',
-        description: '',
-        doi: '',
-        privacy: '',
+        token: '',
+        dataServiceId: '',
         tags: [],
-        thumbnail: '',
-        source: '',
+        Privacy: '',
         type: 'service'
+        
       },
-      inputTagValue: ''
+      inputTagValue: '',
+      dataServiceInfo: []
     };
   },
 
@@ -83,8 +99,26 @@ export default {
       this.$notify({
         title: 'Success',
         message: 'You have add the model service successfully!',
-        type: 'success'
+        type: 'success',
       });
+    },
+
+    handclick(val) {
+      console.log(val)
+      this.form.name = this.dataServiceInfo[val].name
+      this.form.dataServiceId = this.dataServiceInfo[val].id
+    },
+    
+    async findData(token) {
+      let data = await getAllProcessing({"token": token})
+      let testJson = eval("(" + data + ")")
+      for(let l in testJson) {
+        this.dataServiceInfo.push({
+          name: l.list.name,
+          id: l.list.id
+        })
+      }
+      console.log(testJson)
     },
 
     uploadImgResponse(val) {
@@ -101,10 +135,12 @@ export default {
         this.form.tags.push(inputTagValue);
       }
       this.inputTagValue = '';
-    }
+    },
   },
 
-  mounted() {}
+  mounted() {
+    this.findData("uGi4gMg94+ux4nuugF0M9tlqpCtZFRqem1kl/J2Vra8=")
+  },
 };
 </script>
 <style lang="scss" scoped>

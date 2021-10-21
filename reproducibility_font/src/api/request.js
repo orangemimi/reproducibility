@@ -487,6 +487,10 @@ export async function getDataServiceInfo1(form) {
   return await post(`/dataContainer/dataService/findData`, form);
 }
 
+export async function getAllProcessing(list) {
+  return await get(`/dataContainer/dataService/getAllProcessing`, list)
+}
+
 //获取自己的dataService
 export async function getMyDataService() {
   return await get(`/dataServices/getmydataservices`)

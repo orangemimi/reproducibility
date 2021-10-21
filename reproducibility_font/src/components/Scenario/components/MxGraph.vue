@@ -60,7 +60,7 @@
         </el-row>
         <el-row>
           <div v-for="(item, index) in instanceList" :key="index">
-            <instance-card :instanceItem="item" :taskItem="currentTask" @showInstanceStatus="showInstanceStatus"></instance-card>
+            <instance-card :instanceItem="item" :taskItem="currentTask" @showInstanceStatus="showInstanceStatus" @changeSelectInstanceId="changeSelectInstanceId"></instance-card>
           </div>
         </el-row>
       </div>
@@ -189,6 +189,7 @@ export default {
           this.getSelectionCells();
 
           await this.getAllInstances(0);
+          console.log(this.instancePageFilter.page)
           await this.getAllIntegrateTaskInstances(this.instancePageFilter.page);
           this.graph.importGraph(val.taskContent);
         }
@@ -1063,7 +1064,7 @@ export default {
       let data = await saveIntegrateTaskInstance(postJson);
       console.log(data);
       this.currentTaskInstance = data
-      this.instanceList.push(data);
+      this.allInstanceList.push(data);
     },
 
     async updateTaskInstances(type) {
@@ -1103,24 +1104,25 @@ export default {
 
     async getAllInstances(page) {
       if (this.currentTask.selectInstanceId == null) {
-        this.instancePageFilter.page = 0;
+        this.instancePageFilter.page = 1;
       }
       let data = await getAllIntegrateTaskInstancesByTaskId(this.currentTask.id, page, this.instancePageFilter.pageSize);
       while (data != null && data.content.length != 0) {
         for (let i = 0; i < data.content.length; i++) {
           this.allInstanceList.push(data.content[i]);
           if (data.content[i].id == this.currentTask.selectInstanceId) {
-            this.instancePageFilter.page = page;
+            this.instancePageFilter.page = page + 1;
           }
         }
         page++;
         data = await getAllIntegrateTaskInstancesByTaskId(this.currentTask.id, page, this.instancePageFilter.pageSize);
       }
+      console.log(this.allInstanceList.length)
     },
 
     //instance list
     async getAllIntegrateTaskInstances(page) {
-      let data = await getAllIntegrateTaskInstancesByTaskId(this.currentTask.id, page, this.instancePageFilter.pageSize);
+      let data = await getAllIntegrateTaskInstancesByTaskId(this.currentTask.id, page - 1, this.instancePageFilter.pageSize);
       if (data == null) {
         this.instanceList = [];
         return;
@@ -1136,8 +1138,12 @@ export default {
     },
 
     async handleCurrentChange(val) {
-      await this.getAllIntegrateTaskInstances(val - 1);
+      await this.getAllIntegrateTaskInstances(val);
     },
+
+    changeSelectInstanceId(val) {
+      this.currentTask.selectInstanceId = val
+    }
   },
 
   mounted() {},
@@ -1224,6 +1230,7 @@ export default {
       }
     }
     .page {
+      // position: relative;
       position: absolute;
       bottom: 0;
     }

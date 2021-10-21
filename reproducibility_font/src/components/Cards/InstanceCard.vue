@@ -1,9 +1,9 @@
 <!--  -->
 <template>
   <div class="main">
-    <el-card :class="instance.status == 1 ? 'successCard' : 'runningCard'" shadow="hover">
+    <el-card :class="instanceItem.status == 1 ? 'successCard' : 'runningCard'" shadow="hover">
       <div class="task_name">
-        {{ instance.name }}
+        {{ instanceItem.name }}
         <div v-if="!isStar" class="task_star" @click="changeStar">
           <i class="el-icon-star-off" />
         </div>
@@ -13,7 +13,7 @@
       </div>
       <div class="task_createTime">
         <i class="el-icon-time" />
-        {{ instance.createTime }}
+        {{ instanceItem.createTime }}
       </div>
 
       <div class="task_view" @click="showInstanceStatus">
@@ -36,6 +36,31 @@ export default {
     }
   },
 
+  watch:{
+    taskItem:{
+      handler(val) {
+        if(val.selectInstanceId == this.instanceItem.id) {
+          this.isStar = true
+        } else {
+          this.isStar = false
+        }
+      },
+      deep: true,
+      immediate: true
+    },
+    instanceItem: {
+      handler(val) {
+        if(val.id == this.taskItem.selectInstanceId) {
+          this.isStar = true
+        } else {
+          this.isStar = false
+        }
+      },
+      deep: true,
+      immediate: true
+    }
+  },
+
   computed: {},
 
   data() {
@@ -50,7 +75,7 @@ export default {
   methods: {
     init() {
       this.isStar = false;
-      if (this.instance.id == this.currentTask.selectInstanceId) {
+      if (this.instanceItem.id == this.taskItem.selectInstanceId) {
         this.isStar = true;
       }
     },
@@ -62,14 +87,16 @@ export default {
       //[0]instance id [1]isStar
       let isStar = this.isStar;
       if (!isStar) {
-        await updateIntegrateTaskInstance(this.currentTask.id, this.instance.id);
+        await updateIntegrateTaskInstance(this.taskItem.id, this.instanceItem.id);
         await this.updatePerformance();
+        this.$emit('changeSelectInstanceId', this.instanceItem.id)
       }
       if (isStar) {
         console.log('1111');
-        await updateIntegrateTaskInstance(this.currentTask.id, null);
+        await updateIntegrateTaskInstance(this.taskItem.id, null);
+        this.$emit('changeSelectInstanceId', null)
       }
-      this.isStar = !this.isStar;
+      // this.isStar = !this.isStar;
     },
     async updatePerformance() {
       let content = { content: 'Simulation Scenario', degree: '100%', type: 'success', icon: 'el-icon-sunny' };
@@ -80,6 +107,8 @@ export default {
 
   mounted() {
     this.init();
+    // console.log(this.instance)
+    // console.log(this.currentTask)
   }
 };
 </script>
