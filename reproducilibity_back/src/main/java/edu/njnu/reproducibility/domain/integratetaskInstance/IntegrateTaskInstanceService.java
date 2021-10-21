@@ -7,7 +7,11 @@ import edu.njnu.reproducibility.domain.integratetaskInstance.dto.UpdateNoteTaskI
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author ：Zhiyi
@@ -27,7 +31,10 @@ public class IntegrateTaskInstanceService {
 
 
     public Page<IntegrateTaskInstance>  getAllByTaskId(String taskId, String userId,int currentPage, int pagesize ) {
-        PageRequest pageable =  PageRequest.of(currentPage, pagesize);
+        List<Sort.Order> orderList = new ArrayList<>();
+        orderList.add(new Sort.Order(Sort.Direction.DESC, "createTime"));
+        Sort sort = Sort.by(orderList);
+        PageRequest pageable =  PageRequest.of(currentPage, pagesize, sort);
         Page<IntegrateTaskInstance> actionList= integrateTaskInstanceRepository.findAllByTaskIdAndOperatorId(taskId,userId,pageable);
         return actionList;
     }

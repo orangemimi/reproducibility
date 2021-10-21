@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @Author ：Zhiyi
@@ -165,6 +166,11 @@ public class RemoteDataContainerController {
         String token = jsonObject.getStr("token");
         String name = jsonObject.getStr("name");
         return ResultUtils.success(dataContainerService.findData(token, name));
+    }
+
+    @RequestMapping(value = "/dataService/getAllProcessing", method = RequestMethod.GET)
+    public JsonResult findAllProcessing(@RequestParam("token") String token) {
+        return ResultUtils.success(dataContainerService.findAllProcessing(token));
     }
 
 }
