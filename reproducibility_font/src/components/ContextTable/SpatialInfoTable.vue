@@ -82,6 +82,7 @@ table.gridtable {
   border: 1px solid #dcdfe6;
   border-collapse: collapse;
   line-height: 15px;
+  width: 100%;
   th {
     border-width: 1px;
     padding: 8px;

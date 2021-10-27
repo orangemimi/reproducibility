@@ -6,7 +6,7 @@
         <el-col :span="12">
           <div class="info-card">
             <div class="info-card-top">
-              <div class="info-detail">
+              <div class="info-detail" v-if="Object.keys(projectInfo).length != 0">
                 <div class="content">
                   <strong>Title:</strong>
                   {{ projectInfo.name }}
@@ -21,31 +21,36 @@
                 </div>
                 <div class="content">
                   <strong style="float: left">Tag:</strong>
-                  <div v-for="(item, index) in projectInfo.tag" :key="index">
-                    <el-tag type="info" style="float: left">{{ item }}</el-tag>
+                  <div v-if="projectInfo.tag != null">
+                    <div v-for="(item, index) in projectInfo.tag" :key="index">
+                      <el-tag type="success" style="float: left">{{ item }}</el-tag>
+                    </div>
+                  </div>
+                  <div v-else>
+                    <el-tag type="success" style="float: left"><i class="el-icon-edit"></i></el-tag>
                   </div>
                 </div>
 
                 <div class="content">
-                  <strong>Create time:</strong>
-                  {{ dateFormat(projectInfo.createTime) }}
+                  <strong>Create time: </strong>
+                  <span class="time">{{ dateFormat(projectInfo.createTime) }}</span>
                 </div>
                 <div class="content">
-                  <strong>Update time:</strong>
-                  {{ dateFormat(projectInfo.updateTime) }}
+                  <strong>Update time: </strong>
+                  <span class="time">{{ dateFormat(projectInfo.updateTime) }}</span>
                 </div>
               </div>
 
               <div class="info-img">
                 <div style="float: right">
                   <!-- <el-button-group> -->
-                  <el-button type="info" plain size="small" @click="editProjectInfoDialog" v-show="role == 'builder'">Edit</el-button>
+                  <el-button type="primary" plain size="small" @click="editProjectInfoDialog" v-show="role == 'builder'">Edit</el-button>
                   <!-- </el-button-group> -->
                   <el-button-group>
-                    <el-button type="info" plain size="small">
+                    <el-button type="primary" plain size="small">
                       <i class="el-icon-share"></i>
                     </el-button>
-                    <el-button type="info" plain size="small">
+                    <el-button type="primary" plain size="small">
                       <i class="el-icon-more"></i>
                     </el-button>
                   </el-button-group>
@@ -54,7 +59,7 @@
                   <avatar
                     username="projectInfo.name"
                     :src="projectInfo.picture"
-                    :size="150"
+                    :size="200"
                     style="margin-top: 10px"
                     :rounded="false"
                     class="avatar-img"
@@ -65,14 +70,20 @@
             <div class="info-card-bottom">
               <div class="des">
                 <strong>Description:</strong>
-                <div class="content">
+                <div class="content" v-if="projectInfo.description != null && projectInfo.description != ''">
                   {{ projectInfo.description }}
+                </div>
+                <div v-else class="content">
+                  <p class="nocontent">No description</p>
                 </div>
               </div>
               <div class="intro">
                 <strong>Introduction:</strong>
-                <div class="content">
+                <div class="content" v-if="projectInfo.introduction != null && projectInfo.introduction != ''">
                   {{ projectInfo.introduction }}
+                </div>
+                <div v-else class="content">
+                  <p class="nocontent">No introduction</p>
                 </div>
               </div>
             </div>
@@ -84,7 +95,10 @@
               <div class="info">
                 <div class="title">Participants</div>
                 <div class="add-participant">
-                  <el-button size="small" @click="addParticipantDialogShow = true">+ Add participant</el-button>
+                  <el-button size="small" @click="addParticipantDialogShow = true">
+                    Add participant
+                    <i class="el-icon-user-solid"></i>
+                  </el-button>
                 </div>
               </div>
 
@@ -103,8 +117,7 @@
                         <el-col :span="3"><user-card :user="members[index]"></user-card></el-col>
                       </div>
                       <el-col :span="3">
-                        <el-avatar :size="50" icon="el-icon-more">
-                        </el-avatar>
+                        <el-avatar :size="50" icon="el-icon-more"></el-avatar>
                       </el-col>
                     </div>
                     <div v-else>
@@ -201,7 +214,7 @@ export default {
       console.log(data);
       this.projectInfo = data.project;
       this.creator = data.creator;
-      if(data.members != null) {
+      if (data.members != null) {
         this.members = data.members;
       }
     },
@@ -236,6 +249,11 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.nocontent {
+  opacity: 0.3;
+  margin-left: 8px;
+  margin-top: 5px;
+}
 .information {
   width: 100%;
   min-height: calc(100vh - 240px);
@@ -252,13 +270,16 @@ export default {
         height: 100%;
         float: left;
         .content {
-          margin-bottom: 5px;
+          margin-bottom: 20px;
           clear: both;
-
+          height: 20px;
           .el-tag {
             display: inline;
             font-size: 14px;
             margin: 0 5px;
+          }
+          .time {
+            font: italic 1em Georgia, serif;
           }
         }
       }

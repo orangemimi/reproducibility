@@ -26,7 +26,7 @@
 
         <!-- <el-badge is-dot class="item">{{ currentTask.taskName }}</el-badge> -->
         <el-button @click="clear" size="mini">clear</el-button>
-        <!-- <el-button @click="test" size="mini">hahaha</el-button> -->
+        <test @getTid="getTid"/>
         <!-- <img src="/static/images/calcModel.png" alt=""> -->
 
         <transition name="fade" mode="out-in">
@@ -38,6 +38,7 @@
         <integrate-tasks @selectTask="selectTask" style="float: right"></integrate-tasks>
       </div>
       <vue-scroll style="height: 850px; width: calc(100%)" :ops="ops" ref="scroll">
+        <!-- 鼠标拖动功能暂时没写好 -->
         <div
           class="graphContainer"
           ref="container"
@@ -60,7 +61,12 @@
         </el-row>
         <el-row>
           <div v-for="(item, index) in instanceList" :key="index">
-            <instance-card :instanceItem="item" :taskItem="currentTask" @showInstanceStatus="showInstanceStatus" @changeSelectInstanceId="changeSelectInstanceId"></instance-card>
+            <instance-card
+              :instanceItem="item"
+              :taskItem="currentTask"
+              @showInstanceStatus="showInstanceStatus"
+              @changeSelectInstanceId="changeSelectInstanceId"
+            ></instance-card>
           </div>
         </el-row>
       </div>
@@ -145,7 +151,7 @@ import { hasProperty } from '@/utils/utils';
 
 import integrateTasks from '_com/IntegrateTasks';
 import instanceCard from '_com/Cards/InstanceCard';
-
+import test from './test.vue'
 import comparison from '_com/Comparison/Comparison';
 import leftToolbar from './LeftToolbar.vue';
 
@@ -168,6 +174,7 @@ export default {
     instanceCard,
     comparison,
     leftToolbar,
+    test
   },
 
   watch: {
@@ -185,11 +192,12 @@ export default {
           this.init();
           this.$refs.leftToolbar.init();
           this.$refs.leftToolbar.listenGraphEvent();
+
           this.initUndoMng();
           this.getSelectionCells();
 
           await this.getAllInstances(0);
-          console.log(this.instancePageFilter.page)
+          console.log(this.instancePageFilter.page);
           await this.getAllIntegrateTaskInstances(this.instancePageFilter.page);
           this.graph.importGraph(val.taskContent);
         }
@@ -333,6 +341,7 @@ export default {
   },
 
   methods: {
+    
     clear() {
       this.graph.removeCells(this.graph.getChildVertices(this.graph.getDefaultParent()));
       const codec = new mxCodec();
@@ -481,6 +490,8 @@ export default {
       let dataServiceInputInGraph = [];
       let dataServiceLinkInGraph = [];
       let dataServiceOutputListInGraph = [];
+
+      console.log(this.graph.getModel().cells);
 
       Object.values(this.graph.getModel().cells).forEach((cell) => {
         if (cell.style != undefined) {
@@ -678,15 +689,6 @@ export default {
       }
 
       this.getCells();
-      console.log('modelListInGraph', this.modelListInGraph);
-      console.log('modelInputInGraph', this.modelInputInGraph);
-      console.log('modelLinkInGraph', this.modelLinkInGraph);
-      console.log('modelOutputInGraph', this.modelOutputInGraph);
-      console.log('linkEdgeList', this.linkEdgeList);
-      console.log('dataServiceListInGraph', this.dataServiceListInGraph);
-      console.log('dataServiceInputInGraph', this.dataServiceInputInGraph);
-      console.log('dataServiceLinkInGraph', this.dataServiceLinkInGraph);
-      console.log('dataServiceOutputListInGraph', this.dataServiceOutputListInGraph);
 
       //王梓欢配置文件
       let xml = generateXml1(
@@ -739,7 +741,7 @@ export default {
       this.undoMng.indexOfNextAdd = 1;
     },
 
-    selectTask(val) {
+    async selectTask(val) {
       this.currentTask = val;
       this.taskInfo = val;
       if (val.id == this.selectId) {
@@ -751,6 +753,9 @@ export default {
       this.graph.importGraph(val.taskContent);
       this.undoMng.history = [this.undoMng.history[this.undoMng.indexOfNextAdd - 1]];
       this.undoMng.indexOfNextAdd = 1;
+      this.allInstanceList = []
+      await this.getAllInstances(0);
+      await this.getAllIntegrateTaskInstances(this.instancePageFilter.page);
 
       // let note = val.note;
       // this.importModelXML(note);
@@ -872,6 +877,10 @@ export default {
       //save to  the instance
     },
 
+    getTid(val) {
+      console.log(val)
+    },
+
     async getOutputs(tid) {
       //获得结果
 
@@ -885,7 +894,7 @@ export default {
         } else {
           let data = await checkTaskStatus(tid);
           this.record = data;
-          console.log(data);
+          console.log(this.record);
           this.changeCellColor(data);
         }
       }, 3000);
@@ -1023,8 +1032,8 @@ export default {
         let outputActionList = processingActionResponse.filter((response) => eventCell.linkModelCellId == response.id);
         // console.log(outputActionList)
         let outputValueJson = outputActionList[0].outputData.outputs.filter((out) => out.dataId == eventCell.id);
-        console.log(eventCell)
-        console.log(outputValueJson)
+        console.log(eventCell);
+        console.log(outputValueJson);
         let content = outputValueJson[0].dataContent;
 
         //upload
@@ -1046,6 +1055,32 @@ export default {
     },
 
     async addTaskInstance(tid) {
+      let taskInfo = {
+        modelInfo: {
+          finished: [],
+          running: [],
+          waiting: [],
+          failed: []
+        },
+        dataServiceInfo: {
+          finished: [],
+          running: [],
+          waiting: [],
+          failed: []
+        },
+      }
+      this.modelListInGraph.forEach(cell => {
+        taskInfo.modelInfo.waiting.push({
+          processId: cell.id,
+          processName: cell.name
+        })
+      })
+      this.dataServiceListInGraph.forEach(cell => {
+        taskInfo.dataServiceInfo.waiting.push({
+          processId: cell.id,
+          processName: cell.name
+        })
+      })
       let postJson = {
         name: this.currentTask.taskName + '-Instance',
         taskId: this.currentTask.id,
@@ -1058,17 +1093,18 @@ export default {
           this.linkEdgeList,
           'taskInstance'
         ),
+        taskInfo: taskInfo,
         status: 0,
         tid: tid,
       };
       let data = await saveIntegrateTaskInstance(postJson);
       console.log(data);
-      this.currentTaskInstance = data
+      this.currentTaskInstance = data;
       this.allInstanceList.push(data);
     },
 
     async updateTaskInstances(type) {
-      let postJson = {}
+      let postJson = {};
       if (type == 'model') {
         postJson = {
           action: generateAction(
@@ -1082,7 +1118,7 @@ export default {
           ),
           status: 1,
         };
-      } else if(type == 'dataProcessing') {
+      } else if (type == 'dataProcessing') {
         postJson = {
           action: generateAction(
             this.currentTask.id,
@@ -1096,7 +1132,6 @@ export default {
           status: 1,
         };
       }
-
       // console.log(postJson, this.currentTaskInstance.id);
 
       await updateIntegrateTaskInstanceById(this.currentTaskInstance.id, postJson);
@@ -1117,7 +1152,7 @@ export default {
         page++;
         data = await getAllIntegrateTaskInstancesByTaskId(this.currentTask.id, page, this.instancePageFilter.pageSize);
       }
-      console.log(this.allInstanceList.length)
+      console.log(this.allInstanceList.length);
     },
 
     //instance list
@@ -1142,8 +1177,8 @@ export default {
     },
 
     changeSelectInstanceId(val) {
-      this.currentTask.selectInstanceId = val
-    }
+      this.currentTask.selectInstanceId = val;
+    },
   },
 
   mounted() {},

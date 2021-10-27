@@ -10,6 +10,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -19,6 +20,7 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -124,9 +126,11 @@ public class DataContainerService {
         HttpEntity<Map<String, Object>> httpEntity = new HttpEntity(param, headers);
         try {
             RestTemplate restTemplate = new RestTemplate();
+            //设置RestTemplate编码格式，restemplate底层是默认使用ISO-8859-1编码
+            restTemplate.getMessageConverters().set(1,new StringHttpMessageConverter(StandardCharsets.UTF_8));
             ResponseEntity<String> result = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
             String body = result.getBody();
-
+//            body = new String(body.getBytes("ISO8859-1"), "UTF-8");
             return body;
         }catch (Exception e) {
             throw new MyException(ResultEnum.REMOTE_SERVICE_ERROR);
@@ -148,6 +152,7 @@ public class DataContainerService {
         HttpEntity<Map<String, Object>> httpEntity = new HttpEntity(param, headers);
         try {
             RestTemplate restTemplate = new RestTemplate();
+            restTemplate.getMessageConverters().set(1,new StringHttpMessageConverter(StandardCharsets.UTF_8));
             ResponseEntity<String> result = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
             String body = result.getBody();
 

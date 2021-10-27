@@ -1,16 +1,21 @@
 package edu.njnu.reproducibility.remote;
 
 import cn.hutool.json.JSONObject;
+import com.alibaba.fastjson.JSON;
 import edu.njnu.reproducibility.annotation.JwtTokenParser;
 import edu.njnu.reproducibility.common.enums.ResultEnum;
 import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
+import edu.njnu.reproducibility.domain.integratetaskInstance.IntegrateTaskInstance;
+import edu.njnu.reproducibility.domain.integratetaskInstance.IntegrateTaskInstanceRepository;
+import edu.njnu.reproducibility.domain.integratetaskInstance.support.TaskInfo;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -22,6 +27,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Author ：Zhiyi
@@ -34,6 +41,9 @@ import java.io.File;
 public class RemoteManagerServerController {
     @Autowired
     ManagerServerFeign managerServerFeign;
+
+    @Autowired
+    IntegrateTaskInstanceRepository integrateTaskInstanceRepository;
 
     @Value("${managerServerIpAndPort}")
     private String managerServerIpAndPort;
@@ -94,11 +104,11 @@ public class RemoteManagerServerController {
         }
     }
 
-    @RequestMapping(value = "/checkTaskStatus/{taskId}", method = RequestMethod.GET)
-    JsonResult checkTaskStatus(@PathVariable("taskId") String taskId){
+    @RequestMapping(value = "/checkTaskStatus/{tid}", method = RequestMethod.GET)
+    JsonResult checkTaskStatus(@PathVariable("tid") String tid){
 
 //        String urlStr ="http://"+managerServerIpAndPort +"/GeoModeling/task/checkTaskStatus?taskId="+taskId;
-        String urlStr ="http://172.21.212.167:8084/GeoModeling/task/checkTaskStatus?taskId="+taskId;
+        String urlStr ="http://172.21.212.167:8084/GeoModeling/task/checkTaskStatus?taskId="+tid;
 //        JSONObject form = new JSONObject();
 //        MultiValueMap<String, Object> param = new LinkedMultiValueMap<>();
 //        param.add("taskId", taskId);
@@ -111,6 +121,16 @@ public class RemoteManagerServerController {
             throw new MyException(ResultEnum.REMOTE_SERVICE_ERROR);
         }
         JSONObject result = jsonObjectResponseEntity.getBody().getJSONObject("data");
+//        JSONObject res = new JSONObject();
+//        JSONObject temp = result.getJSONObject("taskInfo").getJSONObject("modelActionList");
+//        res.put("modelInfo", temp);
+//        res.put("dataServiceInfo", result.getJSONObject("taskInfo").getJSONObject("dataProcessingList"));
+        IntegrateTaskInstance integrateTaskInstance = integrateTaskInstanceRepository.findByTid(tid).orElseThrow(MyException::noObject);
+        TaskInfo taskInfo = result.getJSONObject("taskInfo").toBean(TaskInfo.class);
+        integrateTaskInstance.setTaskInfo(taskInfo);
+        integrateTaskInstanceRepository.save(integrateTaskInstance);
+
+
 
 
         return ResultUtils.success(result);

@@ -19,3 +19,4 @@ public class Action {
     List<Condition> conditionList;
     List<Dependency> dependencyList;
 }
+

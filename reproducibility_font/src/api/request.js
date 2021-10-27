@@ -346,6 +346,10 @@ export async function updateNoteTaskInstanceById(id, postJson) {
   return data;
 }
 
+export async function getInstanceOfUncompleted(taskId) {
+  return await get(`/integrateTaskInstances/getInstanceOfUncompleted/${taskId}`)
+}
+
 //-------------------------------------------modelitems--------------------------------------------------
 
 export async function getAllModelItems(currentPage, pagesize) {

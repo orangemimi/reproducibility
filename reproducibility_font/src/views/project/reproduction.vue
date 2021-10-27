@@ -140,7 +140,7 @@ export default {
 
     async getProjectInfo() {
       let data = await getProjectAndUsers(this.projectId);
-      // console.log(data);
+      console.log("ProjectInfo", data);
       this.projectInfo = data.project;
       this.creator = data.creator;
       this.members = data.members;
@@ -148,6 +148,7 @@ export default {
 
     async getPerformance() {
       let data = await getPerformanceByProjectId(this.projectId);
+      console.log("Performance", data)
       this.completion = data.completion;
     },
     async getContext() {
@@ -160,12 +161,13 @@ export default {
         return;
       }
       let data = await getContextByProjectId(this.projectId);
-      // console.log('context', data);
+      console.log('context', data);
       this.context = data;
     },
 
     async getDataAsOperator() {
       let data = await getFileItemByCreatorId(this.projectId);
+      console.log("DataAsOperator", data)
       this.dataItemListFromResource = data;
       this.$refs.multipleTable.toggleAllSelection();
       // console.log('DATA', data);
@@ -176,7 +178,8 @@ export default {
         return 'You have not do any operation';
       }
       return dateFormat(time);
-    }
+    },
+    handleSelectionChange() {}
   },
   mounted() {
     this.init();

@@ -58,4 +58,9 @@ public class IntegrateTaskInstanceController {
         integrateTaskInstanceService.delete(actionId);
         return ResultUtils.success();
     }
+
+    @RequestMapping(value = "/getInstanceOfUncompleted/{taskId}", method = RequestMethod.GET)
+    public JsonResult getInstanceOfUncompleted(@JwtTokenParser(key = "userId") String userId, @PathVariable String taskId) {
+        return ResultUtils.success(integrateTaskInstanceService.getInstanceOfUncompleted(userId, taskId));
+    }
 }

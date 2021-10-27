@@ -390,6 +390,7 @@ export default {
 
     isUpload(val) {
       this.dataNode.upload = val
+      console.log(val)
     },
 
     listenGraphEvent() {
@@ -484,10 +485,10 @@ export default {
       });
 
       // 监听 mxGraph 事件
-      console.log(this.mxGraphSelectionModel);
+      // console.log(this.mxGraphSelectionModel);
       // this.mxGraphSelectionModel = this.graph.getSelectionModel();
       // this.mxGraphSelectionModel.addListener(mxEvent.CHANGE, this.handleSelectionChange);
-      console.log(this.mxGraphSelectionModel);
+      // console.log(this.mxGraphSelectionModel);
     },
 
     currentEventWithFile(val) {

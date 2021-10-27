@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <vue-scroll style="height: calc(42vh)" :ops="ops">
-      <el-form ref="contextForm" :model="contextForm" @submit.native.prevent size="mini" label="top" style="margin: 0 10px">
+      <el-form ref="contextForm" :model="contextForm" @submit.native.prevent size="mini" label="top" style="margin: 0 10  px">
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="Theme">
@@ -27,14 +27,14 @@
               <el-input v-model="contextForm.objects" placeholder="Please enter the content."></el-input>
             </el-form-item> -->
             <el-form-item label="Spatio scale">
-              <el-button @click="addSpatialInfodialogVisible = true" size="mini" class="spatioEdit">Edit</el-button>
+              <el-button @click="addSpatialInfodialogVisible = true" size="mini" class="spatioEdit" type="text">Edit</el-button>
               <spatial-info-table :spatialInfoForm="spatialInfoForm"></spatial-info-table>
             </el-form-item>
           </el-col>
 
           <el-col :span="12" style="margin-top: 50px">
             <el-form-item label="Temporal scale">
-              <el-button @click="addTemporalInfodialogVisible = true" size="mini" class="temporalEdit">Edit</el-button>
+              <el-button @click="addTemporalInfodialogVisible = true" size="mini" class="temporalEdit" type="text">Edit</el-button>
               <!-- {{ temporalInfoForm }} -->
               <temporal-info-table :temporalInfoForm="temporalInfoForm"></temporal-info-table>
             </el-form-item>
@@ -265,17 +265,21 @@ export default {
 .main {
   margin: 0 10px;
   height: 100%;
-  // .spatioEdit {
-  //   position: absolute;
-  //   left: -60px;
-  //   top: 30px;
-  // }
-  // .temporalEdit {
-  //   position: absolute;
-  //   left: -60px;
-  //   top: 30px;
-  // }
+  .spatioEdit {
+    position: relative;
+    left: 78%;
+    // top: 30px;
+  }
+  .temporalEdit {
+    position: relative;
+    left: 75%;
 
-  
+  }
+  /deep/ .el-form-item__label {
+    font-size: 15px;
+    font: italic 1em Georgia, serif;
+    margin-bottom: 5px;
+    // line-height: 20px;
+  }
 }
 </style>

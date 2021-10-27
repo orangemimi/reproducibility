@@ -2,6 +2,7 @@ package edu.njnu.reproducibility.domain.integratetaskInstance;
 
 import edu.njnu.reproducibility.common.entity.BaseEntity;
 import edu.njnu.reproducibility.domain.integratetask.support.Action;
+import edu.njnu.reproducibility.domain.integratetaskInstance.support.TaskInfo;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -32,5 +33,6 @@ public class IntegrateTaskInstance extends BaseEntity {
     //note task relate
 //    String content;
 
+    TaskInfo taskInfo;
 
 }

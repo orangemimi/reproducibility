@@ -75,7 +75,9 @@ export default {
     },
   },
 
-  mounted() {},
+  mounted() {
+    this.init()
+  },
 };
 </script>
 <style lang="scss" scoped>

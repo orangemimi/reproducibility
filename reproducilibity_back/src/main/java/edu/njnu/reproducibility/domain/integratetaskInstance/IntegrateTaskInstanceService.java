@@ -67,4 +67,15 @@ public class IntegrateTaskInstanceService {
         update.updateTo(integrateTaskInstance);
         return integrateTaskInstanceRepository.save(integrateTaskInstance);
     }
+
+    public List<String> getInstanceOfUncompleted(String userId, String taskId) {
+        List<IntegrateTaskInstance> integrateTaskInstances = integrateTaskInstanceRepository.findAllByTaskIdAndOperatorId(taskId, userId);
+        List<String> tides = new ArrayList<>();
+        for(IntegrateTaskInstance temp : integrateTaskInstances) {
+            if(temp.getStatus() != 1) {
+                tides.add(temp.tid);
+            }
+        }
+        return tides;
+    }
 }

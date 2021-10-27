@@ -12,7 +12,7 @@
           </el-form-item>
           <el-form-item label="Data Serice Id">
             <el-input v-model="form.dataServiceId">
-              <el-dropdown slot="append" @click="handclick">
+              <el-dropdown slot="append" @command="handclick">
                 <el-button icon="el-icon-more-outline"></el-button>
                 <el-dropdown-menu slot="dropdown">
                   <div v-for="(item, index) in dataServiceInfo" :key="index">
@@ -104,21 +104,24 @@ export default {
     },
 
     handclick(val) {
-      console.log(val)
+      // console.log(val)
       this.form.name = this.dataServiceInfo[val].name
       this.form.dataServiceId = this.dataServiceInfo[val].id
+      // console.log(this.form.name)
+      // console.log(this.form.dataServiceId)
     },
     
     async findData(token) {
       let data = await getAllProcessing({"token": token})
+      
       let testJson = eval("(" + data + ")")
-      for(let l in testJson) {
+      for(let i = 0;i < testJson.length;i++) {
         this.dataServiceInfo.push({
-          name: l.list.name,
-          id: l.list.id
+          name: testJson[i].list.name,
+          id: testJson[i].list.id
         })
       }
-      console.log(testJson)
+      
     },
 
     uploadImgResponse(val) {

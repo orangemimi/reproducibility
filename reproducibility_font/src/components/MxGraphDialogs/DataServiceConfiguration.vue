@@ -2,7 +2,7 @@
   <div class="main">
     <div class="info">
       <div>123Information:</div>
-      {{ modelIntroduction.name }}
+      
     </div>
     <div class="event">
       <div>Input:</div>
@@ -18,8 +18,8 @@
           </el-col>
         </div>
       </el-row>
-      <div>Parameter:</div>
-      <el-row :gutter="10">
+      <div v-if="stateListParameter.length > 0">Parameter:</div>
+      <el-row :gutter="10" v-if="stateListParameter.length > 0">
         <div class="event-desc" v-for="(modelInEvent, inEventIndex) in stateListParameter" :key="inEventIndex" ref="inputItemList">
           <el-col :span="6" :class="modelInEvent.isSelect != undefined && modelInEvent.isSelect ? 'selectCard' : 'unselectCard'">
             <el-card :title="modelInEvent.name" @click.native="addSelectItem(modelInEvent)">

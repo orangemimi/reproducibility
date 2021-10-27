@@ -1,5 +1,5 @@
 <template>
-  <div class="card" v-if="project != ''">
+  <div class="card" v-if="project != ''" v-cloak>
     <div class="head">
       <p class="title">{{ project.name }}</p>
       <p class="privacy" v-show="type == 'projects' && $route.params.userId == $store.state.user.userId">{{ project.privacy }}</p>
@@ -67,6 +67,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+[v-cloak] {
+    display: none !important;
+}
 .card {
   width: 100%;
   height: 170px;

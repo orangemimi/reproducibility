@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -16,4 +17,9 @@ public interface IntegrateTaskInstanceRepository extends MongoRepository<Integra
     Optional<IntegrateTaskInstance> findById(String id);
     Page<IntegrateTaskInstance> findAllByOperatorId(String operatorId, PageRequest pageable);
     Page<IntegrateTaskInstance> findAllByTaskIdAndOperatorId(String taskId,String operator, PageRequest pageable);
+    Optional<IntegrateTaskInstance> findByTaskId(String taskId);
+    Optional<IntegrateTaskInstance> findByTid(String tid);
+
+
+    List<IntegrateTaskInstance> findAllByTaskIdAndOperatorId(String taskId, String operator);
 }
