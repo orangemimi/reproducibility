@@ -1,5 +1,6 @@
 package edu.njnu.reproducibility.remote;
 
+import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import com.alibaba.fastjson.JSON;
 import edu.njnu.reproducibility.annotation.JwtTokenParser;
@@ -7,9 +8,13 @@ import edu.njnu.reproducibility.common.enums.ResultEnum;
 import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
+import edu.njnu.reproducibility.domain.file.FileItem;
+import edu.njnu.reproducibility.domain.file.FileItemRepository;
 import edu.njnu.reproducibility.domain.integratetaskInstance.IntegrateTaskInstance;
 import edu.njnu.reproducibility.domain.integratetaskInstance.IntegrateTaskInstanceRepository;
+import edu.njnu.reproducibility.domain.integratetaskInstance.support.Process;
 import edu.njnu.reproducibility.domain.integratetaskInstance.support.TaskInfo;
+import edu.njnu.reproducibility.utils.Utils;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +32,9 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,6 +51,9 @@ public class RemoteManagerServerController {
 
     @Autowired
     IntegrateTaskInstanceRepository integrateTaskInstanceRepository;
+
+    @Autowired
+    FileItemRepository fileItemRepository;
 
     @Value("${managerServerIpAndPort}")
     private String managerServerIpAndPort;
@@ -105,15 +115,10 @@ public class RemoteManagerServerController {
     }
 
     @RequestMapping(value = "/checkTaskStatus/{tid}", method = RequestMethod.GET)
-    JsonResult checkTaskStatus(@PathVariable("tid") String tid){
+    JsonResult checkTaskStatus(@PathVariable("tid") String tid, @JwtTokenParser(key = "userId") String userId){
 
 //        String urlStr ="http://"+managerServerIpAndPort +"/GeoModeling/task/checkTaskStatus?taskId="+taskId;
         String urlStr ="http://172.21.212.167:8084/GeoModeling/task/checkTaskStatus?taskId="+tid;
-//        JSONObject form = new JSONObject();
-//        MultiValueMap<String, Object> param = new LinkedMultiValueMap<>();
-//        param.add("taskId", taskId);
-//        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(param);
-
 
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<JSONObject>  jsonObjectResponseEntity = restTemplate.getForEntity(urlStr, JSONObject.class);
@@ -121,19 +126,62 @@ public class RemoteManagerServerController {
             throw new MyException(ResultEnum.REMOTE_SERVICE_ERROR);
         }
         JSONObject result = jsonObjectResponseEntity.getBody().getJSONObject("data");
-//        JSONObject res = new JSONObject();
-//        JSONObject temp = result.getJSONObject("taskInfo").getJSONObject("modelActionList");
-//        res.put("modelInfo", temp);
-//        res.put("dataServiceInfo", result.getJSONObject("taskInfo").getJSONObject("dataProcessingList"));
         IntegrateTaskInstance integrateTaskInstance = integrateTaskInstanceRepository.findByTid(tid).orElseThrow(MyException::noObject);
         TaskInfo taskInfo = result.getJSONObject("taskInfo").toBean(TaskInfo.class);
+
+        JSONArray modelCompleted = result.getJSONObject("taskInfo").getJSONObject("modelActionList").getJSONArray("completed");
+        for(int i = 0; i < modelCompleted.size(); i++) {
+            List<String> temp = new ArrayList<>();
+            for(Process p : integrateTaskInstance.getTaskInfo().getModelActionList().getCompleted()) {
+                temp.add(p.getId());
+            }
+            if(!temp.contains(modelCompleted.get(i, JSONObject.class).getStr("id"))) {
+                JSONArray outputs = ((JSONObject) modelCompleted.get(i)).getJSONObject("outputData").getJSONArray("outputs");
+                for(int j = 0;j < outputs.size();j++) {
+                    JSONObject dataContent = ((JSONObject) outputs.get(j)).getJSONObject("dataContent");
+                    FileItem fileItem = new FileItem();
+                    fileItem.setAddress(dataContent.getStr("value"));
+                    fileItem.setUserUpload(dataContent.getStr("type").equals("url"));
+                    fileItem.setUploaderId(userId);
+                    fileItem.setName(dataContent.getStr("fileName"));
+                    fileItem.setSuffix(dataContent.getStr("suffix"));
+                    fileItemRepository.insert(fileItem);
+                }
+            }
+        }
+        JSONArray dataServiceCompleted = result.getJSONObject("taskInfo").getJSONObject("dataProcessingList").getJSONArray("completed");
+        for(int i = 0; i < dataServiceCompleted.size(); i++) {
+            List<String> temp = new ArrayList<>();
+            for(Process p : integrateTaskInstance.getTaskInfo().getDataProcessingList().getCompleted()) {
+                temp.add(p.getId());
+            }
+            if(!temp.contains(dataServiceCompleted.get(i, JSONObject.class).getStr("id"))) {
+                JSONArray outputs = ((JSONObject) dataServiceCompleted.get(i)).getJSONObject("outputData").getJSONArray("outputs");
+                for(int j = 0;j < outputs.size();j++) {
+                    JSONObject dataContent = ((JSONObject) outputs.get(j)).getJSONObject("dataContent");
+                    FileItem fileItem = new FileItem();
+                    fileItem.setAddress(dataContent.getStr("value"));
+                    fileItem.setUserUpload(dataContent.getStr("type").equals("url"));
+                    fileItem.setUploaderId(userId);
+                    fileItem.setName(dataContent.getStr("fileName"));
+                    fileItem.setSuffix(dataContent.getStr("suffix"));
+                    fileItemRepository.insert(fileItem);
+                }
+            }
+        }
         integrateTaskInstance.setTaskInfo(taskInfo);
+
+        List<Map<String, String>> completedValue = Utils.getValueList(result, "completed");
+        List<Map<String, String>> failedValue = Utils.getValueList(result, "failed");
+
+        Utils.changeStatusOfCell(integrateTaskInstance, completedValue, failedValue);
+        if(result.getInt("status") == 1) {
+            integrateTaskInstance.setStatus(1);
+        }
         integrateTaskInstanceRepository.save(integrateTaskInstance);
 
 
-
-
-        return ResultUtils.success(result);
+        return ResultUtils.success(integrateTaskInstance);
     }
 
 }

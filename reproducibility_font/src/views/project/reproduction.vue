@@ -204,7 +204,7 @@ export default {
   }
 
   .scenario {
-    width: 80%;
+    width: 100%;
   }
 }
 </style>

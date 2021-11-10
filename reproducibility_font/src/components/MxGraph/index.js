@@ -26,5 +26,6 @@ window.mxCellEditor = mxgraph.mxCellEditor;
 window.mxGraphHandler = mxgraph.mxGraphHandler;
 window.mxPerimeter = mxgraph.mxPerimeter;
 window.mxCellState = mxgraph.mxCellState;
+window.mxHierarchicalLayout = mxgraph.mxHierarchicalLayout;
 
 export default mxgraph;

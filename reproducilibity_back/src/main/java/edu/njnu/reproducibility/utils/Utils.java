@@ -2,17 +2,21 @@ package edu.njnu.reproducibility.utils;
 
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
+import edu.njnu.reproducibility.domain.integratetaskInstance.IntegrateTaskInstance;
+import edu.njnu.reproducibility.domain.integratetaskInstance.IntegrateTaskInstanceRepository;
+import edu.njnu.reproducibility.domain.integratetaskInstance.support.Process;
 import edu.njnu.reproducibility.domain.project.Project;
 import edu.njnu.reproducibility.domain.user.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class Utils {
+    @Autowired
     public static JSONObject convertMdl(JSONObject data) {
         JSONObject jsonObject = data.getJSONObject("mdlJson");
         String md5 = data.getStr("md5");
@@ -188,5 +192,118 @@ public class Utils {
         return ipAddress;
     }
 
+    /**
+    * @Description: 修改数据库IntegrateTaskInstance中的taskContent
+    * @Author: Yiming
+    * @Date: 2021/11/3
+    */
+
+    public static void changeStatusOfCell(IntegrateTaskInstance integrateTaskInstance, List<Map<String, String>> completedValue, List<Map<String, String>> failedValue) {
+        List<Process> modelFailed = integrateTaskInstance.getTaskInfo().getModelActionList().getFailed();
+        List<Process> modelCompleted = integrateTaskInstance.getTaskInfo().getModelActionList().getCompleted();
+        List<Process> modelRunning = integrateTaskInstance.getTaskInfo().getModelActionList().getRunning();
+        List<Process> dataServiceFailed = integrateTaskInstance.getTaskInfo().getDataProcessingList().getFailed();
+        List<Process> dataServiceCompleted = integrateTaskInstance.getTaskInfo().getDataProcessingList().getCompleted();
+        List<Process> dataServiceRunning = integrateTaskInstance.getTaskInfo().getModelActionList().getRunning();
+        for(Map<String, String> temp : completedValue) {
+            String id = temp.keySet().toArray(new String[1])[0];
+            String value = temp.get(id);
+            String oldStr = "<mxCell id=\"" + id + "\" value=\"\"";
+            String newStr = "<mxCell id=\"" + id + "\" value=\"" + value + "\"";
+            integrateTaskInstance.setTaskContent(integrateTaskInstance.getTaskContent().replaceAll(oldStr, newStr));
+        }
+        for(Map<String, String> temp : failedValue) {
+            String id = temp.keySet().toArray(new String[1])[0];
+            String oldStr = "<mxCell id=\"" + id + "\" value=\"\"";
+            String newStr = "<mxCell id=\"" + id + "\" value=\"" + "failed" + "\"";
+            integrateTaskInstance.setTaskContent(integrateTaskInstance.getTaskContent().replaceAll(oldStr, newStr));
+        }
+        for(Process p : modelFailed) {
+            String id = p.getId();
+            String oldStr = "<mxCell id=\"" + id + "\" style=\"fontColor=#......;fillColor=#......";
+            String newStr = "<mxCell id=\"" + id + "\" style=\"fontColor=#f6f6f6;fillColor=#ce1212";
+            integrateTaskInstance.setTaskContent(integrateTaskInstance.getTaskContent().replaceAll(oldStr, newStr));
+        }
+        for(Process p : dataServiceFailed) {
+            String id = p.getId();
+            String oldStr = "<mxCell id=\"" + id + "\" style=\"fontColor=#......;fillColor=#......";
+            String newStr = "<mxCell id=\"" + id + "\" style=\"fontColor=#f6f6f6;fillColor=#ce1212";
+            integrateTaskInstance.setTaskContent(integrateTaskInstance.getTaskContent().replaceAll(oldStr, newStr));
+        }
+        for(Process p : modelCompleted) {
+            String id = p.getId();
+            String oldStr = "<mxCell id=\"" + id + "\" style=\"fontColor=#......;fillColor=#......";
+            String newStr = "<mxCell id=\"" + id + "\" style=\"fontColor=#24292E;fillColor=#67C23A";
+            integrateTaskInstance.setTaskContent(integrateTaskInstance.getTaskContent().replaceAll(oldStr, newStr));
+        }
+        for(Process p : dataServiceCompleted) {
+            String id = p.getId();
+            String oldStr = "<mxCell id=\"" + id + "\" style=\"fontColor=#......;fillColor=#......";
+            String newStr = "<mxCell id=\"" + id + "\" style=\"fontColor=#24292E;fillColor=#67C23A";
+            integrateTaskInstance.setTaskContent(integrateTaskInstance.getTaskContent().replaceAll(oldStr, newStr));
+        }
+        for(Process p : modelRunning) {
+            String id = p.getId();
+            String oldStr = "<mxCell id=\"" + id + "\" style=\"fontColor=#......;fillColor=#......";
+            String newStr = "<mxCell id=\"" + id + "\" style=\"fontColor=#f6f6f6;fillColor=#E6A23C";
+            integrateTaskInstance.setTaskContent(integrateTaskInstance.getTaskContent().replaceAll(oldStr, newStr));
+        }
+        for(Process p : dataServiceRunning) {
+            String id = p.getId();
+            String oldStr = "<mxCell id=\"" + id + "\" style=\"fontColor=#......;fillColor=#......";
+            String newStr = "<mxCell id=\"" + id + "\" style=\"fontColor=#f6f6f6;fillColor=#E6A23C";
+            integrateTaskInstance.setTaskContent(integrateTaskInstance.getTaskContent().replaceAll(oldStr, newStr));
+        }
+    }
+
+    /**
+    * @Description:对checkTask接口返回数据进行处理，获取output的（id，value）键值对
+    * @Author: Yiming
+    * @Date: 2021/11/3
+    */
+
+    public static List<Map<String, String>> getValueList(JSONObject data, String type) {
+        List<Map<String, String>> list = new ArrayList<>();
+        if(type.equals("completed")) {
+            JSONArray modelCompleted = data.getJSONObject("taskInfo").getJSONObject("modelActionList").getJSONArray("completed");
+            for(int i = 0;i < modelCompleted.size();i++) {
+                JSONArray outputs = modelCompleted.get(i, JSONObject.class).getJSONObject("outputData").getJSONArray("outputs");
+                for(int j = 0;j < outputs.size();j++) {
+                    Map<String, String> temp = new HashMap<>();
+                    temp.put(outputs.get(j, JSONObject.class).getStr("dataId"), outputs.get(j, JSONObject.class).getJSONObject("dataContent").getStr("value"));
+                    list.add(temp);
+                }
+            }
+            JSONArray dataServiceCompleted = data.getJSONObject("taskInfo").getJSONObject("dataProcessingList").getJSONArray("completed");
+            for(int i = 0;i < dataServiceCompleted.size();i++) {
+                JSONArray outputs = dataServiceCompleted.get(i, JSONObject.class).getJSONObject("outputData").getJSONArray("outputs");
+                for(int j = 0;j < outputs.size();j++) {
+                    Map<String, String> temp = new HashMap<>();
+                    temp.put(outputs.get(j, JSONObject.class).getStr("dataId"), outputs.get(j, JSONObject.class).getJSONObject("dataContent").getStr("value"));
+                    list.add(temp);
+                }
+            }
+        } else if(type.equals("failed")) {
+            JSONArray modelFailed = data.getJSONObject("taskInfo").getJSONObject("modelActionList").getJSONArray("failed");
+            for(int i = 0;i < modelFailed.size();i++) {
+                JSONArray outputs = modelFailed.get(i, JSONObject.class).getJSONObject("outputData").getJSONArray("outputs");
+                for(int j = 0;j < outputs.size();j++) {
+                    Map<String, String> temp = new HashMap<>();
+                    temp.put(outputs.get(j, JSONObject.class).getStr("dataId"), outputs.get(j, JSONObject.class).getJSONObject("dataContent").getStr("value"));
+                    list.add(temp);
+                }
+            }
+            JSONArray dataServiceFailed = data.getJSONObject("taskInfo").getJSONObject("dataProcessingList").getJSONArray("failed");
+            for(int i = 0;i < dataServiceFailed.size();i++) {
+                JSONArray outputs = dataServiceFailed.get(i, JSONObject.class).getJSONObject("outputData").getJSONArray("outputs");
+                for(int j = 0;j < outputs.size();j++) {
+                    Map<String, String> temp = new HashMap<>();
+                    temp.put(outputs.get(j, JSONObject.class).getStr("dataId"), outputs.get(j, JSONObject.class).getJSONObject("dataContent").getStr("value"));
+                    list.add(temp);
+                }
+            }
+        }
+        return list;
+    }
 
 }

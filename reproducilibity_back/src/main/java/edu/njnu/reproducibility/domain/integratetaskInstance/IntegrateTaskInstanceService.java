@@ -1,9 +1,16 @@
 package edu.njnu.reproducibility.domain.integratetaskInstance;
 
+import cn.hutool.json.JSONArray;
 import edu.njnu.reproducibility.common.exception.MyException;
+import edu.njnu.reproducibility.domain.integratetask.IntegrateTask;
+import edu.njnu.reproducibility.domain.integratetask.IntegrateTaskRepository;
 import edu.njnu.reproducibility.domain.integratetaskInstance.dto.AddIntegrateTaskInstanceDTO;
 import edu.njnu.reproducibility.domain.integratetaskInstance.dto.UpdateIntegrateTaskInstanceDTO;
 import edu.njnu.reproducibility.domain.integratetaskInstance.dto.UpdateNoteTaskInstanceDTO;
+import edu.njnu.reproducibility.domain.integratetaskInstance.support.TaskInfo;
+import edu.njnu.reproducibility.domain.scenario.Scenario;
+import edu.njnu.reproducibility.domain.scenario.ScenarioRepository;
+import edu.njnu.reproducibility.domain.scenario.ScenarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @Author ：Zhiyi
@@ -23,6 +31,13 @@ import java.util.List;
 public class IntegrateTaskInstanceService {
     @Autowired
     IntegrateTaskInstanceRepository integrateTaskInstanceRepository;
+
+    @Autowired
+    ScenarioService scenarioService;
+
+    @Autowired
+    IntegrateTaskRepository integrateTaskRepository;
+
 
     public IntegrateTaskInstance getById(String id) {
         IntegrateTaskInstance integrateTaskInstance = integrateTaskInstanceRepository.findById(id).orElseThrow(MyException::noObject);
@@ -77,5 +92,39 @@ public class IntegrateTaskInstanceService {
             }
         }
         return tides;
+    }
+
+    public String getXML(String instanceId) {
+        IntegrateTaskInstance integrateTaskInstance = integrateTaskInstanceRepository.findById(instanceId).orElseThrow(MyException::noObject);
+        return integrateTaskInstance.getTaskContent();
+    }
+
+    public TaskInfo getTaskInfo(String instanceId) {
+        IntegrateTaskInstance integrateTaskInstance = integrateTaskInstanceRepository.findById(instanceId).orElseThrow(MyException::noObject);
+        return integrateTaskInstance.getTaskInfo();
+    }
+
+    public List<IntegrateTaskInstance> getAllIntegrateTaskInstance(String taskId, String userId) {
+        return integrateTaskInstanceRepository.findAllByTaskIdAndOperatorId(taskId, userId);
+    }
+
+    public List<IntegrateTaskInstance> getSelectedInstancesByProjectId(String projectId) {
+        List<IntegrateTaskInstance> instances = new ArrayList<>();
+        Scenario scenario = scenarioService.getScenario(projectId).orElseThrow(MyException::noObject);
+        String taskId = scenario.getSelectTaskId();
+        IntegrateTask integrateTask = integrateTaskRepository.findById(taskId).orElseThrow(MyException::noObject);
+        List<String> selectedId = integrateTask.getSelectInstanceId();
+        for(String id : selectedId) {
+            instances.add(integrateTaskInstanceRepository.findById(id).orElseThrow(MyException::noObject));
+        }
+        return instances;
+    }
+
+    public List<IntegrateTaskInstance> getAllInstancesOfReproductionByProjectId(String projectId) {
+        Scenario scenario = scenarioService.getScenario(projectId).orElseThrow(MyException::noObject);
+        String userId = scenario.getUserId();
+        String taskId = scenario.getSelectTaskId();
+        List<IntegrateTaskInstance> allByTaskId = integrateTaskInstanceRepository.findAllByTaskId(taskId, userId);
+        return allByTaskId;
     }
 }

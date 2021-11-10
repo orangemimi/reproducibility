@@ -1,6 +1,7 @@
 package edu.njnu.reproducibility.domain.integratetask;
 
 
+import cn.hutool.json.JSONObject;
 import edu.njnu.reproducibility.annotation.JwtTokenParser;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
@@ -45,10 +46,14 @@ public class IntegrateTaskController {
     }
 
 
-    @RequestMapping(value = "/changeSelectInstance/{id}/{instanceId}", produces = {"application/json;charset=UTF-8"}, method = RequestMethod.PATCH)
-    public JsonResult changeSelectInstance(@PathVariable("id") String id, @PathVariable("instanceId") String instanceId, @JwtTokenParser(key = "userId") String userId) {
-        return ResultUtils.success(integrateTaskService.changeSelectInstance(id, instanceId, userId));
+    @RequestMapping(value = "/changeSelectInstance", method = RequestMethod.PATCH)
+    public JsonResult changeSelectInstance(@RequestBody JSONObject form) {
+        return ResultUtils.success(integrateTaskService.changeSelectInstance(form.getStr("id"), form.getStr("instanceId"), form.getStr("type")));
     }
+//    @RequestMapping(value = "/changeSelectInstance", method = RequestMethod.GET)
+//    public JsonResult changeSelectInstance() {
+//        return ResultUtils.success("haha");
+//    }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     public JsonResult saveTask(@RequestBody AddIntegrateTaskDTO add, @JwtTokenParser(key = "userId") String userId) {
@@ -72,6 +77,11 @@ public class IntegrateTaskController {
             String username = session.getAttribute("userName").toString();
             return ResultUtils.success(integrateTaskService.runTask(file, taskName, username));
         }
+    }
+
+    @RequestMapping(value = "/getSelectedTaskByProjectId/{projectId}", method = RequestMethod.GET)
+    public JsonResult getSelectedTaskByProjectId(@PathVariable String projectId) {
+        return ResultUtils.success(integrateTaskService.getSelectedTaskByProjectId(projectId));
     }
 
 

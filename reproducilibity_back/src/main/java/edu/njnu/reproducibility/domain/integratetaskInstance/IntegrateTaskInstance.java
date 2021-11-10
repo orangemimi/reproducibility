@@ -34,5 +34,8 @@ public class IntegrateTaskInstance extends BaseEntity {
 //    String content;
 
     TaskInfo taskInfo;
+    String taskContent;
+
+    String authority;
 
 }

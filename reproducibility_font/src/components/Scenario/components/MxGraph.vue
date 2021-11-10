@@ -10,11 +10,44 @@
         <input @change="readFile" ref="importInput" class="hide" type="file" />
         <el-button @click="importGraphFile" type="text" size="mini">Import mxGraph</el-button> -->
         <!-- <el-button @click="checked ? deleteCells() : deleteCellsConfirmDialog()" type="text" size="mini" :disabled="this.graph.getSelectionCells().length == 0"> -->
-        <el-button @click="checked ? deleteCells() : deleteCellsConfirmDialog()" type="text" size="mini" :disabled="selectionCells.length == 0">
-          Delete
-        </el-button>
-        <el-button @click="undo" type="text" size="mini" :disabled="undoMng.indexOfNextAdd > 1 ? false : true">Undo</el-button>
-        <el-button @click="redo" type="text" size="mini" :disabled="undoMng.indexOfNextAdd < undoMng.history.length ? false : true">Redo</el-button>
+        <!-- <i class="el-icon-delete" @click="checked ? deleteCells() : deleteCellsConfirmDialog()" :disabled="selectionCells.length == 0"></i> -->
+        <el-divider direction="vertical"></el-divider>
+
+        <el-dropdown trigger="click" @command="zoom">
+          <el-button type="text" size="mini">
+            {{ size }}%
+            <i class="el-icon-arrow-down el-icon--right"></i>
+          </el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item :command="50">50%</el-dropdown-item>
+            <el-dropdown-item :command="75">75%</el-dropdown-item>
+            <el-dropdown-item :command="100">100%</el-dropdown-item>
+            <el-dropdown-item :command="125">125%</el-dropdown-item>
+            <el-dropdown-item :command="150">150%</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+
+        <el-divider direction="vertical"></el-divider>
+        <el-button @click="zoomIn" size="mini" type="text" icon="el-icon-zoom-in"></el-button>
+        <el-button @click="zoomOut" size="mini" type="text" icon="el-icon-zoom-out"></el-button>
+        <el-divider direction="vertical"></el-divider>
+
+        <el-button @click="undo" type="text" size="mini" :disabled="undoMng.indexOfNextAdd > 1 ? false : true" icon="iconfont icon-undo"></el-button>
+        <el-button
+          @click="redo"
+          type="text"
+          size="mini"
+          :disabled="undoMng.indexOfNextAdd < undoMng.history.length ? false : true"
+          icon="iconfont icon-redo"
+        ></el-button>
+        <el-divider direction="vertical"></el-divider>
+        <el-button
+          @click="checked ? deleteCells() : deleteCellsConfirmDialog()"
+          type="text"
+          size="mini"
+          :disabled="selectionCells.length == 0"
+          icon="el-icon-delete"
+        />
         <!-- 创建一个新的画布  均为create-->
         <el-button @click="showCreateNewTask" type="success" size="mini">New Task</el-button>
         <!-- 保存现有的画布 均为update-->
@@ -25,8 +58,9 @@
         <el-button @click="compareResult" size="mini">Compare Result</el-button>
 
         <!-- <el-badge is-dot class="item">{{ currentTask.taskName }}</el-badge> -->
-        <el-button @click="clear" size="mini">clear</el-button>
-        <test @getTid="getTid"/>
+        <el-button @click="clear" size="mini">Clear</el-button>
+        <!-- <el-button @click="zoom" size="mini">zoom</el-button> -->
+
         <!-- <img src="/static/images/calcModel.png" alt=""> -->
 
         <transition name="fade" mode="out-in">
@@ -38,35 +72,16 @@
         <integrate-tasks @selectTask="selectTask" style="float: right"></integrate-tasks>
       </div>
       <vue-scroll style="height: 850px; width: calc(100%)" :ops="ops" ref="scroll">
-        <!-- 鼠标拖动功能暂时没写好 -->
-        <div
-          class="graphContainer"
-          ref="container"
-          :style="{ 'min-height': scrollerHeight, 'min-width': scrollerWidth }"
-          @mousedown.right="rightDown($event)"
-          @mouseup.right="rightUp($event)"
-          @mousemove="rightMove($event)"
-          :class="rightflag ? 'moving' : ''"
-          @contextmenu.prevent
-        ></div>
+        <div class="graphContainer" ref="container" @contextmenu.prevent></div>
       </vue-scroll>
     </div>
 
     <div class="rightBar">
       <div class="instances">
-        <el-row class="add_ins">
-          <el-card shadow="hover" class="box-card">
-            <i class="el-icon-plus" />
-          </el-card>
-        </el-row>
+
         <el-row>
           <div v-for="(item, index) in instanceList" :key="index">
-            <instance-card
-              :instanceItem="item"
-              :taskItem="currentTask"
-              @showInstanceStatus="showInstanceStatus"
-              @changeSelectInstanceId="changeSelectInstanceId"
-            ></instance-card>
+            <instance-card :instanceItem="item" :taskItem="currentTask" :role="'builder'" @instance="instance" @changeSelectInstanceId="changeSelectInstanceId"></instance-card>
           </div>
         </el-row>
       </div>
@@ -75,9 +90,11 @@
           @current-change="handleCurrentChange"
           :current-page.sync="instancePageFilter.page"
           :page-size="instancePageFilter.pageSize"
+          :pager-count="5"
+          :small="true"
           background
           layout="prev, pager, next"
-          :total="allInstanceList.length + 1"
+          :total="allInstanceList.length"
         ></el-pagination>
       </div>
     </div>
@@ -140,6 +157,7 @@ import {
   updateIntegrateTaskInstanceById,
   getScenarioByProjectId,
   getAllIntegrateTaskInstancesByTaskId,
+  getAllInstances,
   runtask,
   checkTaskStatus,
   updatePerformanceById,
@@ -151,7 +169,6 @@ import { hasProperty } from '@/utils/utils';
 
 import integrateTasks from '_com/IntegrateTasks';
 import instanceCard from '_com/Cards/InstanceCard';
-import test from './test.vue'
 import comparison from '_com/Comparison/Comparison';
 import leftToolbar from './LeftToolbar.vue';
 
@@ -174,53 +191,37 @@ export default {
     instanceCard,
     comparison,
     leftToolbar,
-    test
   },
 
-  watch: {
-    taskInfoInit: {
-      async handler(val, oldVal) {
-        // console.log(val)
-        // console.log(val.id)
-        // console.log(oldVal)
-        // console.log('执行watch')
-        if (val.id != undefined && val.id != oldVal.id) {
-          // await initSetTimeOut();
-          // debugger;
-          this.currentTask = val;
+  // watch: {
+  //   taskInfoInit: {
+  //     async handler(val, oldVal) {
+  //       // console.log(val)
+  //       // console.log(val.id)
+  //       // console.log(oldVal)
+  //       // console.log('执行watch')
+  //       if (val.id != undefined && val.id != oldVal.id) {
+  //         // await initSetTimeOut();
+  //         // debugger;
+  //         this.currentTask = val;
 
-          this.init();
-          this.$refs.leftToolbar.init();
-          this.$refs.leftToolbar.listenGraphEvent();
+  //         this.init();
+  //         this.$refs.leftToolbar.init();
+  //         this.$refs.leftToolbar.listenGraphEvent();
 
-          this.initUndoMng();
-          this.getSelectionCells();
+  //         this.initUndoMng();
+  //         this.getSelectionCells();
 
-          await this.getAllInstances(0);
-          console.log(this.instancePageFilter.page);
-          await this.getAllIntegrateTaskInstances(this.instancePageFilter.page);
-          this.graph.importGraph(val.taskContent);
-        }
-        // console.log('watch执行完')
-      },
-      deep: true,
-      immediate: true,
-    },
-    // currentTask: {
-    //   async handler(val, oldVal) {
-    //     console.log(val);
-    //     console.log(oldVal);
-    //     if (oldVal != '' && val != oldVal) {
-    //       this.init();
-    //       await this.getAllIntegrateTaskInstances(0);
-    //       this.graph.importGraph(val.taskContent);
-    //       console.log('执行currentTask');
-    //     }
-    //   },
-    //   deep: true,
-    //   immediate: true,
-    // },
-  },
+  //         await this.getAllInstances(0);
+  //         await this.getAllIntegrateTaskInstances(this.instancePageFilter.page);
+  //         this.graph.importGraph(val.taskContent);
+  //       }
+  //       // console.log('watch执行完')
+  //     },
+  //     deep: true,
+  //     immediate: true,
+  //   },
+  // },
 
   computed: {
     ...mapState({
@@ -230,14 +231,7 @@ export default {
 
   data() {
     return {
-      rightflag: false,
-      scrollerHeight: '850px',
-      scrollerWidth: 'calc(100%)',
-      oldHeight: '',
-      oldWidth: '',
-      oldX: '',
-      oldY: '',
-
+      size: 100,
       newTaskForm: {
         taskName: '',
         taskDescription: '',
@@ -329,7 +323,7 @@ export default {
 
       //INSTANCE LIST
       instancePageFilter: {
-        pageSize: 8,
+        pageSize: 7,
         page: 0,
       },
       instanceList: [],
@@ -341,7 +335,19 @@ export default {
   },
 
   methods: {
-    
+    zoom(val) {
+      this.size = val;
+      this.graph.zoomTo(val / 100);
+    },
+    zoomIn() {
+      this.size = this.size + 10;
+      this.graph.zoomTo(this.size / 100);
+    },
+    zoomOut() {
+      this.size = this.size - 10;
+      this.graph.zoomTo(this.size / 100);
+    },
+
     clear() {
       this.graph.removeCells(this.graph.getChildVertices(this.graph.getDefaultParent()));
       const codec = new mxCodec();
@@ -356,45 +362,6 @@ export default {
       bus.$on('go', (data) => {
         this.selectionCells = data;
       });
-    },
-
-    rightDown(e) {
-      this.rightflag = true;
-      console.log(e.offsetX, e.offsetY);
-      // console.log(this.$refs['scroll'])
-      // console.log(this.$refs['scroll'].scrollPanelElm.scrollLeft, this.$refs['scroll'].scrollPanelElm.scrollTop)
-      // console.log(this.$refs['scroll'].scrollPanelElm.scrollHeight)
-      // console.log(this.$refs['scroll'].scrollPanelElm.scrollWidth)
-      this.oldHeight = this.$refs['scroll'].scrollPanelElm.scrollHeight;
-      this.oldWidth = this.$refs['scroll'].scrollPanelElm.scrollWidth;
-      this.oldX = e.offsetX;
-      this.oldY = e.offsetY;
-      // this.scrollerHeight = '1200px'
-      // this.scrollerWidth = '1200px'
-      // this.$refs['scroll'].scrollPanelElm.scrollLeft = 30
-      // this.$refs['scroll'].scrollPanelElm.scrollTop = 30
-      // console.log(this.$refs['scroll'].scrollPanelElm.scrollLeft)
-      // console.log(this.$refs['scroll'].scrollPanelElm.scrollTop)
-    },
-    rightMove(e) {
-      if (this.rightflag) {
-        console.log(e.offsetX, e.offsetY);
-        let tempX = e.offsetX - this.oldX;
-        let tempY = e.offsetY - this.oldY;
-        this.scrollerHeight = this.oldHeight + tempX + 'px';
-        this.scrollerWidth = this.oldWidth + tempY + 'px';
-        console.log('scrollerHeight', this.scrollerHeight);
-        this.$refs['scroll'].scrollPanelElm.scrollLeft = this.$refs['scroll'].scrollPanelElm.scrollLeft + tempX;
-        this.$refs['scroll'].scrollPanelElm.scrollTop = this.$refs['scroll'].scrollPanelElm.scrollTop + tempY;
-        this.oldHeight = this.oldHeight + tempX;
-        this.oldWidth = this.oldWidth + tempY;
-        this.oldX = e.offsetX;
-        this.oldY = e.offsetY;
-      }
-    },
-    rightUp(e) {
-      this.rightflag = false;
-      console.log(e.offsetX, e.offsetY);
     },
 
     async confirmNewTask() {
@@ -420,6 +387,8 @@ export default {
       }
       this.undoMng.history = [this.undoMng.history[this.undoMng.indexOfNextAdd - 1]];
       this.undoMng.indexOfNextAdd = 1;
+      this.allInstanceList = [];
+      this.instanceList = [];
     },
 
     compareResult() {
@@ -456,12 +425,25 @@ export default {
     // },
 
     //初始化mxgraph
-    init() {
+    async init() {
       //创建画布
+      
+      this.currentTask = this.taskInfoInit;
+
       this.container = this.$refs.container;
       this.createGraph();
 
       this.getScenario();
+      this.graph.setPanning(true);
+      this.$refs.leftToolbar.init();
+      this.$refs.leftToolbar.listenGraphEvent();
+
+      this.initUndoMng();
+      this.getSelectionCells();
+
+      await this.getAllInstances();
+      await this.getAllIntegrateTaskInstances(1);
+      this.graph.importGraph(this.taskInfoInit.taskContent);
     },
 
     async getScenario() {
@@ -753,9 +735,9 @@ export default {
       this.graph.importGraph(val.taskContent);
       this.undoMng.history = [this.undoMng.history[this.undoMng.indexOfNextAdd - 1]];
       this.undoMng.indexOfNextAdd = 1;
-      this.allInstanceList = []
-      await this.getAllInstances(0);
-      await this.getAllIntegrateTaskInstances(this.instancePageFilter.page);
+      this.allInstanceList = [];
+      await this.getAllInstances();
+      await this.getAllIntegrateTaskInstances(1);
 
       // let note = val.note;
       // this.importModelXML(note);
@@ -774,11 +756,6 @@ export default {
         this.graph.getModel().endUpdate();
       }
       // this._restoreModel();
-    },
-
-    async showInstanceStatus(value) {
-      this.currentTaskInstance = value;
-      await this.getOutputs(value.tid);
     },
 
     getInstanceAction(action) {
@@ -858,8 +835,6 @@ export default {
         this.dataServiceOutputListInGraph
       );
 
-      console.log(xml);
-
       let file = new File([xml], this.currentTask.taskName + '.xml', {
         type: 'text/xml',
       });
@@ -869,16 +844,11 @@ export default {
 
       //get tid from manager server
       let tid = await runtask(formData);
-      console.log(tid);
       await this.addTaskInstance(tid);
 
-      await this.getOutputs(tid);
+      // await this.getOutputs(tid);
 
       //save to  the instance
-    },
-
-    getTid(val) {
-      console.log(val)
     },
 
     async getOutputs(tid) {
@@ -1032,19 +1002,20 @@ export default {
         let outputActionList = processingActionResponse.filter((response) => eventCell.linkModelCellId == response.id);
         // console.log(outputActionList)
         let outputValueJson = outputActionList[0].outputData.outputs.filter((out) => out.dataId == eventCell.id);
-        console.log(eventCell);
-        console.log(outputValueJson);
         let content = outputValueJson[0].dataContent;
 
         //upload
+        let userUpload = false;
+        if (content.type == 'url') {
+          userUpload = true;
+        }
         let dataJson = {
           name: content.fileName,
           address: content.value,
           suffix: content.suffix,
           description: '',
-          userUpload: false, //--false是中间数据
+          userUpload: userUpload,
         };
-        console.log(dataJson);
         let data = await saveFileItem(dataJson);
         console.log(data);
         eventCell.fileId = data.id;
@@ -1056,31 +1027,31 @@ export default {
 
     async addTaskInstance(tid) {
       let taskInfo = {
-        modelInfo: {
-          finished: [],
+        modelActionList: {
+          completed: [],
           running: [],
           waiting: [],
-          failed: []
+          failed: [],
         },
-        dataServiceInfo: {
-          finished: [],
+        dataProcessingList: {
+          completed: [],
           running: [],
           waiting: [],
-          failed: []
+          failed: [],
         },
-      }
-      this.modelListInGraph.forEach(cell => {
-        taskInfo.modelInfo.waiting.push({
+      };
+      this.modelListInGraph.forEach((cell) => {
+        taskInfo.modelActionList.waiting.push({
           processId: cell.id,
-          processName: cell.name
-        })
-      })
-      this.dataServiceListInGraph.forEach(cell => {
-        taskInfo.dataServiceInfo.waiting.push({
+          processName: cell.name,
+        });
+      });
+      this.dataServiceListInGraph.forEach((cell) => {
+        taskInfo.dataProcessingList.waiting.push({
           processId: cell.id,
-          processName: cell.name
-        })
-      })
+          processName: cell.name,
+        });
+      });
       let postJson = {
         name: this.currentTask.taskName + '-Instance',
         taskId: this.currentTask.id,
@@ -1094,6 +1065,7 @@ export default {
           'taskInstance'
         ),
         taskInfo: taskInfo,
+        taskContent: this.currentTask.taskContent,
         status: 0,
         tid: tid,
       };
@@ -1101,6 +1073,10 @@ export default {
       console.log(data);
       this.currentTaskInstance = data;
       this.allInstanceList.push(data);
+      if (this.instanceList.length == this.instancePageFilter.pageSize) {
+        this.instanceList.pop();
+      }
+      this.instanceList.splice(0, 0, data);
     },
 
     async updateTaskInstances(type) {
@@ -1135,24 +1111,16 @@ export default {
       // console.log(postJson, this.currentTaskInstance.id);
 
       await updateIntegrateTaskInstanceById(this.currentTaskInstance.id, postJson);
+      this.allInstanceList.forEach((instance) => {
+        if (instance.id == this.currentTaskInstance.id) {
+          instance.status = 1;
+        }
+      });
     },
 
-    async getAllInstances(page) {
-      if (this.currentTask.selectInstanceId == null) {
-        this.instancePageFilter.page = 1;
-      }
-      let data = await getAllIntegrateTaskInstancesByTaskId(this.currentTask.id, page, this.instancePageFilter.pageSize);
-      while (data != null && data.content.length != 0) {
-        for (let i = 0; i < data.content.length; i++) {
-          this.allInstanceList.push(data.content[i]);
-          if (data.content[i].id == this.currentTask.selectInstanceId) {
-            this.instancePageFilter.page = page + 1;
-          }
-        }
-        page++;
-        data = await getAllIntegrateTaskInstancesByTaskId(this.currentTask.id, page, this.instancePageFilter.pageSize);
-      }
-      console.log(this.allInstanceList.length);
+    async getAllInstances() {
+      let data = await getAllInstances(this.currentTask.id)
+      this.allInstanceList = data
     },
 
     //instance list
@@ -1177,11 +1145,25 @@ export default {
     },
 
     changeSelectInstanceId(val) {
-      this.currentTask.selectInstanceId = val;
+      if(val.type == 'add') {
+        this.currentTask.selectInstanceId.push(val.id)
+      } else if(val.type == 'remove') {
+        this.currentTask.selectInstanceId.splice(this.currentTask.selectInstanceId.indexOf(val.id), 1)
+      }
+    },
+    instance(val) {
+      console.log(val);
+      this.instanceList.forEach((instance) => {
+        if (instance.id == val.id) {
+          instance.status = val.status;
+        }
+      });
     },
   },
 
-  mounted() {},
+  mounted() {
+    this.init()
+  },
 };
 </script>
 
@@ -1231,13 +1213,10 @@ export default {
       overflow: hidden;
       height: 100%;
       width: 100%;
-      // min-width: calc(100%);
-      // min-height: 850px;
+      min-width: calc(100%);
+      min-height: 850px;
       background: rgb(251, 251, 251) url('./../../../assets/images/mxgraph/point.gif') 0 0 repeat;
       border-radius: 4px;
-    }
-    .moving {
-      cursor: pointer;
     }
   }
 

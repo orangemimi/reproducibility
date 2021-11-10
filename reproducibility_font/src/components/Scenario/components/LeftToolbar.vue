@@ -26,18 +26,19 @@
     </vue-scroll>
 
     <div class="dialogs">
-      <el-dialog :visible.sync="modelDoubleClick" width="50%" title="Configuration" :destroy-on-close="true" :close-on-click-modal="false">
-        <data-item-toolbar :cell="currentCell" @selectItemListToGraph="selectItemListToGraph"></data-item-toolbar>
+      <!-- el-dialog的destroy-on-close属性在关闭时会再次通知组件，拉黑这个属性，改用v-if -->
+      <el-dialog :visible.sync="modelDoubleClick" width="50%" title="Configuration" :close-on-click-modal="false">   
+        <data-item-toolbar :cell="currentCell" @selectItemListToGraph="selectItemListToGraph" v-if="modelDoubleClick"></data-item-toolbar>
       </el-dialog>
-      <el-dialog :visible.sync="dataDoubleClick" width="50%" title="Configuration" :destroy-on-close="true" :close-on-click-modal="false">
+      <el-dialog :visible.sync="dataDoubleClick" width="50%" title="Configuration" :close-on-click-modal="false">
         <!-- Configuration -->
-        <data-cell-info :cell="dataNode" @isUpload="isUpload"></data-cell-info>
+        <data-cell-info :cell="dataNode" @isUpload="isUpload" v-if="dataDoubleClick"></data-cell-info>
       </el-dialog>
-      <el-dialog :visible.sync="codeDoubleClick" width="50%" title="Configuration" destroy-on-close :close-on-click-modal="false">
-        <data-service-code-configuration @selectItemListToGraph="selectItemListToGraph"></data-service-code-configuration>
+      <el-dialog :visible.sync="codeDoubleClick" width="50%" title="Configuration" :close-on-click-modal="false">
+        <data-service-code-configuration @selectItemListToGraph="selectItemListToGraph" v-if="codeDoubleClick"></data-service-code-configuration>
       </el-dialog>
-      <el-dialog :visible.sync="dataServiceDoubleClick" width="50%" title="Configuration" destroy-on-close :close-on-click-modal="false">
-        <data-service-configuration :cell="currentCell" @selectItemListToGraph="selectItemListToGraph"></data-service-configuration>
+      <el-dialog :visible.sync="dataServiceDoubleClick" width="50%" title="Configuration" :close-on-click-modal="false">
+        <data-service-configuration :cell="currentCell" @selectItemListToGraph="selectItemListToGraph" v-if="dataServiceDoubleClick"></data-service-configuration>
       </el-dialog>
       <!-- <el-drawer title="Configuration" :visible.sync="codeDoubleClick" size="45%">
         <el-col :span="22" :offset="1">
@@ -350,6 +351,7 @@ export default {
           } else if (type == 'modelServiceOutput') {
             this.addEdge(selectionCell, vertex);
             vertex.upload = false
+            vertex.value = ''
           }
         }
         if (type == 'dataServiceInput' || type == 'dataServiceOutput') {
@@ -377,6 +379,7 @@ export default {
           } else if (type == 'dataServiceOutput') {
             this.addEdge(selectionCell, vertex);
             vertex.upload = false
+            vertex.value = ''
           }
         }
       } finally {

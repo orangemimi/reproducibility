@@ -28,10 +28,10 @@
       </div>
     </div>
     <div class="customToolbarContainer" v-show="isIntegrateTaskShow">
-      <mx-graph :taskInfoInit="taskInfoInit"></mx-graph>
+      <mx-graph :taskInfoInit="taskInfoInit" v-if="taskInfoInit != null"></mx-graph>
     </div>
     <div class="customToolbarContainer" v-show="isNoteTaskShow">
-      <comparison-task :taskInfoInit="taskInfoInit"></comparison-task>
+      <comparison-task :taskInfoInit="taskInfoInit" v-if="taskInfoInit != null"></comparison-task>
     </div>
   </div>
 </template>
@@ -65,7 +65,7 @@ export default {
       isIntegrateTaskShow: false,
       isNoteTaskShow: false,
       taskInfo: { type: 'integrateTask' },
-      taskInfoInit: { content: '' },
+      taskInfoInit: null,
       taskList: [],
       content: '', //task selected mxgraph
       typeOptions: [
@@ -83,18 +83,15 @@ export default {
 
     async getScenario() {
       let data = await getScenarioByProjectId(this.projectId);
-      console.log(data)
       if (data == null || data.selectTaskId == '' || data.selectTaskId == null) {
         this.isNewTaskShow = true;
         return;
       } else {
         if (data.type == 'integrateTask') {
+          let data2 = await getIntegrateTaskByTaskId(data.selectTaskId);
+          this.$set(this, 'taskInfoInit', data2);
           this.isNoteTaskShow = this.isNewTaskShow = false;
           this.isIntegrateTaskShow = true;
-          let data2 = await getIntegrateTaskByTaskId(data.selectTaskId);
-          console.log(' this.taskInfoInit2', data2);
-          this.$set(this, 'taskInfoInit', data2);
-          console.log(' this.taskInfoInit', this.taskInfoInit);
         }
         if (data.type == 'notebook') {
           this.isIntegrateTaskShow = this.isNewTaskShow = false;

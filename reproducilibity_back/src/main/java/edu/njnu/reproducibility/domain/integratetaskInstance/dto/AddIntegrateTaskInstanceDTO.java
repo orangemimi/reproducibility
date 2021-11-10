@@ -25,6 +25,8 @@ public class AddIntegrateTaskInstanceDTO implements ToDomainConverter<IntegrateT
     // 0代表未开始，-1代表运行失败，1代表运行成功, 2代表运行超时(不存在运行中状态，省略)
     String tid;//managerServer Id;
     TaskInfo taskInfo;
+    String taskContent;
+    String authority;
 
     //note task relate
 //    String content;

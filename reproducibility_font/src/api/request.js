@@ -304,10 +304,14 @@ export async function updateIntegrateTask(taskId, postJson) {
   return data;
 }
 
-export async function updateIntegrateTaskInstance(taskId, instanceId) {
-  let data = await patch(`/integrateTasks/changeSelectInstance/${taskId}/${instanceId}`);
+export async function updateIntegrateTaskInstance(form) {
+  let data = await patch(`/integrateTasks/changeSelectInstance`, form);
 
   return data;
+}
+
+export async function getSelectedTaskByProjectId(projectId) {
+  return await get(`/integrateTasks/getSelectedTaskByProjectId/${projectId}`)
 }
 
 //--------------------------------------integrateTaskInstances--------------------------------------------
@@ -350,6 +354,24 @@ export async function getInstanceOfUncompleted(taskId) {
   return await get(`/integrateTaskInstances/getInstanceOfUncompleted/${taskId}`)
 }
 
+export async function getInstanceXML(instanceId) {
+  return await get(`/integrateTaskInstances/getInstanceXML/${instanceId}`)
+}
+
+export async function getTaskInfo(instanceId) {
+  return await get(`/integrateTaskInstances/getTaskInfo/${instanceId}`)
+}
+
+export async function getAllInstances(taskId) {
+  return await get(`/integrateTaskInstances/getAllIntegrateTaskInstance/${taskId}`)
+}
+export async function getSelectedInstancesByProjectId(projectId) {
+  return await get(`/integrateTaskInstances/getSelectedInstancesByProjectId/${projectId}`)
+}
+
+export async function getAllInstancesOfReproductionByProjectId(projectId) {
+  return await get(`/integrateTaskInstances/getAllInstancesOfReproductionByProjectId/${projectId}`)
+}
 //-------------------------------------------modelitems--------------------------------------------------
 
 export async function getAllModelItems(currentPage, pagesize) {

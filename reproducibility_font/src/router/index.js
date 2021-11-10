@@ -184,6 +184,15 @@ export const constantRoutes = [
             }
           },
           {
+            path: 'community',
+            name: 'Community',
+            component: () => import('@/views/project/community'),
+            meta: {
+              requireAuth: true,
+              roles: ['builder', 'rebuilder_explorer', 'rebuilder_operator']
+            }
+          },
+          {
             path: 'reproduction',
             name: 'Reproduction',
             component: () => import('@/views/project/reproduction'),

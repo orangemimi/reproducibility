@@ -18,6 +18,10 @@
         <i class="el-icon-info"></i>
         Contributor
       </div>
+      <div class="community menu-item" @click="handleClick('Community')" :class="{ isActive: isCommunityActive }">
+        <i class="el-icon-info"></i>
+        Community
+      </div>
       <div class="settings menu-item" @click="handleClick('Settings')" :class="{ isActive: isSettingsActive }">
         <i class="el-icon-info"></i>
         Settings
@@ -40,6 +44,7 @@ export default {
       isConstructionActive: false,
       isContributorActive: false,
       isSettingsActive: false,
+      isCommunityActive: false,
     };
   },
 
@@ -47,16 +52,19 @@ export default {
     handleClick(type) {
       if (type == 'Information') {
         this.isInfoActive = true;
-        this.isConstructionActive = this.isContributorActive = this.isSettingsActive = false;
+        this.isConstructionActive = this.isContributorActive = this.isSettingsActive = this.isCommunityActive = false;
       } else if (type == 'Construction') {
         this.isConstructionActive = true;
-        this.isInfoActive = this.isContributorActive = this.isSettingsActive = false;
+        this.isInfoActive = this.isContributorActive = this.isSettingsActive = this.isCommunityActive = false;
       } else if (type == 'Contributor') {
         this.isContributorActive = true;
-        this.isInfoActive = this.isConstructionActive = this.isSettingsActive = false;
+        this.isInfoActive = this.isConstructionActive = this.isSettingsActive = this.isCommunityActive = false;
+      } else if (type == 'Community') {
+        this.isCommunityActive = true;
+        this.isInfoActive = this.isReproductionActive = this.isSettingsActive = this.isContributorActive = false;
       } else {
         this.isSettingsActive = true;
-        this.isInfoActive = this.isConstructionActive = this.isContributorActive = false;
+        this.isInfoActive = this.isConstructionActive = this.isContributorActive = this.isCommunityActive = false;
       }
       this.$emit('toRouterType', type);
     },
@@ -65,29 +73,35 @@ export default {
       switch (this.$router.currentRoute.name) {
         case 'Information': {
           this.isInfoActive = true;
-          this.isConstructionActive = this.isContributorActive = this.isSettingsActive = false;
+          this.isConstructionActive = this.isContributorActive = this.isSettingsActive = this.isCommunityActive = false;
           break;
         }
         case 'Construction': {
           this.isConstructionActive = true;
-          this.isInfoActive = this.isContributorActive = this.isSettingsActive = false;
+          this.isInfoActive = this.isContributorActive = this.isSettingsActive = this.isCommunityActive = false;
           break;
         }
         case 'Contributor': {
           this.isContributorActive = true;
-          this.isInfoActive = this.isConstructionActive = this.isSettingsActive = false;
+          this.isInfoActive = this.isConstructionActive = this.isSettingsActive = this.isCommunityActive = false;
           break;
         }
         case 'Settings': {
           this.isSettingsActive = true;
-          this.isInfoActive = this.isConstructionActive = this.isContributorActive = false;
+          this.isInfoActive = this.isConstructionActive = this.isContributorActive = this.isCommunityActive = false;
           break;
+        }
+        case 'Community': {
+          this.isCommunityActive = true;
+          this.isInfoActive = this.isReproductionActive = this.isSettingsActive = this.isContributorActive = false;
         }
       }
     },
   },
 
-  mounted() { this.init() },
+  mounted() {
+    this.init();
+  },
 };
 </script>
 <style lang="scss" scoped>

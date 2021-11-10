@@ -63,4 +63,30 @@ public class IntegrateTaskInstanceController {
     public JsonResult getInstanceOfUncompleted(@JwtTokenParser(key = "userId") String userId, @PathVariable String taskId) {
         return ResultUtils.success(integrateTaskInstanceService.getInstanceOfUncompleted(userId, taskId));
     }
+
+    @RequestMapping(value = "/getInstanceXML/{Id}", method = RequestMethod.GET)
+    public JsonResult getXML(@PathVariable String Id) {
+        return ResultUtils.success(integrateTaskInstanceService.getXML(Id));
+    }
+
+    @RequestMapping(value = "/getTaskInfo/{id}", method = RequestMethod.GET)
+    public JsonResult getTaskInfo(@PathVariable String id) {
+        return ResultUtils.success(integrateTaskInstanceService.getTaskInfo(id));
+    }
+
+    @RequestMapping(value = "/getAllIntegrateTaskInstance/{taskId}", method = RequestMethod.GET)
+    public JsonResult getAllInstances(@PathVariable String taskId, @JwtTokenParser(key = "userId") String userId) {
+        return ResultUtils.success(integrateTaskInstanceService.getAllIntegrateTaskInstance(taskId, userId));
+    }
+
+    @RequestMapping(value = "/getSelectedInstancesByProjectId/{projectId}", method = RequestMethod.GET)
+    public JsonResult getSelectedInstancesByProjectId(@PathVariable String projectId) {
+        return ResultUtils.success(integrateTaskInstanceService.getSelectedInstancesByProjectId(projectId));
+    }
+
+    @RequestMapping(value = "/getAllInstancesOfReproductionByProjectId/{projectId}", method = RequestMethod.GET)
+    public JsonResult getAllInstancesOfReproductionByProjectId(@PathVariable String projectId) {
+        return ResultUtils.success(integrateTaskInstanceService.getAllInstancesOfReproductionByProjectId(projectId));
+    }
+
 }

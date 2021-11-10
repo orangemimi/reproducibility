@@ -7,6 +7,8 @@ import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.domain.integratetask.dto.AddIntegrateTaskDTO;
 import edu.njnu.reproducibility.domain.integratetask.dto.UpdateCurrentActionInTaskDTO;
 import edu.njnu.reproducibility.domain.integratetask.dto.UpdateIntegratedTaskDTO;
+import edu.njnu.reproducibility.domain.scenario.Scenario;
+import edu.njnu.reproducibility.domain.scenario.ScenarioRepository;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,6 +34,9 @@ import java.util.List;
 public class IntegrateTaskService {
     @Autowired
     IntegrateTaskRepository integrateTaskRepository;
+
+    @Autowired
+    ScenarioRepository scenarioRepository;
 
     @Value("${managerServerIpAndPort}")
     private String managerServerIpAndPort;
@@ -71,9 +77,21 @@ public class IntegrateTaskService {
         return integrateTaskRepository.save(integrateTask);
     }
 
-    public IntegrateTask changeSelectInstance(String id, String instanceId, String userId) {
+    public IntegrateTask changeSelectInstance(String id, String instanceId, String type) {
         IntegrateTask integrateTask = integrateTaskRepository.findFirstById(id).orElseThrow(MyException::noObject);
-        integrateTask.setSelectInstanceId(instanceId);
+        if(type.equals("star")) {
+            List<String> temp = integrateTask.getSelectInstanceId();
+            if(temp == null) {
+                integrateTask.setSelectInstanceId(new ArrayList<>());
+            }
+            integrateTask.selectInstanceId.add(instanceId);
+        } else if(type.equals("unstar")) {
+            List<String> temp = integrateTask.getSelectInstanceId();
+            if(temp == null) {
+                throw new MyException(ResultEnum.NO_OBJECT);
+            }
+            integrateTask.selectInstanceId.remove(instanceId);
+        }
         return integrateTaskRepository.save(integrateTask);
     }
 
@@ -101,5 +119,10 @@ public class IntegrateTaskService {
         return result;
     }
 
+    public IntegrateTask getSelectedTaskByProjectId(String projectId) {
+        Scenario scenario = scenarioRepository.findByProjectId(projectId).orElseThrow(MyException::noObject);
+        String taskId = scenario.getSelectTaskId();
+        return integrateTaskRepository.findById(taskId).orElseThrow(MyException::noObject);
+    }
 
 }

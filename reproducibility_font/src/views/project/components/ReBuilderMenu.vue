@@ -18,6 +18,10 @@
         <i class="el-icon-info"></i>
         Contributor
       </div>
+      <div class="community menu-item" @click="handleClick('Community')" :class="{ isActive: isCommunityActive }">
+        <i class="el-icon-info"></i>
+        Community
+      </div>
     </div>
   </div>
 </template>
@@ -36,6 +40,7 @@ export default {
       isReproductionActive: false,
       isContributorActive: false,
       isSettingsActive: false,
+      isCommunityActive: false,
     };
   },
 
@@ -43,13 +48,16 @@ export default {
     handleClick(type) {
       if (type == 'Information') {
         this.isInfoActive = true;
-        this.isReproductionActive = this.isContributorActive = this.isSettingsActive = false;
+        this.isReproductionActive = this.isContributorActive = this.isSettingsActive = this.isCommunityActive = false;
       } else if (type == 'Reproduction') {
         this.isReproductionActive = true;
-        this.isInfoActive = this.isContributorActive = this.isSettingsActive = false;
+        this.isInfoActive = this.isContributorActive = this.isSettingsActive = this.isCommunityActive = false;
       } else if (type == 'Contributor') {
         this.isContributorActive = true;
-        this.isInfoActive = this.isReproductionActive = this.isSettingsActive = false;
+        this.isInfoActive = this.isReproductionActive = this.isSettingsActive = this.isCommunityActive = false;
+      } else if (type == 'Community') {
+        this.isCommunityActive = true;
+        this.isInfoActive = this.isReproductionActive = this.isSettingsActive = this.isContributorActive = false;
       }
       this.$emit('toRouterType', type);
     },
@@ -71,12 +79,16 @@ export default {
           this.isInfoActive = this.isReproductionActive = this.isSettingsActive = false;
           break;
         }
+        case 'Community': {
+          this.isCommunityActive = true;
+          this.isInfoActive = this.isReproductionActive = this.isSettingsActive = this.isContributorActive = false;
+        }
       }
     },
   },
 
   mounted() {
-    this.init()
+    this.init();
   },
 };
 </script>

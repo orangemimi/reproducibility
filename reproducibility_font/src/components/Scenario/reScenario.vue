@@ -3,92 +3,182 @@
     <div class="mainContainer">
       <div class="modelbarTop">
         <el-button @click="runGraph" size="mini">Run Task</el-button>
+        
       </div>
-      <vue-scroll style="height: 800px; width: calc(100%)" :ops="ops">
-        <div class="graphContainer" ref="container"></div>
+      <vue-scroll style="height: 850px; width: calc(100%)" :ops="ops">
+        <div class="graphContainer" ref="container" @contextmenu.prevent></div>
       </vue-scroll>
     </div>
 
     <div class="rightBar">
-      <div class="instances">
-        <el-row class="add_ins">
-          <el-card shadow="hover" class="box-card">
-            <i class="el-icon-plus" />
-          </el-card>
-        </el-row>
-        <el-row class="instance">
-          <el-card shadow="hover" class="box-card">
-            <!-- <i class="el-icon-plus" /> -->
-            producible instance from builder
-
-            <div class="task_view" @click="showInstanceStatus">
-              View
-            </div>
-          </el-card>
-        </el-row>
-        <el-row>
-          <div v-for="(item, index) in instanceList" :key="index">
-            <instance-card :instanceItem="item" :taskItem="currentTask" @showInstanceStatus="showInstanceStatus"></instance-card>
+      <el-switch
+        style="display: block"
+        v-model="switchValue"
+        inactive-color="#13ce66"
+        active-color="#ff4949"
+        active-text="My Tasks"
+        inactive-text="Tasks"
+      ></el-switch>
+      <div class="barBottom">
+        <div v-if="!switchValue">
+          <el-empty description="No Data" v-if="selectedInstances.length == 0"></el-empty>
+          <div class="instances">
+            <el-row v-if="instanceList.length != 0 && currentTask != null">
+              <div v-for="(item, index) in instanceList" :key="index" class="card" @click="clickCard(index)">
+                <instance-card :instanceItem="item" :taskItem="currentTask" :role="'reproductioner'" @showInstanceStatus="showInstanceStatus"></instance-card>
+              </div>
+            </el-row>
           </div>
-        </el-row>
-      </div>
-      <div class="page">
-        <el-pagination
-          @current-change="handleCurrentChange"
-          :current-page.sync="instancePageFilter.page"
-          :page-size="instancePageFilter.pageSize"
-          background
-          layout="prev, pager, next"
-          :total="instanceList.length + 1"
-        ></el-pagination>
+          <div class="page">
+            <el-pagination
+              @current-change="handleCurrentChange"
+              :current-page.sync="instancePageFilter.page"
+              :page-size="instancePageFilter.pageSize"
+              background
+              layout="prev, pager, next"
+              :total="selectedInstances.length"
+            ></el-pagination>
+          </div>
+        </div>
+        <div v-else-if="switchValue">
+          <el-empty description="No Data" v-if="allMyTaskList.length == 0"></el-empty>
+          <div class="instances">
+            <el-row v-if="myTaskList != [] && currentTask != null">
+              <div v-for="(item, index) in myTaskList" :key="index" class="card">
+                <instance-card :instanceItem="item" :taskItem="currentTask" :role="'reproductioner-builder'" @showInstanceStatus="showInstanceStatus" @instance="instance"></instance-card>
+              </div>
+            </el-row>
+          </div>
+          <div class="page">
+            <el-pagination
+              @current-change="handleCurrentChange"
+              :current-page.sync="instancePageFilter.myTaskPage"
+              :page-size="instancePageFilter.pageSize"
+              background
+              layout="prev, pager, next"
+              :total="allMyTaskList.length"
+            ></el-pagination>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="dialogs">
-      <el-dialog :visible.sync="dataDoubleClick" width="50%" title="Configuration">
-        <span>
-          <!-- Configuration -->
-          <data-cell-info :cell="dataNode"></data-cell-info>
-        </span>
-      </el-dialog>
-    </div>
+    <el-dialog title="Detail" :visible.sync="outputDialogVisible" width="50%" :modal="false">
+      <el-tabs>
+        <el-tab-pane>
+          <template #label>
+            <i class="el-icon-s-order"></i>
+            Data
+          </template>
+          <el-row class="dataInfo">
+            <div class="data">
+              <div class="dataTitle">name:</div>
+              <div class="dataDetail">{{ clickedCell.name }}</div>
+            </div>
+            <div class="data">
+              <div class="dataTitle">description:</div>
+              <div class="dataDetail">{{ clickedCell.description }}</div>
+            </div>
+
+            <div class="data" v-if="clickedCell.value != '' && clickedCell.upload == 1">
+              <div class="dataTitle">value:</div>
+              <div class="dataDetail"><el-button type="primary" @click="download(clickedCell.value)">DownLoad</el-button></div>
+            </div>
+            <div class="data" v-if="clickedCell.value != '' && clickedCell.upload == 0">
+              <div class="dataTitle">value:</div>
+              <div class="dataDetail">{{ clickedCell.value }}</div>
+            </div>
+            <div class="data" v-if="clickedCell.value == ''">
+              <div class="dataTitle">value:</div>
+              <div class="dataDetail">Please wait for the calculation result!</div>
+            </div>
+          </el-row>
+        </el-tab-pane>
+        <el-tab-pane>
+          <template #label>
+            <i class="el-icon-s-platform"></i>
+            View
+          </template>
+          <el-empty description="This data does not support visualization temporarily"></el-empty>
+        </el-tab-pane>
+      </el-tabs>
+
+      <el-divider></el-divider>
+    </el-dialog>
+    <el-dialog title="Detail" :visible.sync="inputDialogVisible" width="50%" :modal="false">
+      <el-tabs>
+        <el-tab-pane>
+          <template #label>
+            <i class="el-icon-s-order"></i>
+            Data
+          </template>
+          <el-row class="dataInfo">
+            <div class="data">
+              <div class="dataTitle">Name:</div>
+              <div class="dataDetail">{{ clickedCell.name }}</div>
+            </div>
+            <div class="data">
+              <div class="dataTitle">Description:</div>
+              <div class="dataDetail">{{ clickedCell.description }}</div>
+            </div>
+            <div class="data">
+              <div class="dataTitle">Type:</div>
+              <div class="dataDetail" v-if="clickedCell.isParameter">Parameter</div>
+              <div class="dataDetail" v-else>File</div>
+            </div>
+          </el-row>
+        </el-tab-pane>
+        <el-tab-pane>
+          <template #label>
+            <i class="el-icon-s-platform"></i>
+            View
+          </template>
+          <el-empty description="This data does not support visualization temporarily"></el-empty>
+        </el-tab-pane>
+      </el-tabs>
+
+      <el-divider></el-divider>
+    </el-dialog>
+
   </div>
-  <!-- </div> -->
+
 </template>
 
 <script>
 import { mapState } from 'vuex';
 import mxgraph from '_com/MxGraph/index';
 import { genGraph } from '_com/MxGraph/initMx';
+import X2js from 'x2js'
 import {
-  saveFileItem,
   saveIntegrateTaskInstance,
-  updateIntegrateTaskInstanceById,
-  getScenarioByProjectId,
-  runtask,
-  checkTaskStatus,
-  getIntegrateTaskByTaskId,
-  getAllIntegrateTaskInstancesByTaskId
-} from '@/api/request';
-import { generateAction, generateXml, getCellStyle } from './components/configuration';
-import { initSetTimeOut, hasProperty } from '@/utils/utils';
 
-import dataCellInfo from '_com/MxGraphDialogs/DataCellInfo';
+  runtask,
+
+  getSelectedTaskByProjectId,
+  getSelectedInstancesByProjectId,
+  getAllInstances
+} from '@/api/request';
+import {
+  // generateAction,
+  generateXml1,
+  // getCellStyle
+} from './components/configuration';
+
 
 import instanceCard from '_com/Cards/InstanceCard';
 
-const { mxEvent } = mxgraph;
+const { mxEvent, mxGraphHandler } = mxgraph;
 
 export default {
   components: {
-    dataCellInfo,
-    instanceCard
+    // dataCellInfo,
+    instanceCard,
   },
 
   computed: {
     ...mapState({
-      role: state => state.permission.role
-    })
+      role: (state) => state.permission.role,
+    }),
   },
 
   data() {
@@ -96,6 +186,7 @@ export default {
       projectId: this.$route.params.id,
 
       graph: null,
+      
       editCellVisible: false,
 
       selectionCells: [],
@@ -104,7 +195,7 @@ export default {
       undoMng: null,
 
       cellForm: {
-        name: ''
+        name: '',
       },
 
       getXml: this.sendXml,
@@ -124,23 +215,19 @@ export default {
       dataClick: false,
       dataDoubleClick: false,
 
-      modelListInGraph: [],
-      modelInputInGraph: [],
-      modelLinkInGraph: [], //下一模型的输入数据
-      modelOutputInGraph: [],
-      linkEdgeList: [],
+
 
       stateList: [],
       // dataItemModelbarKey: 0,
 
       taskInfo: {
         taskName: '',
-        taskDescription: ''
+        taskDescription: '',
       },
 
       isNewTaskContainerShow: true,
 
-      currentTask: {},
+      currentTask: null,
 
       //document
       nodeList: [],
@@ -160,8 +247,8 @@ export default {
           specifyBorderRadius: false,
           minSize: 0,
           size: '6px',
-          disable: false
-        }
+          disable: false,
+        },
       },
 
       record: {}, //task -->get output record
@@ -179,71 +266,121 @@ export default {
 
       //INSTANCE LIST
       instancePageFilter: {
-        pageSize: 8,
-        page: 0
+        pageSize: 7,
+        page: 1,
+        myTaskPage: 1,
       },
-      instanceList: []
+      instanceList: [],
+      selectedInstances: [],
+      myTaskList: [],
+      allMyTaskList: [],
+      switchValue: false,
+      outputDialogVisible: false,
+      inputDialogVisible: false,
+      type: '',
+      clickedCell: '',
+
+      linkEdgeList: '',
+      modelListInGraph: '',
+      modelOutputInGraph: '',
+      modelInputInGraph: '',
+      modelLinkInGraph: '',
+      dataServiceListInGraph: '',
+      dataServiceInputInGraph: '',
+      dataServiceOutputListInGraph: '',
+      dataServiceLinkInGraph: '',
     };
   },
 
   methods: {
-    runInstanes() {},
-
-    async getScenario() {
-      let data = await getScenarioByProjectId(this.projectId);
-      this.currentTask = await getIntegrateTaskByTaskId(data.selectTaskId);
-      this.graph.importGraph(this.currentTask.mxgraph);
-
-      await this.getAllIntegrateTaskInstances(0);
-    },
-
-    //instance list
-    async getAllIntegrateTaskInstances(page) {
-      let data = await getAllIntegrateTaskInstancesByTaskId(this.currentTask.id, page, this.instancePageFilter.pageSize);
-      if (data == null) {
-        this.instanceList = [];
-        return;
-      }
-      this.instanceList = data.content;
-      this.instancePageFilter.page++;
-      // console.log('instances', data);
-    },
-    async handleCurrentChange(val) {
-      await this.getAllIntegrateTaskInstances(val++);
+    handleCurrentChange(val) {
+      console.log(val);
     },
 
     //初始化mxgraph
     async init() {
       this.container = this.$refs.container;
+      await this.getSelectedTaskByProjectId();
+      await this.getSelectedInstances();
+      
       this.createGraph();
+      this.createCell(0);
       this.listenGraphEvent();
-      this.getScenario();
+    },
+
+    async getSelectedTaskByProjectId() {
+      this.currentTask = await getSelectedTaskByProjectId(this.projectId);
     },
 
     // Creates the graph inside the given container
     createGraph() {
       this.graph = genGraph(this.container);
+      this.graph.setPanning(true);
+    },
+
+    createCell(index) {
+      this.graph.removeCells(this.graph.getChildVertices(this.graph.getDefaultParent()));
+      this.graph.importGraph(this.instanceList[index].taskContent);
+      this.graph.getModel().beginUpdate();
+      try {
+        this.graph.setCellsResizable(false);
+        mxGraphHandler.prototype.setMoveEnabled(false);
+      } finally {
+        this.graph.getModel().endUpdate();
+      }
+    },
+
+    async getSelectedInstances() {
+      let data1 = await getSelectedInstancesByProjectId(this.projectId);
+      let data2 = await getAllInstances(this.currentTask.id)
+      this.selectedInstances = data1;
+      this.allMyTaskList = data2
+      this.getInstanceList();
+    },
+
+    getInstanceList() {
+      this.instanceList = [];
+      this.myTaskList = []
+      let index = 0;
+      while (
+        index < this.instancePageFilter.pageSize &&
+        (this.instancePageFilter.page - 1) * this.instancePageFilter.pageSize + index < this.selectedInstances.length
+      ) {
+        this.instanceList.push(this.selectedInstances[(this.instancePageFilter.page - 1) * this.instancePageFilter.pageSize + index]);
+        index++;
+      }
+      index = 0
+      while(index < this.instancePageFilter.pageSize && (this.instancePageFilter.page - 1) * this.instancePageFilter.pageSize + index < this.allMyTaskList.length) {
+        this.myTaskList.push(this.allMyTaskList[(this.instancePageFilter.page - 1) * this.instancePageFilter.pageSize + index]);
+        index++;
+      }
     },
 
     listenGraphEvent() {
-      // 监听双击事件
-      this.graph.addListener(mxEvent.DOUBLE_CLICK, async (graph, evt) => {
-        // DOUBLE_CLICK
-        let cell = evt.properties.cell;
-        let clickModelType = cell.type;
-        if (clickModelType == 'model') {
-          this.modelDoubleClick = true;
-          this.domFlag++;
-          await initSetTimeOut();
-          this.cell = cell;
-          this.dataDoubleClick = this.dataClick = this.modelClick = false;
-        } else {
-          this.modelDoubleClick = this.modelClick = this.dataClick = false;
-          this.dataDoubleClick = true;
-          // console.log(cell);
-          this.dataNode = cell;
+      this.graph.addListener(mxEvent.CLICK, (sender, evt) => {
+        let cell = evt.getProperty('cell'); // cell may be null
+        if (cell != undefined && cell.type != undefined) {
+          this.type = cell.type;
+          this.clickedCell = cell;
+          if (cell.type == 'dataServiceInput' || cell.type == 'modelServiceInput') {
+            console.log(cell);
+            this.inputDialogVisible = true;
+          } else if (cell.type == 'dataServiceOutput' || cell.type == 'modelServiceOutput') {
+            console.log(cell);
+            this.outputDialogVisible = true;
+          } else if (cell.type == 'dataServiceLink' || cell.type == 'modelServiceLink') {
+            console.log(cell);
+            // this.dialogVisible = true;
+          } else if (cell.type == 'dataService' || cell.type == 'modelService') {
+            console.log(cell);
+            // this.dialogVisible = true;
+          }
         }
       });
+    },
+
+    clickCard(index) {
+      this.createCell(index);
     },
 
     getCells() {
@@ -252,79 +389,70 @@ export default {
       let modelInputInGraph = [];
       let modelLinkInGraph = [];
 
-      Object.values(this.graph.getModel().cells).forEach(cell => {
+      let dataServiceListInGraph = [];
+      let dataServiceInputInGraph = [];
+      let dataServiceLinkInGraph = [];
+      let dataServiceOutputListInGraph = [];
+
+      Object.values(this.graph.getModel().cells).forEach((cell) => {
         if (cell.style != undefined) {
-          if (cell.type == 'model') {
+          if (cell.type == 'modelService') {
             modelListInGraph.push(cell);
-          } else if (cell.type == 'output') {
+          } else if (cell.type == 'modelServiceOutput') {
             modelOutputInGraph.push(cell);
-          } else if (cell.type == 'input') {
+          } else if (cell.type == 'modelServiceInput') {
             modelInputInGraph.push(cell);
-          } else if (cell.type == 'link') {
+          } else if (cell.type == 'modelServiceLink') {
             modelLinkInGraph.push(cell);
+          } else if (cell.type == 'dataService') {
+            dataServiceListInGraph.push(cell);
+          } else if (cell.type == 'dataServiceOutput') {
+            cell.value = ''
+            dataServiceOutputListInGraph.push(cell);
+          } else if (cell.type == 'dataServiceInput') {
+            dataServiceInputInGraph.push(cell);
+          } else if (cell.type == 'dataServiceLink') {
+            dataServiceLinkInGraph.push(cell);
           }
         }
       });
-      let links = Object.values(this.graph.getModel().cells).filter(cell => Object.prototype.hasOwnProperty.call(cell, 'edge'));
+      let links = Object.values(this.graph.getModel().cells).filter((cell) => Object.prototype.hasOwnProperty.call(cell, 'edge'));
+
       this.linkEdgeList = links;
       this.modelListInGraph = modelListInGraph;
       this.modelOutputInGraph = modelOutputInGraph;
       this.modelInputInGraph = modelInputInGraph;
       this.modelLinkInGraph = modelLinkInGraph;
-    },
 
-    judgeInputList() {
-      let modelInputInGraph = this.modelInputInGraph;
-      modelInputInGraph.forEach(input => {
-        if (!hasProperty(input, 'value')) {
-          this.$notify.error({
-            title: 'Error',
-            message: 'You have not bind the data'
-          });
-          return false;
-        }
-      });
-      return true;
-    },
-
-    async showInstanceStatus(value) {
-      this.currentTaskInstance = value;
-      await this.getOutputs(value.tid);
-      // }
-    },
-
-    getInstanceAction(action) {
-      //
-      //
-      // 考虑dataitemcollection 改变
-      let outputList = this.modelOutputInGraph;
-      let dataItem = action.dataItemList;
-      outputList.forEach(out => {
-        let dataOutputValue = dataItem.filter(item => item.id == out.fileId);
-        if (dataOutputValue.length != 0) {
-          out.value = dataOutputValue.value;
-        }
-      });
+      this.dataServiceListInGraph = dataServiceListInGraph;
+      this.dataServiceInputInGraph = dataServiceInputInGraph;
+      this.dataServiceOutputListInGraph = dataServiceOutputListInGraph;
+      this.dataServiceLinkInGraph = dataServiceLinkInGraph;
     },
 
     async runGraph() {
       this.getCells();
 
       //是否有input中有空 无法run
-      if (!this.judgeInputList()) {
-        return;
-      }
+      // if (!this.judgeInputList()) {
+      //   return;
+      // }
 
-      let xml = generateXml(
+      let xml = generateXml1(
         this.currentTask.taskName,
         this.modelListInGraph,
         this.modelInputInGraph,
         this.modelLinkInGraph,
         this.modelOutputInGraph,
-        this.linkEdgeList
+        this.linkEdgeList,
+        this.dataServiceListInGraph,
+        this.dataServiceInputInGraph,
+        this.dataServiceLinkInGraph,
+        this.dataServiceOutputListInGraph
       );
+      console.log(xml)
       let file = new File([xml], this.currentTask.taskName + '.xml', {
-        type: 'text/xml'
+        type: 'text/xml',
       });
       let formData = new FormData();
       formData.append('file', file);
@@ -334,181 +462,102 @@ export default {
 
       await this.addTaskInstance(tid);
 
-      await this.getOutputs(tid);
-
       //save to  the instance
     },
 
-    async getOutputs(tid) {
-      //获得结果
-
-      this.record = {};
-      this.timer = setInterval(async () => {
-        if (this.record.status == 1) {
-          clearInterval(this.timer);
-          await this.putOutputToCell();
-
-          return;
-        } else {
-          let data = await checkTaskStatus(tid);
-          this.record = data;
-          this.changeCellColor(data);
-        }
-      }, 3000);
-    },
-
-    changeCellColor(data) {
-      let modelActions = data.taskInfo.modelActionList;
-      let runningTask = modelActions.running; //yellow
-      let failedTask = modelActions.failed; //red
-      let completedTask = modelActions.completed;
-
-      this.getCells();
-      let modelListInGraph = this.modelListInGraph;
-
-      modelListInGraph.forEach(modelCell => {
-        //判断runnign里面是否有model
-        if (runningTask.some(task => task.id == modelCell.id)) {
-          //change color
-          this.changeCellStyleByStatus(0, modelCell, false);
-          this.changeDataCellByStatus(0, modelCell, false);
-        }
-        //判断completedTask里面是否有model
-        if (completedTask.some(task => task.id == modelCell.id)) {
-          //change color
-
-          this.changeCellStyleByStatus(1, modelCell, false);
-
-          this.changeDataCellByStatus(1, modelCell, false);
-        }
-        //判断failedTask里面是否有model
-        if (failedTask.some(task => task.id == modelCell.id)) {
-          //change color
-          this.changeCellStyleByStatus(2, modelCell, false);
-
-          this.changeDataCellByStatus(2, modelCell, false);
-        }
-      });
-    },
-
-    changeDataCellByStatus(status, modelCell) {
-      let list = [...this.modelInputInGraph, ...this.modelLinkInGraph];
-      let inputList = list.filter(event => event.md5 == modelCell.md5);
-      let outputList = this.modelOutputInGraph.filter(event => event.md5 == modelCell.md5);
-      inputList.forEach(item => {
-        this.changeCellStyleByStatus(status, item, true);
-      });
-      outputList.forEach(item => {
-        this.changeCellStyleByStatus(status, item, true);
-      });
-    },
-
-    changeCellStyleByStatus(status, item, isData) {
-      //runnning
-      let style;
-      if (status == 0) {
-        style = {
-          fontColor: '#f6f6f6',
-          fillColor: '#E6A23C'
-        };
-      }
-      //finish
-      if (status == 1) {
-        style = {
-          fillColor: '#67C23A',
-          fontColor: '#24292E'
-        };
-      } //error
-      if (status == 2) {
-        style = {
-          fillColor: '#ce1212',
-          fontColor: '#f6f6f6'
-        };
-      }
-      if (isData) {
-        style.shape = 'parallelogram';
-        style.fixedSize = 1;
-      }
-      let styleIn = getCellStyle(style, item);
-      this.graph.getModel().setStyle(item, styleIn);
-    },
-
-    async putOutputToCell() {
-      let actionResponse = this.record.taskInfo.modelActionList.completed;
-      // console.log(this.modelOutputInGraph);
-      this.modelOutputInGraph.forEach(async eventCell => {
-        let outputActionList = actionResponse.filter(response => eventCell.linkModelCellId == response.id);
-        let outputValueJson = outputActionList[0].outputData.outputs.filter(out => out.dataId == eventCell.eventId && out.state == eventCell.stateName);
-        let content = outputValueJson[0].dataContent;
-
-        //upload
-        let dataJson = {
-          name: content.fileName,
-          address: content.value,
-          suffix: content.suffix,
-          description: '',
-          userUpload: false //--false是中间数据
-        };
-
-        let data = await saveFileItem(dataJson);
-        eventCell.fileId = data.id;
-        eventCell.value = data.address;
-        eventCell.fileName = data.name;
-      });
-
-      await this.updateTaskInstances();
-    },
-
     async addTaskInstance(tid) {
+      let taskInfo = {
+        modelActionList: {
+          completed: [],
+          running: [],
+          waiting: [],
+          failed: [],
+        },
+        dataProcessingList: {
+          completed: [],
+          running: [],
+          waiting: [],
+          failed: [],
+        },
+      };
+      this.modelListInGraph.forEach((cell) => {
+        taskInfo.modelActionList.waiting.push({
+          processId: cell.id,
+          processName: cell.name,
+        });
+      });
+      this.dataServiceListInGraph.forEach((cell) => {
+        taskInfo.dataProcessingList.waiting.push({
+          processId: cell.id,
+          processName: cell.name,
+        });
+      });
+      // let graphXml = this.graph.getGraphXml();
       let postJson = {
         name: this.currentTask.taskName + '-Instance',
         taskId: this.currentTask.id,
-        action: generateAction(
-          this.currentTask.id,
-          this.modelListInGraph,
-          this.modelInputInGraph,
-          this.modelLinkInGraph,
-          this.modelOutputInGraph,
-          this.linkEdgeList,
-          'taskInstance'
-        ),
+        // action: generateAction(
+        //   this.currentTask.id,
+        //   this.modelListInGraph,
+        //   this.modelInputInGraph,
+        //   this.modelLinkInGraph,
+        //   this.modelOutputInGraph,
+        //   this.linkEdgeList,
+        //   'taskInstance'
+        // ),
+        authority: 'public',
+        taskInfo: taskInfo,
+        taskContent: this.changeXML(),
         status: 0,
-        tid: tid
+        tid: tid,
       };
       let data = await saveIntegrateTaskInstance(postJson);
-      this.instanceList.push(data);
+      console.log(data);
+      // this.currentTaskInstance = data;
+      this.allMyTaskList.splice(0, 0, data);
+      if (this.myTaskList.length == this.instancePageFilter.pageSize) {
+        this.myTaskList.pop();
+      }
+      this.myTaskList.splice(0, 0, data);
     },
 
-    async updateTaskInstances() {
-      let postJson = {
-        action: generateAction(
-          this.currentTask.id,
-          this.modelListInGraph,
-          this.modelInputInGraph,
-          this.modelLinkInGraph,
-          this.modelOutputInGraph,
-          this.linkEdgeList,
-          'taskInstance'
-        ),
-        status: 1
-      };
-      // console.log(postJson, this.currentTaskInstance.id);
-      await updateIntegrateTaskInstanceById(this.currentTaskInstance.id, postJson);
-    }
+    instance(val) {
+      console.log(val);
+      this.allMyTaskList.forEach((instance) => {
+        if (instance.id == val.id) {
+          instance.status = val.status;
+        }
+      });
+    },
+
+    changeXML() {
+      let xml = this.graph.getGraphXml()
+      let x2js = new X2js()
+      let json = x2js.xml2js(xml)
+      json.mxGraphModel.root.mxCell.forEach(cell => {
+        if(cell._type == 'dataService') {
+          // console.log('dataService', cell)
+          cell._style = "fontColor=#f6f6f6;fillColor=#07689f;strokeColor=;shape=rectangle;strokeWidth=1.5;align=center;imageAlign=center;imageVerticalAlign=top"
+        } else if(cell._type == 'dataServiceOutput') {
+          // console.log('dataServiceOutput', cell)
+          cell._value = ''
+        }
+      })
+      return x2js.js2xml(json)
+    },
+
+    showInstanceStatus() {},
   },
 
-  async mounted() {
-    await initSetTimeOut();
-    // debugger;
-
+  mounted() {
     this.init();
-  }
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 .main {
-  width: 100%;
+  width: calc(100%);
   height: 100%;
   display: flex;
   position: relative;
@@ -517,7 +566,7 @@ export default {
     position: relative;
     // top: 0;
     // left: 300px;
-    width: calc(100%);
+    width: 85%;
     height: 100%;
     .modelbarTop {
       background: rgb(251, 251, 251);
@@ -561,35 +610,24 @@ export default {
   .rightBar {
     position: relative;
     right: 0;
-    width: 200px;
+    width: 15%;
     margin-left: 5px;
     padding: 0 5px;
     box-shadow: 0px 0px 5px rgb(207, 207, 207);
     background-color: rgba(243, 243, 243, 0.9);
-    .instances {
-      width: 100%;
-      .add_ins {
-        font-size: 30px;
-        margin-bottom: 10px;
-        text-align: center;
-        /deep/.el-card {
-          background-color: rgba($color: #ffffff, $alpha: 0.8);
+    .barBottom {
+      margin-top: 10px;
+      .instances {
+        width: 100%;
+
+        .card {
+          box-shadow: 0px 0px 5px 1px rgba(27, 94, 238, 0.2);
         }
       }
-      .add_ins:hover {
-        cursor: pointer;
+      .page {
+        position: absolute;
+        bottom: 0;
       }
-      .instance {
-        margin-bottom: 10px;
-        text-align: center;
-        /deep/.el-card {
-          background-color: rgba($color: #b87171, $alpha: 0.8);
-        }
-      }
-    }
-    .page {
-      position: absolute;
-      bottom: 0;
     }
   }
 
@@ -613,6 +651,23 @@ export default {
   .dialogs {
     /deep/ .el-dialog__body {
       padding: 20px;
+    }
+  }
+  .dataInfo {
+    .data {
+      font-size: 16px;
+      line-height: 30px;
+
+      .dataTitle {
+        clear: both;
+        font-weight: 600;
+        width: 150px;
+        float: left;
+      }
+      .dataDetail {
+        float: left;
+        // width: 700px;
+      }
     }
   }
 }

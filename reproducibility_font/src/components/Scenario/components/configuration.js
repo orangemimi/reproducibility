@@ -450,7 +450,7 @@ export function generateXml1(
         }
         if (item.dataResourceRelated.format == 'parameter') {
           DataProcessings.DataProcessing[index].Inputs.Parameter.push({
-            _id: item.nodeAttribute.eventId,
+            _id: item.id,
             _event: item.name,
             _value: item.dataResourceRelated.value,
             _type: "param",

@@ -33,9 +33,18 @@ public class UserServiceServie {
     public JSONObject register(AddUserDTO add) {
         String urlStr = "http://" + userServiceIp + "/userServer/user";
         RestTemplate restTemplate = new RestTemplate();
+        Map<String, Object> param = new HashMap<>();
+        param.put("email", add.getEmail());
+        param.put("password", add.getPassword());
+        param.put("name", add.getName());
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
+        headers.add("Content-Type", "application/json");
+        HttpEntity httpEntity = new HttpEntity(param, headers);
         try {
-            ResponseEntity<JSONObject> jsonObjectResponseEntity = restTemplate.postForEntity(urlStr, add, JSONObject.class);
-            return jsonObjectResponseEntity.getBody();
+//            ResponseEntity<JSONObject> jsonObjectResponseEntity = restTemplate.postForEntity(urlStr, add, JSONObject.class);
+            ResponseEntity<JSONObject> result = restTemplate.exchange(urlStr, HttpMethod.POST, httpEntity, JSONObject.class);
+            return result.getBody();
         }catch (Exception e) {
             System.out.println(e);
             System.out.println("用户数据库注册时出现错误");

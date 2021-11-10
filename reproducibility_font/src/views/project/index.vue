@@ -87,6 +87,7 @@ export default {
     },
 
     toRouterType(val) {
+      console.log(val)
       if (val != this.$router.currentRoute.name) {
         this.$router.push({
           name: val,

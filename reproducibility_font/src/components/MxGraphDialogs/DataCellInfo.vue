@@ -1,43 +1,34 @@
 <template>
   <div class="mainContain" v-if="currentEvent != null">
-    <el-tabs>
-      <el-tab-pane>
-        <template #label>
-          <i class="el-icon-s-order"></i>Data
-        </template>
-        <el-row class="dataInfo">
-          <div class="data">
-            <div class="dataTitle">State name:</div>
-            <div class="dataDetail" v-if="currentEvent.type == 'modelServiceInput' || currentEvent.type == 'modelServiceOutput'">{{ currentEvent.nodeAttribute.stateName }}</div>
-            <div v-else class="dataDetail">{{ currentEvent.name }}</div>
-          </div>
-          <div class="data">
-            <div class="dataTitle">State description:</div>
-            <div class="dataDetail" v-if="currentEvent.type == 'modelServiceInput' || currentEvent.type == 'modelServiceOutput'">{{ currentEvent.nodeAttribute.stateDescription }}</div>
-            <div v-else class="dataDetail">{{currentEvent.description}}</div>
-          </div>
+    <el-row class="dataInfo">
+      <div class="data">
+        <div class="dataTitle">State name:</div>
+        <div class="dataDetail" v-if="currentEvent.type == 'modelServiceInput' || currentEvent.type == 'modelServiceOutput'">
+          {{ currentEvent.nodeAttribute.stateName }}
+        </div>
+        <div v-else class="dataDetail">{{ currentEvent.name }}</div>
+      </div>
+      <div class="data">
+        <div class="dataTitle">State description:</div>
+        <div class="dataDetail" v-if="currentEvent.type == 'modelServiceInput' || currentEvent.type == 'modelServiceOutput'">
+          {{ currentEvent.nodeAttribute.stateDescription }}
+        </div>
+        <div v-else class="dataDetail">{{ currentEvent.description }}</div>
+      </div>
 
-          <div class="data" v-if="currentEvent.type == 'modelServiceInput' || currentEvent.type == 'modelServiceOutput'">
-            <div class="dataTitle">Event name:</div>
-            <div class="dataDetail">{{ currentEvent.nodeAttribute.eventName }}</div>
-          </div>
-          <div class="data" v-if="currentEvent.type != 'dataServiceOutput'">
-            <div class="dataTitle">Event description:</div>
-            <div class="dataDetail">{{ currentEvent.nodeAttribute.eventDescription }}</div>
-          </div>
-          <div class="data">
-            <div class="dataTitle">Event type:</div>
-            <div class="dataDetail">{{ currentEvent.nodeAttribute.type }}</div>
-          </div>
-        </el-row>
-      </el-tab-pane>
-      <el-tab-pane>
-        <template #label>
-          <i class="el-icon-s-platform"></i>View
-        </template>
-        123
-      </el-tab-pane>
-    </el-tabs>
+      <div class="data" v-if="currentEvent.type == 'modelServiceInput' || currentEvent.type == 'modelServiceOutput'">
+        <div class="dataTitle">Event name:</div>
+        <div class="dataDetail">{{ currentEvent.nodeAttribute.eventName }}</div>
+      </div>
+      <div class="data" v-if="currentEvent.type != 'dataServiceOutput'">
+        <div class="dataTitle">Event description:</div>
+        <div class="dataDetail">{{ currentEvent.nodeAttribute.eventDescription }}</div>
+      </div>
+      <div class="data">
+        <div class="dataTitle">Event type:</div>
+        <div class="dataDetail">{{ currentEvent.nodeAttribute.type }}</div>
+      </div>
+    </el-row>
 
     <el-row>
       <el-divider class="eventDivider"></el-divider>
@@ -48,36 +39,13 @@
           <el-button>DownLoad</el-button>
         </div>
         <div v-else>Please run this task to get the output!</div>
-        <el-switch v-model="value1.upload" active-text="Upload" inactive-text="Don't upload" @change="changeSwitch"></el-switch>
+        <el-switch v-model="upload" active-text="Upload" inactive-text="Don't upload" @change="changeSwitch"></el-switch>
       </div>
       <div v-else-if="currentEvent.type == 'modelServiceLink'">Link to the output</div>
       <div v-else-if="currentEvent.type == 'modelServiceInput'">
         <div v-if="currentEvent.nodeAttribute.datasetItem != undefined && currentEvent.nodeAttribute.datasetItem.type == `internal`" class="uploadContent">
           <vue-scroll style="height: 100%" :ops="ops">
             <div v-if="currentEvent.isParameter">
-              <!-- <el-table border :data="filterEvent[0].UdxNode" size="mini" class="table" style="width: 100%">
-                <el-table-column type="expand" width="20">
-                  <template slot-scope="props">
-                    <el-form label-position="top" inline class="table-expand" size="mini">
-                      <el-form-item label="Parameter">
-                        <span>{{ props.row.name }}</span>
-                      </el-form-item>
-                      <el-form-item label="Type">
-                        <span>{{ props.row.type }}</span>
-                      </el-form-item>
-                      <el-form-item label="Description">
-                        <span>{{ props.row.description }}</span>
-                      </el-form-item>
-                    </el-form>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="name" label="Parameter" width="120"></el-table-column>
-                <el-table-column label="Value" width="140">
-                  <template slot-scope="scope">
-                    <el-input v-model="scope.row.value"></el-input>
-                  </template>
-                </el-table-column>
-              </el-table> -->
               <el-select
                 v-if="role == 'builder'"
                 v-model="selectDataItem.name"
@@ -130,7 +98,7 @@
       <div v-else-if="currentEvent.type == 'dataServiceInput'">
         <el-select
           v-if="role == 'builder'"
-          v-model="selectDataId"
+          v-model="selectDataName"
           placeholder="Please select data"
           class="uploadContent"
           @change="changeSelectResource"
@@ -140,7 +108,7 @@
         </el-select>
         <el-select
           v-if="role == 'builder'"
-          v-model="selectDataId"
+          v-model="selectDataName"
           placeholder="Please select data"
           class="uploadContent"
           @change="changeSelectResource"
@@ -171,46 +139,37 @@ export default {
       type: Object,
     },
   },
-  watch: {
-    cell: {
-      // immediate: true,
-      handler(val, oldVal) {
-        if (val != '' && val != oldVal) {
-          console.log(val);
-          this.currentEvent = val;
-          this.selectDataId = '';
-          this.selectDataItem = {};
-          this.$set(this.value1, 'upload', val.upload);
-          //this.init();
-          if (hasProperty(val, 'dataResourceRelated')) {
-            this.selectDataId = this.currentEvent.dataResourceRelated.dataSelectId;
-            this.selectDataItem = this.currentEvent.dataResourceRelated;
-          }
-          // this.init();
-        }
-      },
-      deep: true,
-      immediate: true,
-    },
-  },
+  // watch: {
+  //   cell: {
+  //     // immediate: true,
+  //     handler(val, oldVal) {
+  //       if (val != '' && val != oldVal) {
+  //         console.log(val);
+  //         this.currentEvent = val;
+  //         this.selectDataName = '';
+  //         this.selectDataItem = {};
+  //         // this.$set(this.value1, 'upload', val.upload);
+
+  //         if (val.upload) {
+  //           this.upload = true;
+  //         } else {
+  //           this.upload = false;
+  //         }
+
+  //         //this.init();
+  //         if (hasProperty(val, 'dataResourceRelated')) {
+  //           this.selectDataName = this.currentEvent.dataResourceRelated.dataSelectId;
+  //           this.selectDataItem = this.currentEvent.dataResourceRelated;
+  //         }
+  //         // this.init();
+  //       }
+  //     },
+  //     deep: true,
+  //     immediate: true,
+  //   },
+  // },
 
   computed: {
-    filterEvent() {
-      let datasetItem = this.currentEvent.nodeAttribute.datasetItem;
-      if (Object.prototype.hasOwnProperty.call(datasetItem, 'UdxDeclaration')) {
-        console.log(datasetItem.UdxDeclaration[0].UdxNode);
-        return datasetItem.UdxDeclaration[0].UdxNode;
-        // if (datasetItem.UdxDeclaration[0].UdxNode != '') {
-        //   return false;
-        // } else {
-        //   let udxNode = datasetItem.UdxDeclaration[0].UdxNode;
-
-        //   return udxNode;
-        // }
-      } else {
-        return false;
-      }
-    },
     ...mapState({
       role: (state) => state.permission.role,
     }),
@@ -218,7 +177,7 @@ export default {
 
   data() {
     return {
-      value1: {},
+      upload: false,
 
       currentEvent: { nodeAttribute: '' },
       dataItemList: [],
@@ -232,14 +191,14 @@ export default {
           keepShow: true,
         },
       },
-      selectDataId: '',
+      selectDataName: '',
       selectDataItem: {},
     };
   },
 
   methods: {
     changeSwitch() {
-      this.$emit('isUpload', this.value1.upload);
+      this.$emit('isUpload', this.upload);
     },
     async init() {
       await this.getResources();
@@ -259,20 +218,35 @@ export default {
     },
 
     async changeSelectResource(id) {
+      console.log(id)
       let dataSelect = this.dataItemList.find((e) => e.id == id);
-      this.selectDataId = dataSelect.name;
+      this.selectDataName = dataSelect.name;
       dataSelect.id = id + this.cell.id;
       dataSelect.dataSelectId = id;
       this.selectDataItem = dataSelect;
-      // console.log(dataSelect)
+      console.log(dataSelect)
       // this.currentEvent.dataResourceRelated = { name: dataSelect.name, value: dataSelect.value, id: dataSelect.id };
 
       this.currentEvent.dataResourceRelated = dataSelect;
-      // this.selectDataId = this.selectDataItem.fileName;
       this.$forceUpdate();
     },
   },
   mounted() {
+    console.log(this.cell);
+    this.currentEvent = this.cell;
+    this.selectDataName = '';
+    this.selectDataItem = {};
+
+    if (this.cell.upload) {
+      this.upload = true;
+    } else {
+      this.upload = false;
+    }
+
+    if (hasProperty(this.cell, 'dataResourceRelated')) {
+      this.selectDataName = this.currentEvent.dataResourceRelated.name;
+      this.selectDataItem = this.currentEvent.dataResourceRelated;
+    }
     this.init();
   },
 };

@@ -4,11 +4,14 @@
     <el-card :class="instanceItem.status == 1 ? 'successCard' : 'runningCard'" shadow="hover">
       <div class="task_name">
         {{ instanceItem.name }}
-        <div v-if="!isStar" class="task_star" @click="changeStar">
+        <div v-if="!(taskItem.selectInstanceId.indexOf(instanceItem.id) > -1) && role == 'builder'" class="task_star" @click="changeStar">
           <i class="el-icon-star-off" />
         </div>
-        <div v-else class="task_star" @click="changeStar">
+        <div v-else-if="role == 'builder'" class="task_star" @click="changeStar">
           <i class="el-icon-star-on" />
+        </div>
+        <div v-if="role == 'reproductioner-builder'">
+          <i class="iconfont icon-icon-test1"></i>
         </div>
       </div>
       <div class="task_createTime">
@@ -16,113 +19,100 @@
         {{ instanceItem.createTime }}
       </div>
 
-      <div class="task_view" @click="showInstanceStatus">
-        View
-      </div>
+      <div class="task_view" @click="clickView" v-if="role == 'builder' || role == 'reproductioner-builder'">View</div>
       <div></div>
     </el-card>
+
+    <el-drawer :title="instanceItem.name" :visible.sync="drawer" :direction="direction" destroy-on-close size="50%" v-if="role == 'builder' || role == 'reproductioner-builder'">
+      <instance-graph :instanceId="instanceItem.id"/>
+    </el-drawer>
   </div>
 </template>
 
 <script>
-import { updateIntegrateTaskInstance, updatePerformanceById } from '@/api/request';
+import { updateIntegrateTaskInstance, updatePerformanceById, checkTaskStatus } from '@/api/request';
+import instanceGraph from './components/InstanceGraph.vue';
+
 export default {
   props: {
     instanceItem: {
-      type: Object
+      type: Object,
     },
     taskItem: {
-      type: Object
-    }
-  },
-
-  watch:{
-    taskItem:{
-      handler(val) {
-        if(val.selectInstanceId == this.instanceItem.id) {
-          this.isStar = true
-        } else {
-          this.isStar = false
-        }
-      },
-      deep: true,
-      immediate: true
+      type: Object,
     },
-    instanceItem: {
-      handler(val) {
-        if(val.id == this.taskItem.selectInstanceId) {
-          this.isStar = true
-        } else {
-          this.isStar = false
-        }
-      },
-      deep: true,
-      immediate: true
+    role: {
+      type: String
     }
   },
+  components: { instanceGraph },
 
-  computed: {},
 
   data() {
     return {
       instance: this.instanceItem,
-      isStar: false,
       currentTask: this.taskItem,
-      projectId: this.$route.params.id
+      projectId: this.$route.params.id,
+      direction: 'rtl',
+      drawer: false,
     };
   },
 
+
   methods: {
-    init() {
-      this.isStar = false;
-      if (this.instanceItem.id == this.taskItem.selectInstanceId) {
-        this.isStar = true;
+
+    async clickView() {
+      
+      if (this.instanceItem.status != 1) {
+        let data = await checkTaskStatus(this.instanceItem.tid);
+        this.$emit("instance", data)
       }
-    },
-    showInstanceStatus() {
-      this.$emit('showInstanceStatus', this.instance);
+      this.drawer = true;
+      
     },
 
     async changeStar() {
-      //[0]instance id [1]isStar
-      let isStar = this.isStar;
+      let isStar = this.taskItem.selectInstanceId.indexOf(this.instanceItem.id) > -1;
       if (!isStar) {
-        await updateIntegrateTaskInstance(this.taskItem.id, this.instanceItem.id);
+        let form = {
+          id: this.taskItem.id,
+          instanceId: this.instanceItem.id,
+          type: 'star'
+        }
+        await updateIntegrateTaskInstance(form);
         await this.updatePerformance();
-        this.$emit('changeSelectInstanceId', this.instanceItem.id)
+        this.$emit('changeSelectInstanceId', {id: this.instanceItem.id, type: 'add'});
       }
       if (isStar) {
-        console.log('1111');
-        await updateIntegrateTaskInstance(this.taskItem.id, null);
-        this.$emit('changeSelectInstanceId', null)
+        let form = {
+          id: this.taskItem.id,
+          instanceId: this.instanceItem.id,
+          type: 'unstar'
+        }
+        await updateIntegrateTaskInstance(form);
+        this.$emit('changeSelectInstanceId', {id: this.instanceItem.id, type: 'remove'});
       }
-      // this.isStar = !this.isStar;
     },
     async updatePerformance() {
       let content = { content: 'Simulation Scenario', degree: '100%', type: 'success', icon: 'el-icon-sunny' };
-
       await updatePerformanceById('scenario', this.projectId, content);
-    }
+    },
   },
-
   mounted() {
-    this.init();
-    // console.log(this.instance)
-    // console.log(this.currentTask)
   }
+
 };
 </script>
 <style lang="scss" scoped>
 .main {
-  height: 80px;
+  // min-height: 100px;
   width: 100%;
   margin-bottom: 15px;
   text-align: center;
-  // padding-right: 50px;
   /deep/ .el-card {
-    // padding: 5px;
     width: 100%;
-    height: 100%;
+    // height: 100%;
+    min-height: 98px;
   }
   /deep/ .el-card__body {
     padding: 10px 5px;
@@ -170,5 +160,9 @@ export default {
   .task_view:hover {
     cursor: pointer;
   }
+  /deep/ .rtl {
+    width: 50%;
+  }
 }
+
 </style>

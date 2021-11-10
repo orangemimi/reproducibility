@@ -66,17 +66,18 @@ export default {
     },
   },
   components: { selectCard },
-  watch: {
-    cell: {
-      handler(val) {
-        if (hasProperty(val, 'id') && val.type == 'dataService') {
-          this.init();
-        }
-      },
-      deep: true,
-      immediate: true
-    }
-  },
+  // watch: {
+  //   cell: {
+  //     handler(val) {
+  //       console.log(2)
+  //       if (hasProperty(val, 'id') && val.type == 'dataService') {
+  //         this.init();
+  //       }
+  //     },
+  //     deep: true,
+  //     immediate: true
+  //   }
+  // },
 
   computed: {},
   data() {
@@ -163,6 +164,8 @@ export default {
     // if (this.cell != undefined) {
     //   this.init();
     // }
+    console.log(1)
+    this.init();
   },
 };
 </script>

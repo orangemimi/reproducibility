@@ -142,7 +142,7 @@ export default {
   },
 
   mounted() {
-    this.findData("uGi4gMg94+ux4nuugF0M9tlqpCtZFRqem1kl/J2Vra8=")
+    // this.findData("uGi4gMg94+ux4nuugF0M9tlqpCtZFRqem1kl/J2Vra8=")
   },
 };
 </script>

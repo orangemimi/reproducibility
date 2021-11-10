@@ -88,7 +88,6 @@ export default {
       await this.getProjectInfo();
       await this.getPerformance();
       // await this.judgeRole(this.projectInfo);
-      console.log(this.completion)
     },
 
     async getProjectInfo() {
