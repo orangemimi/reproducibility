@@ -60,40 +60,40 @@ export default {
 
   //state用来跟踪状态
   data() {
-    return { recipientNoticeList: [], senderNoticeList: [], userInfo: {}, index: "1" };
+    return { recipientNoticeList: [], senderNoticeList: [], userInfo: {}, index: '1' };
   },
 
   methods: {
     async init() {
       await this.getUserInfo();
-      switch(this.$router.currentRoute.name) {
+      switch (this.$router.currentRoute.name) {
         case 'UserHome': {
-          this.index = '1'
-          break
+          this.index = '1';
+          break;
         }
         case 'UserResource': {
-          this.index = '2'
-          break
+          this.index = '2';
+          break;
         }
         case 'UserProject': {
-          this.index = '3'
-          break
+          this.index = '3';
+          break;
         }
         case 'UserModel': {
-          this.index = '4'
-          break
+          this.index = '4';
+          break;
         }
         case 'UserDataService': {
-          this.index = '5'
-          break
+          this.index = '5';
+          break;
         }
         case 'UserAccount': {
-          this.index = '6'
-          break
+          this.index = '6';
+          break;
         }
         case 'UserMessage': {
-          this.index = '7'
-          break
+          this.index = '7';
+          break;
         }
       }
     },
@@ -171,7 +171,6 @@ export default {
 
   mounted() {
     this.init();
-    
   },
 };
 </script>

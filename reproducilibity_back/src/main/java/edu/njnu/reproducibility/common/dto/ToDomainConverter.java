@@ -48,7 +48,7 @@ public interface ToDomainConverter<DOMAIN> {
     default void invokeMethodByAnnotation(DOMAIN domain, String annotationType)  {
         Class<?> domainClass = domain.getClass();
         //只有继承BaseEntity的类才会执行
-        if(BaseEntity.class.isAssignableFrom(domainClass)){
+        if(BaseEntity.class.isAssignableFrom(domainClass)){         //isAssignableFrom方法用来判断BaseEntity是否是domainClass类的父类，超接口，或者是相同的类型。是则返回true，否则返回false。
             try {
                 Class<? extends Annotation> annotationCls = (Class<? extends Annotation>) Class.forName(annotationType);
                 Method[] methods= ReflectUtil.getMethods(domainClass, el-> el.getAnnotation(annotationCls)!=null);

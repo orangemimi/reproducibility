@@ -31,7 +31,7 @@
           </div>
           <div class="page">
             <el-pagination
-              @current-change="handleCurrentChange"
+              @current-change="handleCurrentChange($event, 'Task')"
               :current-page.sync="instancePageFilter.page"
               :page-size="instancePageFilter.pageSize"
               background
@@ -45,13 +45,13 @@
           <div class="instances">
             <el-row v-if="myTaskList != [] && currentTask != null">
               <div v-for="(item, index) in myTaskList" :key="index" class="card">
-                <instance-card :instanceItem="item" :taskItem="currentTask" :role="'reproductioner-builder'" @showInstanceStatus="showInstanceStatus" @instance="instance"></instance-card>
+                <instance-card :instanceItem="item" :taskItem="currentTask" :role="'reproductioner-builder'" @showInstanceStatus="showInstanceStatus" @instance="instance" @authority="authority($event, index)"></instance-card>
               </div>
             </el-row>
           </div>
           <div class="page">
             <el-pagination
-              @current-change="handleCurrentChange"
+              @current-change="handleCurrentChange($event, 'Mytasks')"
               :current-page.sync="instancePageFilter.myTaskPage"
               :page-size="instancePageFilter.pageSize"
               background
@@ -293,8 +293,23 @@ export default {
   },
 
   methods: {
-    handleCurrentChange(val) {
-      console.log(val);
+    handleCurrentChange(val, type) {
+      if(type == 'Mytasks') {
+        let index = 0
+        this.myTaskList = []
+        while(index < this.instancePageFilter.pageSize && (val - 1) * this.instancePageFilter.pageSize + index < this.allMyTaskList.length) {
+          this.myTaskList.push(this.allMyTaskList[(val - 1) * this.instancePageFilter.pageSize + index])
+          index++
+        }
+      }
+      if(type == 'Tasks') {
+        let index = 0
+        this.instanceList = []
+        while(index < this.instancePageFilter.pageSize && (val - 1) * this.instancePageFilter.pageSize + index < this.selectedInstances.length) {
+          this.instanceList.push(this.selectedInstances[(val - 1) * this.instancePageFilter.pageSize + index])
+          index++
+        }
+      }
     },
 
     //初始化mxgraph
@@ -544,6 +559,17 @@ export default {
         }
       })
       return x2js.js2xml(json)
+    },
+
+    authority(val, index) {
+      console.log(val)
+      console.log(index)
+      this.allMyTaskList.forEach(task => {
+        if(task.id == val.id) {
+          task.authority = val.authority
+        }
+      })
+      this.myTaskList[index].authority = val.authority
     },
 
     showInstanceStatus() {},

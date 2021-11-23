@@ -61,7 +61,7 @@ export default {
         this.isInfoActive = this.isConstructionActive = this.isSettingsActive = this.isCommunityActive = false;
       } else if (type == 'Community') {
         this.isCommunityActive = true;
-        this.isInfoActive = this.isReproductionActive = this.isSettingsActive = this.isContributorActive = false;
+        this.isInfoActive = this.isConstructionActive = this.isSettingsActive = this.isContributorActive = false;
       } else {
         this.isSettingsActive = true;
         this.isInfoActive = this.isConstructionActive = this.isContributorActive = this.isCommunityActive = false;

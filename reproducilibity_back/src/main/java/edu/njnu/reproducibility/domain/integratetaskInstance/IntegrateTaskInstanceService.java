@@ -1,6 +1,8 @@
 package edu.njnu.reproducibility.domain.integratetaskInstance;
 
 import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONObject;
+import com.alibaba.fastjson.JSON;
 import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.domain.integratetask.IntegrateTask;
 import edu.njnu.reproducibility.domain.integratetask.IntegrateTaskRepository;
@@ -11,15 +13,14 @@ import edu.njnu.reproducibility.domain.integratetaskInstance.support.TaskInfo;
 import edu.njnu.reproducibility.domain.scenario.Scenario;
 import edu.njnu.reproducibility.domain.scenario.ScenarioRepository;
 import edu.njnu.reproducibility.domain.scenario.ScenarioService;
+import edu.njnu.reproducibility.domain.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @Author ：Zhiyi
@@ -37,6 +38,9 @@ public class IntegrateTaskInstanceService {
 
     @Autowired
     IntegrateTaskRepository integrateTaskRepository;
+
+    @Autowired
+    UserService userService;
 
 
     public IntegrateTaskInstance getById(String id) {
@@ -120,11 +124,27 @@ public class IntegrateTaskInstanceService {
         return instances;
     }
 
-    public List<IntegrateTaskInstance> getAllInstancesOfReproductionByProjectId(String projectId) {
+    public Map<String, List<com.alibaba.fastjson.JSONObject>> getAllInstancesOfReproductionByProjectId(String projectId) {
         Scenario scenario = scenarioService.getScenario(projectId).orElseThrow(MyException::noObject);
         String userId = scenario.getUserId();
         String taskId = scenario.getSelectTaskId();
         List<IntegrateTaskInstance> allByTaskId = integrateTaskInstanceRepository.findAllByTaskId(taskId, userId);
-        return allByTaskId;
+        Map<String, List<com.alibaba.fastjson.JSONObject>> result = new HashMap<>();
+        List<com.alibaba.fastjson.JSONObject> pub = new ArrayList<>();
+        List<com.alibaba.fastjson.JSONObject> pri = new ArrayList<>();
+        for(IntegrateTaskInstance temp : allByTaskId) {
+            String json = com.alibaba.fastjson.JSONObject.toJSONString(temp);
+            com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(json);
+            Map<String, Object> userInfoByUserId = userService.getUserInfoByUserId(temp.getOperatorId());
+            jsonObject.put("userInfo", userInfoByUserId);
+            if(temp.getAuthority().equals("public")) {
+                pub.add(jsonObject);
+            } else {
+                pri.add(jsonObject);
+            }
+        }
+        result.put("public", pub);
+        result.put("private", pri);
+        return result;
     }
 }

@@ -93,6 +93,7 @@ export default {
     },
 
     async submitUpload({ file }) {
+      console.log(file)
       let form = new FormData();
       form.append('pictureFile', file);
       let fileName = await post(`${this.uploadPath}`, form);

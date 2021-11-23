@@ -1,15 +1,11 @@
 <template>
   <div class="main">
-    <div class="btnList" v-if="role == 'builder'">
+    <!-- <div class="btnList" v-if="role == 'builder'">
       <div class="btn">
-        <!-- <el-button size="mini" @click="uploadFileDialogShow = true">
-          <i class="el-icon-upload"></i>
-          Upload File
-        </el-button> -->
+
         <div class="btn"><el-button size="mini" @click="addData">Add Item</el-button></div>
       </div>
     </div>
-    <!-- {{ dataItemList }} -->
     <div class="row-style">
       <el-table
         ref="multipleTable"
@@ -51,15 +47,69 @@
               <el-button size="mini" @click="delDataItem(scope)">Del</el-button>
             </div>
             <div v-else>
-              <!-- <el-button size="mini" @click="bindResource(scope.row)">Bind</el-button> -->
+
               <el-button size="mini" @click="delDataItem(scope)">Del</el-button>
             </div>
           </template>
         </el-table-column>
       </el-table>
-    </div>
+    </div> -->
+    <el-table :data="tableData" style="width: 100%" max-height="380" :default-sort="{ prop: 'date', order: 'descending' }">
+      <el-table-column type="selection" width="55"></el-table-column>
+      <el-table-column label="Date" width="180" :sortable="true" prop="date">
+        <template #default="scope">
+          <i class="el-icon-time"></i>
+          <span style="margin-left: 10px">{{ scope.row.date }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Name" width="180" :sortable="true" prop="name">
+        <template #default="scope">
+          <span style="margin-left: 10px">{{ scope.row.name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Type" width="180" :sortable="true" prop="type">
+        <template #default="scope">
+          <div class="name-wrapper">
+            <el-tag size="medium">{{ scope.row.type }}</el-tag>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="Data Type" width="180" :sortable="true" prop="dataType">
+        <template #default="scope">
+          <div class="name-wrapper">
+            <el-tag size="medium">{{ scope.row.dataType }}</el-tag>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="Description" width="300" prop="description">
+        <template #default="scope">
+          <span style="margin-left: 10px">{{ scope.row.des }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column fixed="right">
+        <template #header>
+          <el-row>
+            <el-col :span="15">
+              <el-input size="mini" placeholder="输入关键字搜索" />
+            </el-col>
+            <el-col :span="2" :offset="1">
+              <el-button size="mini" class="el-icon-plus"></el-button>
+            </el-col>
+            <el-col :span="2" :offset="2">
+              <el-button size="mini" class="el-icon-delete"></el-button>
+            </el-col>
+          </el-row>
+          
+        </template>
+        <template #default="scope">
+          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          <el-button size="mini" class="el-icon-view"></el-button>
+          <el-button size="mini" class="el-icon-download"></el-button>
+        </template>
+      </el-table-column>
+    </el-table>
 
-    <!-- upload data -->
     <el-dialog title="Upload resource" :visible.sync="uploadDataDialogShow" width="40%" :close-on-click-modal="false" :append-to-body="true">
       <data-upload-info @uploadSuccess="uploadSuccess"></data-upload-info>
     </el-dialog>
@@ -80,7 +130,7 @@ import { getDataItemsByProjectId, updateDataItemById, saveFileItem, postDataCont
 import dataUploadInfo from './DataUploadInfo'; //dialogcontent
 import bindResource from './BindResource';
 import fileUpload from './FileUpload';
-import editResource from './EditResource.vue'
+// import editResource from './EditResource.vue';
 import { getUuid, getSuffix, renderSize, getTime } from '@/utils/utils';
 import { mapState } from 'vuex';
 
@@ -89,7 +139,7 @@ export default {
     dataUploadInfo,
     bindResource,
     fileUpload,
-    editResource
+    // editResource,
   },
 
   data() {
@@ -119,17 +169,75 @@ export default {
       expands: [],
       bindResourceDialogShow: false,
       uploadFileDialogShow: false,
-      selectItem: {}
+      selectItem: {},
+
+      tableData: [
+        {
+          date: '2016-05-02',
+          name: '王小虎',
+          des: '上海市普陀区金沙江路 1518 弄',
+          type: 'input',
+          dataType: 'FILE',
+        },
+        {
+          date: '2016-05-04',
+          name: '王小虎',
+          des: '上海市普陀区金沙江路 1517 弄',
+          type: 'input',
+          dataType: 'FILE',
+        },
+        {
+          date: '2016-05-01',
+          name: '王小虎',
+          des: '上海市普陀区金沙江路 1519 弄',
+          type: 'parameter',
+          dataType: 'INT',
+        },
+        {
+          date: '2016-05-03',
+          name: '王小虎',
+          des: '上海市普陀区金沙江路 1516 弄',
+          type: 'input',
+          dataType: 'FILE',
+        },
+        {
+          date: '2016-05-03',
+          name: '王小虎',
+          des: '上海市普陀区金沙江路 1516 弄',
+          type: 'input',
+          dataType: 'FILE',
+        },
+        {
+          date: '2016-05-03',
+          name: '王小虎',
+          des: '上海市普陀区金沙江路 1516 弄',
+          type: 'input',
+          dataType: 'FILE',
+        },
+        {
+          date: '2016-05-03',
+          name: '王小虎',
+          des: '上海市普陀区金沙江路 1516 弄',
+          type: 'input',
+          dataType: 'FILE',
+        },
+      ],
     };
   },
   computed: {
     ...mapState({
-      role: state => state.permission.role
-    })
+      role: (state) => state.permission.role,
+    }),
   },
 
   methods: {
     //add data dialog show
+    handleEdit(index, row) {
+      console.log(index, row);
+    },
+    handleDelete(index, row) {
+      console.log(index, row);
+    },
     addData() {
       this.uploadDataDialogShow = true;
     },
@@ -137,15 +245,15 @@ export default {
     uploadSuccess(val) {
       if (val.flag) {
         this.uploadDataDialogShow = false;
-        this.dataItemList.push(val.data)
+        this.dataItemList.push(val.data);
       }
     },
 
     async delDataItem(scope) {
-      console.log(scope)
-      await deleteDataItemById(scope.row.id)
-      this.dataItemList.splice(scope.$index, 1)
-      this.dataItemList
+      console.log(scope);
+      await deleteDataItemById(scope.row.id);
+      this.dataItemList.splice(scope.$index, 1);
+      this.dataItemList;
     },
 
     downloadDataResource(data) {
@@ -181,7 +289,7 @@ export default {
     toggleSelection(rows) {
       if (rows) {
         this.$nextTick(() => {
-          rows.forEach(row => {
+          rows.forEach((row) => {
             this.$refs.multipleTable.toggleRowSelection(row);
           });
         });
@@ -200,16 +308,16 @@ export default {
     selectRow(selection, row) {
       let val = row;
       // this.multipleSelection.push(row);
-      if (selection.some(el => el == row)) {
+      if (selection.some((el) => el == row)) {
         if (val.folder && val.children.length != 0 && val.children != null) {
-          val.children.forEach(child => {
+          val.children.forEach((child) => {
             this.multipleSelection.push(child);
           });
         }
       } else {
         if (val.folder && val.children.length != 0 && val.children != null) {
-          val.children.forEach(child => {
-            this.multipleSelection.splice(item => item.id == child.id);
+          val.children.forEach((child) => {
+            this.multipleSelection.splice((item) => item.id == child.id);
           });
         }
       }
@@ -294,7 +402,7 @@ export default {
         userUpload: true,
         children: [],
         parent: '',
-        folder: false
+        folder: false,
       };
 
       await this.saveProjectResource(form);
@@ -330,12 +438,12 @@ export default {
 
     bindResource(selectItem) {
       this.bindResourceDialogShow = true;
-      this.selectItem = this.dataItemList.find(item => item.id == selectItem.id);
+      this.selectItem = this.dataItemList.find((item) => item.id == selectItem.id);
       // console.log(item);
     },
 
     async returnResourceUrl(value) {
-      console.log(value)
+      console.log(value);
       this.selectItem.value = value.url;
       if (value[1] != '') {
         this.selectItem.token = value.token;
@@ -343,7 +451,7 @@ export default {
       // let json ={value:value}
       let data = await updateDataItemById(this.selectItem.id, this.selectItem);
       console.log('updateData', data);
-    }
+    },
   },
   async mounted() {
     if (this.role == 'builder') {
@@ -352,7 +460,7 @@ export default {
     if (this.role == 'rebuilder_operator') {
       await this.getDataAsOperator();
     }
-  }
+  },
 };
 </script>
 

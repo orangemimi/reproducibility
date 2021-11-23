@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author Zhiyi
@@ -41,9 +42,10 @@ public class FileItem extends BaseEntity {
 //    Boolean hasChildren;
     //存储父资源的 uuid
     String parent;
+    String storey;
     ArrayList<FileItem> children;
 
-
+    List<String> son;
 
 
 }

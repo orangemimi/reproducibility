@@ -1,69 +1,87 @@
 <template>
   <div class="main">
-    <vue-scroll style="height: calc(42vh)" :ops="ops">
-      <el-form ref="contextForm" :model="contextForm" @submit.native.prevent size="mini" label="top" style="margin: 0 10  px">
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="Theme">
-              <el-input v-if="tagInputVisible" v-model="themeTag" ref="tagInput" @keyup.enter.native="addTags" @blur="addTags" style="width: 300px"></el-input>
-              <el-button v-else @click="showTagInput" type="text" size="small">+ New Tag</el-button>
-              <div v-if="contextForm != null">
-                <el-tag
-                  :key="tagIndex"
-                  v-for="(tag, tagIndex) in contextForm.themes"
-                  closable
-                  :disable-transitions="false"
-                  @close="delTags(tagIndex)"
-                  style="margin: 0 2px"
-                >
-                  {{ tag }}
-                </el-tag>
-              </div>
-            </el-form-item>
-            <el-form-item label="Purpose">
-              <el-input v-model="contextForm.purpose" placeholder="Please enter the content." type="textarea" maxlength="550" show-word-limit></el-input>
-            </el-form-item>
-            <!-- <el-form-item label="Object">
-              <el-input v-model="contextForm.objects" placeholder="Please enter the content."></el-input>
-            </el-form-item> -->
-            <el-form-item label="Spatio scale">
-              <el-button @click="addSpatialInfodialogVisible = true" size="mini" class="spatioEdit" type="text">Edit</el-button>
-              <spatial-info-table :spatialInfoForm="spatialInfoForm"></spatial-info-table>
-            </el-form-item>
-          </el-col>
 
-          <el-col :span="12" style="margin-top: 50px">
-            <el-form-item label="Temporal scale">
-              <el-button @click="addTemporalInfodialogVisible = true" size="mini" class="temporalEdit" type="text">Edit</el-button>
-              <!-- {{ temporalInfoForm }} -->
-              <temporal-info-table :temporalInfoForm="temporalInfoForm"></temporal-info-table>
-            </el-form-item>
-            <!-- <el-form-item label="Method">
-              <el-input v-model="contextForm.methods" placeholder="Please enter the content."></el-input>
-            </el-form-item> -->
-            <el-form-item label="Discussion">
-              <el-input v-model="contextForm.discussion" placeholder="Please enter the content." type="textarea" maxlength="50" show-word-limit></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="submitContext">Submit</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-    </vue-scroll>
-
-    <el-dialog :visible.sync="addSpatialInfodialogVisible" width="40%" title="Add Spatial Info" class="spatialDialog">
-      <spatial-info-dialog :spatialInfo="spatialInfoForm" @getSpatialInfoReturn="getSpatialInfoReturn"></spatial-info-dialog>
-
-      <!-- <template #footer>
-        <span class="dialog-footer">
-          <el-button type="primary" @click="handleSpatialInfoClose" size="mini">Confirm</el-button>
+    <el-tabs type="border-card">
+      <el-tab-pane>
+        <el-dropdown split-button type="text" slot="label">
+          <i class="el-icon-document"></i>
+          Context
+          <el-dropdown-menu slot="dropdown" style="width: 150px">
+            <el-tree :data="data" :props="defaultProps" @node-click="handleClick"></el-tree>
+          </el-dropdown-menu>
+        </el-dropdown>
+        <div style="height: 320px">
+          <el-carousel type="card" height="300px" :autoplay="false">
+            <el-carousel-item>
+              <info-card />
+            </el-carousel-item>
+            <el-carousel-item>
+              <context-card :type="'description'" />
+            </el-carousel-item>
+            <el-carousel-item>
+              <context-card :type="'other'" />
+            </el-carousel-item>
+            <!-- <el-carousel-item v-for="item in 0" :key="item"></el-carousel-item> -->
+          </el-carousel>
+        </div>
+      </el-tab-pane>
+      <el-tab-pane>
+        <span slot="label">
+          <i class="iconfont icon-resource-manage"></i>
+          Resource
         </span>
-      </template> -->
+        <vue-scroll style="height: 320px" :ops="ops">
+          <div class="resource">
+            <resource-card :type="'plus'" />
+            <!-- :key="'info-'+ index"这种写法原因，这里写了两个for循环，尽管都加上了key值,然而又将key的值都写成index，会导致vue警告 -->
+            <resource-card :type="'input'" :resourceItem="item" v-for="(item, index) in resourceInfo.inputs" :key="'info-'+ index"/>
+            <resource-card :type="'parameter'" :resourceItem="item" v-for="(item, index) in resourceInfo.parameters" :key="'info1-'+ index"/>
+            <resource-card :type="'output'" :resourceItem="item" v-for="(item, index) in resourceInfo.outputs" :key="'info2-'+ index"/>
+          </div>
+        </vue-scroll>
+      </el-tab-pane>
+      <el-tab-pane>
+        <span slot="label">
+          <i class="iconfont icon-changjingguanli"></i>
+          Scenario
+        </span>
+        <vue-scroll style="height: 320px" :ops="ops">
+          <div class="scenario">
+            <scenario-card :type="'plus'" />
+            <scenario-card :type="'iconfont icon-text'" />
+            <scenario-card :type="'iconfont icon-picture'" />
+            <scenario-card :type="'iconfont icon-video'" />
+            <scenario-card :type="'iconfont icon-biaoge'" />
+            <scenario-card :type="'iconfont icon-map'" />
+            <scenario-card :type="'iconfont icon-flow-chart'" />
+          </div>
+        </vue-scroll>
+      </el-tab-pane>
+      <el-tab-pane>
+        <span slot="label">
+          <i class="iconfont icon-result"></i>
+          Result analysis
+        </span>
+        <vue-scroll style="height: 320px" :ops="ops"></vue-scroll>
+      </el-tab-pane>
+      <el-tab-pane>
+        <span slot="label">
+          <i class="iconfont icon-comparison-analysis"></i>
+          Comparision analysis
+        </span>
+        <vue-scroll style="height: 320px" :ops="ops"></vue-scroll>
+      </el-tab-pane>
+    </el-tabs>
+
+    <el-dialog :visible.sync="description" width="40%" class="descriptionDialog" title="Description">
+      <description />
     </el-dialog>
 
-    <el-dialog :visible.sync="addTemporalInfodialogVisible" width="40%" class="temporalDialog" title="Add Temporal Info">
-      <temporal-info-dialog :temporalInfo="temporalInfoForm" @getTemporalInfoReturn="getTemporalInfoReturn"></temporal-info-dialog>
+    <el-dialog :visible.sync="other" width="40%" class="otherDialog" title="Other">
+      <other />
+    </el-dialog>
+    <el-dialog :visible.sync="temporalInfo" width="40%" class="temporalInfoDialog" title="TemporalInfo" v-if="temporalInfo">
+      <temporal-info/>
     </el-dialog>
   </div>
 </template>
@@ -71,14 +89,19 @@
 <script>
 import { getContextByProjectId, updateContexByProjectId, saveRecord, updatePerformanceById } from '@/api/request';
 import { mapState } from 'vuex';
-import temporalInfoTable from '_com/ContextTable/TemporalInfoTable';
-import temporalInfoDialog from '_com/ContextTable/TemporalInfoDialog';
-import spatialInfoTable from '_com/ContextTable/SpatialInfoTable';
-import spatialInfoDialog from '_com/ContextTable/SpatialInfoDialog';
 import { hasProperty } from '@/utils/utils';
 
-// import timeExtentVertical from '_com/TimeExtent/TimeExtentVertical';
 
+import description from './components/description.vue';
+import other from './components/other.vue';
+import infoCard from './components/Cards/InfoCard.vue';
+import contextCard from './components/Cards/ContextCard.vue';
+import resourceCard from './components/Resource/ResourceCard.vue';
+import scenarioCard from './components/Scenario/ScenarioCard.vue';
+import temporalInfo from './components/temporalInfo.vue'
+// import spatialInfo from './components/spatialInfo.vue'
+
+import { getAllResource } from '@/api/request'
 export default {
   computed: {
     ...mapState({
@@ -88,13 +111,13 @@ export default {
     }),
   },
   components: {
-    temporalInfoTable,
-    spatialInfoTable,
-    temporalInfoDialog,
-    spatialInfoDialog,
-
-    // descriptionComp
-    // timeExtentVertical
+    infoCard,
+    description,
+    contextCard,
+    other,
+    resourceCard,
+    scenarioCard,
+    temporalInfo
   },
 
   data() {
@@ -158,7 +181,47 @@ export default {
           size: '6px',
           disable: false,
         },
+        scrollPanel: {
+          scrollingY: false,
+          scrollingX: true,
+        },
       },
+
+
+
+
+      defaultProps: {
+        children: 'children',
+        label: 'label',
+      },
+      data: [
+        {
+          label: 'Add',
+          children: [
+            {
+              label: 'Description',
+            },
+            {
+              label: 'TemporalInfo',
+            },
+            {
+              label: 'SpatialInfo',
+            },
+            {
+              label: 'Other',
+            },
+            {
+              label: 'Boundary',
+            },
+          ],
+        },
+      ],
+      description: false,
+      temporalInfo: false,
+      spatialInfo: false,
+      boundary: false,
+      other: false,
+      resourceInfo: {}
     };
   },
 
@@ -255,9 +318,41 @@ export default {
       // this.contextForm.temporalInfo = this.temporalInfoForm;
       this.addTemporalInfodialogVisible = false;
     },
+
+
+
+    init() {
+      this.getAllResource()
+    },
+    async getAllResource() {
+      let data = await getAllResource(this.projectId)
+      console.log(data)
+      this.resourceInfo = data
+
+    },
+    handleClick(val) {
+      if (val.label == 'Description') {
+        this.description = true;
+        this.temporalInfo = this.spatialInfo = this.boundary = this.other = false;
+      } else if (val.label == 'TemporalInfo') {
+        this.temporalInfo = true;
+        this.description = this.spatialInfo = this.boundary = this.other = false;
+      } else if (val.label == 'SpatialInfo') {
+        this.spatialInfo = true;
+        this.description = this.temporalInfo = this.boundary = this.other = false;
+      } else if (val.label == 'Boundary') {
+        this.boundary = true;
+        this.description = this.temporalInfo = this.spatialInfo = this.other = false;
+      } else if (val.label == 'Other') {
+        this.other = true;
+        this.temporalInfo = this.spatialInfo = this.boundary = this.description = false;
+      }
+    },
   },
+
   created() {
     this.getContext();
+    this.init()
   },
 };
 </script>
@@ -265,6 +360,29 @@ export default {
 .main {
   margin: 0 10px;
   height: 100%;
+
+  .context,
+  .resource,
+  .scenario {
+    height: 100%;
+    width: 100%;
+    display: flex;
+  }
+  .el-carousel__item {
+    color: #475669;
+    font-size: 14px;
+    margin: 0;
+    border-radius: 4px;
+  }
+
+  .el-carousel__item:nth-child(2n) {
+    background-color: #99a9bf;
+  }
+
+  .el-carousel__item:nth-child(2n + 1) {
+    background-color: #d3dce6;
+  }
+
   .spatioEdit {
     position: relative;
     left: 78%;
@@ -273,13 +391,7 @@ export default {
   .temporalEdit {
     position: relative;
     left: 75%;
+  }
 
-  }
-  /deep/ .el-form-item__label {
-    font-size: 15px;
-    font: italic 1em Georgia, serif;
-    margin-bottom: 5px;
-    // line-height: 20px;
-  }
 }
 </style>

@@ -1,9 +1,11 @@
 package edu.njnu.reproducibility.remote;
 
 import cn.hutool.json.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import edu.njnu.reproducibility.common.enums.ResultEnum;
 import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
@@ -62,9 +64,10 @@ public class DataContainerService {
     }
 
     public JSONObject upload(MultiValueMap<String, Object> form) {
-        String urlStr = "http://" + dataContainer + ":8082/data";
 //        String urlStr = "http://" + dataContainer + ":8082/dataNoneConfig";
+        String urlStr = "http://" + dataContainer + ":8082/data";
         RestTemplate restTemplate = new RestTemplate();
+
         ResponseEntity<JSONObject> jsonObjectResponseEntity = restTemplate.postForEntity(urlStr, form, JSONObject.class);
         if (!jsonObjectResponseEntity.getStatusCode().is2xxSuccessful()) {
             throw new MyException(ResultEnum.REMOTE_SERVICE_ERROR);

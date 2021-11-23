@@ -34,4 +34,5 @@ public class AddFileItemDTO implements ToDomainConverter<FileItem> {
 
     //存储父资源的 uuid
     String parent;
+    String storey;
 }

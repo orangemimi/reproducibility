@@ -19,4 +19,5 @@ public class UpdateIntegrateTaskInstanceDTO implements ToDomainConverter<Integra
 
     //模型运行所需的参数 以及
     Integer status; // 0代表未开始，-1代表运行失败，1代表运行成功, 2代表运行超时(不存在运行中状态，省略)
+    String authority;
 }

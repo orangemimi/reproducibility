@@ -9,4 +9,5 @@ import java.util.ArrayList;
 @Data
 public class UpdateFileItemDTO implements ToDomainConverter<FileItem> {
     ArrayList<FileItem> children;
+    String name;
 }

@@ -22,9 +22,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static edu.njnu.reproducibility.utils.Utils.filterUserInfo;
 import static edu.njnu.reproducibility.utils.Utils.filterUserInfoProjects;
@@ -299,6 +297,13 @@ public class UserService {
         JSONObject result = new JSONObject();
         result.put("localhost", user);
         result.put("remote", remoteUser);
+        return result;
+    }
+
+    public Map<String, Object> getUserInfoByUserId(String userId) {
+        User user = userRepository.findByUserId(userId).orElseThrow(MyException::noObject);
+        Map<String, Object> result = new HashMap<>();
+        result.put("name", user.getName());
         return result;
     }
 }

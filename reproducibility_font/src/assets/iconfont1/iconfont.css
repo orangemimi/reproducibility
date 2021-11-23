@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 2910523 */
-  src: url('iconfont.woff2?t=1636468020777') format('woff2'),
-       url('iconfont.woff?t=1636468020777') format('woff'),
-       url('iconfont.ttf?t=1636468020777') format('truetype');
+  src: url('iconfont.woff2?t=1637220445766') format('woff2'),
+       url('iconfont.woff?t=1637220445766') format('woff'),
+       url('iconfont.ttf?t=1637220445766') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,70 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-wenjianjia:before {
+  content: "\e80c";
+}
+
+.icon-save-fill:before {
+  content: "\e78b";
+}
+
+.icon-map:before {
+  content: "\e609";
+}
+
+.icon-biaoge:before {
+  content: "\e63e";
+}
+
+.icon-picture:before {
+  content: "\e657";
+}
+
+.icon-video:before {
+  content: "\e820";
+}
+
+.icon-text:before {
+  content: "\e680";
+}
+
+.icon-flow-chart:before {
+  content: "\e7ca";
+}
+
+.icon-comparison-analysis:before {
+  content: "\e637";
+}
+
+.icon-changjingguanli:before {
+  content: "\eb61";
+}
+
+.icon-result:before {
+  content: "\e625";
+}
+
+.icon-resource-manage:before {
+  content: "\e626";
+}
+
+.icon-good-fill-copy:before {
+  content: "\e7aa";
+}
+
+.icon-code:before {
+  content: "\e6f2";
+}
+
+.icon-good-fill:before {
+  content: "\e780";
+}
+
+.icon-comments-fill:before {
+  content: "\e7a9";
 }
 
 .icon-icon-test:before {

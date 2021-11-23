@@ -75,6 +75,10 @@ export async function getAllUserInfo(userId) {
   return await get(`/users/getAllInfo/${userId}`)
 }
 
+export async function getUserInfoByUserId(userId) {
+  return await get(`/users/getUserInfoByUserId/${userId}`)
+}
+
 //----------------------------------------------------projects-----------------------------------------
 
 //获取project的star数
@@ -215,7 +219,11 @@ export async function updateResource(projectId, form) {
   return data;
 }
 
-//-----------------------------------------------dataitems---------------------------------------------
+export async function upload(form) {
+  return await post(`/dataContainer/upload`, form)
+}
+
+//-----------------------------------------------fileItems---------------------------------------------
 
 export async function saveFileItem(form) {
   let data = await post(`/fileItems`, form);
@@ -238,6 +246,18 @@ export async function getFileItemsByJwtUserId() {
 
 export async function getFileItemByCreatorId(projectId) {
   return await get(`/fileItems/creator/${projectId}`);
+}
+
+export async function getFileItemByStoreyAndParent(storey, parent) {
+  return await get(`/fileItems/getFileItemByStoreyAndParent/${storey}/${parent}`)
+}
+
+export async function Rename(form) {
+  return await patch(`/fileItems/Rename`, form)
+}
+
+export async function addFileItem(form) {
+  return await post(`/fileItems/addFileItem`, form)
 }
 
 //-----------------------------------------------dataitems---------------------------------------------
@@ -372,6 +392,46 @@ export async function getSelectedInstancesByProjectId(projectId) {
 export async function getAllInstancesOfReproductionByProjectId(projectId) {
   return await get(`/integrateTaskInstances/getAllInstancesOfReproductionByProjectId/${projectId}`)
 }
+
+
+//-------------------------------------------Content--------------------------------------------------
+
+export async function addContent(content) {
+  return await post(`/Content/addContent`, content)
+}
+
+export async function addResourceCard(jsonData) {
+  return await patch(`/Content/addResourceCard`, jsonData)
+}
+
+export async function getAllResource(projectId) {
+  return await get(`/Content/getAllResource/${projectId}`)
+}
+
+export async function addPictureGroup(jsonData) {
+  return await post(`/Content/addPictureGroup`, jsonData)
+}
+
+export async function addTextGroup(jsonData) {
+  return await post(`/Content/addTextGroup`, jsonData)
+}
+
+export async function addFormGroup(jsonData) {
+  return await post(`/Content/addFormGroup`, jsonData)
+}
+
+
+
+//-------------------------------------------UserFile--------------------------------------------------
+export async function addUserFile(jsonData) {
+  return await post(`/UserFile/addUserFile`, jsonData)
+}
+
+export async function getUserFileByFidAndStorey(fid, storey) {
+  return await get(`/UserFile/getUserFileByFidAndStorey/${fid}/${storey}`)
+}
+
+
 //-------------------------------------------modelitems--------------------------------------------------
 
 export async function getAllModelItems(currentPage, pagesize) {

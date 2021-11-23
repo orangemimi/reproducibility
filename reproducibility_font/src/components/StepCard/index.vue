@@ -56,7 +56,7 @@ export default {
     typeMapping(type) {
       let vueType;
       switch (type) {
-        case 'Context Definition':
+        case 'Content Definition':
           {
             vueType = 'ContextContent';
           }

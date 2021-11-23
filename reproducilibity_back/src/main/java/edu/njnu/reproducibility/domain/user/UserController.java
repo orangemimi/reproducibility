@@ -107,4 +107,9 @@ public class UserController {
     public JsonResult getAllUserInfo(@PathVariable String userId) {
         return ResultUtils.success(userService.getUserInfoOfLocalhostAndRemote(userId));
     }
+
+    @RequestMapping(value = "/getUserInfoByUserId/{userId}", method = RequestMethod.GET)
+    public JsonResult getUserInfoByUserId(@PathVariable String userId) {
+        return ResultUtils.success(userService.getUserInfoByUserId(userId));
+    }
 }

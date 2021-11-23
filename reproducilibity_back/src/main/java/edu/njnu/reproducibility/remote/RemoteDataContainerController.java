@@ -20,14 +20,18 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import com.alibaba.fastjson.TypeReference;
+import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 
 /**
  * @Author ：Zhiyi
@@ -171,6 +175,20 @@ public class RemoteDataContainerController {
     @RequestMapping(value = "/dataService/getAllProcessing", method = RequestMethod.GET)
     public JsonResult findAllProcessing(@RequestParam("token") String token) {
         return ResultUtils.success(dataContainerService.findAllProcessing(token));
+    }
+
+    @RequestMapping(value = "/upload", method = RequestMethod.POST)
+    public JsonResult upload(@RequestParam("datafile") MultipartFile multipartFile, @RequestParam("name") String name) throws IOException {
+        MultiValueMap<String, Object> multiValueMap = new LinkedMultiValueMap<>();
+        String suffix="."+ FilenameUtils.getExtension(multipartFile.getOriginalFilename());
+        File temp = File.createTempFile("temp", suffix);
+        multipartFile.transferTo(temp);
+        FileSystemResource resource = new FileSystemResource(temp);
+        multiValueMap.add("datafile", resource);
+        multiValueMap.add("name", name);
+
+
+        return ResultUtils.success(dataContainerService.upload(multiValueMap));
     }
 
 }

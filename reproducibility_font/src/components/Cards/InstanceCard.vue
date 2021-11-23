@@ -10,8 +10,11 @@
         <div v-else-if="role == 'builder'" class="task_star" @click="changeStar">
           <i class="el-icon-star-on" />
         </div>
-        <div v-if="role == 'reproductioner-builder'">
+        <div v-if="role == 'reproductioner-builder' && instanceItem.authority == 'public'" @click="updateIntegrateTaskInstanceById(instanceItem.authority)">
           <i class="iconfont icon-icon-test1"></i>
+        </div>
+        <div v-else-if="role == 'reproductioner-builder' && instanceItem.authority != 'public'" @click="updateIntegrateTaskInstanceById(instanceItem.authority)">
+          <i class="iconfont icon-icon-test"></i>
         </div>
       </div>
       <div class="task_createTime">
@@ -30,7 +33,7 @@
 </template>
 
 <script>
-import { updateIntegrateTaskInstance, updatePerformanceById, checkTaskStatus } from '@/api/request';
+import { updateIntegrateTaskInstance, updatePerformanceById, checkTaskStatus, updateIntegrateTaskInstanceById } from '@/api/request';
 import instanceGraph from './components/InstanceGraph.vue';
 
 export default {
@@ -97,6 +100,17 @@ export default {
       let content = { content: 'Simulation Scenario', degree: '100%', type: 'success', icon: 'el-icon-sunny' };
       await updatePerformanceById('scenario', this.projectId, content);
     },
+
+    async updateIntegrateTaskInstanceById(authority) {
+      let json = {authority: ''}
+      if(authority == 'public') {
+        json.authority = 'private'
+      } else {
+        json.authority = 'public'
+      }
+      let data = await updateIntegrateTaskInstanceById(this.instanceItem.id, json)
+      this.$emit("authority", data)
+    }
   },
   mounted() {
   }

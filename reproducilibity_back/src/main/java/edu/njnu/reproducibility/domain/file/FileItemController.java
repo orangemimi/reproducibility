@@ -1,6 +1,7 @@
 package edu.njnu.reproducibility.domain.file;
 
 
+import com.alibaba.fastjson.JSONObject;
 import edu.njnu.reproducibility.annotation.JwtTokenParser;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
@@ -8,6 +9,11 @@ import edu.njnu.reproducibility.domain.file.dto.AddFileItemDTO;
 import edu.njnu.reproducibility.domain.file.dto.UpdateFileItemDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 /**
  * @Author Zhiyi
@@ -45,11 +51,33 @@ public class FileItemController {
 
     @RequestMapping(value = "",method = RequestMethod.POST)
     public JsonResult save(@RequestBody AddFileItemDTO add, @JwtTokenParser(key="userId") String userId){
-        return fileItemService.save(add,userId);
+        return ResultUtils.success(fileItemService.save(add, userId));
     }
 
     @RequestMapping(value = "/{id}",method = RequestMethod.DELETE)
     public void delete(@PathVariable("id") String id){
         fileItemService.del(id);
+    }
+
+    @RequestMapping(value = "/getFileItemByStoreyAndParent/{storey}/{parent}", method = RequestMethod.GET)
+    public JsonResult getFileItemByStoreyAndParent(@PathVariable String storey, @PathVariable String parent, @JwtTokenParser(key = "userId") String userId) {
+        return ResultUtils.success(fileItemService.getFileItemByStoreyAndParent(parent, storey, userId));
+    }
+
+    @RequestMapping(value = "/Rename", method = RequestMethod.PATCH)
+    public JsonResult Rename(@RequestBody JSONObject jsonObject) {
+        String id = jsonObject.getString("id");
+        String name = jsonObject.getString("name");
+        return ResultUtils.success(fileItemService.Rename(id, name));
+    }
+
+    @RequestMapping(value = "/addFileItem", method = RequestMethod.POST)
+    public JsonResult addFileItem(HttpServletRequest httpServletRequest, @JwtTokenParser(key = "userId") String userId) throws IOException {
+        MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) httpServletRequest;
+        MultipartFile multipartFile =  multipartHttpServletRequest.getFile("datafile");
+        String name = multipartHttpServletRequest.getParameter("name");
+        String parent = multipartHttpServletRequest.getParameter("parent");
+        String storey = multipartHttpServletRequest.getParameter("storey");
+        return ResultUtils.success(fileItemService.addFileItem(name, userId, multipartFile, parent, storey));
     }
 }

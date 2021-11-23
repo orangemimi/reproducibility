@@ -14,4 +14,9 @@ public interface FileItemRepository extends MongoRepository<FileItem,String> {
     Optional<FileItem> findById(String pid);
     List<FileItem> findAllByUploaderId(String id);
 //    Optional<List<DataItem>> findAllByStepBindId(String stepId);
+
+    List<FileItem> findAllByStoreyAndUploaderId(String storey, String uploaderId);
+    List<FileItem> findAllByStoreyAndParentAndUploaderId(String storey, String parent, String uploaderId);
+
+    FileItem findByStoreyAndUploaderIdAndId(String storey, String uploaderId, String id);
 }
