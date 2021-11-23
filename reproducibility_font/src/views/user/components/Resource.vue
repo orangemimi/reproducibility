@@ -91,7 +91,7 @@
     <menu-card v-if="flagMenu" :position="position" ref="menu" @menu="menu"></menu-card>
     <blank-menu-card v-if="flagBlank" :position="position" ref="blankMenu" @blankMenu="blankMenu"></blank-menu-card>
     <el-dialog title="Upload Data" :visible.sync="centerDialogVisible" width="30%" center v-if="centerDialogVisible">
-      <upload-card :stack="stack" @uploadData="uploadData"/>
+      <upload-card :stack="stack" @uploadData="uploadData" />
     </el-dialog>
   </div>
 </template>
@@ -101,7 +101,7 @@ import menuCard from './MenuCard.vue';
 import blankMenuCard from './BlankMenuCard.vue';
 import uploadCard from './UploadCard.vue';
 
-import { getFileItemByStoreyAndParent, saveFileItem, Rename } from '@/api/request';
+import { getFileItemByStoreyAndParent, saveFileItem, Rename, delFile, delFolder } from '@/api/request';
 import { dateFormat } from '@/utils/utils';
 export default {
   components: { menuCard, blankMenuCard, uploadCard },
@@ -117,7 +117,7 @@ export default {
       stack: ['-1'],
       arrayStack: [],
       oldName: '',
-      centerDialogVisible: false
+      centerDialogVisible: false,
     };
   },
   methods: {
@@ -264,9 +264,9 @@ export default {
         folder: val.folder,
         fileSize: val.fileSize,
         flag: false,
-        date: dateFormat(val.updateTime, 'yyyy/MM/dd hh:mm')
-      })
-      this.centerDialogVisible = false
+        date: dateFormat(val.updateTime, 'yyyy/MM/dd hh:mm'),
+      });
+      this.centerDialogVisible = false;
     },
 
     //空白栏菜单触发相应的方法事件
@@ -293,7 +293,7 @@ export default {
         this.$refs.input.select();
         this.oldName = data.name;
       } else if (val == 'new') {
-        this.centerDialogVisible = true
+        this.centerDialogVisible = true;
       }
     },
 
@@ -308,6 +308,19 @@ export default {
             this.$refs.input.select();
             this.oldName = item.name;
           }
+        });
+      } else if (val == 'delete') {
+        let temp = this.selectedItem;
+        if (this.selectedItem[0].folder == false) {
+          await delFile(this.stack.length - 1, temp[0].id, this.stack[this.stack.length - 1]);
+        } else {
+          await delFolder(this.stack.length - 1, temp[0].id, this.stack[this.stack.length - 1]);
+        }
+        this.tableData.forEach((item, index) => {
+          if (item.id == temp[0].id) {
+            this.tableData.splice(index, 1);
+          }
+          index++;
         });
       }
     },

@@ -80,4 +80,16 @@ public class FileItemController {
         String storey = multipartHttpServletRequest.getParameter("storey");
         return ResultUtils.success(fileItemService.addFileItem(name, userId, multipartFile, parent, storey));
     }
+
+    @RequestMapping(value = "/delFile/{storey}/{id}/{parent}", method = RequestMethod.DELETE)
+    public JsonResult delFile(@PathVariable String storey, @PathVariable String id, @PathVariable String parent) {
+        fileItemService.delFile(storey, id, parent);
+        return ResultUtils.success();
+    }
+
+    @RequestMapping(value = "/delFolder/{storey}/{id}/{parent}", method = RequestMethod.DELETE)
+    public JsonResult delFolder(@PathVariable String storey, @PathVariable String id, @PathVariable String parent) {
+        fileItemService.delFolder(storey, id, parent);
+        return ResultUtils.success();
+    }
 }

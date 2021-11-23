@@ -1,17 +1,17 @@
 <template>
   <div class="card" ref="card" :style="styleVar">
     <el-row>
-      <el-col class="row" :span="24"><span @click="clickHander('rename')">重命名</span></el-col>
-      <el-col class="row" :span="24"><span>查看</span></el-col>
-      <el-col class="row" :span="24"><span>排列方式</span></el-col>
+      <el-col class="row" :span="24"><div @click="clickHander('rename')"><span>重命名</span></div></el-col>
+      <el-col class="row" :span="24"><div><span>查看</span></div></el-col>
+      <el-col class="row" :span="24"><div><span>排列方式</span></div></el-col>
       <el-col style="margin-top: 10px"><el-divider class="divider"></el-divider></el-col>
-      <el-col class="row" :span="24"><span>分组依据</span></el-col>
-      <el-col class="row" :span="24"><span>刷新</span></el-col>
-      <el-col class="row" :span="24"><span>复制</span></el-col>
+      <el-col class="row" :span="24"><div><span>分组依据</span></div></el-col>
+      <el-col class="row" :span="24"><div><span>刷新</span></div></el-col>
+      <el-col class="row" :span="24"><div><span>复制</span></div></el-col>
       <el-col style="margin-top: 10px"><el-divider class="divider"></el-divider></el-col>
-      <el-col class="row" :span="24"><span>粘贴</span></el-col>
-      <el-col class="row" :span="24"><span>新建</span></el-col>
-      <el-col class="row" :span="24" style="margin-bottom: 10px"><span>属性</span></el-col>
+      <el-col class="row" :span="24"><div><span>粘贴</span></div></el-col>
+      <el-col class="row" :span="24"><div @click="clickHander('delete')"><span>删除</span></div></el-col>
+      <el-col class="row" :span="24" style="margin-bottom: 10px"><div><span>属性</span></div></el-col>
     </el-row>
   </div>
 </template>

@@ -215,4 +215,46 @@ public class FileItemService {
         return fileItem.getUpdateTime();
     }
 
+    //删除文件
+    public void delFile(String storey, String id, String parent) {
+        Date date = new Date();
+        this.updateTime = date;
+        fileItemRepository.deleteByStoreyAndId(storey, id);
+        String fstorey = String.valueOf(Integer.valueOf(storey) - 1);
+        FileItem fileItem = fileItemRepository.findByStoreyAndId(fstorey, parent);
+        if(fileItem == null) {
+            throw MyException.noObject();
+        }
+        fileItem.getSon().remove(id);
+        fileItem.setUpdateTime(this.updateTime);
+        fileItemRepository.save(fileItem);
+    }
+    //删除文件夹
+    public void delFolder(String storey, String id, String parent) {
+        this.updateTime = new Date();
+        String fstorey = String.valueOf(Integer.valueOf(storey) - 1);
+        if(!fstorey.equals("-1")) {
+            FileItem father = fileItemRepository.findByStoreyAndId(fstorey, parent);
+            if(father == null) {
+                throw MyException.noObject();
+            }
+            father.getSon().remove(id);
+            father.setUpdateTime(this.updateTime);
+            fileItemRepository.save(father);
+        }
+        List<String> que = new ArrayList<>();
+        que.add(id);
+        while(que.size() != 0) {
+            List<String> stringList = fileItemRepository.findById(que.get(0)).orElseThrow(MyException::noObject).getSon();
+            if(stringList != null) {
+                for(String str : stringList) {
+                    que.add(str);
+                }
+            }
+
+            fileItemRepository.deleteById(que.get(0));
+            que.remove(0);
+        }
+    }
 }
+

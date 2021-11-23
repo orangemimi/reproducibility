@@ -260,6 +260,14 @@ export async function addFileItem(form) {
   return await post(`/fileItems/addFileItem`, form)
 }
 
+export async function delFile(storey, id, parent) {
+  return await del(`/fileItems/delFile/${storey}/${id}/${parent}`)
+}
+
+export async function delFolder(storey, id, parent) {
+  return await del(`/fileItems/delFolder/${storey}/${id}/${parent}`)
+}
+
 //-----------------------------------------------dataitems---------------------------------------------
 
 export async function saveDataItem(form) {

@@ -19,4 +19,7 @@ public interface FileItemRepository extends MongoRepository<FileItem,String> {
     List<FileItem> findAllByStoreyAndParentAndUploaderId(String storey, String parent, String uploaderId);
 
     FileItem findByStoreyAndUploaderIdAndId(String storey, String uploaderId, String id);
+    FileItem findByStoreyAndId(String storey, String id);
+    void deleteByStoreyAndId(String storey, String Id);
+    void deleteAllByParent(String parent);
 }
