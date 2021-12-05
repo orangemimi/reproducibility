@@ -78,10 +78,15 @@
 
     <div class="rightBar">
       <div class="instances">
-
         <el-row>
           <div v-for="(item, index) in instanceList" :key="index">
-            <instance-card :instanceItem="item" :taskItem="currentTask" :role="'builder'" @instance="instance" @changeSelectInstanceId="changeSelectInstanceId"></instance-card>
+            <instance-card
+              :instanceItem="item"
+              :taskItem="currentTask"
+              :role="'builder'"
+              @instance="instance"
+              @changeSelectInstanceId="changeSelectInstanceId"
+            ></instance-card>
           </div>
         </el-row>
       </div>
@@ -427,7 +432,7 @@ export default {
     //初始化mxgraph
     async init() {
       //创建画布
-      
+
       this.currentTask = this.taskInfoInit;
 
       this.container = this.$refs.container;
@@ -435,8 +440,6 @@ export default {
 
       this.getScenario();
       this.graph.setPanning(true);
-      this.$refs.leftToolbar.init();
-      this.$refs.leftToolbar.listenGraphEvent();
 
       this.initUndoMng();
       this.getSelectionCells();
@@ -1119,8 +1122,8 @@ export default {
     },
 
     async getAllInstances() {
-      let data = await getAllInstances(this.currentTask.id)
-      this.allInstanceList = data
+      let data = await getAllInstances(this.currentTask.id);
+      this.allInstanceList = data;
     },
 
     //instance list
@@ -1145,10 +1148,10 @@ export default {
     },
 
     changeSelectInstanceId(val) {
-      if(val.type == 'add') {
-        this.currentTask.selectInstanceId.push(val.id)
-      } else if(val.type == 'remove') {
-        this.currentTask.selectInstanceId.splice(this.currentTask.selectInstanceId.indexOf(val.id), 1)
+      if (val.type == 'add') {
+        this.currentTask.selectInstanceId.push(val.id);
+      } else if (val.type == 'remove') {
+        this.currentTask.selectInstanceId.splice(this.currentTask.selectInstanceId.indexOf(val.id), 1);
       }
     },
     instance(val) {
@@ -1162,7 +1165,7 @@ export default {
   },
 
   mounted() {
-    this.init()
+    this.init();
   },
 };
 </script>

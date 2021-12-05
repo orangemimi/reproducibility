@@ -24,32 +24,37 @@ import ScenarioContent from '_com/Scenario/Scenario';
 // import ReScenarioContent from '_com/Scenario/reScenario';
 import ResourceContent from '_com/Resource/Resource';
 import ResultContent from '_com/Result/Result';
+import contentResource from '_com/Context/components/Resource/ContentResource.vue';
+import contentScenario from '_com/Context/components/Scenario/ContentScenario.vue';
+import contentContext from '_com/Context/components/Context/ContentContext.vue';
+
 // import AnalysisContent from "./AnalysisContent";
 export default {
   components: {
     ContextContent,
     ScenarioContent,
     ResourceContent,
-    // ReScenarioContent,
-    ResultContent
-    // AnalysisContent,
+    ResultContent,
+    contentResource,
+    contentScenario,
+    contentContext,
   },
   props: {
     cardInfo: {
-      type: Object
-    }
+      type: Object,
+    },
   },
   watch: {
     cardInfo: {
       handler(val) {
         this.info = val;
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   data() {
     return {
-      info: this.cardInfo
+      info: this.cardInfo,
     };
   },
   methods: {
@@ -81,10 +86,25 @@ export default {
             vueType = 'ResultContent';
           }
           break;
+        case 'Resource Definition':
+          {
+            vueType = 'contentResource';
+          }
+          break;
+        case 'Scenario Definition':
+          {
+            vueType = 'contentScenario';
+          }
+          break;
+        case 'Context Definition':
+          {
+            vueType = 'contentContext';
+          }
+          break;
       }
       return vueType;
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -95,7 +115,9 @@ export default {
   opacity: 1;
   height: 100%;
   width: 100%;
-  margin: 10px;
+  // margin: 10px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
 
   .top {
     background: $headerBackground;
@@ -103,6 +125,8 @@ export default {
     font-size: 16px;
     line-height: 30px;
     height: 30px;
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
     .title {
       margin-left: 10px;
       //   width: 200px;

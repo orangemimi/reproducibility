@@ -10,7 +10,7 @@ import enLocale from '../node_modules/element-ui/lib/locale/lang/en'; //英文
 
 import { errorHandler } from '@/lib/error';
 import mavonEditor from 'mavon-editor';
-import 'mavon-editor/dist/css/index.css';
+import 'mavon-editor/dist/css/index.css'
 
 import './assets/iconfont/iconfont.css';
 import './assets/iconfont1/iconfont.css'
@@ -23,6 +23,8 @@ import vueJsonEditor from 'vue-json-editor';
 import { codemirror } from 'vue-codemirror';
 import 'codemirror/lib/codemirror.css';
 
+
+
 // import Descriptions from '_com/Description/index.js';
 Vue.config.devtools = true;
 Vue.config.productionTip = false;
@@ -32,6 +34,7 @@ Vue.use(mavonEditor);
 Vue.use(vuescroll);
 // Vue.use(Highlight);
 Vue.use(codemirror);
+
 
 Vue.component('vue-json-editor', vueJsonEditor);
 // Vue.use(vueJsonEditor);

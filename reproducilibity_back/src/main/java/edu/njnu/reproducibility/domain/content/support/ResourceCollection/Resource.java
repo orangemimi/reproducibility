@@ -1,7 +1,9 @@
 package edu.njnu.reproducibility.domain.content.support.ResourceCollection;
 
 import edu.njnu.reproducibility.common.entity.BaseEntity;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -15,9 +17,12 @@ import java.util.List;
  * @Description:
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Resource {
-
     List<Input> inputs;
     List<Parameter> parameters;
     List<Output> outputs;
+    List<Model> models;
+    List<DataService> dataServices;
 }

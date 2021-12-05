@@ -9,7 +9,6 @@
       <el-switch v-model="switchValue" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
     </div>
     <div v-show="switchValue" class="card-contain">
-      
       <vue-scroll :ops="ops" style="height: 390px">
         <div v-for="(model, index) in publicModels" :key="index" ref="modelItemList">
           <div class="choose-model-contain">
@@ -51,18 +50,28 @@ export default {
         },
       },
 
-      publicModelFilter: { page: 0, pageSize: 8 },
+      publicModelFilter: { page: 1, pageSize: 8 },
       personalModelFilter: { page: 0, pageSize: 8 },
 
       switchValue: true,
     };
   },
 
+  watch: {
+    publicModels: {
+      handler: function() {
+        this.$nextTick(function () {
+          this.$emit('getModels', this.publicModels);
+        });
+      },
+      
+    },
+  },
+
   methods: {
     async getPublicModels() {
       let { content } = await getModelItemsByPrivacy('public', this.publicModelFilter.page, this.publicModelFilter.pageSize);
       this.$set(this, 'publicModels', content);
-      this.$emit('getModels', content);
     },
 
     async getPersonalModels() {

@@ -24,7 +24,9 @@
         <re-builder-menu v-else @toRouterType="toRouterType"></re-builder-menu>
       </div>
     </div>
-    <div class="page-content"><router-view class="scroll-item"></router-view></div>
+    <div class="page-content">
+      <router-view class="scroll-item"></router-view>
+    </div>
   </div>
 </template>
 
@@ -68,7 +70,6 @@ export default {
       await this.judgeRole(this.projectInfo);
     },
 
-
     async getProjectInfo() {
       // let data = await getProjectById(this.projectId);
 
@@ -87,7 +88,7 @@ export default {
     },
 
     toRouterType(val) {
-      console.log(val)
+      console.log(val);
       if (val != this.$router.currentRoute.name) {
         this.$router.push({
           name: val,

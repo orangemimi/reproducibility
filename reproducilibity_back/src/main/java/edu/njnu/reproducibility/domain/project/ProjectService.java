@@ -6,6 +6,12 @@ import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import com.google.common.collect.Lists;
 import edu.njnu.reproducibility.common.exception.MyException;
+import edu.njnu.reproducibility.domain.content.Content;
+import edu.njnu.reproducibility.domain.content.ContentRepository;
+import edu.njnu.reproducibility.domain.content.support.ContextCollection.Context;
+import edu.njnu.reproducibility.domain.content.support.ContextCollection.EssentialInformation;
+import edu.njnu.reproducibility.domain.content.support.ResourceCollection.Resource;
+import edu.njnu.reproducibility.domain.content.support.dto.AddContentDTO;
 import edu.njnu.reproducibility.domain.context.ContextDefinition;
 import edu.njnu.reproducibility.domain.context.ContextDefinitionService;
 import edu.njnu.reproducibility.domain.project.dto.AddProjectDTO;
@@ -47,6 +53,9 @@ public class ProjectService {
     @Autowired
     ContextDefinitionService contextDefinitionService;
 
+    @Autowired
+    ContentRepository contentRepository;
+
 
     public Project get(String projectId) {
         return projectRepository.findById(projectId).orElse(null);
@@ -64,6 +73,18 @@ public class ProjectService {
             projectList.add(get(projectId));
         }
         return projectList;
+    }
+    public JSONArray getProjectsCreatedByMe(String userId) {
+        JSONObject userProjectInfo = userService.getUserProjectInfo(userId);
+        List<String> createdProjects = (List<String>) userProjectInfo.get("createdProjects");
+        JSONArray jsonArray = new JSONArray();
+        for(String s : createdProjects) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("projectId", s);
+            jsonObject.put("name", projectRepository.findById(s).orElseThrow(MyException::noObject).getName());
+            jsonArray.add(jsonObject);
+        }
+        return jsonArray;
     }
 
     public Object getProjectAndUsers(String projectId) {
@@ -137,9 +158,21 @@ public class ProjectService {
         Project result = projectRepository.insert(project);
         User user = userService.getUserInfoById(userId);
         user.getCreatedProjects().add(result.getId());
-
         userService.update(user);
 
+        AddContentDTO addContentDTO = new AddContentDTO();
+        addContentDTO.setContext(new Context());
+        addContentDTO.setProjectId(result.getId());
+        addContentDTO.setResource(new Resource());
+        addContentDTO.getContext().setEssentialInformation(new EssentialInformation(result.getName(),"","","",new ArrayList<>()));
+        addContentDTO.getResource().setInputs(new ArrayList<>());
+        addContentDTO.getResource().setOutputs(new ArrayList<>());
+        addContentDTO.getResource().setParameters(new ArrayList<>());
+        addContentDTO.getResource().setDataServices(new ArrayList<>());
+        addContentDTO.getResource().setModels(new ArrayList<>());
+        Content content = new Content();
+        addContentDTO.convertTo(content);
+        contentRepository.save(content);
         return result;
     }
 

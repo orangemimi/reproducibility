@@ -27,7 +27,7 @@
 
     <div class="dialogs">
       <!-- el-dialog的destroy-on-close属性在关闭时会再次通知组件，拉黑这个属性，改用v-if -->
-      <el-dialog :visible.sync="modelDoubleClick" width="50%" title="Configuration" :close-on-click-modal="false">   
+      <el-dialog :visible.sync="modelDoubleClick" width="50%" title="Configuration" :close-on-click-modal="false">
         <data-item-toolbar :cell="currentCell" @selectItemListToGraph="selectItemListToGraph" v-if="modelDoubleClick"></data-item-toolbar>
       </el-dialog>
       <el-dialog :visible.sync="dataDoubleClick" width="50%" title="Configuration" :close-on-click-modal="false">
@@ -38,7 +38,11 @@
         <data-service-code-configuration @selectItemListToGraph="selectItemListToGraph" v-if="codeDoubleClick"></data-service-code-configuration>
       </el-dialog>
       <el-dialog :visible.sync="dataServiceDoubleClick" width="50%" title="Configuration" :close-on-click-modal="false">
-        <data-service-configuration :cell="currentCell" @selectItemListToGraph="selectItemListToGraph" v-if="dataServiceDoubleClick"></data-service-configuration>
+        <data-service-configuration
+          :cell="currentCell"
+          @selectItemListToGraph="selectItemListToGraph"
+          v-if="dataServiceDoubleClick"
+        ></data-service-configuration>
       </el-dialog>
       <!-- <el-drawer title="Configuration" :visible.sync="codeDoubleClick" size="45%">
         <el-col :span="22" :offset="1">
@@ -52,7 +56,7 @@
 </template>
 
 <script>
-import bus from './bus'
+import bus from './bus';
 import modelItemToolbar from '_com/MxGraphBars/ModelItemToolbar';
 import dataItemToolbar from '_com/MxGraphDialogs/ModelItemConfiguration';
 import generalToolbar from '_com/MxGraphBars/GeneralToolbar';
@@ -126,27 +130,42 @@ export default {
         },
       },
       currentCell: {},
+      flag: {
+        modelFlag: 0,
+        dataFlag: 0,
+      },
     };
   },
 
-  methods: {
-    async init() {
-      this.graph = this.$parent.graph;
+  watch: {
+    flag: {
+      handler: function () {
+        if (this.flag.dataFlag == 1 && this.flag.modelFlag == 1) {
+          this.init();
+          this.listenGraphEvent()
+        }
+      },
+      deep: true,
+    },
+  },
 
-      this.initLeftBar('generalBar');
-      this.initLeftBar('codeBar');
+  methods: {
+    init() {
+      this.graph = this.$parent.graph;
       this.initLeftBar('modelService');
       this.initLeftBar('dataService');
+      this.initLeftBar('generalBar');
+      this.initLeftBar('codeBar');
     },
 
     getModels(val) {
-      // console.log('modelitm', val);
       this.$set(this, 'modelItemList', val);
+      this.flag.modelFlag = 1;
     },
 
     getDataServices(val) {
-      // console.log('dataService', val);
       this.$set(this, 'dataServiceItemList', val);
+      this.flag.dataFlag = 1;
     },
 
     //--------------初始化 bar的dataItem的内容--由 data-item-toolbar组件返回
@@ -223,7 +242,6 @@ export default {
       }
 
       const domArray = this.$refs[panel].$refs[barRef];
-
       if (!(domArray instanceof Array) || domArray.length <= 0) {
         return;
       }
@@ -244,7 +262,6 @@ export default {
           elt.style.height = `50px`;
           return elt;
         };
-
         mxUtils.makeDraggable(dom, this.graph, dropHandler, createDragPreview(), 0, 0, false, true);
 
         //         makeDraggable: function(	element,
@@ -317,7 +334,7 @@ export default {
           vertex.nodeAttribute.type = item.type; //Processing
         }
         if (type == 'modelServiceInput' || type == 'modelServiceOutput') {
-          console.log(item)
+          console.log(item);
           if (this.selectionCells.length == 0) {
             this.$notify.error({
               title: 'Error',
@@ -350,8 +367,8 @@ export default {
             this.addEdge(vertex, selectionCell);
           } else if (type == 'modelServiceOutput') {
             this.addEdge(selectionCell, vertex);
-            vertex.upload = false
-            vertex.value = ''
+            vertex.upload = false;
+            vertex.value = '';
           }
         }
         if (type == 'dataServiceInput' || type == 'dataServiceOutput') {
@@ -378,8 +395,8 @@ export default {
             this.addEdge(vertex, selectionCell);
           } else if (type == 'dataServiceOutput') {
             this.addEdge(selectionCell, vertex);
-            vertex.upload = false
-            vertex.value = ''
+            vertex.upload = false;
+            vertex.value = '';
           }
         }
       } finally {
@@ -392,8 +409,8 @@ export default {
     },
 
     isUpload(val) {
-      this.dataNode.upload = val
-      console.log(val)
+      this.dataNode.upload = val;
+      console.log(val);
     },
 
     listenGraphEvent() {
@@ -421,7 +438,7 @@ export default {
             this.codeDoubleClick = true;
           } else {
             this.modelDoubleClick = this.modelClick = this.dataClick = this.codeDoubleClick = this.dataServiceDoubleClick = false;
-            
+
             this.dataNode = cell;
             this.dataDoubleClick = true;
           }
@@ -434,8 +451,8 @@ export default {
         let isCell = Object.prototype.hasOwnProperty.call(evt.properties, 'cell');
         if (isCell) {
           let cell = evt.properties.cell;
-          this.graph.addSelectionCell(cell)
-          bus.$emit('go', this.graph.getSelectionCells())
+          this.graph.addSelectionCell(cell);
+          bus.$emit('go', this.graph.getSelectionCells());
           const clickModelType = cell.type;
 
           if (clickModelType == 'modelService') {
@@ -457,7 +474,7 @@ export default {
           //单击空白处
           this.currentCell = {};
           // console.log(this.graph.getSelectionCells())
-          bus.$emit('go', [])
+          bus.$emit('go', []);
         }
       });
 

@@ -11,10 +11,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
@@ -44,5 +41,15 @@ public class RemotePortalController {
     @RequestMapping(value = "/getUnitList/{currentPage}/{pagesize}",method = RequestMethod.GET)
     JsonResult getModel( @PathVariable("currentPage") int currentPage, @PathVariable("pagesize") int pagesize){
         return ResultUtils.success(remotePortalService.getUnitList(currentPage,pagesize));
+    }
+
+    @RequestMapping(value = "/getModelList", method = RequestMethod.GET)
+    JsonResult getModelList(@RequestParam int page, @RequestParam int pageSize, @RequestParam String searchText) {
+        return ResultUtils.success(remotePortalService.getModelsByPortal(page, pageSize, searchText));
+    }
+
+    @RequestMapping(value = "/getComputableModels/{oid}", method = RequestMethod.GET)
+    JsonResult getComputableModels(@PathVariable String oid) {
+        return ResultUtils.success(remotePortalService.getComputableModels(oid));
     }
 }

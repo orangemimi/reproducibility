@@ -14,9 +14,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
  */
 @Data
 public class Output {
-
+    String uid;
     String name;
     String eventName;
     String type;
     String description;
+    String markDown;
+    String markDownHtml;
 }

@@ -10,7 +10,11 @@
         <i class="el-icon-info"></i>
         Information
       </div>
-      <div class="construction menu-item" @click="handleClick('Construction')" :class="{ isActive: isConstructionActive }">
+      <!-- <div class="construction menu-item" @click="handleClick('Construction')" :class="{ isActive: isConstructionActive }">
+        <i class="el-icon-info"></i>
+        Construction
+      </div> -->
+      <div class="construction1 menu-item" @click="handleClick('Construction1')" :class="{ isActive: isConstruction1Active }">
         <i class="el-icon-info"></i>
         Construction
       </div>
@@ -26,6 +30,7 @@
         <i class="el-icon-info"></i>
         Settings
       </div>
+      
     </div>
   </div>
 </template>
@@ -45,6 +50,7 @@ export default {
       isContributorActive: false,
       isSettingsActive: false,
       isCommunityActive: false,
+      isConstruction1Active: false,
     };
   },
 
@@ -52,19 +58,19 @@ export default {
     handleClick(type) {
       if (type == 'Information') {
         this.isInfoActive = true;
-        this.isConstructionActive = this.isContributorActive = this.isSettingsActive = this.isCommunityActive = false;
-      } else if (type == 'Construction') {
-        this.isConstructionActive = true;
-        this.isInfoActive = this.isContributorActive = this.isSettingsActive = this.isCommunityActive = false;
+        this.isConstructionActive = this.isContributorActive = this.isSettingsActive = this.isCommunityActive = this.isConstruction1Active = false;
       } else if (type == 'Contributor') {
         this.isContributorActive = true;
-        this.isInfoActive = this.isConstructionActive = this.isSettingsActive = this.isCommunityActive = false;
+        this.isInfoActive = this.isConstructionActive = this.isSettingsActive = this.isCommunityActive = this.isConstruction1Active = false;
       } else if (type == 'Community') {
         this.isCommunityActive = true;
-        this.isInfoActive = this.isConstructionActive = this.isSettingsActive = this.isContributorActive = false;
-      } else {
+        this.isInfoActive = this.isConstructionActive = this.isSettingsActive = this.isContributorActive = this.isConstruction1Active = false;
+      } else if (type == 'Settings'){
         this.isSettingsActive = true;
-        this.isInfoActive = this.isConstructionActive = this.isContributorActive = this.isCommunityActive = false;
+        this.isInfoActive = this.isConstructionActive = this.isContributorActive = this.isCommunityActive = this.isConstruction1Active = false;
+      } else if (type == 'Construction1') {
+        this.isConstruction1Active = true
+        this.isInfoActive = this.isConstructionActive = this.isContributorActive = this.isSettingsActive = this.isCommunityActive = false;
       }
       this.$emit('toRouterType', type);
     },

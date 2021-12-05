@@ -200,9 +200,19 @@ export const constantRoutes = [
               requireAuth: true,
               roles: ['builder', 'rebuilder_explorer', 'rebuilder_operator'] // or you can only set roles in sub nav
             }
-          }
+          },
+          {
+            path: 'construction1',
+            name: 'Construction1',
+            component: () => import('@/views/project/construction1'),
+            meta: {
+              requireAuth: true,
+              roles: ['builder', 'rebuilder_explorer', 'rebuilder_operator'] // or you can only set roles in sub nav
+            }
+          },
         ]
       },
+      
       {
         path: '/newmodel',
         name: 'NewModel',
@@ -267,7 +277,43 @@ export const constantRoutes = [
           main: () => import('@/views/homepage'),
           footer: () => import('_com/layout/MyFooter.vue')
         },
-      }
+      },
+      {
+        path: '/project/context/:projectId',
+        name: 'Context',
+        meta: {
+          requireAuth: true
+        },
+        components: {
+          header: () => import('_com/layout/MyHeader.vue'),
+          main: () => import('_com/Context/components/Context/components/EssentialInfo.vue'),
+          footer: () => import('_com/layout/MyFooter.vue')
+        }
+      },
+      {
+        path: '/project/resource/:projectId',
+        name: 'Resource',
+        meta: {
+          requireAuth: true
+        },
+        components: {
+          header: () => import('_com/layout/MyHeader.vue'),
+          main: () => import('_com/Context/components/Resource/components/AddResourceCard.vue'),
+          footer: () => import('_com/layout/MyFooter.vue')
+        }
+      },
+      {
+        path: '/project/resourcecollection/:projectId',
+        name: 'resourcecollection',
+        meta: {
+          requireAuth: true
+        },
+        components: {
+          header: () => import('_com/layout/MyHeader.vue'),
+          main: () => import('_com/Context/components/Resource/components/ResourceCollection.vue'),
+          footer: () => import('_com/layout/MyFooter.vue')
+        }
+      },
     ]
   }
 ];

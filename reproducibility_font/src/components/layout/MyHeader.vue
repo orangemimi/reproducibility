@@ -1,5 +1,5 @@
 <template>
-  <div class="app-head">
+  <div class="app-head" ref="head">
     <el-row :gutter="20">
       <el-col :span="3" class="logo">
         <div @click="handleSelect('1')">Reproducibility</div>
@@ -19,9 +19,6 @@
       </el-col>
 
       <el-col v-else class="user" :span="2" :offset="8">
-        <el-badge :is-dot="this.$store.state.user.unreadApplynum == 0 && this.$store.state.user.unreadReplynum == 0 ? false : true" class="item">
-          <i class="el-icon-message-solid" @click="toNotice"></i>
-        </el-badge>
         <el-dropdown placement="bottom-start" @command="handleCommond">
           <div class="personal">
             <avatar
@@ -31,32 +28,80 @@
             ></avatar>
           </div>
           <el-dropdown-menu slot="dropdown">
-            
-            <el-dropdown-item command="homepage"><i class="el-icon-monitor"/>homepage</el-dropdown-item>
-            <el-dropdown-item command="space"><i class="el-icon-menu"/>individual space</el-dropdown-item>
-            <el-dropdown-item command="setting"><i class="el-icon-setting"/>setting</el-dropdown-item>
-            <el-dropdown-item command="logout"><i class="el-icon-location"/>logout</el-dropdown-item>
-
+            <el-dropdown-item command="homepage">
+              <i class="el-icon-monitor" />
+              homepage
+            </el-dropdown-item>
+            <el-dropdown-item command="space">
+              <i class="el-icon-menu" />
+              individual space
+            </el-dropdown-item>
+            <el-dropdown-item command="setting">
+              <i class="el-icon-setting" />
+              setting
+            </el-dropdown-item>
+            <el-dropdown-item command="logout">
+              <i class="el-icon-location" />
+              logout
+            </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
+        <el-badge
+          :is-dot="this.$store.state.user.unreadApplynum == 0 && this.$store.state.user.unreadReplynum == 0 ? false : true"
+          class="item"
+          style="margin-left: 10px"
+        >
+          <i class="el-icon-message-solid" @click="toNotice"></i>
+        </el-badge>
+        <el-badge :value="selectModelCount" :max="10" class="item">
+          <i class="iconfont icon-gouwuche" @click="handleClick"></i>
+        </el-badge>
       </el-col>
     </el-row>
+    <el-drawer :visible.sync="drawer" direction="rtl" size="300px" :withHeader="false" v-if="drawer">
+      <drawer-card @close="close" @success="success" />
+    </el-drawer>
   </div>
 </template>
 <script>
 import Avatar from 'vue-avatar';
 import { mapState, mapActions } from 'vuex';
+import drawerCard from './components/DrawerCard.vue';
 export default {
   data() {
     return {
       activeIndex: 1,
+      selectModelCount: 0,
+      drawer: false,
     };
   },
   computed: {
     ...mapState(['user']),
   },
+
   methods: {
     ...mapActions({ handleLogOut: 'user/handleLogOut' }),
+
+    init() {
+      if (localStorage.selectModels != undefined) {
+        this.selectModelCount = JSON.parse(localStorage.selectModels).computableModels.length;
+      }
+    },
+    handleClick() {
+      this.drawer = true;
+    },
+    close() {
+      this.drawer = false;
+    },
+    success() {
+      this.selectModelCount = 0;
+      if (this.$route.path == '/models') {
+        let temp = this.$parent.$children[1].$children[1].$children
+        temp.forEach(item => {
+          item.$children[0].select = false
+        })
+      }
+    },
 
     handleSelect(key) {
       switch (key) {
@@ -106,15 +151,15 @@ export default {
         await this.handleLogOut();
         location.reload();
       } else if (command == 'space') {
-        this.toUserPage()
+        this.toUserPage();
       } else if (command == 'homepage') {
-        this.toHomePage()
+        this.toHomePage();
       }
     },
     register() {
       this.$router.push({
         name: 'Login',
-        params: {tab: 'register'}
+        params: { tab: 'register' },
       });
     },
     login() {
@@ -138,15 +183,19 @@ export default {
       }
     },
     toHomePage() {
-      if(this.$router.currentRoute.name != 'Homepage') {
+      if (this.$router.currentRoute.name != 'Homepage') {
         this.$router.push({
           path: `/Homepage/${this.$store.state.user.userId}`,
         });
       }
-    }
+    },
+  },
+  mounted() {
+    this.init();
   },
   components: {
     Avatar,
+    drawerCard,
   },
 };
 </script>

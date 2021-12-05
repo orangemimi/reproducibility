@@ -3,10 +3,9 @@ package edu.njnu.reproducibility.domain.content;
 import cn.hutool.json.JSONObject;
 import edu.njnu.reproducibility.common.enums.ResultEnum;
 import edu.njnu.reproducibility.common.exception.MyException;
-import edu.njnu.reproducibility.domain.content.support.ResourceCollection.Input;
-import edu.njnu.reproducibility.domain.content.support.ResourceCollection.Output;
-import edu.njnu.reproducibility.domain.content.support.ResourceCollection.Parameter;
-import edu.njnu.reproducibility.domain.content.support.ResourceCollection.Resource;
+import edu.njnu.reproducibility.domain.content.support.ContextCollection.Context;
+import edu.njnu.reproducibility.domain.content.support.ContextCollection.EssentialInformation;
+import edu.njnu.reproducibility.domain.content.support.ResourceCollection.*;
 import edu.njnu.reproducibility.domain.content.support.ScenarioCollection.FormGroup;
 import edu.njnu.reproducibility.domain.content.support.ScenarioCollection.PictureGroup;
 import edu.njnu.reproducibility.domain.content.support.ScenarioCollection.TextGroup;
@@ -24,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created with IntelliJ IDEA.
@@ -52,6 +52,40 @@ public class ContentService {
         }
     }
 
+    public Content getContent(String projectId) {
+        Content content = contentRepository.findByProjectId(projectId);
+        if(content == null) {
+            throw MyException.noObject();
+        } else {
+            return content;
+        }
+    }
+
+    /**
+    * @Description:以下部分是Context的相关代码
+    * @Author: Yiming
+    * @Date: 2021/11/28
+    */
+
+    public Context getContextByProject(String projectId) {
+        Content content = contentRepository.findByProjectId(projectId);
+        if(content == null) {
+            throw MyException.noObject();
+        }
+        return content.getContext();
+    }
+
+    //修改EssentialInformation
+    public void updateEssentialInformation(String projectId, EssentialInformation essentialInformation) {
+        Content content = contentRepository.findByProjectId(projectId);
+        if(content == null) {
+            throw MyException.noObject();
+        }
+        content.getContext().setEssentialInformation(essentialInformation);
+        contentRepository.save(content);
+    }
+
+
     /**
     * @Description:以下部分是Resource的相关方法
     * @Author: Yiming
@@ -67,6 +101,7 @@ public class ContentService {
                 List<Input> inputList = new ArrayList<>();
                 content.getResource().setInputs(inputList);
             }
+            input.setUid(UUID.randomUUID().toString());
             content.getResource().getInputs().add(input);
         }else if(jsonObject.getStr("resourceType").equals("parameter")) {
             Parameter parameter = jsonObject.getJSONObject("info").toBean(Parameter.class);
@@ -74,14 +109,32 @@ public class ContentService {
                 List<Parameter> parameterList = new ArrayList<>();
                 content.getResource().setParameters(parameterList);
             }
+            parameter.setUid(UUID.randomUUID().toString());
             content.getResource().getParameters().add(parameter);
-        } else {
+        } else if(jsonObject.getStr("resourceType").equals("output")) {
             Output output = jsonObject.getJSONObject("info").toBean(Output.class);
             if(content.getResource().getOutputs() == null) {
                 List<Output> outputList = new ArrayList<>();
                 content.getResource().setOutputs(outputList);
             }
+            output.setUid(UUID.randomUUID().toString());
             content.getResource().getOutputs().add(output);
+        } else if(jsonObject.getStr("resourceType").equals("model")) {
+            Model model = jsonObject.getJSONObject("info").toBean(Model.class);
+            if(content.getResource().getModels() == null) {
+                List<Model> models = new ArrayList<>();
+                content.getResource().setModels(models);
+            }
+            model.setUid(UUID.randomUUID().toString());
+            content.getResource().getModels().add(model);
+        } else if(jsonObject.getStr("resourceType").equals("dataservice")) {
+            DataService dataService = jsonObject.getJSONObject("info").toBean(DataService.class);
+            if(content.getResource().getDataServices() == null) {
+                List<DataService> dataServices = new ArrayList<>();
+                content.getResource().setDataServices(dataServices);
+            }
+            dataService.setUid(UUID.randomUUID().toString());
+            content.getResource().getDataServices().add(dataService);
         }
         return contentRepository.save(content);
     }
@@ -92,6 +145,67 @@ public class ContentService {
             throw MyException.noObject();
         }
         return content.getResource();
+    }
+
+    public void updateResource(JSONObject jsonObject) {
+        String projectId = jsonObject.getStr("projectId");
+        String format = jsonObject.getStr("format");
+        Content content = contentRepository.findByProjectId(projectId);
+        if(content == null) {
+            throw MyException.noObject();
+        }
+        if(format.equals("input") ) {
+            Input input = jsonObject.getJSONObject("bean").toBean(Input.class);
+            int index = 0;
+            for(Input temp : content.getResource().getInputs()) {
+                if(temp.getUid().equals(input.getUid())) {
+                    content.getResource().getInputs().set(index, input);
+                    break;
+                }
+                index++;
+            }
+        } else if(format.equals("parameter")) {
+            Parameter parameter = jsonObject.getJSONObject("bean").toBean(Parameter.class);
+            int index = 0;
+            for(Parameter temp : content.getResource().getParameters()) {
+                if(temp.getUid().equals(parameter.getUid())) {
+                    content.getResource().getParameters().set(index, parameter);
+                    break;
+                }
+                index++;
+            }
+        } else if(format.equals("output")) {
+            Output output = jsonObject.getJSONObject("bean").toBean(Output.class);
+            int index = 0;
+            for(Output temp : content.getResource().getOutputs()) {
+                if(temp.getUid().equals(output.getUid())) {
+                    content.getResource().getOutputs().set(index, output);
+                    break;
+                }
+                index++;
+            }
+        } else if(format.equals("model")) {
+            Model model = jsonObject.getJSONObject("bean").toBean(Model.class);
+            int index = 0;
+            for(Model temp : content.getResource().getModels()) {
+                if(temp.getUid().equals(model.getUid())) {
+                    content.getResource().getModels().set(index, model);
+                    break;
+                }
+                index++;
+            }
+        } else if(format.equals("dataservice")) {
+            DataService dataService = jsonObject.getJSONObject("bean").toBean(DataService.class);
+            int index = 0;
+            for(DataService temp : content.getResource().getDataServices()) {
+                if(temp.getUid().equals(dataService.getUid())) {
+                    content.getResource().getDataServices().set(index, dataService);
+                    break;
+                }
+                index++;
+            }
+        }
+        contentRepository.save(content);
     }
 
 

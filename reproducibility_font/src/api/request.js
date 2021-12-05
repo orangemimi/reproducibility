@@ -153,6 +153,10 @@ export async function getPrivacy(projectId) {
   return await get(`/projects/getPrivacy/${projectId}`)
 }
 
+export async function getProjectsCreatedByMe() {
+  return await get(`/projects/getProjectsCreatedByMe`)
+}
+
 //---------------------------------------------------contextDefinition------------------------------------------
 
 // export async function updateContexByProjectId(projectId) {
@@ -271,11 +275,7 @@ export async function delFolder(storey, id, parent) {
 //-----------------------------------------------dataitems---------------------------------------------
 
 export async function saveDataItem(form) {
-  console.log('form', form);
   let data = await post(`/dataItems`, form);
-  if (data != null) {
-    successNotification('save', 'data items');
-  }
   return data;
 }
 export async function updateDataItemById(id, form) {
@@ -292,6 +292,18 @@ export async function getDataItemsByJwtUserId() {
 
 export async function getDataItemsByProjectId(projectId) {
   return await get(`/dataItems/${projectId}`);
+}
+
+export async function saveDataItemOfUploaded(jsonData) {
+  return await post(`/dataItems/saveDataItemOfUploaded`, jsonData)
+}
+
+export async function saveDataItemOfNoUpload(formData) {
+  return await post(`/dataItems/saveDataItemOfNoUpload`, formData)
+}
+
+export async function batchDelete(jsonData) {
+  return await del(`/dataItems/batchDelete`, '', jsonData)
 }
 
 // export async function getDataItemsByProjectId(projectId) {
@@ -408,6 +420,14 @@ export async function addContent(content) {
   return await post(`/Content/addContent`, content)
 }
 
+export async function getContent(projectId) {
+  return await get(`/Content/getContent/${projectId}`)
+}
+
+export async function getContextByProject(projectId) {
+  return await get(`/Content/getContextByProject/${projectId}`)
+}
+
 export async function addResourceCard(jsonData) {
   return await patch(`/Content/addResourceCard`, jsonData)
 }
@@ -428,7 +448,13 @@ export async function addFormGroup(jsonData) {
   return await post(`/Content/addFormGroup`, jsonData)
 }
 
+export async function updateEssentialInformation(projectId, jsonData) {
+  return await post(`/Content/updateEssentialInformation/${projectId}`, jsonData)
+}
 
+export async function updateResourceOfContent(jsonData) {
+  return await patch(`/Content/updateResource`, jsonData)
+}
 
 //-------------------------------------------UserFile--------------------------------------------------
 export async function addUserFile(jsonData) {
@@ -452,6 +478,14 @@ export async function getModelItemsByPrivacy(privacy, currentPage, pagesize) {
 
 export async function getModelItemsByProvider(currentPage, pagesize) {
   return await get(`/modelItems/provider/${currentPage}/${pagesize}`);
+}
+
+export async function saveToProject(jsonData) {
+  return await post(`/modelItems/saveToProject`, jsonData)
+}
+
+export async function saveModelsToProject(jsonData) {
+  return await post(`/modelItems/saveModelsToProject`, jsonData)
 }
 
 //------------------------------------------methods-----------------------------------
@@ -550,6 +584,7 @@ export async function saveRecord(form) {
   return await post(`/records`, form);
 }
 
+
 //------------------------------------------portal------------------------------------
 
 export async function getModelInfo(doi) {
@@ -558,6 +593,14 @@ export async function getModelInfo(doi) {
 
 export async function getAllUnitsFromPoral(currentPage, pagesize) {
   return await get(`/portal/getUnitList/${currentPage}/${pagesize}`);
+}
+
+export async function getModelList(params) {
+  return await get(`/portal/getModelList`, params)
+}
+
+export async function getComputableModels(oid) {
+  return await get(`/portal/getComputableModels/${oid}`)
 }
 
 //------------------------------------------dataService------------------------------------

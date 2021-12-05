@@ -317,6 +317,7 @@ export function generateXml1(
   dataServiceLinkInGraph,
   dataServiceOutputListInGraph
 ) {
+  console.log(linkEdgeList)
   let jsonObj = {
     TaskConfiguration: {
       _uid: generateGUID(),
@@ -349,6 +350,7 @@ export function generateXml1(
       _description: "",
       _model: model.nodeAttribute.md5,
       _iterationNum: model.iterationNum,
+      _step: index,
       Inputs: {
         DataConfiguration: [],
         Parameter: []
@@ -362,6 +364,15 @@ export function generateXml1(
         let type = "url"
         if (item.dataResourceRelated.format == 'shared_file') {
           type = 'insituData'
+          ModelActions.ModelAction[index].Inputs.DataConfiguration.push({
+            _id: item.nodeAttribute.eventId,
+            _state: model.name,
+            _event: item.name,
+            Data: {
+              _value: item.dataResourceRelated.value,
+              _type: type
+            }
+          })
         }
         if (item.dataResourceRelated.format == 'parameter') {
           ModelActions.ModelAction[index].Inputs.Parameter.push({
@@ -376,7 +387,7 @@ export function generateXml1(
             _state: model.name,
             _event: item.name,
             Data: {
-              _value: item.dataResourceRelated.value,
+              _value: 'http://221.226.60.2:8082/data/' + item.dataResourceRelated.value,
               _type: type
             }
           })
@@ -394,17 +405,17 @@ export function generateXml1(
         })
       }
     });
-    outputList.forEach((item, n) => {
+    outputList.forEach((item) => {
       ModelActions.ModelAction[index].Outputs.DataConfiguration.push({
-        _id: item.nodeAttribute.eventId,
+        _id: item.id,
         _state: model.name,
         _event: item.name
       })
-      if (!item.upload) {
-        ModelActions.ModelAction[index].Outputs.DataConfiguration[n].Data = {
-          _type: "insituData"
-        }
-      }
+      // if (!item.upload) {
+      //   ModelActions.ModelAction[index].Outputs.DataConfiguration[n].Data = {
+      //     _type: "insituData"
+      //   }
+      // }
     });
   });
 

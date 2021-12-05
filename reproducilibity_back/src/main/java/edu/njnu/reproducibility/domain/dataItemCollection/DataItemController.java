@@ -1,6 +1,7 @@
 package edu.njnu.reproducibility.domain.dataItemCollection;
 
 
+import com.alibaba.fastjson.JSONObject;
 import edu.njnu.reproducibility.annotation.JwtTokenParser;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
@@ -9,6 +10,11 @@ import edu.njnu.reproducibility.domain.dataItemCollection.dto.UpdateDataItemDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * @Author Zhiyi
@@ -66,5 +72,30 @@ public class DataItemController {
     @RequestMapping(value = "/del/{Id}", method = RequestMethod.DELETE)
     public JsonResult delDataItem(@PathVariable String Id) {
         return ResultUtils.success(dataItemService.delDataItem(Id));
+    }
+
+    @RequestMapping(value = "/saveDataItemOfUploaded", method = RequestMethod.POST)
+    public JsonResult saveDataItemOfUploaded(@RequestBody JSONObject jsonObject, @JwtTokenParser(key = "userId") String userId) {
+        JSONObject temp = jsonObject.getJSONObject("dataItem");
+        AddDataItemDTO addDataItemDTO = JSONObject.toJavaObject(temp, AddDataItemDTO.class);
+        return ResultUtils.success(dataItemService.saveDataItemOfUploaded(addDataItemDTO, jsonObject.getJSONObject("resource"), userId));
+    }
+
+    @RequestMapping(value = "/saveDataItemOfNoUpload", method = RequestMethod.POST)
+    public JsonResult saveDataItemOfNoUpload(HttpServletRequest httpServletRequest, @JwtTokenParser(key = "userId") String userId) throws IOException {
+        MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) httpServletRequest;
+        MultipartFile multipartFile = multipartHttpServletRequest.getFile("localFile");
+        String name = multipartHttpServletRequest.getParameter("name");
+        String description = multipartHttpServletRequest.getParameter("description");
+        String format = multipartHttpServletRequest.getParameter("format");
+        String type = multipartHttpServletRequest.getParameter("type");
+        String projectId = multipartHttpServletRequest.getParameter("projectId");
+        return ResultUtils.success(dataItemService.saveDataItemOfNoUpload(multipartFile, name, description, userId, format, type, projectId));
+    }
+
+    @RequestMapping(value = "/batchDelete", method = RequestMethod.DELETE)
+    public JsonResult batchDelete(@RequestBody List<String> Ids) {
+        dataItemService.batchDelete(Ids);
+        return ResultUtils.success();
     }
 }

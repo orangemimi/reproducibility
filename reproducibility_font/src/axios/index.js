@@ -97,8 +97,11 @@ export const patch = (url, data, pathVariable = null, loading = true) =>
     loading
   });
 
-export const del = (url, params, pathVariable = null, loading = true) =>
+export const del = (url, params, data, pathVariable = null, loading = true) =>
   axiosInstance.delete(sf(url, pathVariable), {
     params: params,
+    data: data,
     loading
   });
+
+

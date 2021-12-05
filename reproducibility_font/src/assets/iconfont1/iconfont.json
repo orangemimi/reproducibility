@@ -6,6 +6,34 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "10584915",
+      "name": "一键清理",
+      "font_class": "yijianqingli",
+      "unicode": "e6ac",
+      "unicode_decimal": 59052
+    },
+    {
+      "icon_id": "970736",
+      "name": "购物车",
+      "font_class": "gouwuche",
+      "unicode": "e621",
+      "unicode_decimal": 58913
+    },
+    {
+      "icon_id": "176313",
+      "name": "read",
+      "font_class": "read",
+      "unicode": "e742",
+      "unicode_decimal": 59202
+    },
+    {
+      "icon_id": "2551720",
+      "name": "操作-详情",
+      "font_class": "xiangqing",
+      "unicode": "e649",
+      "unicode_decimal": 58953
+    },
+    {
       "icon_id": "11448884",
       "name": "文件夹",
       "font_class": "wenjianjia",

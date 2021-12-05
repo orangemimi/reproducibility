@@ -1,6 +1,8 @@
 package edu.njnu.reproducibility.domain.modelItemCollection;
 
 
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONObject;
 import edu.njnu.reproducibility.annotation.JwtTokenParser;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
@@ -58,4 +60,17 @@ public class ModelItemController {
 //        modelItemService.del(tid);
 //        return ResultUtils.success();
 //    }
+
+    @RequestMapping(value = "/saveToProject", method = RequestMethod.POST)
+    public JsonResult saveToProject(@RequestBody JSONObject jsonObject, @JwtTokenParser String userId) {
+        modelItemService.saveToProject(jsonObject, userId);
+        return ResultUtils.success();
+    }
+
+    @RequestMapping(value = "/saveModelsToProject", method = RequestMethod.POST)
+    public JsonResult saveModelsToProject(@RequestBody JSONObject jsonObject, @JwtTokenParser String userId) {
+        modelItemService.saveModelsToProject(jsonObject.getJSONArray("models"), jsonObject.getStr("projectId"), userId);
+        return ResultUtils.success();
+    }
+
 }

@@ -3,187 +3,222 @@
   <div class="main">
     <el-col :xs="24" :sm="24" :md="{ span: 22, offset: 1 }" :lg="{ span: 18, offset: 3 }">
       <div class="main-card">
-        <!-- <el-timeline>
-          <el-timeline-item timestamp="2018/4/12" placement="top">
-            <el-row>
-              <el-col :span="12">
-                <step-card :cardInfo="{ btnType: 'Context Definition' }" style="height:450px;width:100%"></step-card>
-              </el-col>
-            </el-row>
-          </el-timeline-item>
-          <el-timeline-item timestamp="2018/4/3" placement="top">
-            <el-row>
-              <el-col :span="12">
-                <step-card :cardInfo="{ btnType: 'Resource Collection' }" style="height:450px;width:100%"></step-card>
-              </el-col>
-            </el-row>
-          </el-timeline-item>
-          <el-timeline-item timestamp="2018/4/3" placement="top">
-            <el-row>
-              <el-col :span="12">
-                <step-card :cardInfo="{ btnType: 'Expected Results' }" style="height:450px;width:100%"></step-card>
-              </el-col>
-            </el-row>
-          </el-timeline-item>
-          <el-timeline-item timestamp="2018/4/2" placement="top">
-            <el-row>
-              <el-col :span="24">
-                <step-card :cardInfo="{ btnType: 'Reproducible Simulation Scenario' }" style="height:900px;width:100%"></step-card>
-              </el-col>
-            </el-row>
-          </el-timeline-item>
-        </el-timeline> -->
-
-        <el-form ref="context" :model="context" label-width="110px" @submit.native.prevent size="mini">
-          <el-form-item label="Theme:">
-            <div v-if="context != null">
-              <el-tag :key="tagIndex" v-for="(tag, tagIndex) in context.themes" closable :disable-transitions="false" @close="delTags(tag)" style="margin: 0 2px">
-                {{ tag }}
-              </el-tag>
+        <el-row :gutter="20">
+          <el-col :span="17">
+            <div class="scenario">
+              <div ref="scenario"><re-scenario-content /></div>
+              <div class="md" v-if="content.context != undefined" ref="abstract">
+                <div class="head">
+                  <i class="iconfont icon-xiangqing" style="margin-left: 15px; margin-right: 15px"></i>
+                  ABSTRACT.md
+                </div>
+                <el-divider></el-divider>
+                <mavon-editor v-html="content.context.essentialInformation.abstractRender" style="box-shadow: none" ></mavon-editor>
+              </div>
+              <div class="md" v-for="(item, index) in resourceMD" :key="index">
+                <div v-if="item.markDownHtml != ''">
+                  <div class="head">
+                    <i class="iconfont icon-xiangqing" style="margin-left: 15px; margin-right: 15px"></i>
+                    {{ item.name + '.md' }}
+                  </div>
+                  <el-divider></el-divider>
+                  <mavon-editor v-html="item.markDownHtml" style="box-shadow: none"></mavon-editor>
+                </div>
+              </div>
             </div>
-          </el-form-item>
-          <el-form-item label="Purpose:">
-            <div>{{ context.purpose }}</div>
-          </el-form-item>
-          <el-form-item label="Object:">
-            <div>{{ context.objects }}</div>
-          </el-form-item>
-          <el-form-item label="Temporal scale:">
-            <div>{{ context.temporalScale }}</div>
-          </el-form-item>
-          <el-form-item label="Spatio scale:">
-            <div>{{ context.spatialScale }}</div>
-          </el-form-item>
-          <el-form-item label="Method:">
-            <div>{{ context.methods }}</div>
-          </el-form-item>
-          <el-form-item label="Discussion:">
-            <div>{{ context.discussion }}</div>
-          </el-form-item>
-        </el-form>
-
-        <div class="row-style">
-          <!-- <div class="table"> -->
-          Related Resource
-          <el-table
-            ref="multipleTable"
-            :data="dataItemListFromResource"
-            tooltip-effect="dark"
-            style="width: 100%"
-            @selection-change="handleSelectionChange"
-            max-height="350"
-            :row-style="{ height: '0' }"
-            :cell-style="{ padding: '4px' }"
-          >
-            <template slot="empty">
-              Please upload a file
-            </template>
-            <el-table-column label="Name" show-overflow-tooltip>
-              <template #default="scope">{{ scope.row.name }}</template>
-            </el-table-column>
-            <el-table-column label="Type" width="70">
-              <template #default="scope">{{ scope.row.type }}</template>
-            </el-table-column>
-            <el-table-column label="File size" width="100">
-              <template #default="scope">{{ scope.row.fileSize }}</template>
-            </el-table-column>
-            <el-table-column label="Upload time" width="180" show-overflow-tooltip>
-              <template #default="scope">{{ scope.row.createTime }}</template>
-            </el-table-column>
-          </el-table>
-          <!-- </div> -->
-        </div>
-
-        <div class="scenario">
-          <re-scenario-content />
-        </div>
+          </el-col>
+          <el-col :span="7">
+            <div v-if="content.context != undefined">
+              <el-divider content-position="left">Name</el-divider>
+              <h4>{{ content.context.essentialInformation.name }}</h4>
+              <el-tag v-for="(item, index) in content.context.essentialInformation.keyWords" :key="index" style="margin-right: 5px; margin-top: 10px">
+                {{ item }}
+              </el-tag>
+              <el-divider content-position="left">Purpose</el-divider>
+              <h4>{{ content.context.essentialInformation.purpose }}</h4>
+              <el-divider></el-divider>
+              <div @click="toAbstract">
+                <i class="iconfont icon-read" style="margin-right: 10px"></i>
+                Abstract
+              </div>
+              <div @click="toScenario" style="margin-top: 10px">
+                <i class="el-icon-data-board" style="margin-right: 10px"></i>
+                Scenario
+              </div>
+              <el-divider content-position="left">
+                Resource
+                <div class="divider-text">{{ resourceCount }}</div>
+              </el-divider>
+              <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick" @node-collapse="handleNodeCollapse"></el-tree>
+              <el-descriptions direction="vertical" :column="3" border v-if="resourceFlag" style="margin-top: 20px">
+                <el-descriptions-item label="Name">{{ selectedNode.label }}</el-descriptions-item>
+                <el-descriptions-item label="Event Name">{{ selectedNode.eventName }}</el-descriptions-item>
+                <el-descriptions-item label="Type">
+                  <el-tag size="small" :type="getFormat">{{ selectedNode.format }}</el-tag>
+                </el-descriptions-item>
+                <el-descriptions-item label="Data Type" v-if="selectedNode.format == 'parameter' || selectedNode.format == 'output'">
+                  <el-tag size="small" :type="getType" effect="dark">{{ selectedNode.type }}</el-tag>
+                </el-descriptions-item>
+                <el-descriptions-item label="Description">
+                  {{ selectedNode.description }}
+                </el-descriptions-item>
+              </el-descriptions>
+              <el-divider></el-divider>
+            </div>
+          </el-col>
+        </el-row>
+        <el-divider></el-divider>
       </div>
     </el-col>
   </div>
 </template>
 
 <script>
-// import stepCard from '_com/StepCard';
-// import recordList from '_com/RecordList';
-import { getProjectAndUsers, getPerformanceByProjectId, getContextByProjectId, getFileItemByCreatorId } from '@/api/request';
-import { dateFormat } from '@/utils/utils';
+import { getContent } from '@/api/request';
 
 import ReScenarioContent from '_com/Scenario/reScenario';
 
 export default {
   components: {
-    ReScenarioContent
-    // stepCard
-    // recordList
+    ReScenarioContent,
   },
   data() {
     return {
       projectId: this.$route.params.id,
-      projectInfo: {},
-      completion: [],
-      context: {},
-      resource: {},
-      dataItemListFromResource: [],
-      scenario: {},
-      results: {}
+      content: {},
+      resourceCount: 0,
+      data: [],
+      resourceFlag: false,
+      defaultProps: {
+        children: 'children',
+        label: 'label',
+      },
+      selectedNode: {},
+      resourceMD: [],
     };
+  },
+  computed: {
+    getFormat() {
+      if (this.selectedNode.format == 'input') {
+        return '';
+      } else if (this.selectedNode.format == 'parameter') {
+        return 'info';
+      } else if (this.selectedNode.format == 'output') {
+        return 'success';
+      } else if (this.selectedNode.format == 'model') {
+        return 'danger';
+      } else {
+        return 'warning';
+      }
+    },
+    getType() {
+      if (this.selectedNode.type == 'INT') {
+        return '';
+      } else if (this.selectedNode.type == 'STRING') {
+        return 'success';
+      } else {
+        return 'warning';
+      }
+    },
   },
 
   methods: {
+    click() {
+      console.log(this.$refs.md);
+    },
+    handleNodeClick(data) {
+      if (data.flag) {
+        this.resourceFlag = true;
+        this.selectedNode = data;
+      } else {
+        this.resourceFlag = false;
+      }
+    },
+    handleNodeCollapse() {
+      this.resourceFlag = false;
+    },
+
+    async getContent() {
+      this.content = await getContent(this.projectId);
+      if (this.content.resource != undefined) {
+        if (this.content.resource.inputs != undefined && this.content.resource.inputs.length != 0) {
+          this.resourceCount = this.resourceCount + this.content.resource.inputs.length;
+          this.data.push({
+            label: 'inputs',
+            children: [],
+          });
+          this.content.resource.inputs.forEach((item) => {
+            this.data[this.data.length - 1].children.push({
+              label: item.name,
+              eventName: item.eventName,
+              description: item.description,
+              format: 'input',
+              flag: true,
+            });
+            this.resourceMD.push({
+              name: item.name,
+              markDownHtml: item.markDownHtml
+            });
+          });
+        }
+        if (this.content.resource.parameters != undefined) {
+          this.resourceCount = this.resourceCount + this.content.resource.parameters.length;
+          this.data.push({
+            label: 'parameters',
+            children: [],
+          });
+          this.content.resource.parameters.forEach((item) => {
+            this.data[this.data.length - 1].children.push({
+              label: item.name,
+              eventName: item.eventName,
+              description: item.description,
+              format: 'parameter',
+              type: item.type,
+              flag: true,
+            });
+            this.resourceMD.push({
+              name: item.name,
+              markDownHtml: item.markDownHtml
+            });
+          });
+        }
+        if (this.content.resource.outputs != undefined) {
+          this.resourceCount = this.resourceCount + this.content.resource.outputs.length;
+          this.data.push({
+            label: 'output',
+            children: [],
+          });
+          this.content.resource.outputs.forEach((item) => {
+            this.data[this.data.length - 1].children.push({
+              label: item.name,
+              eventName: item.eventName,
+              description: item.description,
+              format: 'output',
+              type: item.type,
+              flag: true,
+            });
+            this.resourceMD.push({
+              name: item.name,
+              markDownHtml: item.markDownHtml
+            });
+          });
+        }
+      }
+    },
+
+    toAbstract() {
+      this.$refs.abstract.scrollIntoView();
+    },
+    toScenario() {
+      this.$refs.scenario.scrollIntoView();
+    },
     async init() {
-      await this.getProjectInfo();
-      await this.getPerformance();
-      await this.getContext();
-      await this.getDataAsOperator();
-      // await this.judgeRole(this.projectInfo);
+      await this.getContent();
     },
-
-    async getProjectInfo() {
-      let data = await getProjectAndUsers(this.projectId);
-      console.log("ProjectInfo", data);
-      this.projectInfo = data.project;
-      this.creator = data.creator;
-      this.members = data.members;
-    },
-
-    async getPerformance() {
-      let data = await getPerformanceByProjectId(this.projectId);
-      console.log("Performance", data)
-      this.completion = data.completion;
-    },
-    async getContext() {
-      // console.log(this.projectId);
-      if (this.projectId == null) {
-        this.$message({
-          message: 'Get information error!',
-          type: 'error'
-        });
-        return;
-      }
-      let data = await getContextByProjectId(this.projectId);
-      console.log('context', data);
-      this.context = data;
-    },
-
-    async getDataAsOperator() {
-      let data = await getFileItemByCreatorId(this.projectId);
-      console.log("DataAsOperator", data)
-      this.dataItemListFromResource = data;
-      this.$refs.multipleTable.toggleAllSelection();
-      // console.log('DATA', data);
-    },
-
-    dateFormat(time) {
-      if (time == null) {
-        return 'You have not do any operation';
-      }
-      return dateFormat(time);
-    },
-    handleSelectionChange() {}
   },
-  mounted() {
+  created() {
     this.init();
-  }
+  },
 };
 </script>
 
@@ -200,11 +235,43 @@ export default {
     padding: 0 10px;
     height: 100%;
     width: 50%;
-    // position: relative;
   }
 
   .scenario {
     width: 100%;
+
+    .md {
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
+      border-radius: 4px;
+      margin-top: 20px;
+      .head {
+        height: 45px;
+        line-height: 45px;
+        font-weight: bolder;
+      }
+      .el-divider {
+        margin-top: 0px;
+      }
+      .markdown-body {
+        padding: 30px 30px;
+      }
+    }
+  }
+  .el-divider__text {
+    display: flex;
+    .divider-text {
+      border-radius: 50%;
+      background-color: #343942;
+      // width: 15px;
+      height: 15px;
+      min-width: 15px;
+      text-align: center;
+      margin-top: 3px;
+      margin-left: 3px;
+      line-height: 15px;
+      color: white;
+      font-size: 8px;
+    }
   }
 }
 </style>

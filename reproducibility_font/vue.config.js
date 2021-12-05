@@ -24,7 +24,7 @@ module.exports = {
 
     config.plugin('webpack-bundle-analyzer').use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin);
   },
-  productionSourceMap: false,
+  
   devServer: {
     host: '0.0.0.0',
     port: 8080,
@@ -38,5 +38,5 @@ module.exports = {
         // }
       }
     }
-  }
+  },
 };

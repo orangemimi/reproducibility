@@ -33,6 +33,12 @@ public class ProjectController {
     public JsonResult getMyProjects(@JwtTokenParser(key = "userId") String userId) {
         return ResultUtils.success(projectService.getMyProjects(userId));
     }
+    @RequestMapping(value = "/getProjectsCreatedByMe", method = RequestMethod.GET)
+    public JsonResult getProjectsCreatedByMe(@JwtTokenParser String userId) {
+        return ResultUtils.success(projectService.getProjectsCreatedByMe(userId));
+    }
+
+
 
     @RequestMapping(value = "/user/{projectId}", method = RequestMethod.GET)
     public JsonResult getProjectAndUsers(@PathVariable("projectId") String projectId) {

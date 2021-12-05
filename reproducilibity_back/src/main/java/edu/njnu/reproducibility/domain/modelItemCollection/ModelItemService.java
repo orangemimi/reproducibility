@@ -1,6 +1,7 @@
 package edu.njnu.reproducibility.domain.modelItemCollection;
 
 
+import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
@@ -9,7 +10,16 @@ import edu.njnu.reproducibility.remote.RemotePortalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author ：Zhiyi
@@ -69,4 +79,34 @@ public class ModelItemService {
 //    public void del(String tid) {
 //        modelItemRepository.deleteByTid(tid);
 //    }
+
+    public void saveToProject(JSONObject jsonObject, String userId) {
+        AddModelItemDTO addModelItemDTO = new AddModelItemDTO();
+        addModelItemDTO.setUploaderId(userId);
+        addModelItemDTO.setProjectId(jsonObject.getStr("projectId"));
+        addModelItemDTO.setMd5(jsonObject.getStr("md5"));
+        String image;
+        if(jsonObject.getStr("image").equals("")) {
+            image = "http://geomodeling.njnu.edu.cn/static/img/model/model.png";
+        } else {
+            image = "http://geomodeling.njnu.edu.cn" + jsonObject.getStr("image");
+        }
+        addModelItemDTO.setImage(image);
+        addModelItemDTO.setName(jsonObject.getStr("name"));
+        addModelItemDTO.setType("service");
+        addModelItemDTO.setPrivacy("public");
+        addModelItemDTO.setTags(new ArrayList<>());
+        ModelItemColletion modelItemColletion = new ModelItemColletion();
+        addModelItemDTO.convertTo(modelItemColletion);
+        modelItemRepository.save(modelItemColletion);
+    }
+
+    public void saveModelsToProject(JSONArray jsonArray, String projectId, String userId) {
+        for(int i = 0; i < jsonArray.size(); i++) {
+            JSONObject jsonObject = jsonArray.get(i, JSONObject.class);
+            jsonObject.put("project", projectId);
+            saveToProject(jsonObject, userId);
+        }
+    }
+
 }

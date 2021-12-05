@@ -1,5 +1,6 @@
 package edu.njnu.reproducibility.remote;
 
+import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import edu.njnu.reproducibility.common.enums.ResultEnum;
 import edu.njnu.reproducibility.common.exception.MyException;
@@ -11,6 +12,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static edu.njnu.reproducibility.utils.Utils.convertMdl;
 
@@ -77,5 +83,53 @@ public class RemotePortalService {
         JSONObject result = jsonObjectResponseEntity.getBody().getJSONObject("data");
 
         return result;
+    }
+
+    public JSONObject getModelsByPortal(int page, int pageSize, String searchText) {
+        String url = "http://geomodeling.njnu.edu.cn/modelItem/list";
+        LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+        map.add("sortField", "viewCount");
+        map.add("asc", false);
+        map.add("page", page);
+        map.add("pageSize", pageSize);
+//        List<String> list = new ArrayList<>();
+//        list.add("all");
+        map.add("classifications[]", "all");
+        map.add("classType", 2);
+        map.add("queryField", "Name");
+        map.add("searchText", searchText);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity httpEntity = new HttpEntity(map, headers);
+
+        ResponseEntity<JSONObject> responseEntity = restTemplate.exchange(url, HttpMethod.POST, httpEntity, JSONObject.class);
+        return responseEntity.getBody();
+    }
+
+    public List<JSONObject> getComputableModels(String oid) {
+        String url = "http://geomodeling.njnu.edu.cn/modelItem/searchByOid?oid=" + oid;
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
+        HttpEntity httpEntity = new HttpEntity(headers);
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<JSONObject> result = restTemplate.exchange(url, HttpMethod.GET, httpEntity, JSONObject.class);
+        JSONArray computableIds = result.getBody().getJSONObject("data").getJSONObject("relate").getJSONArray("computableModels");
+        List<JSONObject> list = new ArrayList<>();
+        for(int i = 0; i < computableIds.size(); i++) {
+            String str = computableIds.get(i, String.class);
+            String url1 = "http://geomodeling.njnu.edu.cn/computableModel/getInfo/" + str;
+            ResponseEntity<JSONObject> responseEntity = restTemplate.exchange(url1, HttpMethod.GET, httpEntity, JSONObject.class);
+            if(responseEntity.getBody().getJSONObject("data").getStr("md5") != null) {
+                JSONObject temp = new JSONObject();
+                temp.put("md5", responseEntity.getBody().getJSONObject("data").getStr("md5"));
+                temp.put("name", responseEntity.getBody().getJSONObject("data").getStr("name"));
+                temp.put("description", responseEntity.getBody().getJSONObject("data").getStr("description"));
+                list.add(temp);
+            }
+        }
+        return list;
+
     }
 }

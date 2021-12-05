@@ -1,18 +1,28 @@
 package edu.njnu.reproducibility.domain.dataItemCollection;
 
 
+import com.alibaba.fastjson.JSONObject;
 import edu.njnu.reproducibility.common.enums.ResultEnum;
 import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
 import edu.njnu.reproducibility.domain.dataItemCollection.dto.AddDataItemDTO;
 import edu.njnu.reproducibility.domain.dataItemCollection.dto.UpdateDataItemDTO;
+import edu.njnu.reproducibility.domain.file.FileItem;
+import edu.njnu.reproducibility.domain.file.FileItemRepository;
+import edu.njnu.reproducibility.remote.DataContainerService;
 import edu.njnu.reproducibility.utils.FileUtil;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ClassUtils;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -24,6 +34,12 @@ import java.util.List;
 public class DataItemService {
     @Autowired
     private DataItemRepository dataItemRepository;
+
+    @Autowired
+    FileItemRepository fileItemRepository;
+
+    @Autowired
+    DataContainerService dataContainerService;
 
 
     public JsonResult getResources(String userId) {
@@ -80,4 +96,66 @@ public class DataItemService {
             throw new MyException(ResultEnum.NO_OBJECT);
         }
     }
+
+
+    /**
+    * @Description:保存用户文件夹下（即已经上传）的DataItem
+    * @Author: Yiming
+    * @Date: 2021/11/24
+    */
+    public String saveDataItemOfUploaded(AddDataItemDTO addDataItemDTO, JSONObject jsonObject, String userId) {
+        String id = jsonObject.getString("id");
+        String storey = jsonObject.getString("storey");
+        FileItem fileItem = fileItemRepository.findByStoreyAndUploaderIdAndId(storey, userId, id);
+        addDataItemDTO.setUserId(userId);
+        addDataItemDTO.setValue(fileItem.getId());
+        addDataItemDTO.setSize(fileItem.getFileSize());
+        DataItemCollection dataItemCollection = new DataItemCollection();
+        addDataItemDTO.convertTo(dataItemCollection);
+        return dataItemRepository.save(dataItemCollection).getId();
+    }
+
+    /**
+    * @Description:保存用户文件夹下没有的（即没有上传的）DataItem
+    * @Author: Yiming
+    * @Date: 2021/11/24
+    */
+    public String saveDataItemOfNoUpload(MultipartFile multipartFile, String name, String description, String userId, String format, String type, String projectId) throws IOException {
+        MultiValueMap<String, Object> multiValueMap = new LinkedMultiValueMap<>();
+        String suffix="."+ FilenameUtils.getExtension(multipartFile.getOriginalFilename());
+        File temp = File.createTempFile("temp", suffix);
+        multipartFile.transferTo(temp);
+        FileSystemResource resource = new FileSystemResource(temp);
+        multiValueMap.add("datafile", resource);
+        multiValueMap.add("name", name);
+        String address = dataContainerService.upload(multiValueMap).getStr("id");
+        AddDataItemDTO addDataItemDTO = new AddDataItemDTO();
+        addDataItemDTO.setName(name);
+        addDataItemDTO.setDescription(description);
+        addDataItemDTO.setUserId(userId);
+        addDataItemDTO.setFormat(format);
+        addDataItemDTO.setType(type);
+        addDataItemDTO.setProjectId(projectId);
+        addDataItemDTO.setValue(address);
+        DataItemCollection dataItemCollection = new DataItemCollection();
+        addDataItemDTO.convertTo(dataItemCollection);
+        return dataItemRepository.save(dataItemCollection).getId();
+    }
+
+    /**
+    * @Description:批量删除
+    * @Author: Yiming
+    * @Date: 2021/11/25
+    */
+    public void batchDelete(List<String> Ids) {
+        for(String id : Ids) {
+            try {
+                dataItemRepository.deleteById(id);
+            } catch (Exception e) {
+                System.out.println(e);
+                throw MyException.noObject();
+            }
+        }
+    }
+
 }

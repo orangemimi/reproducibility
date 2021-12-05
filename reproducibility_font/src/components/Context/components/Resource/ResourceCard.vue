@@ -1,77 +1,90 @@
 <template>
   <div class="master" :style="type == 'plus' ? 'background-color: #f6f6f6;' : 'background-color: #d3dce6;'">
-    <div v-if="type == 'plus'" class="plus" @click="addCard">
-      <i class="el-icon-plus"></i>
-    </div>
-    <div class="content" v-else>
-      <div class="name">{{ resourceItem.name }}<i class="el-icon-view" v-if="type == 'input'"></i></div>
+    <router-link target="_blank" :to="{ path: `/project/resource/${projectId}` }" v-if="type == 'plus'">
+      <div class="plus">
+        <i class="el-icon-plus"></i>
+      </div>
+    </router-link>
+    <div class="content" v-else @click="go">
+      <div class="name">
+        {{ resourceItem.name }}
+        <i class="el-icon-view" v-if="type == 'input'"></i>
+      </div>
       <el-row>
         <el-col :span="24">
           Type:
-          <el-tag :type="getTag">{{type}}</el-tag>
+          <el-tag :type="getTag">{{ type }}</el-tag>
         </el-col>
-        <el-col :span="24">{{'Event Name: ' + resourceItem.eventName}}</el-col>
+        <el-col :span="24">{{ 'Event Name: ' + resourceItem.eventName }}</el-col>
         <el-col :span="24" v-if="type == 'input'">Data Type: FILE</el-col>
-        <el-col :span="24" v-if="type == 'output'">{{'Data Type: ' + resourceItem.type}}</el-col>
-        <el-col :span="12" v-if="type == 'parameter'">{{'Data Type: ' + resourceItem.type}}</el-col>
-        <el-col :span="12" v-if="type == 'parameter'">{{'Value: ' + resourceItem.value}}</el-col>
+        <el-col :span="24" v-if="type == 'output'">{{ 'Data Type: ' + resourceItem.type }}</el-col>
+        <el-col :span="24" v-if="type == 'parameter'">{{ 'Data Type: ' + resourceItem.type }}</el-col>
+        <!-- <el-col :span="12" v-if="type == 'parameter'">{{ 'Value: ' + resourceItem.value }}</el-col> -->
         <el-col :span="24">Description:</el-col>
         <el-col :span="24" style="margin-top: 5px">
-          <el-input type="textarea" :rows="3" placeholder="Please enter" v-model="resourceItem.description" style="width: 85%" resize="none" :disabled="true"></el-input>
+          <el-input
+            type="textarea"
+            :rows="3"
+            placeholder="Please enter"
+            v-model="resourceItem.description"
+            style="width: 85%"
+            resize="none"
+            :disabled="true"
+          ></el-input>
         </el-col>
       </el-row>
     </div>
-    <el-dialog :visible.sync="flag" width="40%" class="addResourceCard" title="Resource" v-if="flag">
-      <add-resource-card/>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-import addResourceCard from './components/AddResourceCard.vue'
 export default {
-  components: {
-    addResourceCard
-  },
+  components: {},
   data() {
     return {
       // textarea: '',
-      flag: false
+      projectId: this.$route.params.id,
     };
   },
   computed: {
     getTag() {
-      if(this.type == 'input') {
-        return ''
-      } else if(this.type == 'parameter') {
-        return 'info'
+      if (this.type == 'input') {
+        return '';
+      } else if (this.type == 'parameter') {
+        return 'info';
       } else {
-        return 'success'
+        return 'success';
       }
-    }
+    },
   },
   props: {
     type: {
       type: String,
     },
     resourceItem: {
-      type: Object
-    }
+      type: Object,
+    },
   },
   methods: {
-    addCard() {
-      console.log(1)
-      this.flag = true
+    // init() {
+    //   let temp = JSON.parse(JSON.stringify(this.resourceItem));
+    //   this.textarea = temp.description;
+    // },
+    go() {
+      let temp = JSON.parse(JSON.stringify(this.resourceItem));
+      temp.format = this.type
+      let obj=JSON.stringify(temp)
+      let routeData = this.$router.resolve({
+        path: `/project/resourcecollection/${this.projectId}`,
+        query: { resourceItem: encodeURIComponent(obj) },
+      });
+      window.open(routeData.href, '_blank');
     },
-    init() {
-      let temp = JSON.parse(JSON.stringify(this.resourceItem))
-      this.textarea = temp.description
-    }
   },
   mounted() {
     // this.init()
     // console.log(this.resourceItem)
-  }
+  },
 };
 </script>
 
@@ -82,7 +95,7 @@ export default {
   border-radius: 4px;
   background-color: #f6f6f6;
   margin-right: 8px;
-  
+
   .plus {
     font-size: 50px;
     line-height: 250px;

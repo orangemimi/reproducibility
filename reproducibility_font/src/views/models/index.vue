@@ -8,30 +8,15 @@
           </picture>
         </div>
         <el-row class="top-info">
-          <el-row class="top-title">
-            Models
-          </el-row>
-          <el-row class="top-desc">
-            Various, useful Models.
-          </el-row>
-          <el-row class="top-desc">
-            Collected by generous community of OpenGMS Team. 🎁
-          </el-row>
+          <el-row class="top-title">Models</el-row>
+          <el-row class="top-desc">Various, useful Models.</el-row>
+          <el-row class="top-desc">Collected by generous community of OpenGMS Team. 🎁</el-row>
           <el-row class="input-container">
-            <el-input
-              @keyup.enter.native="searchData"
-              v-model="value"
-              placeholder=""
-              prefix-icon="el-icon-search"
-            ></el-input>
+            <el-input @keyup.enter.native="searchData" v-model="value" placeholder="" prefix-icon="el-icon-search"></el-input>
           </el-row>
-          <el-row class="search-note">
-            Trending searches: Geodynamics,Geostatics,Hydrology,Coastal Vulnerability,Urban Noise
-          </el-row>
+          <el-row class="search-note">Trending searches: Geodynamics,Geostatics,Hydrology,Coastal Vulnerability,Urban Noise</el-row>
           <el-row>
-            <el-button plain class="add-btn" @click="addModelDialogShow = true">
-              Add your model service ➔
-            </el-button>
+            <el-button plain class="add-btn" @click="addModelDialogShow = true">Add your model service ➔</el-button>
           </el-row>
         </el-row>
       </div>
@@ -39,33 +24,26 @@
 
     <div class="main">
       <div class="main-container">
-        <el-row
-          class="infinite-list"
-          v-infinite-scroll="extendData"
-          infinite-scroll-disabled="disabled"
-          style="overflow:auto"
-        >
+        <el-row class="infinite-list" v-infinite-scroll="extendData" infinite-scroll-disabled="disabled" style="overflow: auto">
           <el-col :span="4" v-for="(item, index) in data" :key="index">
-            <serviceCard :item="item" type="model"></serviceCard>
+            <serviceCard :item="item" type="Model"></serviceCard>
           </el-col>
         </el-row>
       </div>
     </div>
+    <div style="text-align: center;">
+      <el-pagination layout="prev, pager, next" :total="total" background small :pager-count="5" :page-size="12" :current-page="1" @current-change="currentChange"></el-pagination>
+    </div>
 
     <!-- add model -->
-    <el-dialog
-      title="Add model in Reproducibilty"
-      :visible.sync="addModelDialogShow"
-      width="40%"
-      :close-on-click-modal="false"
-    >
+    <el-dialog title="Add model in Reproducibilty" :visible.sync="addModelDialogShow" width="40%" :close-on-click-modal="false">
       <create-model></create-model>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getAllModelItems } from '@/api/request';
+import { getAllModelItems, getModelList } from '@/api/request';
 import serviceCard from '_com/common/ServiceCard';
 import createModel from './create';
 export default {
@@ -76,9 +54,12 @@ export default {
       value: '',
       pageFilter: {
         pageSize: 8,
-        page: 0
+        page: 0,
       },
-      addModelDialogShow: false
+      addModelDialogShow: false,
+      total: 0,
+      // currentPage: 1,
+      modelList: []
     };
   },
   computed: {
@@ -87,12 +68,41 @@ export default {
     },
     disabled() {
       return this.loading || this.noMore;
-    }
+    },
   },
   methods: {
-    searchData() {
-      this.pageFilter.page = 0;
-      this.getData();
+    async getModelList() {
+      let params = {
+        page: 0,
+        pageSize: 12,
+        searchText: '',
+      };
+      let result = await getModelList(params);
+      this.total = result.data.total
+      this.data = result.data.list
+    },
+    init() {
+      this.getModelList()
+    },
+    async currentChange(val) {
+      let params = {
+        page: val - 1,
+        pageSize: 12,
+        searchText: ''
+      }
+      this.data = (await getModelList(params)).data.list
+    },
+    async searchData() {
+      // this.pageFilter.page = 0;
+      // this.getData();
+      let params = {
+        page: 0,
+        pageSize: 12,
+        searchText: this.value
+      }
+      let result = await getModelList(params)
+      this.total = result.data.total,
+      this.data = result.data.list
     },
 
     async getData() {
@@ -108,27 +118,29 @@ export default {
         this.data = content;
         this.is_extending = true;
       }
-      console.log(this.data)
+      console.log(this.data);
     },
 
     extendData() {
-      this.pageFilter.page++;
-      this.getData();
+      // this.pageFilter.page++;
+      // this.getData();
     },
 
-    addModelItem() {}
+    addModelItem() {},
   },
   mounted() {
-    this.getData();
+    // this.getData();
+    this.init()
     // window.addEventListener('scroll', this.scrollDown);
   },
-  components: { serviceCard, createModel }
+  components: { serviceCard, createModel },
 };
 </script>
 
 <style lang="scss">
 .container {
   .top {
+    
     // background-color: #000;
     color: #fff;
     //   margin-bottom: 48px;

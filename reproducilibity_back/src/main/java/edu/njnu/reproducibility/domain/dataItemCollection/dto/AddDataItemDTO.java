@@ -18,6 +18,7 @@ public class AddDataItemDTO implements ToDomainConverter<DataItemCollection> {
     String format;//file/parameter/sharedFile
     String value;//url or value
     String size;
+    String type;
 
     String projectId;
     String userId;//creatorId
