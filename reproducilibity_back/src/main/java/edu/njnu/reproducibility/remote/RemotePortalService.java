@@ -123,6 +123,7 @@ public class RemotePortalService {
             ResponseEntity<JSONObject> responseEntity = restTemplate.exchange(url1, HttpMethod.GET, httpEntity, JSONObject.class);
             if(responseEntity.getBody().getJSONObject("data").getStr("md5") != null) {
                 JSONObject temp = new JSONObject();
+                temp.put("doi", str);
                 temp.put("md5", responseEntity.getBody().getJSONObject("data").getStr("md5"));
                 temp.put("name", responseEntity.getBody().getJSONObject("data").getStr("name"));
                 temp.put("description", responseEntity.getBody().getJSONObject("data").getStr("description"));

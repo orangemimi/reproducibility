@@ -71,22 +71,25 @@ export default {
   data() {
     return {
       activeIndex: 1,
-      selectModelCount: 0,
+      selectModelCount: this.$store.state.user.selectNum,
       drawer: false,
     };
   },
   computed: {
     ...mapState(['user']),
   },
+  watch: {
+    '$store.state.user.selectNum': {
+      handler(val) {
+        this.selectModelCount = val
+      }
+    }
+  },
 
   methods: {
     ...mapActions({ handleLogOut: 'user/handleLogOut' }),
 
-    init() {
-      if (localStorage.selectModels != undefined) {
-        this.selectModelCount = JSON.parse(localStorage.selectModels).computableModels.length;
-      }
-    },
+
     handleClick() {
       this.drawer = true;
     },
@@ -94,13 +97,7 @@ export default {
       this.drawer = false;
     },
     success() {
-      this.selectModelCount = 0;
-      if (this.$route.path == '/models') {
-        let temp = this.$parent.$children[1].$children[1].$children
-        temp.forEach(item => {
-          item.$children[0].select = false
-        })
-      }
+      this.$store.state.user.selectNum = 0;
     },
 
     handleSelect(key) {
@@ -191,7 +188,7 @@ export default {
     },
   },
   mounted() {
-    this.init();
+
   },
   components: {
     Avatar,

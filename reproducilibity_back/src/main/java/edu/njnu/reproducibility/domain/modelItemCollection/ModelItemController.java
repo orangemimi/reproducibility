@@ -73,4 +73,8 @@ public class ModelItemController {
         return ResultUtils.success();
     }
 
+    @RequestMapping(value = "/getModelsByProjectId/{projectId}", method = RequestMethod.GET)
+    public JsonResult getModelsByProjectId(@PathVariable String projectId) {
+        return ResultUtils.success(modelItemService.getModelsByProjectId(projectId));
+    }
 }

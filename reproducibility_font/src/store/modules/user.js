@@ -9,7 +9,8 @@ const state = {
   userId: localStorage.getItem('userId'),
   email: localStorage.getItem('email'),
   unreadApplynum: localStorage.getItem('unreadApplynum'),
-  unreadReplynum: localStorage.getItem('unreadReplynum')
+  unreadReplynum: localStorage.getItem('unreadReplynum'),
+  selectNum: localStorage.getItem('selectModels') == undefined ? 0 : JSON.parse(localStorage.selectModels).computableModels.length
 };
 //commit mutation ,同步
 const mutations = {
@@ -50,6 +51,9 @@ const mutations = {
   setUnreadReplynum(state, unreadReplynum) {
     state.unreadReplynum = unreadReplynum
     localStorage.setItem('unreadReplynum', unreadReplynum)
+  },
+  setSelectNum(state, selectNum) {
+    state.selectNum = selectNum
   }
 
 };
@@ -64,6 +68,7 @@ const actions = {
     commit('setEmail', '')
     commit('setUnreadApplynum', '')
     commit('setUnreadReplynum', '')
+    commit('setSelectNum', 0)
     localStorage.clear();
   },
 
@@ -85,6 +90,11 @@ const actions = {
           commit('setEmail', response.email)
           commit('setUnreadApplynum', response.unreadApply)
           commit('setUnreadReplynum', response.unreadReply)
+          commit('setSelectNum', 0)
+          localStorage.setItem("selectModels", JSON.stringify({
+            computableModels: [],
+            modelItem: []
+          }))
           resolve();
         })
         .catch(error => {

@@ -77,6 +77,13 @@ export default {
         }
       },
     },
+    '$store.state.user.selectNum': {
+      handler(val) {
+        if(val == 0) {
+          this.select = false
+        }
+      }
+    }
   },
   methods: {
     init() {
@@ -116,7 +123,7 @@ export default {
         }
         for (let i = 0; i < temp.computableModels.length; i++) {
           for (let j = 0; j < this.computableModels.length; j++) {
-            if (temp.computableModels[i].md5 == this.computableModels[j].md5) {
+            if (temp.computableModels[i].doi == this.computableModels[j].doi) {
               this.selectNumArr[j] = 1;
               break;
             }
@@ -171,7 +178,7 @@ export default {
       if (this.select) {
         for (let i = 0; i < temp.computableModels.length; i++) {
           for (let j = 0; j < this.computableModels.length; j++) {
-            if (this.computableModels[j].md5 == temp.computableModels[i].md5) {
+            if (this.computableModels[j].doi == temp.computableModels[i].doi) {
               temp.computableModels.splice(i, 1);
               console.log(temp.computableModels.length)
               i--;
@@ -190,8 +197,9 @@ export default {
         for (let i = 0; i < this.selectArr.length; i++) {
           temp.computableModels.push({
             name: this.selectArr[i].name,
-            md5: this.selectArr[i].md5,
+            doi: this.selectArr[i].doi,
             image: this.item.image,
+            md5: this.selectArr[i].md5
           });
         }
         if (this.badgeNum == 0) {
@@ -208,8 +216,7 @@ export default {
         }
       }
       localStorage.setItem('selectModels', JSON.stringify(temp));
-      this.$parent.$parent.$parent.$parent.$children[0].selectModelCount =
-        this.$parent.$parent.$parent.$parent.$children[0].selectModelCount + this.selectArr.length - this.badgeNum;
+      this.$store.state.user.selectNum = this.$store.state.user.selectNum + this.selectArr.length - this.badgeNum
       if (this.selectArr.length > 0) {
         this.select = true;
         this.badgeNum = this.selectArr.length;

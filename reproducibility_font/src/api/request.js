@@ -488,6 +488,10 @@ export async function saveModelsToProject(jsonData) {
   return await post(`/modelItems/saveModelsToProject`, jsonData)
 }
 
+export async function getModelsByProjectId(projectId) {
+  return await get(`/modelItems/getModelsByProjectId/${projectId}`)
+}
+
 //------------------------------------------methods-----------------------------------
 
 export async function saveMethod(form) {

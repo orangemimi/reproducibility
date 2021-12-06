@@ -9,7 +9,7 @@
       <el-switch v-model="switchValue" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
     </div>
     <div v-show="switchValue" class="card-contain">
-      <vue-scroll :ops="ops" style="height: 390px">
+      <vue-scroll :ops="ops" style="max-height: 390px;">
         <div v-for="(model, index) in publicModels" :key="index" ref="modelItemList">
           <div class="choose-model-contain">
             <model-card :modelFrom="model" @click.native="getModelInfo(model)"></model-card>
@@ -31,7 +31,7 @@
 
 <script>
 import modelCard from '_com/Cards/MxModelCard';
-import { getModelItemsByPrivacy, getModelItemsByProvider } from '@/api/request';
+import { getModelItemsByPrivacy, getModelItemsByProvider, getModelsByProjectId } from '@/api/request';
 
 export default {
   components: { modelCard },
@@ -74,6 +74,13 @@ export default {
       this.$set(this, 'publicModels', content);
     },
 
+    async getModelsByProjectId() {
+      let data = await getModelsByProjectId(this.projectId)
+      console.log(data)
+      this.publicModels = data
+      console.log(this.publicModels)
+    },
+
     async getPersonalModels() {
       let data = await getModelItemsByProvider(this.personalModelFilter.page, this.personalModelFilter.pageSize);
       this.$set(this, 'personalModels', data);
@@ -83,12 +90,10 @@ export default {
     getModelInfo() {
       console.log(this.$refs['modelItemList']);
       return this.$refs['modelItemList'];
-      // this.$emit('chooseModel',model)
     },
   },
   created() {
-    this.getPublicModels();
-    // this.getPersonalModels();
+    this.getModelsByProjectId()
   },
 };
 </script>
@@ -107,6 +112,7 @@ export default {
   // margin: 0 5px;
   .el-card__body {
     padding: 0px;
+    
   }
 
   .model-top {
@@ -121,7 +127,7 @@ export default {
   }
 
   .card-contain {
-    height: 390px;
+    max-height: 390px;
     width: 100%;
     clear: both;
 

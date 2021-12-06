@@ -84,6 +84,7 @@ public class ModelItemService {
         AddModelItemDTO addModelItemDTO = new AddModelItemDTO();
         addModelItemDTO.setUploaderId(userId);
         addModelItemDTO.setProjectId(jsonObject.getStr("projectId"));
+        addModelItemDTO.setDoi(jsonObject.getStr("doi"));
         addModelItemDTO.setMd5(jsonObject.getStr("md5"));
         String image;
         if(jsonObject.getStr("image").equals("")) {
@@ -104,9 +105,20 @@ public class ModelItemService {
     public void saveModelsToProject(JSONArray jsonArray, String projectId, String userId) {
         for(int i = 0; i < jsonArray.size(); i++) {
             JSONObject jsonObject = jsonArray.get(i, JSONObject.class);
-            jsonObject.put("project", projectId);
+            jsonObject.put("projectId", projectId);
             saveToProject(jsonObject, userId);
         }
     }
+
+    public List<ModelItemColletion> getModelsByProjectId(String projectId) {
+        List<ModelItemColletion> list = modelItemRepository.findAllByProjectId(projectId);
+        if(list == null) {
+            return new ArrayList<>();
+        } else {
+            return list;
+        }
+    }
+
+
 
 }

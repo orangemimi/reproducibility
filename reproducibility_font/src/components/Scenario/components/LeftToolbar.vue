@@ -421,6 +421,7 @@ export default {
           let cell = evt.properties.cell;
           let clickModelType = cell.type;
           if (clickModelType == 'modelService') {
+            console.log(cell)
             this.currentCell = cell;
             this.modelDoubleClick = true;
             this.domFlag++;

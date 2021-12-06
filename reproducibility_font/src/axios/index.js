@@ -67,14 +67,14 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-export const get = (url, params, pathVariable = null, loading = true) => {
+export const get = (url, params, pathVariable = null, loading = false) => {
   return axiosInstance.get(sf(url, pathVariable), {
     params: params,
     loading
   });
 };
 
-export const postFile = (url, data, pathVariable = null, loading = true) =>
+export const postFile = (url, data, pathVariable = null, loading = false) =>
   axiosInstance.post(sf(url, pathVariable), data, {
     loading,
     headers: {
@@ -82,22 +82,22 @@ export const postFile = (url, data, pathVariable = null, loading = true) =>
     }
   });
 
-export const post = (url, data, pathVariable = null, loading = true) =>
+export const post = (url, data, pathVariable = null, loading = false) =>
   axiosInstance.post(sf(url, pathVariable), data, {
     loading
   });
 
-export const put = (url, data, pathVariable = null, loading = true) =>
+export const put = (url, data, pathVariable = null, loading = false) =>
   axiosInstance.put(sf(url, pathVariable), data, {
     loading
   });
 
-export const patch = (url, data, pathVariable = null, loading = true) =>
+export const patch = (url, data, pathVariable = null, loading = false) =>
   axiosInstance.patch(sf(url, pathVariable), data, {
     loading
   });
 
-export const del = (url, params, data, pathVariable = null, loading = true) =>
+export const del = (url, params, data, pathVariable = null, loading = false) =>
   axiosInstance.delete(sf(url, pathVariable), {
     params: params,
     data: data,
