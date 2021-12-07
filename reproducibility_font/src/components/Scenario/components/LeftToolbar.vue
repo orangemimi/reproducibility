@@ -103,7 +103,6 @@ export default {
       outputItemList: [],
       graph: {},
       //dom
-      domFlag: 0,
 
       modelClick: false,
       modelDoubleClick: false,
@@ -306,9 +305,6 @@ export default {
           styleObj
         );
         console.log(vertex);
-        // setTimeout(() => {
-        //   this.graph.getModel().setStyle(vertex, styleObj);
-        // }, 1000);
 
         vertex.nodeAttribute = {};
 
@@ -424,9 +420,7 @@ export default {
             console.log(cell)
             this.currentCell = cell;
             this.modelDoubleClick = true;
-            this.domFlag++;
             // await initSetTimeOut();
-            this.activeNames.push('modelRelatedDatas');
             this.dataDoubleClick = this.dataClick = this.modelClick = this.codeDoubleClick = this.dataServiceDoubleClick = false;
           } else if (clickModelType == 'dataService') {
             // await initSetTimeOut();
@@ -512,23 +506,6 @@ export default {
       // console.log(this.mxGraphSelectionModel);
     },
 
-    currentEventWithFile(val) {
-      this.graph.getModel().beginUpdate();
-
-      try {
-        Object.values(this.graph.getModel().cells).forEach((cell) => {
-          if (cell.id == val.id) {
-            cell.value = val.value;
-            this.$message({
-              message: 'You have submit the file successfully',
-              type: 'success',
-            });
-          }
-        });
-      } finally {
-        this.graph.getModel().endUpdate();
-      }
-    },
   },
 
   mounted() {},

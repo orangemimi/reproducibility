@@ -10,9 +10,7 @@
         <div class="event-desc" v-for="(modelInEvent, inEventIndex) in stateListInput" :key="inEventIndex" ref="inputItemList">
           <el-col :span="6" :class="modelInEvent.isSelect != undefined && modelInEvent.isSelect ? 'selectCard' : 'unselectCard'">
             <el-card :title="modelInEvent.name" @click.native="addSelectItem(modelInEvent)">
-              <div v-show="modelInEvent.optional == 'false'" class="event_option">
-                *
-              </div>
+              <div v-show="modelInEvent.optional == 'false'" class="event_option">*</div>
               <div class="event_name">
                 {{ modelInEvent.name }}
               </div>
@@ -51,25 +49,25 @@ import { hasProperty } from '@/utils/utils';
 export default {
   props: {
     cell: {
-      type: Object
-    }
+      type: Object,
+    },
   },
   components: { selectCard },
-  watch: {
-    cell: {
-      handler(val) {
-        // console.log(val)
-        // console.log(oldval)
-        if (hasProperty(val, 'id') && val.type == 'modelService') {
-          this.doi = val.nodeAttribute.doi;
-          this.init();
-          // console.log("执行watch")
-        }
-      },
-      deep: true,
-      immediate: false
-    }
-  },
+  // watch: {
+  //   cell: {
+  //     handler(val) {
+  //       // console.log(val)
+  //       // console.log(oldval)
+  //       if (hasProperty(val, 'id') && val.type == 'modelService') {
+  //         this.doi = val.nodeAttribute.doi;
+  //         this.init();
+  //         // console.log("执行watch")
+  //       }
+  //     },
+  //     deep: true,
+  //     immediate: false,
+  //   },
+  // },
 
   computed: {},
   data() {
@@ -82,14 +80,13 @@ export default {
       stateListInput: [],
       stateListOutput: [],
       activeName: 'input',
-      selectItemListToGraph: []
+      selectItemListToGraph: [],
     };
   },
 
   methods: {
     async init() {
       await this.getModelInfo();
-      
     },
 
     async getModelInfo() {
@@ -104,8 +101,8 @@ export default {
       let stateList = this.stateList;
       let input = [];
       let output = [];
-      stateList.forEach(state => {
-        state.Event.forEach(event => {
+      stateList.forEach((state) => {
+        state.Event.forEach((event) => {
           if (event.type == 'input') {
             input.push(event);
           } else if (event.type == 'output') {
@@ -119,35 +116,31 @@ export default {
       // this.$emit('getInAndOut', this.stateListInput, this.stateListOutput);
     },
     addSelectItem(item) {
-      console.log(item)
+      // console.log(item);
       if (hasProperty(item, 'isSelect') && item.isSelect) {
-        this.selectItemListToGraph.splice(this.selectItemListToGraph.findIndex(arrItem => arrItem.eventId == item.eventId));
+        this.selectItemListToGraph.splice(this.selectItemListToGraph.findIndex((arrItem) => arrItem.eventId == item.eventId));
+        item.isSelect = false
       } else {
         item.isSelect = true;
         this.selectItemListToGraph.push(item);
       }
     },
     removeItem(item) {
-      let index = this.selectItemListToGraph.findIndex(arrItem => arrItem.eventId == item.eventId);
-      console.log('index', index);
+      let index = this.selectItemListToGraph.findIndex((arrItem) => arrItem.eventId == item.eventId);
+      // console.log('index', index);
       this.selectItemListToGraph.splice(index, 1);
       item.isSelect = false;
     },
     submit() {
-      console.log(this.selectItemListToGraph)
-      
+      // console.log(this.selectItemListToGraph);
+
       this.$emit('selectItemListToGraph', this.selectItemListToGraph);
-    }
+    },
   },
   mounted() {
-    if(this.cell != undefined) {
-      this.doi = this.cell.nodeAttribute.doi;
-      this.init()
-      console.log('haha')
-    } else {
-      console.log(this.cell)
-    }
-  }
+    this.doi = this.cell.nodeAttribute.doi;
+    this.init();
+  },
 };
 </script>
 
