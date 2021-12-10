@@ -402,8 +402,8 @@ export async function getTaskInfo(instanceId) {
   return await get(`/integrateTaskInstances/getTaskInfo/${instanceId}`)
 }
 
-export async function getAllInstances(taskId) {
-  return await get(`/integrateTaskInstances/getAllIntegrateTaskInstance/${taskId}`)
+export async function getAllInstances(taskId, page, size) {
+  return await get(`/integrateTaskInstances/getAllIntegrateTaskInstance/${taskId}/${page}/${size}`)
 }
 export async function getSelectedInstancesByProjectId(projectId) {
   return await get(`/integrateTaskInstances/getSelectedInstancesByProjectId/${projectId}`)

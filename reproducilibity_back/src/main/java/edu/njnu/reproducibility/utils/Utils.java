@@ -24,35 +24,62 @@ public class Utils {
         String doi = data.getStr("oid");
         JSONArray jsonStates = jsonObject.getJSONArray("ModelClass").getJSONObject(0).getJSONArray("Behavior").getJSONObject(0).getJSONArray("StateGroup").getJSONObject(0).getJSONArray("States").getJSONObject(0).getJSONArray("State");
         JSONArray datasetItem = jsonObject.getJSONArray("ModelClass").getJSONObject(0).getJSONArray("Behavior").getJSONObject(0).getJSONArray("RelatedDatasets").getJSONObject(0).getJSONArray("DatasetItem");
+        JSONObject result = new JSONObject();
+        result.put("name", data.getStr("name"));
+        result.put("inputs", new JSONArray());
+        result.put("outputs", new JSONArray());
 
         for (int j = 0; j < jsonStates.size(); j++) {
             String stateId = jsonStates.getJSONObject(j).getStr("id");
             String stateName = jsonStates.getJSONObject(j).getStr("name");
             String stateDescription = jsonStates.getJSONObject(j).getStr("description");
             for (int i = 0; i < jsonStates.getJSONObject(j).getJSONArray("Event").size(); i++) {
+                JSONObject temp = new JSONObject();
                 JSONObject event = (JSONObject) jsonStates.getJSONObject(j).getJSONArray("Event").get(i);
                 event.put("eventId", UUID.randomUUID().toString());
 //                event.put("stateId", stateId);
                 event.put("stateName", stateName);
                 event.put("stateDescription", stateDescription);
                 event.put("stateId", stateId);
+//                event.put("md5", md5);
+//                event.put("doi", doi);
+                temp.put("eventId", UUID.randomUUID().toString());
+                temp.put("stateName", stateName);
+                temp.put("stateDescription", stateDescription);
+                temp.put("stateId", stateId);
+                temp.put("eventName", event.getStr("name"));
+                temp.put("eventDescription", event.getStr("description"));
 
-                event.put("md5", md5);
-                event.put("doi", doi);
 
                 if (event.getStr("optional").equals("False") || event.getStr("optional").equals(false)) {
-                    event.put("optional", "false");
+                    temp.put("optional", "false");
                 }
                 if (event.getStr("optional").equals("True") || event.getStr("optional").equals(true)) {
-                    event.put("optional", "true");
+                    temp.put("optional", "true");
                 }
 
                 if (event.getStr("type").equals("response")) {
                     event.put("type", "input");
+                    if (event.containsKey("ResponseParameter")) {
+                        String datasetReference = ((JSONObject) event.getJSONArray("ResponseParameter").get(0)).getStr("datasetReference");
+                        for (int a = 0; a < datasetItem.size(); a++) {
+                            JSONObject item = (JSONObject) datasetItem.get(a);
+                            if(item.getStr("name").equals(datasetReference)) {
+                                if(judgeIsParameter(item)) {
+                                    temp.put("isParam", "true");
+                                } else {
+                                    temp.put("isParam", "false");
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    result.getJSONArray("inputs").add(temp);
                 }
 
                 if (event.getStr("type").equals("noresponse")) {
                     event.put("type", "output");
+                    result.getJSONArray("outputs").add(temp);
                 }
 
                 if (event.containsKey("ResponseParameter")) {
@@ -93,7 +120,7 @@ public class Utils {
         }
 
         data.put("convertMdlJson", jsonStates);
-        return data;
+        return result;
     }
 
     public static JSONObject judgeIsParam(JSONObject datasetItem){
@@ -104,6 +131,10 @@ public class Utils {
             datasetItem.put("isParams", "false");
         }
         return datasetItem;
+    }
+
+    public static Boolean judgeIsParameter(JSONObject datasetItem) {
+        return datasetItem.containsKey("UdxDeclaration");
     }
 
     public static JSONArray filterUserInfo(List<User> users) {

@@ -108,20 +108,21 @@ public class IntegrateTaskInstanceService {
         return integrateTaskInstance.getTaskInfo();
     }
 
-    public List<IntegrateTaskInstance> getAllIntegrateTaskInstance(String taskId, String userId) {
-        return integrateTaskInstanceRepository.findAllByTaskIdAndOperatorId(taskId, userId);
+    public JSONObject getAllIntegrateTaskInstance(String taskId, String userId, int page, int size) {
+        Sort sort = Sort.by(Sort.Direction.DESC,"createTime");
+        Page<IntegrateTaskInstance> pages = integrateTaskInstanceRepository.findAllByTaskIdAndOperatorId(taskId, userId, PageRequest.of(page, size, sort));
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("content", pages.getContent());
+        jsonObject.put("total", integrateTaskInstanceRepository.countByTaskIdAndOperatorId(taskId, userId));
+        return jsonObject;
     }
 
-    public List<IntegrateTaskInstance> getSelectedInstancesByProjectId(String projectId) {
-        List<IntegrateTaskInstance> instances = new ArrayList<>();
+    public IntegrateTaskInstance getSelectedInstancesByProjectId(String projectId) {
         Scenario scenario = scenarioService.getScenario(projectId).orElseThrow(MyException::noObject);
         String taskId = scenario.getSelectTaskId();
         IntegrateTask integrateTask = integrateTaskRepository.findById(taskId).orElseThrow(MyException::noObject);
-        List<String> selectedId = integrateTask.getSelectInstanceId();
-        for(String id : selectedId) {
-            instances.add(integrateTaskInstanceRepository.findById(id).orElseThrow(MyException::noObject));
-        }
-        return instances;
+        String selectedId = integrateTask.getSelectInstanceId();
+        return integrateTaskInstanceRepository.findById(selectedId).orElseThrow(MyException::noObject);
     }
 
     public Map<String, List<com.alibaba.fastjson.JSONObject>> getAllInstancesOfReproductionByProjectId(String projectId) {

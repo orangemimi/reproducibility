@@ -2,7 +2,7 @@
 <template>
   <div class="select_data">
     <div class="select-data select-data-line">
-      <div class="data-name">{{ currentItem.name }}</div>
+      <div class="data-name">{{ currentItem.eventName }}</div>
       <i class="el-icon-close" @click="remove"></i>
     </div>
   </div>

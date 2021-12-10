@@ -146,7 +146,7 @@ public class FileItemService {
                 addFileItemDTO.setSuffix(suffix);
             }
             addFileItemDTO.setName(name);
-            addFileItemDTO.setAddress(address);
+            addFileItemDTO.setAddress("http://221.226.60.2:8082/data/" + address);
             addFileItemDTO.setParent(parent);
             addFileItemDTO.setStorey(storey);
             addFileItemDTO.setUploaderId(userId);
@@ -165,7 +165,7 @@ public class FileItemService {
                 addFileItemDTO.setSuffix(suffix);
             }
             addFileItemDTO.setName(name);
-            addFileItemDTO.setAddress(address);
+            addFileItemDTO.setAddress("http://221.226.60.2:8082/data/" + address);
             addFileItemDTO.setParent(parent);
             addFileItemDTO.setStorey(storey);
             addFileItemDTO.setUploaderId(userId);

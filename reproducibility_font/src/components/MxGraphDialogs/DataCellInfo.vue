@@ -1,32 +1,32 @@
 <template>
-  <div class="mainContain" v-if="currentEvent != null">
+  <div class="mainContain" v-if="cell != null">
     <el-row class="dataInfo">
       <div class="data">
         <div class="dataTitle">State name:</div>
-        <div class="dataDetail" v-if="currentEvent.type == 'modelServiceInput' || currentEvent.type == 'modelServiceOutput'">
-          {{ currentEvent.nodeAttribute.stateName }}
+        <div class="dataDetail" v-if="cell.type == 'modelServiceInput' || cell.type == 'modelServiceOutput'">
+          {{ cell.nodeAttribute.stateName }}
         </div>
-        <div v-else class="dataDetail">{{ currentEvent.name }}</div>
+        <div v-else class="dataDetail">{{ cell.name }}</div>
       </div>
       <div class="data">
         <div class="dataTitle">State description:</div>
-        <div class="dataDetail" v-if="currentEvent.type == 'modelServiceInput' || currentEvent.type == 'modelServiceOutput'">
-          {{ currentEvent.nodeAttribute.stateDescription }}
+        <div class="dataDetail" v-if="cell.type == 'modelServiceInput' || cell.type == 'modelServiceOutput'">
+          {{ cell.nodeAttribute.stateDescription }}
         </div>
-        <div v-else class="dataDetail">{{ currentEvent.description }}</div>
+        <div v-else class="dataDetail">{{ cell.description }}</div>
       </div>
 
-      <div class="data" v-if="currentEvent.type == 'modelServiceInput' || currentEvent.type == 'modelServiceOutput'">
+      <div class="data" v-if="cell.type == 'modelServiceInput' || cell.type == 'modelServiceOutput'">
         <div class="dataTitle">Event name:</div>
-        <div class="dataDetail">{{ currentEvent.nodeAttribute.eventName }}</div>
+        <div class="dataDetail">{{ cell.nodeAttribute.eventName }}</div>
       </div>
-      <div class="data" v-if="currentEvent.type != 'dataServiceOutput'">
+      <div class="data" v-if="cell.type != 'dataServiceOutput'">
         <div class="dataTitle">Event description:</div>
-        <div class="dataDetail">{{ currentEvent.nodeAttribute.eventDescription }}</div>
+        <div class="dataDetail">{{ cell.nodeAttribute.eventDescription }}</div>
       </div>
       <div class="data">
         <div class="dataTitle">Event type:</div>
-        <div class="dataDetail">{{ currentEvent.nodeAttribute.type }}</div>
+        <div class="dataDetail">{{ cell.nodeAttribute.type }}</div>
       </div>
     </el-row>
 
@@ -34,95 +34,68 @@
       <el-divider class="eventDivider"></el-divider>
     </el-row>
     <el-row>
-      <div v-if="currentEvent.type == 'modelServiceOutput' || currentEvent.type == 'dataServiceOutput'">
-        <div v-if="currentEvent.value != '' && currentEvent.value != undefined">
+      <div v-if="cell.type == 'modelServiceOutput' || cell.type == 'dataServiceOutput'">
+        <div v-if="cell.nodeAttribute.value != '' && cell.nodeAttribute.value != undefined">
           <el-button>DownLoad</el-button>
         </div>
         <div v-else>Please run this task to get the output!</div>
-        <el-switch v-model="upload" active-text="Upload" inactive-text="Don't upload" @change="changeSwitch"></el-switch>
+        <el-switch
+          v-model="upload"
+          active-text="Upload"
+          inactive-text="Don't upload"
+          @change="changeSwitch"
+          v-if="cell.type == 'dataServiceOutput'"
+        ></el-switch>
       </div>
-      <div v-else-if="currentEvent.type == 'modelServiceLink'">Link to the output</div>
-      <div v-else-if="currentEvent.type == 'modelServiceInput'">
-        <div v-if="currentEvent.nodeAttribute.datasetItem != undefined && currentEvent.nodeAttribute.datasetItem.type == `internal`" class="uploadContent">
-          <vue-scroll style="height: 100%" :ops="ops">
-            <div v-if="currentEvent.isParameter">
-              <el-select
-                v-if="role == 'builder'"
-                v-model="selectDataItem.name"
-                placeholder="Please select data"
-                class="uploadContent"
-                @change="changeSelectResource"
-              >
-                <el-option v-for="(item, dataIndex) in paramsDataList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
-              </el-select>
-              <div v-else>
-                <el-button>{{ selectDataItem.name }}</el-button>
-              </div>
-            </div>
-            <div v-else>
-              <!-- {{ dataItemList }} -->
-              <el-select
-                v-if="role == 'builder'"
-                v-model="selectDataItem.name"
-                placeholder="Please select data"
-                class="uploadContent"
-                @change="changeSelectResource"
-              >
-                <el-option v-for="(item, dataIndex) in fileDataList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
-              </el-select>
-              <div v-else>
-                <el-button>{{ selectDataItem.name }}</el-button>
-              </div>
-            </div>
-          </vue-scroll>
-        </div>
-        <div v-else>
-          <el-select
-            v-if="role == 'builder'"
-            v-model="selectDataItem.name"
-            placeholder="Please select data"
-            class="uploadContent"
-            @change="changeSelectResource"
-          >
-            <el-option v-for="(item, dataIndex) in fileDataList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
-          </el-select>
+      <div v-else-if="cell.type == 'modelServiceLink'">Link to the output</div>
+      <div v-else-if="cell.type == 'modelServiceInput'">
+        <div class="uploadContent">
+          <div v-if="cell.nodeAttribute.isParameter == 'true'">
+            <el-select
+              v-if="role == 'builder'"
+              v-model="selectDataItem.name"
+              placeholder="Please select data"
+              class="uploadContent"
+              @change="changeSelectResource"
+            >
+              <el-option v-for="(item, dataIndex) in paramsDataList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
+            </el-select>
+          </div>
           <div v-else>
-            <el-button>{{ selectDataItem.name }}</el-button>
+            <el-select
+              v-if="role == 'builder'"
+              v-model="selectDataItem.name"
+              placeholder="Please select data"
+              class="uploadContent"
+              @change="changeSelectResource"
+            >
+              <el-option v-for="(item, dataIndex) in fileDataList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
+            </el-select>
           </div>
         </div>
-        <!-- <div>
-          <el-button size="small" type="success" round @click="submitResource">Submit</el-button>
-        </div> -->
       </div>
 
-      <div v-else-if="currentEvent.type == 'dataServiceInput'">
+      <div v-else-if="cell.type == 'dataServiceInput'">
         <el-select
           v-if="role == 'builder'"
-          v-model="selectDataName"
+          v-model="selectDataItem.name"
           placeholder="Please select data"
           class="uploadContent"
           @change="changeSelectResource"
-          v-show="currentEvent.isParameter"
+          v-show="cell.isParameter"
         >
           <el-option v-for="(item, dataIndex) in paramsDataList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
         </el-select>
         <el-select
           v-if="role == 'builder'"
-          v-model="selectDataName"
+          v-model="selectDataItem.name"
           placeholder="Please select data"
           class="uploadContent"
           @change="changeSelectResource"
-          v-show="currentEvent.isParameter == false"
+          v-show="cell.isParameter == false"
         >
           <el-option v-for="(item, dataIndex) in fileDataList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
         </el-select>
-        <div v-else>
-          <el-button>{{ selectDataItem.name }}</el-button>
-        </div>
-
-        <!-- <div>
-          <el-button size="small" type="success" round @click="submitResource">Submit</el-button>
-        </div> -->
       </div>
     </el-row>
   </div>
@@ -131,7 +104,7 @@
 <script>
 import { mapState } from 'vuex';
 import { getDataItemsByProjectId } from '@/api/request';
-import { hasProperty } from '@/utils/utils';
+// import { hasProperty } from '@/utils/utils';
 
 export default {
   props: {
@@ -139,35 +112,6 @@ export default {
       type: Object,
     },
   },
-  // watch: {
-  //   cell: {
-  //     // immediate: true,
-  //     handler(val, oldVal) {
-  //       if (val != '' && val != oldVal) {
-  //         console.log(val);
-  //         this.currentEvent = val;
-  //         this.selectDataName = '';
-  //         this.selectDataItem = {};
-  //         // this.$set(this.value1, 'upload', val.upload);
-
-  //         if (val.upload) {
-  //           this.upload = true;
-  //         } else {
-  //           this.upload = false;
-  //         }
-
-  //         //this.init();
-  //         if (hasProperty(val, 'dataResourceRelated')) {
-  //           this.selectDataName = this.currentEvent.dataResourceRelated.dataSelectId;
-  //           this.selectDataItem = this.currentEvent.dataResourceRelated;
-  //         }
-  //         // this.init();
-  //       }
-  //     },
-  //     deep: true,
-  //     immediate: true,
-  //   },
-  // },
 
   computed: {
     ...mapState({
@@ -178,8 +122,6 @@ export default {
   data() {
     return {
       upload: false,
-
-      currentEvent: { nodeAttribute: '' },
       dataItemList: [],
       fileDataList: [],
       paramsDataList: [],
@@ -218,34 +160,36 @@ export default {
     },
 
     async changeSelectResource(id) {
-      console.log(id)
-      let dataSelect = this.dataItemList.find((e) => e.id == id);
-      this.selectDataName = dataSelect.name;
-      dataSelect.id = id + this.cell.id;
-      dataSelect.dataSelectId = id;
-      this.selectDataItem = dataSelect;
-      console.log(dataSelect)
-      // this.currentEvent.dataResourceRelated = { name: dataSelect.name, value: dataSelect.value, id: dataSelect.id };
+      let dataSelect = {
+        value: '',
+        dataSelectId: '',
+        name: '',
+      };
+      this.dataItemList.forEach((item) => {
+        if (item.id == id) {
+          dataSelect.value = item.value;
+          dataSelect.dataSelectId = id;
+          dataSelect.name = item.name;
+        }
+      });
 
-      this.currentEvent.dataResourceRelated = dataSelect;
-      this.$forceUpdate();
+      this.selectDataItem = dataSelect;
+
+      this.$emit('dataSelect', dataSelect);
     },
   },
   mounted() {
     console.log(this.cell);
-    this.currentEvent = this.cell;
-    this.selectDataName = '';
-    this.selectDataItem = {};
-
-    if (this.cell.upload) {
-      this.upload = true;
-    } else {
-      this.upload = false;
+    if (this.cell.type == 'modelServiceInput' || this.cell.type == 'dataServiceInput') {
+      this.selectDataItem = JSON.parse(JSON.stringify(this.cell.nodeAttribute.dataSelect));
     }
 
-    if (hasProperty(this.cell, 'dataResourceRelated')) {
-      this.selectDataName = this.currentEvent.dataResourceRelated.name;
-      this.selectDataItem = this.currentEvent.dataResourceRelated;
+    if (this.cell.type == 'dataServiceOutput') {
+      if (this.cell.nodeAttribute.upload) {
+        this.upload = true;
+      } else {
+        this.upload = false;
+      }
     }
     this.init();
   },

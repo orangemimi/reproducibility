@@ -26,4 +26,6 @@ public interface IntegrateTaskInstanceRepository extends MongoRepository<Integra
 
     @Query(value = "{taskId: ?0, operatorId: {$ne: ?1}}", sort = "{ createTime : -1 }")
     List<IntegrateTaskInstance> findAllByTaskId(String taskId, String userId);
+
+    int countByTaskIdAndOperatorId(String taskId, String operator);
 }

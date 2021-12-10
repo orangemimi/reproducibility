@@ -84,7 +84,8 @@
               :instanceItem="item"
               :taskItem="currentTask"
               :role="'builder'"
-              @instance="instance"
+
+              @check="check"
               @changeSelectInstanceId="changeSelectInstanceId"
             ></instance-card>
           </div>
@@ -93,13 +94,12 @@
       <div class="page">
         <el-pagination
           @current-change="handleCurrentChange"
-          :current-page.sync="instancePageFilter.page"
-          :page-size="instancePageFilter.pageSize"
+          :page-size="7"
           :pager-count="5"
           :small="true"
           background
           layout="prev, pager, next"
-          :total="allInstanceList.length"
+          :total="total"
         ></el-pagination>
       </div>
     </div>
@@ -155,7 +155,6 @@ import { mapState } from 'vuex';
 import mxgraph from '_com/MxGraph/index';
 import { genGraph } from '_com/MxGraph/initMx';
 import {
-  saveFileItem,
   saveIntegrateTask,
   updateIntegrateTask,
   saveIntegrateTaskInstance,
@@ -167,10 +166,10 @@ import {
   checkTaskStatus,
   updatePerformanceById,
   updateScenarioByProjectId,
-  postDataContainer,
+  // postDataContainer,
 } from '@/api/request';
 import { generateAction, generateXml1, getCellStyle } from './configuration';
-import { hasProperty } from '@/utils/utils';
+// import { hasProperty } from '@/utils/utils';
 
 import integrateTasks from '_com/IntegrateTasks';
 import instanceCard from '_com/Cards/InstanceCard';
@@ -198,36 +197,6 @@ export default {
     leftToolbar,
   },
 
-  // watch: {
-  //   taskInfoInit: {
-  //     async handler(val, oldVal) {
-  //       // console.log(val)
-  //       // console.log(val.id)
-  //       // console.log(oldVal)
-  //       // console.log('执行watch')
-  //       if (val.id != undefined && val.id != oldVal.id) {
-  //         // await initSetTimeOut();
-  //         // debugger;
-  //         this.currentTask = val;
-
-  //         this.init();
-  //         this.$refs.leftToolbar.init();
-  //         this.$refs.leftToolbar.listenGraphEvent();
-
-  //         this.initUndoMng();
-  //         this.getSelectionCells();
-
-  //         await this.getAllInstances(0);
-  //         await this.getAllIntegrateTaskInstances(this.instancePageFilter.page);
-  //         this.graph.importGraph(val.taskContent);
-  //       }
-  //       // console.log('watch执行完')
-  //     },
-  //     deep: true,
-  //     immediate: true,
-  //   },
-  // },
-
   computed: {
     ...mapState({
       role: (state) => state.permission.role,
@@ -237,6 +206,7 @@ export default {
   data() {
     return {
       size: 100,
+      total: 0,
       newTaskForm: {
         taskName: '',
         taskDescription: '',
@@ -339,6 +309,7 @@ export default {
     };
   },
 
+
   methods: {
     zoom(val) {
       this.size = val;
@@ -434,7 +405,7 @@ export default {
       //创建画布
 
       this.currentTask = this.taskInfoInit;
-
+      console.log(this.taskInfoInit)
       this.container = this.$refs.container;
       this.createGraph();
 
@@ -445,18 +416,18 @@ export default {
       this.getSelectionCells();
 
       await this.getAllInstances();
-      await this.getAllIntegrateTaskInstances(1);
+      // await this.getAllIntegrateTaskInstances(1);
       this.graph.importGraph(this.taskInfoInit.taskContent);
+
+      
+
     },
 
     async getScenario() {
       let data = await getScenarioByProjectId(this.projectId);
-      // console.log(data.selectTaskId, this.currentTask.id);
       this.selectId = data.selectTaskId;
       let flag = data.selectTaskId == this.currentTask.id;
-      // this.$set(this, 'isSelectTaskInConsruction', flag);
-      this.isSelectTaskInConsruction = flag;
-      // console.log(this.isSelectTaskInConsruction);
+      this.isSelectTaskInConsruction = flag;;
       this.graph.removeCells(this.graph.getChildVertices(this.graph.getDefaultParent()));
     },
 
@@ -518,7 +489,7 @@ export default {
       // console.log(modelInputInGraph)
       modelInputInGraph.forEach((input) => {
         // console.log(input)
-        if (!hasProperty(input.dataResourceRelated, 'value')) {
+        if (input.nodeAttribute.dataSelect.value == '') {
           this.$notify.error({
             title: 'Error',
             message: 'You have not bind the data',
@@ -775,28 +746,28 @@ export default {
     async runGraph() {
       this.getCells();
 
-      this.modelInputInGraph.forEach(async (input) => {
-        console.log(input);
+      // this.modelInputInGraph.forEach(async (input) => {
+      //   console.log(input);
 
-        if (input.nodeAttribute.datasetItem.isParams == 'true') {
-          let Dataset = {
-            Dataset: {
-              XDO: {
-                _name: input.nodeAttribute.datasetItem.UdxDeclaration[0].UdxNode[0].UdxNode[0].name,
-                _kernelType: input.nodeAttribute.datasetItem.UdxDeclaration[0].UdxNode[0].UdxNode[0].name,
-                _value: input.dataResourceRelated.value,
-              },
-            },
-          };
-          let xml = this.$x2js.js2xml(Dataset);
-          let file = new File([xml], input.dataResourceRelated.name + '.xml', { type: 'text/xml' });
-          let uploadFileForm = new FormData();
-          uploadFileForm.append('file', file);
-          let data = await postDataContainer(uploadFileForm);
-          console.log(data);
-          input.dataResourceRelated.value = `http://221.226.60.2:8082/data/${data.id}`;
-        }
-      });
+      //   if (input.nodeAttribute.datasetItem.isParams == 'true') {
+      //     let Dataset = {
+      //       Dataset: {
+      //         XDO: {
+      //           _name: input.nodeAttribute.datasetItem.UdxDeclaration[0].UdxNode[0].UdxNode[0].name,
+      //           _kernelType: input.nodeAttribute.datasetItem.UdxDeclaration[0].UdxNode[0].UdxNode[0].name,
+      //           _value: input.dataResourceRelated.value,
+      //         },
+      //       },
+      //     };
+      //     let xml = this.$x2js.js2xml(Dataset);
+      //     let file = new File([xml], input.dataResourceRelated.name + '.xml', { type: 'text/xml' });
+      //     let uploadFileForm = new FormData();
+      //     uploadFileForm.append('file', file);
+      //     let data = await postDataContainer(uploadFileForm);
+      //     console.log(data);
+      //     input.dataResourceRelated.value = `http://221.226.60.2:8082/data/${data.id}`;
+      //   }
+      // });
 
       // this.dataServiceInputInGraph.forEach((input) => {
       //   console.log(input);
@@ -857,18 +828,21 @@ export default {
     async getOutputs(tid) {
       //获得结果
 
-      this.record = {};
+      this.record[tid] = {};
       this.timer = setInterval(async () => {
-        if (this.record.status == 1) {
+        if (this.record[tid].status == 1) {
           clearInterval(this.timer);
-          await this.putOutputToCell();
-
+          this.instanceList.forEach((item, index) => {
+            if(item.id == this.record[tid].id) {
+              this.instanceList.splice(index, 1, this.record[tid])
+            }
+          })
           return;
         } else {
           let data = await checkTaskStatus(tid);
-          this.record = data;
-          console.log(this.record);
-          this.changeCellColor(data);
+          this.record[tid] = data;
+          // console.log(this.record);
+          // this.changeCellColor(data);
         }
       }, 3000);
     },
@@ -977,55 +951,7 @@ export default {
     },
 
     async putOutputToCell() {
-      let modelActionResponse = this.record.taskInfo.modelActionList.completed;
-      let processingActionResponse = this.record.taskInfo.dataProcessingList.completed;
-      // console.log(this.modelOutputInGraph);
-      this.modelOutputInGraph.forEach(async (eventCell) => {
-        let outputActionList = modelActionResponse.filter((response) => eventCell.linkModelCellId == response.id);
-        let outputValueJson = outputActionList[0].outputData.outputs.filter((out) => out.dataId == eventCell.eventId && out.state == eventCell.stateName);
-        let content = outputValueJson[0].dataContent;
-
-        //upload
-        let dataJson = {
-          name: content.fileName,
-          address: content.value,
-          suffix: content.suffix,
-          description: '',
-          userUpload: false, //--false是中间数据
-        };
-        console.log(dataJson);
-        let data = await saveFileItem(dataJson);
-        console.log(data);
-        eventCell.fileId = data.id;
-        eventCell.value = data.address;
-        eventCell.fileName = data.name;
-        await this.updateTaskInstances('model');
-      });
-      this.dataServiceOutputListInGraph.forEach(async (eventCell) => {
-        let outputActionList = processingActionResponse.filter((response) => eventCell.linkModelCellId == response.id);
-        // console.log(outputActionList)
-        let outputValueJson = outputActionList[0].outputData.outputs.filter((out) => out.dataId == eventCell.id);
-        let content = outputValueJson[0].dataContent;
-
-        //upload
-        let userUpload = false;
-        if (content.type == 'url') {
-          userUpload = true;
-        }
-        let dataJson = {
-          name: content.fileName,
-          address: content.value,
-          suffix: content.suffix,
-          description: '',
-          userUpload: userUpload,
-        };
-        let data = await saveFileItem(dataJson);
-        console.log(data);
-        eventCell.fileId = data.id;
-        eventCell.value = data.address;
-        eventCell.fileName = data.name;
-        await this.updateTaskInstances('dataProcessing');
-      });
+      
     },
 
     async addTaskInstance(tid) {
@@ -1045,14 +971,14 @@ export default {
       };
       this.modelListInGraph.forEach((cell) => {
         taskInfo.modelActionList.waiting.push({
-          processId: cell.id,
-          processName: cell.name,
+          id: cell.id,
+          name: cell.name,
         });
       });
       this.dataServiceListInGraph.forEach((cell) => {
         taskInfo.dataProcessingList.waiting.push({
-          processId: cell.id,
-          processName: cell.name,
+          id: cell.id,
+          name: cell.name,
         });
       });
       let postJson = {
@@ -1073,13 +999,13 @@ export default {
         tid: tid,
       };
       let data = await saveIntegrateTaskInstance(postJson);
-      console.log(data);
       this.currentTaskInstance = data;
-      this.allInstanceList.push(data);
-      if (this.instanceList.length == this.instancePageFilter.pageSize) {
+      if (this.instanceList.length == 7) {
         this.instanceList.pop();
+        this.total = this.total + 1
       }
       this.instanceList.splice(0, 0, data);
+
     },
 
     async updateTaskInstances(type) {
@@ -1122,8 +1048,10 @@ export default {
     },
 
     async getAllInstances() {
-      let data = await getAllInstances(this.currentTask.id);
-      this.allInstanceList = data;
+      let data = await getAllInstances(this.currentTask.id, 0, 7);
+      this.instanceList = data.content;
+      this.total = data.total
+      console.log(data)
     },
 
     //instance list
@@ -1144,24 +1072,22 @@ export default {
     },
 
     async handleCurrentChange(val) {
-      await this.getAllIntegrateTaskInstances(val);
+      let data = await getAllInstances(this.currentTask.id, val - 1, 7)
+      this.instanceList = data.content;
+      this.total = data.total
     },
 
     changeSelectInstanceId(val) {
-      if (val.type == 'add') {
-        this.currentTask.selectInstanceId.push(val.id);
-      } else if (val.type == 'remove') {
-        this.currentTask.selectInstanceId.splice(this.currentTask.selectInstanceId.indexOf(val.id), 1);
-      }
+      this.currentTask.selectInstanceId = val
     },
-    instance(val) {
-      console.log(val);
-      this.instanceList.forEach((instance) => {
-        if (instance.id == val.id) {
-          instance.status = val.status;
+    check(val) {
+      this.instanceList.forEach((item, index) => {
+        if(val.id == item.id) {
+          this.instanceList.splice(index, 1, val)
         }
-      });
-    },
+      })
+    }
+    
   },
 
   mounted() {

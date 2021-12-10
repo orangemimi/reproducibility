@@ -4,7 +4,7 @@
     <el-card :class="instanceItem.status == 1 ? 'successCard' : 'runningCard'" shadow="hover">
       <div class="task_name">
         {{ instanceItem.name }}
-        <div v-if="!(taskItem.selectInstanceId.indexOf(instanceItem.id) > -1) && role == 'builder'" class="task_star" @click="changeStar">
+        <div v-if="taskItem.selectInstanceId != instanceItem.id && role == 'builder'" class="task_star" @click="changeStar">
           <i class="el-icon-star-off" />
         </div>
         <div v-else-if="role == 'builder'" class="task_star" @click="changeStar">
@@ -13,21 +13,31 @@
         <div v-if="role == 'reproductioner-builder' && instanceItem.authority == 'public'" @click="updateIntegrateTaskInstanceById(instanceItem.authority)">
           <i class="iconfont icon-icon-test1"></i>
         </div>
-        <div v-else-if="role == 'reproductioner-builder' && instanceItem.authority != 'public'" @click="updateIntegrateTaskInstanceById(instanceItem.authority)">
+        <div
+          v-else-if="role == 'reproductioner-builder' && instanceItem.authority != 'public'"
+          @click="updateIntegrateTaskInstanceById(instanceItem.authority)"
+        >
           <i class="iconfont icon-icon-test"></i>
         </div>
       </div>
       <div class="task_createTime">
         <i class="el-icon-time" />
-        {{ instanceItem.createTime }}
+        {{ getTime }}
       </div>
 
       <div class="task_view" @click="clickView" v-if="role == 'builder' || role == 'reproductioner-builder'">View</div>
       <div></div>
     </el-card>
 
-    <el-drawer :title="instanceItem.name" :visible.sync="drawer" :direction="direction" destroy-on-close size="50%" v-if="role == 'builder' || role == 'reproductioner-builder'">
-      <instance-graph :instanceId="instanceItem.id"/>
+    <el-drawer
+      :title="instanceItem.name"
+      :visible.sync="drawer"
+      :direction="direction"
+      destroy-on-close
+      size="50%"
+      v-if="role == 'builder' || role == 'reproductioner-builder'"
+    >
+      <instance-graph :instance="instanceItem" />
     </el-drawer>
   </div>
 </template>
@@ -35,7 +45,7 @@
 <script>
 import { updateIntegrateTaskInstance, updatePerformanceById, checkTaskStatus, updateIntegrateTaskInstanceById } from '@/api/request';
 import instanceGraph from './components/InstanceGraph.vue';
-
+import { dateFormat } from '@/utils/utils';
 export default {
   props: {
     instanceItem: {
@@ -45,11 +55,16 @@ export default {
       type: Object,
     },
     role: {
-      type: String
-    }
+      type: String,
+    },
   },
   components: { instanceGraph },
 
+  computed: {
+    getTime() {
+      return dateFormat(this.instanceItem.createTime);
+    },
+  },
 
   data() {
     return {
@@ -58,42 +73,48 @@ export default {
       projectId: this.$route.params.id,
       direction: 'rtl',
       drawer: false,
+      record: {},
+      timer: '',
     };
   },
 
+  watch: {
+    instanceItem: {
+      async handler(val, oldval) {
+        if (oldval.status != 1 && oldval.id != val.id) {
+          clearInterval(this.timer);
+        }
+        if (val.status != 1 && oldval.id != val.id) {
+          await this.getOutputs(val.tid);
+        }
+      },
+    },
+  },
 
   methods: {
-
     async clickView() {
-      
-      if (this.instanceItem.status != 1) {
-        let data = await checkTaskStatus(this.instanceItem.tid);
-        this.$emit("instance", data)
-      }
       this.drawer = true;
-      
     },
 
     async changeStar() {
-      let isStar = this.taskItem.selectInstanceId.indexOf(this.instanceItem.id) > -1;
+      let isStar = this.instanceItem.id == this.taskItem.selectInstanceId;
       if (!isStar) {
         let form = {
           id: this.taskItem.id,
           instanceId: this.instanceItem.id,
-          type: 'star'
-        }
+        };
         await updateIntegrateTaskInstance(form);
         await this.updatePerformance();
-        this.$emit('changeSelectInstanceId', {id: this.instanceItem.id, type: 'add'});
+        this.$emit('changeSelectInstanceId', this.instanceItem.id);
       }
       if (isStar) {
         let form = {
           id: this.taskItem.id,
-          instanceId: this.instanceItem.id,
-          type: 'unstar'
-        }
+          instanceId: '',
+          type: 'unstar',
+        };
         await updateIntegrateTaskInstance(form);
-        this.$emit('changeSelectInstanceId', {id: this.instanceItem.id, type: 'remove'});
+        this.$emit('changeSelectInstanceId', '');
       }
     },
     async updatePerformance() {
@@ -102,19 +123,48 @@ export default {
     },
 
     async updateIntegrateTaskInstanceById(authority) {
-      let json = {authority: ''}
-      if(authority == 'public') {
-        json.authority = 'private'
+      let json = { authority: '' };
+      if (authority == 'public') {
+        json.authority = 'private';
       } else {
-        json.authority = 'public'
+        json.authority = 'public';
       }
-      let data = await updateIntegrateTaskInstanceById(this.instanceItem.id, json)
-      this.$emit("authority", data)
-    }
+      let data = await updateIntegrateTaskInstanceById(this.instanceItem.id, json);
+      this.$emit('authority', data);
+    },
+
+    async getOutputs(tid) {
+      //获得结果
+
+      this.record = {};
+      this.timer = setInterval(async () => {
+        if (this.record.status == 1) {
+          clearInterval(this.timer);
+          return;
+        } else {
+          let data = await checkTaskStatus(tid);
+          this.record = data;
+          this.$emit('check', data);
+        }
+      }, 3000);
+    },
+
+    async init() {
+      if (this.instanceItem.status != 1) {
+        console.log(this.timer)
+        await this.getOutputs(this.instanceItem.tid);
+        
+      }
+    },
   },
   mounted() {
+    this.init();
+  },
+  beforeDestroy() {
+    if(this.timer != '') {
+      clearInterval(this.timer);
+    }
   }
-
 };
 </script>
 <style lang="scss" scoped>
@@ -178,5 +228,4 @@ export default {
     width: 50%;
   }
 }
-
 </style>

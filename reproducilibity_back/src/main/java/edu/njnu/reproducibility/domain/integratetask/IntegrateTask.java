@@ -28,7 +28,7 @@ public class IntegrateTask extends BaseEntity {
     String configuration;//wzh配置文件
     String taskContent;//mxgraph or html
     Action action;
-    List<String> selectInstanceId;
+    String selectInstanceId;
 
 //    String selectInstanceId; //mxgraph+note
 //    String type;//Integrate Task; notebook

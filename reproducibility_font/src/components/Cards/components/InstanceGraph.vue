@@ -6,7 +6,7 @@
           <div ref="container" class="container" @contextmenu.prevent></div>
         </vue-scroll>
       </el-col>
-      <el-col :span="6">
+      <!-- <el-col :span="6">
         <vue-scroll style="height: 100%; width: 100%" v-if="taskInfo != ''">
           <el-timeline style="margin-left: 10px">
             <el-timeline-item
@@ -23,7 +23,7 @@
             </el-timeline-item>
           </el-timeline>
         </vue-scroll>
-      </el-col>
+      </el-col> -->
     </el-row>
 
     <el-dialog title="Detail" :visible.sync="outputDialogVisible" width="50%" :modal="false">
@@ -39,23 +39,18 @@
               <div class="dataDetail">{{ clickedCell.name }}</div>
             </div>
             <div class="data">
-              <div class="dataTitle">description:</div>
-              <div class="dataDetail">{{ clickedCell.description }}</div>
+              <div class="dataTitle">Event Description:</div>
+              <div class="dataDetail">{{ clickedCell.nodeAttribute.eventDescription }}</div>
             </div>
 
-            <div class="data" v-if="clickedCell.value != '' && clickedCell.upload == 1">
-              <div class="dataTitle">value:</div>
-              <div class="dataDetail"><el-button type="primary" @click="download(clickedCell.value)">DownLoad</el-button></div>
-            </div>
-            <div class="data" v-if="clickedCell.value != '' && clickedCell.upload == 0">
-              <div class="dataTitle">value:</div>
-              <div class="dataDetail">{{ clickedCell.value }}</div>
-            </div>
-            <div class="data" v-if="clickedCell.value == ''">
+            <div class="data" v-if="!getOutputValue">
               <div class="dataTitle">value:</div>
               <div class="dataDetail">Please wait for the calculation result!</div>
             </div>
           </el-row>
+          <div class="btn" v-if="getOutputValue">
+            <el-button type="primary" plain size="small">Download</el-button>
+          </div>
         </el-tab-pane>
         <el-tab-pane>
           <template #label>
@@ -68,7 +63,7 @@
 
       <el-divider></el-divider>
     </el-dialog>
-    <el-dialog title="Detail" :visible.sync="inputDialogVisible" width="50%" :modal="false">
+    <el-dialog title="Detail" :visible.sync="inputDialogVisible" width="50%" :modal="false" v-if="inputDialogVisible">
       <el-tabs>
         <el-tab-pane>
           <template #label>
@@ -81,15 +76,22 @@
               <div class="dataDetail">{{ clickedCell.name }}</div>
             </div>
             <div class="data">
-              <div class="dataTitle">Description:</div>
-              <div class="dataDetail">{{ clickedCell.description }}</div>
+              <div class="dataTitle">Event Description:</div>
+              <div class="dataDetail">{{ clickedCell.nodeAttribute.eventDescription }}</div>
             </div>
             <div class="data">
               <div class="dataTitle">Type:</div>
-              <div class="dataDetail" v-if="clickedCell.isParameter">Parameter</div>
+              <div class="dataDetail" v-if="clickedCell.nodeAttribute.isParameter == 'true'">Parameter</div>
               <div class="dataDetail" v-else>File</div>
             </div>
+            <div class="data" v-if="clickedCell.nodeAttribute.isParameter == 'true'">
+              <div class="dataTitle">Value:</div>
+              <div class="dataDetail">{{ clickedCell.nodeAttribute.dataSelect.value }}</div>
+            </div>
           </el-row>
+          <div class="btn" v-if="clickedCell.nodeAttribute.isParameter == 'false'">
+            <el-button type="primary" plain size="small">Download</el-button>
+          </div>
         </el-tab-pane>
         <el-tab-pane>
           <template #label>
@@ -108,7 +110,7 @@
 <script>
 import { genGraph } from '_com/MxGraph/initMx';
 import mxgraph from '_com/MxGraph/index';
-import { getInstanceXML, getTaskInfo } from '@/api/request';
+import { getCellStyle } from '_com/Scenario/components/configuration.js';
 const {
   // mxGraph
   mxGraphHandler,
@@ -117,10 +119,37 @@ const {
 
 export default {
   props: {
-    instanceId: {
-      type: String,
+    instance: {
+      type: Object,
     },
   },
+  computed: {
+    getOutputValue() {
+      let id = this.clickedCell.id;
+      if (this.clickedCell.type == 'modelServiceOutput') {
+        for(let i = 0; i < this.taskInfo.modelActionList.completed.length; i++) {
+          let temp = this.taskInfo.modelActionList.completed[i].outputData.outputs
+          for(let j = 0; j < temp.length; j++) {
+            if (temp[j].dataId == id) {
+              return true;
+            }
+          }
+        }
+      }
+      if (this.clickedCell.type == 'dataServiceOutput') {
+        for(let i = 0; i < this.taskInfo.dataProcessingList.completed.length; i++) {
+          let temp = this.taskInfo.dataProcessingList.completed[i].outputData.outputs
+          for(let j = 0; j < temp.length; j++) {
+            if (temp[j].dataId == id) {
+              return true;
+            }
+          }
+        }
+      }
+      return false;
+    },
+  },
+
   data() {
     return {
       container: null,
@@ -130,35 +159,39 @@ export default {
       outputDialogVisible: false,
       inputDialogVisible: false,
       type: '',
-      clickedCell: '',
+      clickedCell: {
+        nodeAttribute: {
+          dataSelect: {},
+        },
+      },
     };
   },
+
+  watch: {
+    instance: {
+      handler() {
+        this.changeCell();
+        // console.log(this.graph.getModel())
+        // console.log(this.taskInfo)
+      },
+    },
+  },
   methods: {
-    async init() {
-      await this.getInstanceXML();
-      await this.getTaskInfo();
-      console.log(this.taskInfo);
+    init() {
+      this.getInstanceXML();
+
       this.createGraph();
       this.createCell();
       this.addListener();
+      this.changeCell();
     },
 
-    async getInstanceXML() {
-      this.taskConfig = await getInstanceXML(this.instanceId);
+    getInstanceXML() {
+      this.taskConfig = this.instance.taskContent;
     },
 
-    async getTaskInfo() {
-      let data = await getTaskInfo(this.instanceId);
-      data.dataProcessingList.failed.forEach((model) => {
-        model.result = 0;
-      });
-      data.modelActionList.failed.forEach((model) => {
-        model.result = 0;
-      });
-      this.taskInfo = {
-        running: [...data.dataProcessingList.running, ...data.modelActionList.running],
-        finished: [...data.dataProcessingList.completed, ...data.modelActionList.completed, ...data.dataProcessingList.failed, ...data.modelActionList.failed],
-      };
+    getTaskInfo() {
+      this.taskInfo = this.instance.taskInfo;
     },
 
     createGraph() {
@@ -202,6 +235,94 @@ export default {
       console.log(url);
       location.href = url;
     },
+
+    changeCell() {
+      this.getTaskInfo();
+      this.taskInfo.modelActionList.running.forEach((item) => {
+        this.changeCellStyleByStatus(0, this.graph.getModel().cells[item.id], false);
+        item.inputData.inputs.forEach((input) => {
+          this.changeCellStyleByStatus(0, this.graph.getModel().cells[input.dataId], true);
+        });
+        item.outputData.outputs.forEach((output) => {
+          this.changeCellStyleByStatus(0, this.graph.getModel().cells[output.dataId], true);
+        });
+      });
+      this.taskInfo.modelActionList.failed.forEach((item) => {
+        this.changeCellStyleByStatus(2, this.graph.getModel().cells[item.id], false);
+        item.inputData.inputs.forEach((input) => {
+          this.changeCellStyleByStatus(2, this.graph.getModel().cells[input.dataId], true);
+        });
+        item.outputData.outputs.forEach((output) => {
+          this.changeCellStyleByStatus(2, this.graph.getModel().cells[output.dataId], true);
+        });
+      });
+      this.taskInfo.modelActionList.completed.forEach((item) => {
+        this.changeCellStyleByStatus(1, this.graph.getModel().cells[item.id], false);
+        item.inputData.inputs.forEach((input) => {
+          this.changeCellStyleByStatus(1, this.graph.getModel().cells[input.dataId], true);
+        });
+        item.outputData.outputs.forEach((output) => {
+          this.changeCellStyleByStatus(1, this.graph.getModel().cells[output.dataId], true);
+        });
+      });
+      this.taskInfo.dataProcessingList.running.forEach((item) => {
+        this.changeCellStyleByStatus(0, this.graph.getModel().cells[item.id], false);
+        item.inputData.inputs.forEach((input) => {
+          this.changeCellStyleByStatus(0, this.graph.getModel().cells[input.dataId], true);
+        });
+        item.outputData.outputs.forEach((output) => {
+          this.changeCellStyleByStatus(0, this.graph.getModel().cells[output.dataId], true);
+        });
+      });
+      this.taskInfo.dataProcessingList.failed.forEach((item) => {
+        this.changeCellStyleByStatus(2, this.graph.getModel().cells[item.id], false);
+        item.inputData.inputs.forEach((input) => {
+          this.changeCellStyleByStatus(2, this.graph.getModel().cells[input.dataId], true);
+        });
+        item.outputData.outputs.forEach((output) => {
+          this.changeCellStyleByStatus(2, this.graph.getModel().cells[output.dataId], true);
+        });
+      });
+      this.taskInfo.dataProcessingList.completed.forEach((item) => {
+        this.changeCellStyleByStatus(1, this.graph.getModel().cells[item.id], false);
+        item.inputData.inputs.forEach((input) => {
+          this.changeCellStyleByStatus(1, this.graph.getModel().cells[input.dataId], true);
+        });
+        item.outputData.outputs.forEach((output) => {
+          this.changeCellStyleByStatus(1, this.graph.getModel().cells[output.dataId], true);
+        });
+      });
+    },
+
+    changeCellStyleByStatus(status, item, isData) {
+      //runnning
+      let style;
+      if (status == 0) {
+        style = {
+          fontColor: '#f6f6f6',
+          fillColor: '#E6A23C',
+        };
+      }
+      //finish
+      if (status == 1) {
+        style = {
+          fillColor: '#67C23A',
+          fontColor: '#24292E',
+        };
+      } //error
+      if (status == 2) {
+        style = {
+          fillColor: '#ce1212',
+          fontColor: '#f6f6f6',
+        };
+      }
+      if (isData) {
+        style.shape = 'parallelogram';
+        style.fixedSize = 1;
+      }
+      let styleIn = getCellStyle(style, item);
+      this.graph.getModel().setStyle(item, styleIn);
+    },
   },
   mounted() {
     this.init();
@@ -244,5 +365,10 @@ export default {
       // width: 700px;
     }
   }
+}
+.btn {
+  margin-left: 20px;
+  margin-top: 10px;
+  float: left;
 }
 </style>

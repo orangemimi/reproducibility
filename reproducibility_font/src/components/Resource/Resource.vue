@@ -30,8 +30,8 @@
       <el-table-column label="Data Type" width="180" :sortable="true" prop="dataType">
         <template #default="scope">
           <div class="name-wrapper">
-            <el-tag size="medium" v-if="scope.row.format == 'file'">FILE</el-tag>
-            <el-tag size="medium" v-else>STRING</el-tag>
+            <el-tag size="medium">{{scope.row.type}}</el-tag>
+            <!-- <el-tag size="medium">STRING</el-tag> -->
           </div>
         </template>
       </el-table-column>
@@ -194,6 +194,7 @@ export default {
         item.updateTime = dateFormat(item.updateTime, 'yyyy/MM/dd hh:mm');
       });
       this.dataItemList = data;
+      console.log(data)
     },
     async getDataAsOperator() {
       let data = await getDataItemsByProjectId(this.projectId);

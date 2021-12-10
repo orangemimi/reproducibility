@@ -74,9 +74,9 @@ public class IntegrateTaskInstanceController {
         return ResultUtils.success(integrateTaskInstanceService.getTaskInfo(id));
     }
 
-    @RequestMapping(value = "/getAllIntegrateTaskInstance/{taskId}", method = RequestMethod.GET)
-    public JsonResult getAllInstances(@PathVariable String taskId, @JwtTokenParser(key = "userId") String userId) {
-        return ResultUtils.success(integrateTaskInstanceService.getAllIntegrateTaskInstance(taskId, userId));
+    @RequestMapping(value = "/getAllIntegrateTaskInstance/{taskId}/{page}/{size}", method = RequestMethod.GET)
+    public JsonResult getAllInstances(@PathVariable String taskId, @JwtTokenParser(key = "userId") String userId, @PathVariable int page, @PathVariable int size) {
+        return ResultUtils.success(integrateTaskInstanceService.getAllIntegrateTaskInstance(taskId, userId, page, size));
     }
 
     @RequestMapping(value = "/getSelectedInstancesByProjectId/{projectId}", method = RequestMethod.GET)

@@ -48,7 +48,7 @@ public class IntegrateTaskController {
 
     @RequestMapping(value = "/changeSelectInstance", method = RequestMethod.PATCH)
     public JsonResult changeSelectInstance(@RequestBody JSONObject form) {
-        return ResultUtils.success(integrateTaskService.changeSelectInstance(form.getStr("id"), form.getStr("instanceId"), form.getStr("type")));
+        return ResultUtils.success(integrateTaskService.changeSelectInstance(form.getStr("id"), form.getStr("instanceId")));
     }
 //    @RequestMapping(value = "/changeSelectInstance", method = RequestMethod.GET)
 //    public JsonResult changeSelectInstance() {

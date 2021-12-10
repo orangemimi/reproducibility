@@ -108,7 +108,7 @@ public class DataItemService {
         String storey = jsonObject.getString("storey");
         FileItem fileItem = fileItemRepository.findByStoreyAndUploaderIdAndId(storey, userId, id);
         addDataItemDTO.setUserId(userId);
-        addDataItemDTO.setValue(fileItem.getId());
+        addDataItemDTO.setValue(fileItem.getAddress());
         addDataItemDTO.setSize(fileItem.getFileSize());
         DataItemCollection dataItemCollection = new DataItemCollection();
         addDataItemDTO.convertTo(dataItemCollection);
@@ -136,7 +136,7 @@ public class DataItemService {
         addDataItemDTO.setFormat(format);
         addDataItemDTO.setType(type);
         addDataItemDTO.setProjectId(projectId);
-        addDataItemDTO.setValue(address);
+        addDataItemDTO.setValue("http://221.226.60.2:8082/data/" + address);
         DataItemCollection dataItemCollection = new DataItemCollection();
         addDataItemDTO.convertTo(dataItemCollection);
         return dataItemRepository.save(dataItemCollection).getId();

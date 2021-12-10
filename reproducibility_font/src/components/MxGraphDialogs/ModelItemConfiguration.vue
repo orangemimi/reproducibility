@@ -9,10 +9,10 @@
       <el-row :gutter="10">
         <div class="event-desc" v-for="(modelInEvent, inEventIndex) in stateListInput" :key="inEventIndex" ref="inputItemList">
           <el-col :span="6" :class="modelInEvent.isSelect != undefined && modelInEvent.isSelect ? 'selectCard' : 'unselectCard'">
-            <el-card :title="modelInEvent.name" @click.native="addSelectItem(modelInEvent)">
+            <el-card :title="modelInEvent.eventName" @click.native="addSelectItem(modelInEvent)">
               <div v-show="modelInEvent.optional == 'false'" class="event_option">*</div>
               <div class="event_name">
-                {{ modelInEvent.name }}
+                {{ modelInEvent.eventName }}
               </div>
             </el-card>
           </el-col>
@@ -22,9 +22,9 @@
       <el-row :gutter="10">
         <div class="event-desc" v-for="(modelOutEvent, outEventIndex) in stateListOutput" :key="outEventIndex" ref="outputItemList">
           <el-col :span="6" :class="modelOutEvent.isSelect != undefined && modelOutEvent.isSelect ? 'selectCard' : 'unselectCard'">
-            <el-card :title="modelOutEvent.name" @click.native="addSelectItem(modelOutEvent)">
+            <el-card :title="modelOutEvent.eventName" @click.native="addSelectItem(modelOutEvent)">
               <div class="event_name">
-                {{ modelOutEvent.name }}
+                {{ modelOutEvent.eventName }}
               </div>
             </el-card>
           </el-col>
@@ -74,9 +74,6 @@ export default {
     return {
       doi: '',
       modelIntroduction: {},
-      modelInstance: {},
-      md5: '',
-      stateList: [],
       stateListInput: [],
       stateListOutput: [],
       activeName: 'input',
@@ -92,24 +89,23 @@ export default {
     async getModelInfo() {
       let data = await getModelInfo(this.doi); //获得模型所有信息
       console.log('getModelInfo', data);
-      this.md5 = data.md5;
       this.modelIntroduction = data;
-      this.stateList = data.convertMdlJson;
       await this.getInAndOut();
     },
     async getInAndOut() {
-      let stateList = this.stateList;
+      let stateList = this.modelIntroduction;
       let input = [];
       let output = [];
-      stateList.forEach((state) => {
-        state.Event.forEach((event) => {
-          if (event.type == 'input') {
-            input.push(event);
-          } else if (event.type == 'output') {
-            output.push(event);
-          }
-        });
+      stateList.inputs.forEach((state) => {
+        state.type = 'input'
+        state.md5 = this.cell.nodeAttribute.md5
+        input.push(state)
       });
+      stateList.outputs.forEach(state => {
+        state.type = 'output'
+        state.md5 = this.cell.nodeAttribute.md5
+        output.push(state)
+      })
       this.stateListInput = input;
       this.stateListOutput = output;
       // await initSetTimeOut();
@@ -135,6 +131,7 @@ export default {
       // console.log(this.selectItemListToGraph);
 
       this.$emit('selectItemListToGraph', this.selectItemListToGraph);
+      console.log(this.selectItemListToGraph)
     },
   },
   mounted() {

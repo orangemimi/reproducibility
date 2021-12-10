@@ -32,7 +32,7 @@
       </el-dialog>
       <el-dialog :visible.sync="dataDoubleClick" width="50%" title="Configuration" :close-on-click-modal="false">
         <!-- Configuration -->
-        <data-cell-info :cell="dataNode" @isUpload="isUpload" v-if="dataDoubleClick"></data-cell-info>
+        <data-cell-info :cell="dataNode" @isUpload="isUpload" @dataSelect="dataSelect" v-if="dataDoubleClick"></data-cell-info>
       </el-dialog>
       <el-dialog :visible.sync="codeDoubleClick" width="50%" title="Configuration" :close-on-click-modal="false">
         <data-service-code-configuration @selectItemListToGraph="selectItemListToGraph" v-if="codeDoubleClick"></data-service-code-configuration>
@@ -141,7 +141,7 @@ export default {
       handler: function () {
         if (this.flag.dataFlag == 1 && this.flag.modelFlag == 1) {
           this.init();
-          this.listenGraphEvent()
+          this.listenGraphEvent();
         }
       },
       deep: true,
@@ -342,29 +342,33 @@ export default {
 
           let selectionCell = this.selectionCells[0];
 
-          vertex.name = item.name;
+          vertex.name = item.eventName;
           vertex.type = type; //modelServiceInput or modelServiceOutput
-          vertex.isParameter = item.nodeType == 'parameter' ? true : false;
-          vertex.description = item.description; //event description
+          // vertex.isParameter = item.nodeType == 'parameter' ? true : false;
+          // vertex.description = item.description; //event description
           vertex.nodeAttribute.eventId = item.eventId;
-          vertex.nodeAttribute.eventDescription = item.description;
-          vertex.nodeAttribute.eventName = item.name;
-          vertex.nodeAttribute.datasetItem = item.datasetItem;
+          vertex.nodeAttribute.eventDescription = item.eventDescription;
+          vertex.nodeAttribute.eventName = item.eventName;
           vertex.nodeAttribute.stateId = item.stateId; //event description
           vertex.nodeAttribute.stateName = item.stateName;
           vertex.nodeAttribute.stateDescription = item.stateDescription;
-          vertex.nodeAttribute.md5 = item.md5;
-          vertex.nodeAttribute.doi = item.doi;
           vertex.nodeAttribute.optional = item.optional;
           vertex.nodeAttribute.type = item.type;
-          vertex.linkModelCellId = selectionCell.id; //放置输入输出node时 与其关联的model的nodeId
+          vertex.nodeAttribute.md5 = item.md5;
+          // vertex.linkModelCellId = selectionCell.id; //放置输入输出node时 与其关联的model的nodeId
 
           if (type == 'modelServiceInput') {
+            vertex.nodeAttribute.dataSelect = {
+              value: '',
+              dataSelectId: '',
+              name: '',
+            };
+            vertex.nodeAttribute.isParameter = item.isParam;
             this.addEdge(vertex, selectionCell);
           } else if (type == 'modelServiceOutput') {
             this.addEdge(selectionCell, vertex);
-            vertex.upload = false;
-            vertex.value = '';
+            // vertex.nodeAttribute.upload = false;
+            vertex.nodeAttribute.value = '';
           }
         }
         if (type == 'dataServiceInput' || type == 'dataServiceOutput') {
@@ -385,7 +389,7 @@ export default {
           vertex.nodeAttribute.dataServiceId = item.dataServiceId;
           vertex.nodeAttribute.token = item.token;
           vertex.nodeAttribute.type = item.type; //Processing
-          vertex.linkModelCellId = selectionCell.id; //放置输入输出node时 与其关联的model的nodeId
+          // vertex.linkModelCellId = selectionCell.id; //放置输入输出node时 与其关联的model的nodeId
 
           if (type == 'dataServiceInput') {
             this.addEdge(vertex, selectionCell);
@@ -408,16 +412,20 @@ export default {
       this.dataNode.upload = val;
       console.log(val);
     },
+    dataSelect(val) {
+      this.dataNode.nodeAttribute.dataSelect = val;
+    },
 
     listenGraphEvent() {
       // 监听双击事件
       this.graph.addListener(mxEvent.DOUBLE_CLICK, async (graph, evt) => {
         // DOUBLE_CLICK
-        if (evt.properties.cell != undefined) {
+        if (evt.properties.cell != undefined && evt.properties.cell.type != undefined) {
           let cell = evt.properties.cell;
           let clickModelType = cell.type;
+          
           if (clickModelType == 'modelService') {
-            console.log(cell)
+            console.log(cell);
             this.currentCell = cell;
             this.modelDoubleClick = true;
             // await initSetTimeOut();
@@ -505,7 +513,6 @@ export default {
       // this.mxGraphSelectionModel.addListener(mxEvent.CHANGE, this.handleSelectionChange);
       // console.log(this.mxGraphSelectionModel);
     },
-
   },
 
   mounted() {},

@@ -6,14 +6,13 @@ import lombok.Data;
  * Created with IntelliJ IDEA.
  *
  * @Author: Yiming
- * @Date: 2021/10/26/22:25
+ * @Date: 2021/12/09/15:29
  * @Description:
  */
 
 @Data
-public class Process {
-    String id;
-    String name;
-    OutputData outputData;
-    InputData inputData;
+public class DataContent {
+    String type;
+    String value;
+    String suffix;
 }

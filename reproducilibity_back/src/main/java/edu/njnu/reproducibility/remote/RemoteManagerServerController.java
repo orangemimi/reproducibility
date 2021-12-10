@@ -129,56 +129,62 @@ public class RemoteManagerServerController {
         IntegrateTaskInstance integrateTaskInstance = integrateTaskInstanceRepository.findByTid(tid).orElseThrow(MyException::noObject);
         TaskInfo taskInfo = result.getJSONObject("taskInfo").toBean(TaskInfo.class);
 
-        JSONArray modelCompleted = result.getJSONObject("taskInfo").getJSONObject("modelActionList").getJSONArray("completed");
-        for(int i = 0; i < modelCompleted.size(); i++) {
-            List<String> temp = new ArrayList<>();
-            for(Process p : integrateTaskInstance.getTaskInfo().getModelActionList().getCompleted()) {
-                temp.add(p.getId());
-            }
-            if(!temp.contains(modelCompleted.get(i, JSONObject.class).getStr("id"))) {
-                JSONArray outputs = ((JSONObject) modelCompleted.get(i)).getJSONObject("outputData").getJSONArray("outputs");
-                for(int j = 0;j < outputs.size();j++) {
-                    JSONObject dataContent = ((JSONObject) outputs.get(j)).getJSONObject("dataContent");
-                    FileItem fileItem = new FileItem();
-                    fileItem.setAddress(dataContent.getStr("value"));
-                    fileItem.setUserUpload(dataContent.getStr("type").equals("url"));
-                    fileItem.setUploaderId(userId);
-                    fileItem.setName(dataContent.getStr("fileName"));
-                    fileItem.setSuffix(dataContent.getStr("suffix"));
-                    fileItemRepository.insert(fileItem);
-                }
-            }
-        }
-        JSONArray dataServiceCompleted = result.getJSONObject("taskInfo").getJSONObject("dataProcessingList").getJSONArray("completed");
-        for(int i = 0; i < dataServiceCompleted.size(); i++) {
-            List<String> temp = new ArrayList<>();
-            for(Process p : integrateTaskInstance.getTaskInfo().getDataProcessingList().getCompleted()) {
-                temp.add(p.getId());
-            }
-            if(!temp.contains(dataServiceCompleted.get(i, JSONObject.class).getStr("id"))) {
-                JSONArray outputs = ((JSONObject) dataServiceCompleted.get(i)).getJSONObject("outputData").getJSONArray("outputs");
-                for(int j = 0;j < outputs.size();j++) {
-                    JSONObject dataContent = ((JSONObject) outputs.get(j)).getJSONObject("dataContent");
-                    FileItem fileItem = new FileItem();
-                    fileItem.setAddress(dataContent.getStr("value"));
-                    fileItem.setUserUpload(dataContent.getStr("type").equals("url"));
-                    fileItem.setUploaderId(userId);
-                    fileItem.setName(dataContent.getStr("fileName"));
-                    fileItem.setSuffix(dataContent.getStr("suffix"));
-                    fileItemRepository.insert(fileItem);
-                }
-            }
-        }
-        integrateTaskInstance.setTaskInfo(taskInfo);
+//        JSONArray modelCompleted = result.getJSONObject("taskInfo").getJSONObject("modelActionList").getJSONArray("completed");
+//        for(int i = 0; i < modelCompleted.size(); i++) {
+//            List<String> temp = new ArrayList<>();
+//            for(Process p : integrateTaskInstance.getTaskInfo().getModelActionList().getCompleted()) {
+//                temp.add(p.getId());
+//            }
+//            if(!temp.contains(modelCompleted.get(i, JSONObject.class).getStr("id"))) {
+//                JSONArray outputs = ((JSONObject) modelCompleted.get(i)).getJSONObject("outputData").getJSONArray("outputs");
+//                for(int j = 0;j < outputs.size();j++) {
+//                    JSONObject dataContent = ((JSONObject) outputs.get(j)).getJSONObject("dataContent");
+//                    FileItem fileItem = new FileItem();
+//                    fileItem.setAddress(dataContent.getStr("value"));
+//                    fileItem.setUserUpload(dataContent.getStr("type").equals("url"));
+//                    fileItem.setUploaderId(userId);
+//                    fileItem.setName(dataContent.getStr("fileName"));
+//                    fileItem.setSuffix(dataContent.getStr("suffix"));
+//                    fileItemRepository.insert(fileItem);
+//                }
+//            }
+//        }
+//        JSONArray dataServiceCompleted = result.getJSONObject("taskInfo").getJSONObject("dataProcessingList").getJSONArray("completed");
+//        for(int i = 0; i < dataServiceCompleted.size(); i++) {
+//            List<String> temp = new ArrayList<>();
+//            for(Process p : integrateTaskInstance.getTaskInfo().getDataProcessingList().getCompleted()) {
+//                temp.add(p.getId());
+//            }
+//            if(!temp.contains(dataServiceCompleted.get(i, JSONObject.class).getStr("id"))) {
+//                JSONArray outputs = ((JSONObject) dataServiceCompleted.get(i)).getJSONObject("outputData").getJSONArray("outputs");
+//                for(int j = 0;j < outputs.size();j++) {
+//                    JSONObject dataContent = ((JSONObject) outputs.get(j)).getJSONObject("dataContent");
+//                    FileItem fileItem = new FileItem();
+//                    fileItem.setAddress(dataContent.getStr("value"));
+//                    fileItem.setUserUpload(dataContent.getStr("type").equals("url"));
+//                    fileItem.setUploaderId(userId);
+//                    fileItem.setName(dataContent.getStr("fileName"));
+//                    fileItem.setSuffix(dataContent.getStr("suffix"));
+//                    fileItemRepository.insert(fileItem);
+//                }
+//            }
+//        }
 
-        List<Map<String, String>> completedValue = Utils.getValueList(result, "completed");
-        List<Map<String, String>> failedValue = Utils.getValueList(result, "failed");
-
-        Utils.changeStatusOfCell(integrateTaskInstance, completedValue, failedValue);
-        if(result.getInt("status") == 1) {
-            integrateTaskInstance.setStatus(1);
+        if(!taskInfo.toString().equals(integrateTaskInstance.getTaskInfo().toString())) {
+            integrateTaskInstance.setTaskInfo(taskInfo);
+            if(result.getInt("status") == 1) {
+                integrateTaskInstance.setStatus(1);
+            }
+            integrateTaskInstanceRepository.save(integrateTaskInstance);
         }
-        integrateTaskInstanceRepository.save(integrateTaskInstance);
+
+
+
+//        List<Map<String, String>> completedValue = Utils.getValueList(result, "completed");
+//        List<Map<String, String>> failedValue = Utils.getValueList(result, "failed");
+//
+//        Utils.changeStatusOfCell(integrateTaskInstance, completedValue, failedValue);
+
 
 
         return ResultUtils.success(integrateTaskInstance);

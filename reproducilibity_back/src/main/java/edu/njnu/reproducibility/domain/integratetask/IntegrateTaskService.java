@@ -77,21 +77,9 @@ public class IntegrateTaskService {
         return integrateTaskRepository.save(integrateTask);
     }
 
-    public IntegrateTask changeSelectInstance(String id, String instanceId, String type) {
+    public IntegrateTask changeSelectInstance(String id, String instanceId) {
         IntegrateTask integrateTask = integrateTaskRepository.findFirstById(id).orElseThrow(MyException::noObject);
-        if(type.equals("star")) {
-            List<String> temp = integrateTask.getSelectInstanceId();
-            if(temp == null) {
-                integrateTask.setSelectInstanceId(new ArrayList<>());
-            }
-            integrateTask.selectInstanceId.add(instanceId);
-        } else if(type.equals("unstar")) {
-            List<String> temp = integrateTask.getSelectInstanceId();
-            if(temp == null) {
-                throw new MyException(ResultEnum.NO_OBJECT);
-            }
-            integrateTask.selectInstanceId.remove(instanceId);
-        }
+        integrateTask.setSelectInstanceId(instanceId);
         return integrateTaskRepository.save(integrateTask);
     }
 
