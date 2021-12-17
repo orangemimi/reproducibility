@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div class="info">
-      <div>123Information:</div>
+      <div>Information:</div>
       
     </div>
     <div class="event">
@@ -10,7 +10,7 @@
         <div class="event-desc" v-for="(modelInEvent, inEventIndex) in stateListInput" :key="inEventIndex" ref="inputItemList">
           <el-col :span="6" :class="modelInEvent.isSelect != undefined && modelInEvent.isSelect ? 'selectCard' : 'unselectCard'">
             <el-card :title="modelInEvent.name" @click.native="addSelectItem(modelInEvent)">
-              <div v-show="modelInEvent.optional == 'false'" class="event_option">*</div>
+              <div class="event_option">*</div>
               <div class="event_name">
                 {{ modelInEvent.name }}
               </div>
@@ -23,7 +23,7 @@
         <div class="event-desc" v-for="(modelInEvent, inEventIndex) in stateListParameter" :key="inEventIndex" ref="inputItemList">
           <el-col :span="6" :class="modelInEvent.isSelect != undefined && modelInEvent.isSelect ? 'selectCard' : 'unselectCard'">
             <el-card :title="modelInEvent.name" @click.native="addSelectItem(modelInEvent)">
-              <div v-show="modelInEvent.optional == 'false'" class="event_option">*</div>
+              <div class="event_option">*</div>
               <div class="event_name">
                 {{ modelInEvent.name }}
               </div>
@@ -46,7 +46,7 @@
     </div>
     <div>
       <div v-for="(item, index) in selectItemListToGraph" :key="index">
-        <select-card :currentItem="item" @removeItem="removeItem"></select-card>
+        <select-card :currentItem="item" :type="'dataService'" @removeItem="removeItem"></select-card>
       </div>
     </div>
 
@@ -56,7 +56,7 @@
 
 <script>
 import selectCard from '_com/Cards/SelectCard';
-import { getDataServiceInfo1 } from '@/api/request';
+import { getDataServiceInfo1, getDataServiceInfoByPortal } from '@/api/request';
 import { hasProperty } from '@/utils/utils';
 // import { initSetTimeOut } from '@/utils/utils';
 export default {
@@ -86,7 +86,6 @@ export default {
       modelIntroduction: {},
       modelInstance: {},
       md5: '',
-      stateList: [],
       stateListInput: [],
       stateListOutput: [],
       stateListParameter: [],
@@ -97,7 +96,25 @@ export default {
 
   methods: {
     async init() {
-      await this.getServiceInfo();
+      // await this.getServiceInfo();
+      await this.getDataServiceInfoByPortal()
+    },
+
+    async getDataServiceInfoByPortal() {
+      let data = await getDataServiceInfoByPortal(this.cell.nodeAttribute.oid, this.cell.nodeAttribute.dataServiceId)
+      console.log(data)
+      this.stateListInput = data.input
+      this.stateListParameter = data.parameter
+      this.stateListOutput = data.output
+      this.stateListInput.forEach(item => {
+        item.nodeType = 'input'
+      })
+      this.stateListParameter.forEach(item => {
+        item.nodeType = "parameter"
+      })
+      this.stateListOutput.forEach(item => {
+        item.nodeType = "output"
+      })
     },
 
     async getServiceInfo() {
@@ -145,6 +162,7 @@ export default {
       console.log('selecty', item);
       if (hasProperty(item, 'isSelect') && item.isSelect) {
         this.selectItemListToGraph.splice(this.selectItemListToGraph.findIndex((arrItem) => arrItem.name == item.name));
+        item.isSelect = false
       } else {
         item.isSelect = true;
         this.selectItemListToGraph.push(item);
@@ -160,7 +178,7 @@ export default {
       this.$emit('selectItemListToGraph', this.selectItemListToGraph);
     },
   },
-  mounted() {
+  created() {
     // if (this.cell != undefined) {
     //   this.init();
     // }

@@ -2,8 +2,11 @@
 <template>
   <div class="leftContainer">
     <div class="card-contain">
-      <vue-scroll :ops="ops" style="height: 390px">
-        <div v-for="(model, index) in dataProcessing" :key="index" ref="dataServiceItemList">
+      <vue-scroll :ops="ops" style="max-height: 390px">
+        <div v-if="dataProcessing.length == 0">
+          <el-empty description="No Data"></el-empty>
+        </div>
+        <div v-for="(model, index) in dataProcessing" :key="index" ref="dataServiceItemList" v-else>
           <div class="choose-model-contain">
             <model-card :modelFrom="model" @click.native="getModelInfo(model)"></model-card>
           </div>
@@ -15,7 +18,7 @@
 
 <script>
 import modelCard from '_com/Cards/MxModelCard';
-import { getDataServices } from '@/api/request';
+import { getAllByProjectId } from '@/api/request';
 
 export default {
   components: { modelCard },
@@ -44,11 +47,8 @@ export default {
 
   methods: {
     async getAllInfo() {
-      let { content } = await getDataServices(this.dataServiceFilter.page, this.dataServiceFilter.pageSize);
-      // let { content } = await get(
-      //   `/modelItems/public/${this.dataServiceFilter.page}/${this.dataServiceFilter.pageSize}`
-      // );
-
+      let content  = await getAllByProjectId(this.projectId);
+      console.log(content)
       this.$set(this, 'dataProcessing', content);
     },
 
@@ -92,7 +92,7 @@ export default {
   }
 
   .card-contain {
-    height: 390px;
+    // height: 390px;
     width: 100%;
     clear: both;
 

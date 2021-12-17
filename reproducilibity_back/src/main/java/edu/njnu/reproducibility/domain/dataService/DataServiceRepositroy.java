@@ -15,4 +15,6 @@ import java.util.List;
 public interface DataServiceRepositroy  extends MongoRepository<DataService,String> {
     Page<DataService> findAll(Pageable pageable);
     List<DataService> findAllByUserId(String userId);
+
+    List<DataService> findAllByProjectId(String projectId);
 }

@@ -36,7 +36,15 @@ module.exports = {
         // pathRewrite: {
         //   "^/api": ""
         // }
-      }
+      },
+      // '/api': {
+      //   target: 'http://api.map.baidu.com',
+      //   ws: true,
+      //   changeOrigin: true,
+      //   pathRewrite: {
+      //     "^/api": ""
+      //   }
+      // }
     }
   },
 };

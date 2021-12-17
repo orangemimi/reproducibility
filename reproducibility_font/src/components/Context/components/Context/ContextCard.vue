@@ -1,13 +1,22 @@
 <template>
-  <div>
-    <router-link target="_blank" :to="{ path: `/project/context/${projectId}` }">
-      <el-card shadow="hover" class="main">
-        <div class="top" v-if="type == 'EssentialInformation'">
-          <img :src="imgPath(context.snapshot, 'Context')" style="height: 250px; width: 100%" />
+  <div class="main" @click="clickHander" title="EssentialInformation">
+    <el-row>
+      <el-col :span="15">
+        <div class="left" v-if="type == 'EssentialInformation'">
+          <img :src="imgPath(context.snapshot, 'EssentialInformation')" style="height: 280px; width: 100%" />
         </div>
-        <div class="top" v-else></div>
-      </el-card>
-    </router-link>
+        <div class="left" v-else-if="type == 'dimension'">
+          
+        </div>
+      </el-col>
+      <el-col :span="9">
+        <div class="right">
+          <div class="view">
+            <i class="el-icon-view"></i>
+          </div>
+        </div>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -34,6 +43,13 @@ export default {
         return imgBase64(name);
       }
     },
+
+    clickHander() {
+      let routeData = this.$router.resolve({
+        path: `/project/context/${this.projectId}`,
+      });
+      window.open(routeData.href, '_blank');
+    },
   },
 };
 </script>
@@ -45,12 +61,26 @@ export default {
   border-radius: 4px;
   margin-bottom: 15px;
   background-color: white;
-  // box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+
+  // border: solid 1px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
   /deep/ .el-card__body {
     padding: 0px;
   }
-  .top {
-    height: 250px;
+  .left {
+    padding: 10px;
   }
+  .right {
+    .view {
+      margin-right: 20px;
+      margin-top: 5px;
+      .el-icon-view {
+        float: right;
+      }
+    }
+  }
+}
+.main:hover {
+  cursor: pointer;
 }
 </style>

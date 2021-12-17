@@ -10,7 +10,7 @@ const state = {
   email: localStorage.getItem('email'),
   unreadApplynum: localStorage.getItem('unreadApplynum'),
   unreadReplynum: localStorage.getItem('unreadReplynum'),
-  selectNum: localStorage.getItem('selectModels') == undefined ? 0 : JSON.parse(localStorage.selectModels).computableModels.length
+  selectNum: (localStorage.getItem('selectModels') == undefined ? 0 : JSON.parse(localStorage.selectModels).computableModels.length) + (localStorage.getItem('selectDataServices') == undefined ? 0 : JSON.parse(localStorage.selectDataServices).dataServices.length)
 };
 //commit mutation ,同步
 const mutations = {
@@ -94,6 +94,10 @@ const actions = {
           localStorage.setItem("selectModels", JSON.stringify({
             computableModels: [],
             modelItem: []
+          }))
+          localStorage.setItem("selectDataServices", JSON.stringify({
+            dataServices: [],
+            dataServiceItem: {}
           }))
           resolve();
         })

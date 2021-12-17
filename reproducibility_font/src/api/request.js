@@ -1,5 +1,6 @@
 import { get, post, patch, del } from '@/axios';
 import { successNotification } from '@/utils/notification';
+
 //-------------------------------------------------users--------------------------------------
 
 //判断是否是已经Star的项目
@@ -448,8 +449,8 @@ export async function addFormGroup(jsonData) {
   return await post(`/Content/addFormGroup`, jsonData)
 }
 
-export async function updateEssentialInformation(projectId, jsonData) {
-  return await post(`/Content/updateEssentialInformation/${projectId}`, jsonData)
+export async function updateContext(jsonData) {
+  return await patch(`/Content/updateContext`, jsonData)
 }
 
 export async function updateResourceOfContent(jsonData) {
@@ -607,6 +608,14 @@ export async function getComputableModels(oid) {
   return await get(`/portal/getComputableModels/${oid}`)
 }
 
+export async function getDataServiceByPortal(jsonData) {
+  return await post(`/portal/getDataServiceByPortal`, jsonData)
+}
+
+export async function getDataServiceInfoByPortal(oid, serviceId) {
+  return await get(`/portal/getDataServiceInfo/${oid}/${serviceId}`)
+}
+
 //------------------------------------------dataService------------------------------------
 
 export async function getDataServices(currentPage, pagesize) {
@@ -615,6 +624,19 @@ export async function getDataServices(currentPage, pagesize) {
 
 export async function saveDataService(form) {
   return await post(`/dataServices`, form);
+}
+
+//获取自己的dataService
+export async function getMyDataService() {
+  return await get(`/dataServices/getmydataservices`)
+}
+
+export async function saveDataServicesToProject(jsonData) {
+  return await post(`/dataServices/saveDataServicesToProject`, jsonData)
+}
+
+export async function getAllByProjectId(projectId) {
+  return await get(`/dataServices/getAllByProjectId/${projectId}`)
 }
 
 export async function getDataServiceInfo(form) {
@@ -631,12 +653,6 @@ export async function getDataServiceInfo1(form) {
 export async function getAllProcessing(list) {
   return await get(`/dataContainer/dataService/getAllProcessing`, list)
 }
-
-//获取自己的dataService
-export async function getMyDataService() {
-  return await get(`/dataServices/getmydataservices`)
-}
-
 //------------------------------------------dataServiceCode------------------------------------
 
 export async function postDataServiceCode(form) {
@@ -664,3 +680,5 @@ export async function updatePerformanceById(type, id, form) {
 export async function getPerformanceByProjectId(projectId) {
   return await get(`/performances/project/${projectId}`);
 }
+
+//===============================extra=================================================

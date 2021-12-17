@@ -1,5 +1,6 @@
 package edu.njnu.reproducibility.domain.dataService;
 
+import cn.hutool.json.JSONObject;
 import edu.njnu.reproducibility.annotation.JwtTokenParser;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
@@ -34,5 +35,16 @@ public class DataServiceController {
     @RequestMapping(value = "/getmydataservices", method = RequestMethod.GET)
     public JsonResult getMyDataServices(@JwtTokenParser(key = "userId") String userId) {
         return ResultUtils.success(dataServiceService.getMyDataService(userId));
+    }
+
+    @RequestMapping(value = "/saveDataServicesToProject", method = RequestMethod.POST)
+    public JsonResult saveDataServicesToProject(@RequestBody JSONObject jsonObject, @JwtTokenParser String userId) {
+        dataServiceService.saveDataServicesToProject(jsonObject.getJSONArray("dataServices"), jsonObject.getStr("projectId"), userId);
+        return ResultUtils.success();
+    }
+
+    @RequestMapping(value = "/getAllByProjectId/{projectId}", method = RequestMethod.GET)
+    public JsonResult getAllByProjectId(@PathVariable String projectId) {
+        return ResultUtils.success(dataServiceService.getAllByProjectId(projectId));
     }
 }

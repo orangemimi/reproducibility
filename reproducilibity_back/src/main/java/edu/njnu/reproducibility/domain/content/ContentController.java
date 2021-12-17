@@ -3,6 +3,7 @@ package edu.njnu.reproducibility.domain.content;
 import cn.hutool.json.JSONObject;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
+import edu.njnu.reproducibility.domain.content.support.ContextCollection.Context;
 import edu.njnu.reproducibility.domain.content.support.ContextCollection.EssentialInformation;
 import edu.njnu.reproducibility.domain.content.support.dto.AddContentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,9 +67,10 @@ public class ContentController {
         return ResultUtils.success(contentService.getContextByProject(projectId));
     }
 
-    @RequestMapping(value = "/updateEssentialInformation/{projectId}", method = RequestMethod.POST)
-    public JsonResult updateEssentialInformation(@RequestBody EssentialInformation essentialInformation, @PathVariable String projectId) {
-        contentService.updateEssentialInformation(projectId, essentialInformation);
+
+    @RequestMapping(value = "/updateContext", method = RequestMethod.PATCH)
+    public JsonResult updateContext(@RequestBody JSONObject jsonObject) {
+        contentService.updateContext(jsonObject.getStr("projectId"), jsonObject.getJSONObject("context").toBean(Context.class));
         return ResultUtils.success();
     }
 

@@ -23,6 +23,8 @@ import vueJsonEditor from 'vue-json-editor';
 import { codemirror } from 'vue-codemirror';
 import 'codemirror/lib/codemirror.css';
 
+import BaiduMap from 'vue-baidu-map'
+
 
 
 // import Descriptions from '_com/Description/index.js';
@@ -34,6 +36,9 @@ Vue.use(mavonEditor);
 Vue.use(vuescroll);
 // Vue.use(Highlight);
 Vue.use(codemirror);
+Vue.use(BaiduMap, {
+  ak: 'duBHPLUvDk5T3GgLF2o66hqSG3hnGTw5'
+})
 
 
 Vue.component('vue-json-editor', vueJsonEditor);

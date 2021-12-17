@@ -5,9 +5,21 @@
         <el-row :gutter="20">
           <el-col :span="16">
             <h2 style="margin-left: 10px; margin-top: 10px">Abstract:</h2>
-            <mavon-editor :value="value" language="en" style="height: 700px; margin-left: 10px" :toolbars="toolbars" ref="md"/>
+            <mavon-editor :value="value" language="en" style="height: 700px; margin-left: 10px" :toolbars="toolbars" ref="md" />
           </el-col>
           <el-col :span="8">
+            <div>
+              <!-- <el-button icon="el-icon-plus" circle style="float: right; margin-top: 10px" size="mini"></el-button> -->
+              <el-dropdown trigger="click" style="float: right; margin-top: 10px" @command="handleCommand">
+                <span class="el-dropdown-link">
+                  <el-button icon="el-icon-plus" circle size="mini"></el-button>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item icon="iconfont icon-Tool" command="temporalInfo">TemporalInfo</el-dropdown-item>
+                  <el-dropdown-item icon="iconfont icon-Tool" command="spatialInfo">SpatialInfo</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </div>
             <div class="right">
               <el-button icon="el-icon-edit" circle style="margin-right: 3px" @click="titleClick"></el-button>
               <span v-if="editTitle == false" class="title">{{ title }}</span>
@@ -43,18 +55,29 @@
               </el-form>
               <el-divider><i class="el-icon-mobile-phone"></i></el-divider>
             </div>
+            <div class="plus">
+              <div v-if="temporalInfoFlag">
+                <temporal-info @close="temporalInfoClose" @date="getTemporalInfo" :temporalInfo="temporalInfo"/>
+              </div>
+              <div v-if="spatialInfoFlag" class="spatialInfo">
+                <spatial-info @close="spatialInfoClose" @selectData="getSpatialInfo" :spatialInfo="spatialInfo"/>
+              </div>
+            </div>
           </el-col>
         </el-row>
       </el-col>
-      <el-col :span="24" style="text-align: center;margin-top:24px">
-        <el-button type="primary" round @click="updateEssentialInformation">Submit</el-button>
+      <el-col :span="24" style="text-align: center; margin-top: 24px; margin-bottom: 24px">
+        <el-button type="primary" round @click="updateContext">Submit</el-button>
       </el-col>
     </el-row>
   </div>
 </template>
 
 <script>
-import { getContextByProject, updateEssentialInformation } from '@/api/request';
+import { getContextByProject, updateContext } from '@/api/request';
+import { dateFormat } from '@/utils/utils'
+import temporalInfo from './TemporalInfo.vue';
+import spatialInfo from './SpatialInfo.vue';
 export default {
   data() {
     return {
@@ -66,8 +89,14 @@ export default {
       title: '',
       editTitle: false,
       form: {
-        purpose: ''
+        purpose: '',
       },
+
+      temporalInfoFlag: false,
+      spatialInfoFlag: false,
+      temporalInfo: [],
+      spatialInfo: [],
+
       toolbars: {
         bold: true, // 粗体
         italic: true, // 斜体
@@ -105,8 +134,12 @@ export default {
       },
     };
   },
-  methods: {
 
+  components: {
+    temporalInfo,
+    spatialInfo,
+  },
+  methods: {
     async titleClick() {
       this.editTitle = !this.editTitle;
       //$nextTick()相当于setTime()函数，当dom元素全部渲染时执行，此处使用是因为ref无法获取v-if='false'的dom，需要在dom加载后再执行用ref获取（document.getElementById函数同理!）
@@ -141,21 +174,86 @@ export default {
 
     async getContextByProject() {
       let data = await getContextByProject(this.projectId);
+      console.log(data)
       this.title = data.essentialInformation.name;
       this.form.purpose = data.essentialInformation.purpose;
       this.dynamicTags = data.essentialInformation.keyWords;
       this.value = data.essentialInformation.abstractText;
+      if(data.spatialInfos.length > 0) {
+        this.spatialInfo = data.spatialInfos
+        this.spatialInfoFlag = true
+      }
+      if(data.temporalInfo.end != undefined && data.temporalInfo.end != null) {
+        this.temporalInfo.push(data.temporalInfo.start)
+        this.temporalInfo.push(data.temporalInfo.end)
+        this.temporalInfoFlag = true
+      }
     },
-    async updateEssentialInformation() {
+
+    async updateContext() {
       let jsonData = {
-        name: this.title,
-        purpose: this.form.purpose,
-        keyWords: this.dynamicTags,
-        abstractText: this.$refs.md.d_value,
-        abstractRender: this.$refs.md.d_render,
+        projectId: this.projectId,
+        context: {
+          essentialInformation: {
+            name: this.title,
+            purpose: this.form.purpose,
+            keyWords: this.dynamicTags,
+            abstractText: this.$refs.md.d_value,
+            abstractRender: this.$refs.md.d_render,
+          },
+          spatialInfos: [],
+          temporalInfo: {
+          },
+        },
       };
-      console.log(jsonData);
-      await updateEssentialInformation(this.projectId, jsonData);
+      if (this.spatialInfo.length > 0 && this.spatialInfoFlag != false) {
+        this.spatialInfo.forEach((item) => {
+          if (item.type == 'polygon') {
+            jsonData.context.spatialInfos.push({
+              name: item.name,
+              type: item.type,
+              points: item.points,
+            });
+          } else {
+            jsonData.context.spatialInfos.push({
+              name: item.name,
+              type: item.type,
+              value: item.value,
+            });
+          }
+        });
+      }
+      if(this.temporalInfo.length > 0 && this.temporalInfoFlag != false) {
+        jsonData.context.temporalInfo.start = dateFormat(this.temporalInfo[0])
+        jsonData.context.temporalInfo.end = dateFormat(this.temporalInfo[1])
+      }
+      await updateContext(jsonData);
+    },
+
+    handleCommand(val) {
+      console.log(val);
+      if (val == 'temporalInfo') {
+        this.temporalInfoFlag = true;
+      } else if (val == 'spatialInfo') {
+        this.spatialInfoFlag = true;
+      }
+    },
+
+    temporalInfoClose() {
+      this.temporalInfoFlag = false;
+    },
+
+    spatialInfoClose() {
+      this.spatialInfoFlag = false;
+    },
+    getTemporalInfo(val) {
+      this.temporalInfo = val;
+      console.log(dateFormat(val[0]))
+      console.log(val[0].getDate());
+    },
+    getSpatialInfo(val) {
+      this.spatialInfo = val;
+      console.log(val);
     },
 
     init() {
@@ -195,5 +293,11 @@ export default {
 }
 .right /deep/ .el-divider__text {
   background-color: #f6f6f6;
+}
+
+.plus {
+  .spatialInfo {
+    margin-top: 20px;
+  }
 }
 </style>

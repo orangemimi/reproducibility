@@ -6,6 +6,27 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "19099362",
+      "name": "Tool",
+      "font_class": "Tool",
+      "unicode": "e638",
+      "unicode_decimal": 58936
+    },
+    {
+      "icon_id": "7123734",
+      "name": "service",
+      "font_class": "service",
+      "unicode": "e781",
+      "unicode_decimal": 59265
+    },
+    {
+      "icon_id": "18991679",
+      "name": "model",
+      "font_class": "model",
+      "unicode": "e867",
+      "unicode_decimal": 59495
+    },
+    {
       "icon_id": "10584915",
       "name": "一键清理",
       "font_class": "yijianqingli",

@@ -253,10 +253,23 @@ export const constantRoutes = [
         }
       },
       {
-        path: '/dataservices',
-        name: 'DataServices',
+        path: '/officialData',
+        name: 'OfficialData',
         meta: {
-          title: 'dataservices',
+          title: 'Official Repository',
+          requireAuth: true
+        },
+        components: {
+          header: () => import('_com/layout/MyHeader.vue'),
+          main: () => import('@/views/data-service/official.vue'),
+          footer: () => import('_com/layout/MyFooter.vue')
+        }
+      },
+      {
+        path: '/communityData',
+        name: 'CommunityData',
+        meta: {
+          title: 'Community Repository',
           requireAuth: true
         },
         components: {

@@ -75,15 +75,16 @@ public class ContentService {
         return content.getContext();
     }
 
-    //修改EssentialInformation
-    public void updateEssentialInformation(String projectId, EssentialInformation essentialInformation) {
+    //修改Context
+    public void updateContext(String projectId,  Context context) {
         Content content = contentRepository.findByProjectId(projectId);
         if(content == null) {
             throw MyException.noObject();
         }
-        content.getContext().setEssentialInformation(essentialInformation);
+        content.setContext(context);
         contentRepository.save(content);
     }
+
 
 
     /**

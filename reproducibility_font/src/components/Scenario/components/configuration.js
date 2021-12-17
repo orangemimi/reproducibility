@@ -350,9 +350,16 @@ export function generateXml1(
     ModelAction: []
   }
   modelListInGraph.forEach((model, index) => {
-    let list = [...modelInputInGraph, ...modelLinkInGraph];
-    let inputList = list.filter(event => event.nodeAttribute.md5 == model.nodeAttribute.md5);
-    let outputList = modelOutputInGraph.filter(event => event.nodeAttribute.md5 == model.nodeAttribute.md5);
+    let inputList = []
+    let outputList = []
+    model.edges.forEach(edge => {
+      if(edge.target.id == model.id) {
+        inputList.push(edge.source)
+      }
+      if(edge.source.id == model.id) {
+        outputList.push(edge.target)
+      }
+    })
     console.log(inputList)
     ModelActions.ModelAction.push({
       _id: model.id,
@@ -371,7 +378,7 @@ export function generateXml1(
     inputList.forEach(item => {
       if (item.type == 'modelServiceInput') {
         let type = "url"
-        if (item.nodeAttribute.type == 'shared_file') {
+        if (item.nodeAttribute.dataSelect.type == 'shared_file') {
           type = 'insituData'
           ModelActions.ModelAction[index].Inputs.DataConfiguration.push({
             _id: item.id,
@@ -383,7 +390,7 @@ export function generateXml1(
             }
           })
         }
-        if (item.nodeAttribute.type == 'parameter') {
+        if (item.nodeAttribute.dataSelect.type == 'parameter') {
           ModelActions.ModelAction[index].Inputs.DataConfiguration.push({
             _id: item.id,
             _state: item.nodeAttribute.stateName,
@@ -406,13 +413,18 @@ export function generateXml1(
         }
       } else if (item.type == 'modelServiceLink') {
         console.log(1)
-        let link = item.edges.filter(el => el.target.nodeAttribute.eventId == item.nodeAttribute.eventId);
+        let link = {}
+        item.edges.forEach(edge => {
+          if(edge.target.id == item.id) {
+            link = edge.source
+          }
+        })
         ModelActions.ModelAction[index].Inputs.DataConfiguration.push({
           _id: item.id,
           _state: item.nodeAttribute.stateName,
           _event: item.nodeAttribute.eventName,
           Data: {
-            _link: link[0].source.id,
+            _link: link.id,
             _type: "link"
           }
         })
@@ -443,9 +455,20 @@ export function generateXml1(
     DataProcessing: []
   }
   dataServiceListInGraph.forEach((service, index) => {
-    let list = [...dataServiceInputInGraph, ...dataServiceLinkInGraph];
-    let inputList = list.filter(event => event.nodeAttribute.dataServiceId == service.nodeAttribute.dataServiceId);
-    let outputList = dataServiceOutputListInGraph.filter(event => event.nodeAttribute.dataServiceId == service.nodeAttribute.dataServiceId);
+    // let list = [...dataServiceInputInGraph, ...dataServiceLinkInGraph];
+    let inputList = []
+    let outputList = []
+    service.edges.forEach(edge => {
+      if(edge.target.id == service.id) {
+        inputList.push(edge.source)
+      }
+      if(edge.source.id == service.id) {
+        outputList.push(edge.target)
+      }
+    })
+    
+
+    console.log(inputList)
     DataProcessings.DataProcessing.push({
       _id: service.id,
       _token: service.nodeAttribute.token,
@@ -455,7 +478,6 @@ export function generateXml1(
       _service: service.nodeAttribute.dataServiceId,
       Inputs: {
         DataConfiguration: [],
-        Parameter: []
       },
       Outputs: {
         DataConfiguration: []
@@ -463,38 +485,50 @@ export function generateXml1(
     })
     inputList.forEach(item => {
       if (item.type == 'dataServiceInput') {
-        let type = "url"
-        if (item.dataResourceRelated.format == 'shared_file') {
-          type = 'insituData'
-        }
-        if (item.dataResourceRelated.format == 'parameter') {
-          DataProcessings.DataProcessing[index].Inputs.Parameter.push({
-            _id: item.id,
-            _event: item.name,
-            _value: item.dataResourceRelated.value,
-            _type: "param",
-          })
-        } else {
+        if (item.nodeAttribute.dataSelect.type == 'shared_file') {
           DataProcessings.DataProcessing[index].Inputs.DataConfiguration.push({
             _id: item.id,
-            _state: service.name,
             _event: item.name,
             Data: {
-              _value: item.dataResourceRelated.value,
-              _type: type
+              _value: item.nodeAttribute.dataSelect.value,
+              _type: 'insituData'
+            }
+          })
+        }
+        if (item.nodeAttribute.dataSelect.type == 'parameter') {
+          DataProcessings.DataProcessing[index].Inputs.DataConfiguration.push({
+            _id: item.id,
+            _event: item.name,
+            Data: {
+              _value: item.nodeAttribute.dataSelect.value,
+              _type: 'param'
+            }
+          })
+        } else {
+          console.log(1)
+          DataProcessings.DataProcessing[index].Inputs.DataConfiguration.push({
+            _id: item.id,
+            _event: item.name,
+            Data: {
+              _value: item.nodeAttribute.dataSelect.value,
+              _type: 'url'
             }
           })
         }
 
 
       } else if (item.type == 'dataServiceLink') {
-        let link = linkEdgeList.filter(el => el.target.id == item.id);
+        let link = {}
+        item.edges.forEach(edge => {
+          if(edge.target.id == item.id) {
+            link = edge.source
+          }
+        })
         DataProcessings.DataProcessing[index].Inputs.DataConfiguration.push({
           _id: item.id,
-          _state: service.name,
           _event: item.name,
           Data: {
-            _link: link[0].source.id,
+            _link: link.id,
             _type: "link"
           }
         })
@@ -503,10 +537,9 @@ export function generateXml1(
     outputList.forEach((item, n) => {
       DataProcessings.DataProcessing[index].Outputs.DataConfiguration.push({
         _id: item.id,
-        _state: service.name,
         _event: item.name,
       })
-      if (!item.upload) {
+      if (!item.nodeAttribute.upload) {
         DataProcessings.DataProcessing[index].Outputs.DataConfiguration[n].Data = {
           _type: "insituData"
         }

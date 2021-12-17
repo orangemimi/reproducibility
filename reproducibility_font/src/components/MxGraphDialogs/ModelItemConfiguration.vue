@@ -33,7 +33,7 @@
     </div>
     <div>
       <div v-for="(item, index) in selectItemListToGraph" :key="index">
-        <select-card :currentItem="item" @removeItem="removeItem"></select-card>
+        <select-card :currentItem="item" :type="'model'" @removeItem="removeItem"></select-card>
       </div>
     </div>
 

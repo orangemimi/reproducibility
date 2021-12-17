@@ -10,7 +10,10 @@
     </div>
     <div v-show="switchValue" class="card-contain">
       <vue-scroll :ops="ops" style="max-height: 390px;">
-        <div v-for="(model, index) in publicModels" :key="index" ref="modelItemList">
+        <div v-if="publicModels.length == 0">
+          <el-empty description="No Data"></el-empty>
+        </div>
+        <div v-for="(model, index) in publicModels" :key="index" ref="modelItemList" v-else>
           <div class="choose-model-contain">
             <model-card :modelFrom="model" @click.native="getModelInfo(model)"></model-card>
           </div>

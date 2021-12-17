@@ -5,6 +5,8 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  *
@@ -13,7 +15,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * @Description:
  */
 @Data
-
 public class SpatialInfo {
-
+    String name;
+    String type;
+    String value;
+    List<Point> points;
 }

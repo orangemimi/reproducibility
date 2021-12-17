@@ -1,22 +1,20 @@
 <template>
   <div class="mainContain" v-if="cell != null">
-    <el-row class="dataInfo">
+    <el-row class="dataInfo" v-if="cell.type == 'modelServiceInput' || cell.type == 'modelServiceOutput'">
       <div class="data">
         <div class="dataTitle">State name:</div>
-        <div class="dataDetail" v-if="cell.type == 'modelServiceInput' || cell.type == 'modelServiceOutput'">
+        <div class="dataDetail">
           {{ cell.nodeAttribute.stateName }}
         </div>
-        <div v-else class="dataDetail">{{ cell.name }}</div>
       </div>
       <div class="data">
         <div class="dataTitle">State description:</div>
-        <div class="dataDetail" v-if="cell.type == 'modelServiceInput' || cell.type == 'modelServiceOutput'">
+        <div class="dataDetail">
           {{ cell.nodeAttribute.stateDescription }}
         </div>
-        <div v-else class="dataDetail">{{ cell.description }}</div>
       </div>
 
-      <div class="data" v-if="cell.type == 'modelServiceInput' || cell.type == 'modelServiceOutput'">
+      <div class="data">
         <div class="dataTitle">Event name:</div>
         <div class="dataDetail">{{ cell.nodeAttribute.eventName }}</div>
       </div>
@@ -27,6 +25,21 @@
       <div class="data">
         <div class="dataTitle">Event type:</div>
         <div class="dataDetail">{{ cell.nodeAttribute.type }}</div>
+      </div>
+    </el-row>
+
+    <el-row class="dataInfo" v-if="cell.type == 'dataServiceInput' || cell.type == 'dataServiceOutput'">
+      <div class="data">
+        <div class="dataTitle">Name:</div>
+        <div class="dataDetail">
+          {{ cell.name }}
+        </div>
+      </div>
+      <div class="data">
+        <div class="dataTitle">Description:</div>
+        <div class="dataDetail">
+          {{ cell.nodeAttribute.description }}
+        </div>
       </div>
     </el-row>
 
@@ -76,26 +89,28 @@
       </div>
 
       <div v-else-if="cell.type == 'dataServiceInput'">
-        <el-select
-          v-if="role == 'builder'"
-          v-model="selectDataItem.name"
-          placeholder="Please select data"
-          class="uploadContent"
-          @change="changeSelectResource"
-          v-show="cell.isParameter"
-        >
-          <el-option v-for="(item, dataIndex) in paramsDataList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
-        </el-select>
-        <el-select
-          v-if="role == 'builder'"
-          v-model="selectDataItem.name"
-          placeholder="Please select data"
-          class="uploadContent"
-          @change="changeSelectResource"
-          v-show="cell.isParameter == false"
-        >
-          <el-option v-for="(item, dataIndex) in fileDataList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
-        </el-select>
+        <div v-if="cell.nodeAttribute.isParameter == 'true'">
+          <el-select
+            v-if="role == 'builder'"
+            v-model="selectDataItem.name"
+            placeholder="Please select data"
+            class="uploadContent"
+            @change="changeSelectResource"
+          >
+            <el-option v-for="(item, dataIndex) in paramsDataList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
+          </el-select>
+        </div>
+        <div v-else>
+          <el-select
+            v-if="role == 'builder'"
+            v-model="selectDataItem.name"
+            placeholder="Please select data"
+            class="uploadContent"
+            @change="changeSelectResource"
+          >
+            <el-option v-for="(item, dataIndex) in fileDataList" :key="dataIndex" :label="item.name" :value="item.id"></el-option>
+          </el-select>
+        </div>
       </div>
     </el-row>
   </div>
@@ -164,12 +179,14 @@ export default {
         value: '',
         dataSelectId: '',
         name: '',
+        type: ''
       };
       this.dataItemList.forEach((item) => {
         if (item.id == id) {
           dataSelect.value = item.value;
           dataSelect.dataSelectId = id;
           dataSelect.name = item.name;
+          dataSelect.type = item.format
         }
       });
 

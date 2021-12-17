@@ -8,6 +8,8 @@
       </div>
       <el-button class="config-btn" type="text" @click="view(item.id)">View</el-button>
     </el-card>
+
+    
     <el-card class="box-card" v-if="type == 'Model'" :style="select ? 'box-shadow: 0px 0px 20px #666;' : ''">
       <img :src="'http://geomodeling.njnu.edu.cn' + item.image" v-if="item.image != ''" />
       <img src="http://geomodeling.njnu.edu.cn/static/img/model/model.png" alt="" v-else />
@@ -81,6 +83,7 @@ export default {
       handler(val) {
         if(val == 0) {
           this.select = false
+          this.badgeNum = 0
         }
       }
     }

@@ -35,17 +35,14 @@ export default {
           size: '6px',
           disable: false,
         },
-      },
-      yourContent: ''
+      }
     };
   },
   components: {
     contextCard,
   },
   methods: {
-    click() {
-      console.log(this.yourContent)
-    }
+
   }
 };
 </script>

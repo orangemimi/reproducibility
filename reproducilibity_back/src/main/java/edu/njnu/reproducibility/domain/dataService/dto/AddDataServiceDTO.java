@@ -21,6 +21,8 @@ public class AddDataServiceDTO implements ToDomainConverter<DataService> {
     String type;
     String privacy;
     List<String> tags;
+    String projectId;
+    String oid;
 
     String userId;
     List<String> fileList;

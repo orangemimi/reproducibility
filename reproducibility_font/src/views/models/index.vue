@@ -24,7 +24,7 @@
 
     <div class="main">
       <div class="main-container">
-        <el-row class="infinite-list" v-infinite-scroll="extendData" infinite-scroll-disabled="disabled" style="overflow: auto">
+        <el-row>
           <el-col :span="4" v-for="(item, index) in data" :key="index">
             <serviceCard :item="item" type="Model"></serviceCard>
           </el-col>
@@ -121,10 +121,6 @@ export default {
       console.log(this.data);
     },
 
-    extendData() {
-      // this.pageFilter.page++;
-      // this.getData();
-    },
 
     addModelItem() {},
   },

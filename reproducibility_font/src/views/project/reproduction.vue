@@ -13,7 +13,7 @@
                   ABSTRACT.md
                 </div>
                 <el-divider></el-divider>
-                <mavon-editor v-html="content.context.essentialInformation.abstractRender" style="box-shadow: none" ></mavon-editor>
+                <mavon-editor v-html="content.context.essentialInformation.abstractRender" style="box-shadow: none"></mavon-editor>
               </div>
               <div class="md" v-for="(item, index) in resourceMD" :key="index">
                 <div v-if="item.markDownHtml != ''">
@@ -36,6 +36,48 @@
               </el-tag>
               <el-divider content-position="left">Purpose</el-divider>
               <h4>{{ content.context.essentialInformation.purpose }}</h4>
+              <div v-if="content.context.spatialInfos.length > 0 || content.context.temporalInfo.start != null">
+                <el-divider>Scale</el-divider>
+                <div v-if="content.context.temporalInfo.start != null">
+                  <p style="margin-bottom: 10px">TemporalInfo</p>
+                  <el-date-picker v-model="temporalInfo" type="datetimerange" range-separator="-" :readonly="true"></el-date-picker>
+                </div>
+                <div v-if="content.context.spatialInfos.length > 0" class="">
+                  <p style="margin-bottom: 10px; margin-top: 10px">SpatialInfo</p>
+                  <el-select v-model="value1" placeholder="请选择" filterable @change="change1" size="mini">
+                    <el-option v-for="(item, index) in options1" :key="index" :label="item.name" :value="index"></el-option>
+                  </el-select>
+                  <el-select v-model="value2" placeholder="请选择" v-if="flag2" @change="change2" size="mini">
+                    <el-option v-for="(item, index) in options2" :key="index" :label="item.name" :value="index"></el-option>
+                  </el-select>
+                  <el-select v-model="value3" placeholder="请选择" v-if="flag3" @change="change3" size="mini">
+                    <el-option v-for="(item, index) in options3" :key="index" :label="item.name" :value="index"></el-option>
+                  </el-select>
+                  <baidu-map class="map" :center="center" :scroll-wheel-zoom="true" @ready="handleMap">
+                    <bm-control anchor="BMAP_ANCHOR_TOP_RIGHT">
+                      <el-dropdown style="margin-top: 10px; margin-right: 5px" trigger="click" @command="selectCommand">
+                        <span class="el-dropdown-link">
+                          <el-button type="primary" size="mini">
+                            Selected Data
+                            <i class="el-icon-arrow-down el-icon--right"></i>
+                          </el-button>
+                        </span>
+                        <el-dropdown-menu slot="dropdown">
+                          <el-dropdown-item v-for="(item, index) in selectData" :key="index" :command="item">
+                            {{ item.name }}
+                          </el-dropdown-item>
+                        </el-dropdown-menu>
+                      </el-dropdown>
+                    </bm-control>
+
+                    <bm-map-type :map-types="['BMAP_NORMAL_MAP', 'BMAP_HYBRID_MAP']" anchor="BMAP_ANCHOR_TOP_LEFT"></bm-map-type>
+                    <bm-scale anchor="BMAP_ANCHOR_BOTTOM_LEFT"></bm-scale>
+                    <bm-boundary :name="item" :strokeWeight="2" strokeColor="black" v-for="(item, index) in selectBoundary" :key="'index1' + index" />
+                    <bm-polygon :path="path" v-for="(path, index) in paths" :key="'index2' + index" stroke-color="black" :stroke-weight="2" />
+                  </baidu-map>
+                </div>
+              </div>
+
               <el-divider></el-divider>
               <div @click="toAbstract">
                 <i class="iconfont icon-read" style="margin-right: 10px"></i>
@@ -75,7 +117,7 @@
 
 <script>
 import { getContent } from '@/api/request';
-
+import axios from 'axios';
 import ReScenarioContent from '_com/Scenario/reScenario';
 
 export default {
@@ -95,6 +137,23 @@ export default {
       },
       selectedNode: {},
       resourceMD: [],
+      map: '',
+      BMap: '',
+      temporalInfo: [],
+      spatialInfos: [],
+      center: '',
+      selectData: [],
+      selectBoundary: [],
+      paths: [],
+
+      options1: [],
+      options2: [],
+      options3: [],
+      value1: '',
+      value2: '',
+      value3: '',
+      flag2: false,
+      flag3: false,
     };
   },
   computed: {
@@ -123,8 +182,19 @@ export default {
   },
 
   methods: {
-    click() {
-      console.log(this.$refs.md);
+    // test() {
+    //   let size = 0;
+    //   for (let item in localStorage) {
+    //     if (localStorage.getItem(item) != null) {
+    //       size += localStorage.getItem(item).length;
+    //     }
+    //   }
+    //   console.log((size / 1024).toFixed(2));
+    // },
+    async getCityList() {
+      await axios.get('/json/Region.json').then((res) => {
+        this.options1 = res.data.districts[0].districts;
+      });
     },
     handleNodeClick(data) {
       if (data.flag) {
@@ -140,6 +210,19 @@ export default {
 
     async getContent() {
       this.content = await getContent(this.projectId);
+      console.log(this.content);
+      this.temporalInfo.push(this.content.context.temporalInfo.start);
+      this.temporalInfo.push(this.content.context.temporalInfo.end);
+      this.selectData = this.content.context.spatialInfos;
+      if (this.selectData.length > 0) {
+        this.selectData.forEach((item) => {
+          if (item.type == 'polygon') {
+            this.paths.push(item.points);
+          } else if (item.type == 'boundary') {
+            this.selectBoundary.push(item.value);
+          }
+        });
+      }
       if (this.content.resource != undefined) {
         if (this.content.resource.inputs != undefined && this.content.resource.inputs.length != 0) {
           this.resourceCount = this.resourceCount + this.content.resource.inputs.length;
@@ -157,7 +240,7 @@ export default {
             });
             this.resourceMD.push({
               name: item.name,
-              markDownHtml: item.markDownHtml
+              markDownHtml: item.markDownHtml,
             });
           });
         }
@@ -178,7 +261,7 @@ export default {
             });
             this.resourceMD.push({
               name: item.name,
-              markDownHtml: item.markDownHtml
+              markDownHtml: item.markDownHtml,
             });
           });
         }
@@ -199,11 +282,64 @@ export default {
             });
             this.resourceMD.push({
               name: item.name,
-              markDownHtml: item.markDownHtml
+              markDownHtml: item.markDownHtml,
             });
           });
         }
       }
+    },
+
+    handleMap({ BMap, map }) {
+      this.BMap = BMap;
+      this.map = map;
+      if (this.selectData.length > 0) {
+        if (this.selectData[0].type == 'polygon') {
+          this.map.centerAndZoom(new this.BMap.Point(this.selectData[0].points[0].lng, this.selectData[0].points[0].lat), 11);
+        } else if (this.selectData[0].type == 'boundary') {
+          this.map.centerAndZoom(this.selectData[0].value);
+        }
+      }
+    },
+
+    selectCommand(val) {
+      if (val.type == 'boundary') {
+        this.map.centerAndZoom(val.value);
+      } else if (val.type == 'polygon') {
+        this.map.panTo(new this.BMap.Point(val.points[0].lng, val.points[0].lat));
+      }
+    },
+    change1(val) {
+      if (
+        this.options1[val].name == '北京市' ||
+        this.options1[val].name == '天津市' ||
+        this.options1[val].name == '上海市' ||
+        this.options1[val].name == '重庆市'
+      ) {
+        this.options2 = this.options1[val].districts[0].districts;
+      } else {
+        this.options2 = this.options1[val].districts;
+      }
+      this.flag3 = false;
+      this.value2 = '';
+      if (this.options2.length > 0) {
+        this.flag2 = true;
+      } else {
+        this.flag2 = false;
+      }
+      this.center = this.options1[val].name;
+    },
+    change2(val) {
+      this.options3 = this.options2[val].districts;
+      this.value3 = '';
+      if (this.options3.length > 0) {
+        this.flag3 = true;
+      } else {
+        this.flag3 = false;
+      }
+      this.center = this.options1[this.value1].name + this.options2[val].name;
+    },
+    change3(val) {
+      this.center = this.options1[this.value1].name + this.options2[this.value2].name + this.options3[val].name;
     },
 
     toAbstract() {
@@ -214,6 +350,7 @@ export default {
     },
     async init() {
       await this.getContent();
+      await this.getCityList()
     },
   },
   created() {
@@ -273,5 +410,14 @@ export default {
       font-size: 8px;
     }
   }
+}
+.map {
+  width: 100%;
+  height: 400px;
+  margin-top: 10px;
+}
+.el-select {
+  width: 20%;
+  margin-right: 7px;
 }
 </style>

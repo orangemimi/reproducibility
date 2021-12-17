@@ -327,7 +327,8 @@ export default {
           vertex.name = item.name;
           vertex.nodeAttribute.dataServiceId = item.dataServiceId;
           vertex.nodeAttribute.token = item.token;
-          vertex.nodeAttribute.type = item.type; //Processing
+          vertex.nodeAttribute.oid = item.oid
+          // vertex.nodeAttribute.type = item.type; //Processing
         }
         if (type == 'modelServiceInput' || type == 'modelServiceOutput') {
           console.log(item);
@@ -362,6 +363,7 @@ export default {
               value: '',
               dataSelectId: '',
               name: '',
+              type: ''
             };
             vertex.nodeAttribute.isParameter = item.isParam;
             this.addEdge(vertex, selectionCell);
@@ -382,21 +384,29 @@ export default {
 
           let selectionCell = this.selectionCells[0];
 
-          vertex.isParameter = item.nodeType == 'parameter' ? true : false;
           vertex.name = item.name;
           vertex.type = type; //panel
-          vertex.description = item.description;
-          vertex.nodeAttribute.dataServiceId = item.dataServiceId;
-          vertex.nodeAttribute.token = item.token;
-          vertex.nodeAttribute.type = item.type; //Processing
+          vertex.nodeAttribute.description = item.description;
+          vertex.nodeAttribute.isParameter = item.nodeType == 'parameter' ? 'true' : 'false';
+          // vertex.nodeAttribute.dataServiceId = item.dataServiceId;
+          // vertex.nodeAttribute.token = item.token;
+          // vertex.nodeAttribute.type = item.type; //Processing
           // vertex.linkModelCellId = selectionCell.id; //放置输入输出node时 与其关联的model的nodeId
 
           if (type == 'dataServiceInput') {
+            vertex.nodeAttribute.dataSelect = {
+              dataSelectId: '',
+              value: '',
+              name: '',
+              type: '',
+            };
             this.addEdge(vertex, selectionCell);
           } else if (type == 'dataServiceOutput') {
+            vertex.nodeAttribute.value = '';
+            vertex.nodeAttribute.upload = false;
             this.addEdge(selectionCell, vertex);
-            vertex.upload = false;
-            vertex.value = '';
+            // vertex.upload = false;
+            
           }
         }
       } finally {

@@ -5,11 +5,15 @@
         <div @click="handleSelect('1')">Reproducibility</div>
       </el-col>
       <el-col class="nav-bar" :span="6" :offset="4">
-        <el-menu default-active="activeIndex" mode="horizontal" @select="handleSelect">
+        <el-menu default-active="activeIndex" mode="horizontal" @select="handleSelect" text-color="#fff" background-color="#24292E" active-text-color="#ffd04b">
           <el-menu-item index="1">Home</el-menu-item>
           <el-menu-item index="2">Projects</el-menu-item>
           <el-menu-item index="3">Model</el-menu-item>
-          <el-menu-item index="4">Dataservice</el-menu-item>
+          <el-submenu index="4">
+            <template slot="title">Dataservice</template>
+            <el-menu-item index="4-1">Official Repository</el-menu-item>
+            <el-menu-item index="4-2">Community Repository</el-menu-item>
+          </el-submenu>
           <el-menu-item index="5">Help</el-menu-item>
         </el-menu>
       </el-col>
@@ -81,14 +85,14 @@ export default {
   watch: {
     '$store.state.user.selectNum': {
       handler(val) {
-        this.selectModelCount = val
-      }
-    }
+        this.selectModelCount = val;
+      },
+    },
   },
+
 
   methods: {
     ...mapActions({ handleLogOut: 'user/handleLogOut' }),
-
 
     handleClick() {
       this.drawer = true;
@@ -129,11 +133,20 @@ export default {
             }
           }
           break;
-        case '4':
+        case '4-1':
           {
-            if (this.$router.currentRoute.name != 'DataServices') {
+            if (this.$router.currentRoute.name != 'OfficialData') {
               this.$router.push({
-                name: 'DataServices',
+                name: 'OfficialData',
+              });
+            }
+          }
+          break;
+        case '4-2':
+          {
+            if (this.$router.currentRoute.name != 'CommunityData') {
+              this.$router.push({
+                name: 'CommunityData',
               });
             }
           }
@@ -187,9 +200,7 @@ export default {
       }
     },
   },
-  mounted() {
-
-  },
+  mounted() {},
   components: {
     Avatar,
     drawerCard,

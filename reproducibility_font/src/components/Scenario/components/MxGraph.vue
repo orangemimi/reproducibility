@@ -5,12 +5,6 @@
     </div>
     <div class="mainContainer">
       <div class="modelbarTop">
-        <!-- <el-button @click="generateAction" type="text" size="mini">Export as Picture</el-button> -->
-        <!-- <el-button @click="exportGraph" type="text" size="mini">Export as XML</el-button>
-        <input @change="readFile" ref="importInput" class="hide" type="file" />
-        <el-button @click="importGraphFile" type="text" size="mini">Import mxGraph</el-button> -->
-        <!-- <el-button @click="checked ? deleteCells() : deleteCellsConfirmDialog()" type="text" size="mini" :disabled="this.graph.getSelectionCells().length == 0"> -->
-        <!-- <i class="el-icon-delete" @click="checked ? deleteCells() : deleteCellsConfirmDialog()" :disabled="selectionCells.length == 0"></i> -->
         <el-divider direction="vertical"></el-divider>
 
         <el-dropdown trigger="click" @command="zoom">
@@ -57,11 +51,8 @@
         <el-button @click="runGraph" size="mini">Run Task</el-button>
         <el-button @click="compareResult" size="mini">Compare Result</el-button>
 
-        <!-- <el-badge is-dot class="item">{{ currentTask.taskName }}</el-badge> -->
-        <el-button @click="clear" size="mini">Clear</el-button>
-        <!-- <el-button @click="zoom" size="mini">zoom</el-button> -->
 
-        <!-- <img src="/static/images/calcModel.png" alt=""> -->
+        <el-button @click="clear" size="mini">Clear</el-button>
 
         <transition name="fade" mode="out-in">
           <div class="bell" @click="setAsSelectTaskInConstruction">
@@ -118,7 +109,6 @@
     <div class="dialogs">
       <el-dialog :visible.sync="comparisonDialogShow" width="80%" title="Comparison">
         <div style="height: 500px">
-          <!-- Configuration -->
           <comparison />
         </div>
       </el-dialog>
@@ -218,7 +208,6 @@ export default {
       projectId: this.$route.params.id,
 
       graph: null,
-      editCellVisible: false,
 
       selectionCells: [],
       deleteCellsVisible: false,
@@ -228,13 +217,9 @@ export default {
         history: [{}],
       },
 
-      cellForm: {
-        name: '',
-      },
 
       getXml: this.sendXml,
 
-      doi: '',
       // cell: {}, //双击事件 cell
       // state: {},
 
@@ -249,7 +234,6 @@ export default {
       dataServiceLinkInGraph: [],
       dataServiceOutputListInGraph: [],
 
-      stateList: [],
       // dataItemModelbarKey: 0,
 
       taskInfo: {
@@ -257,12 +241,11 @@ export default {
         taskDescription: '',
       },
 
-      isNewTaskContainerShow: false, //暂未用到
+      isNewTaskContainerShow: false, 
 
       currentTask: '',
 
       //document
-      nodeList: [],
       dataItemList: [],
 
       //task
@@ -382,23 +365,11 @@ export default {
           type: 'warning',
         });
       }
-      // this.isSelectTaskInConsruction = !this.isSelectTaskInConsruction;
-      // let taskId = '';
-      // //已经取消了选择的Task
-      // if (this.isSelectTaskInConsruction) {
-      //   taskId = '';
-      // } else {
-      //   taskId = this.currentTask.id;
-      // }
-
-      // await updateScenarioByProjectId(this.projectId, { selectTaskId: taskId });
-      // console.log('!!!');
+      
     },
     //--------------初始化 bar的modelItem的内容--由 AllModels组件返回
 
-    // handleCollapseChange(val) {
 
-    // },
 
     //初始化mxgraph
     async init() {
@@ -498,36 +469,6 @@ export default {
         }
       });
       return true;
-    },
-
-    closeDialog(val) {
-      this.editCellVisible = val;
-    },
-
-    submitCellForm(form) {
-      this.$refs[form].validate((valid) => {
-        if (valid) {
-          this.graph.getModel().beginUpdate();
-          let cell = this.graph.getSelectionCell();
-          if (cell.name == this.cellForm.name) {
-            this.$message({
-              message: 'Name changed is as same as before',
-              type: 'warning',
-            });
-          } else {
-            try {
-              cell.name = this.cellForm.name;
-              this.graph.refresh(cell); // 刷新cell
-              this.$message({
-                message: 'Refresh the node successfully!',
-                type: 'success',
-              });
-            } finally {
-              this.graph.getModel().endUpdate();
-            }
-          }
-        }
-      });
     },
 
     handleSelectionChange(selectModel) {
@@ -746,50 +687,6 @@ export default {
     async runGraph() {
       this.getCells();
 
-      // this.modelInputInGraph.forEach(async (input) => {
-      //   console.log(input);
-
-      //   if (input.nodeAttribute.datasetItem.isParams == 'true') {
-      //     let Dataset = {
-      //       Dataset: {
-      //         XDO: {
-      //           _name: input.nodeAttribute.datasetItem.UdxDeclaration[0].UdxNode[0].UdxNode[0].name,
-      //           _kernelType: input.nodeAttribute.datasetItem.UdxDeclaration[0].UdxNode[0].UdxNode[0].name,
-      //           _value: input.dataResourceRelated.value,
-      //         },
-      //       },
-      //     };
-      //     let xml = this.$x2js.js2xml(Dataset);
-      //     let file = new File([xml], input.dataResourceRelated.name + '.xml', { type: 'text/xml' });
-      //     let uploadFileForm = new FormData();
-      //     uploadFileForm.append('file', file);
-      //     let data = await postDataContainer(uploadFileForm);
-      //     console.log(data);
-      //     input.dataResourceRelated.value = `http://221.226.60.2:8082/data/${data.id}`;
-      //   }
-      // });
-
-      // this.dataServiceInputInGraph.forEach((input) => {
-      //   console.log(input);
-      //   debugger;
-      //   if (input.isParameter) {
-      //     let Dataset = {
-      //       Dataset: {
-      //         XDO: {
-      //           _name: input.nodeAttribute.datasetItem.UdxDeclaration[0].UdxNode[0].UdxNode[0].name,
-      //           _kernelType: input.nodeAttribute.datasetItem.UdxDeclaration[0].UdxNode[0].UdxNode[0].name,
-      //           _value: input.dataResourceRelated.value,
-      //         },
-      //       },
-      //     };
-      //     let xml = this.$x2js.js2xml(Dataset);
-      //     let file = new File([xml], input.dataResourceRelated.name + '.xml', { type: 'text/xml' });
-      //     let uploadFileForm = new FormData();
-      //     uploadFileForm.append('file', file);
-      //     let data = await postDataContainer(uploadFileForm);
-      //     console.log(data);
-      //   }
-      // });
 
       //是否有input中有空 无法run
       if (!this.judgeInputList()) {

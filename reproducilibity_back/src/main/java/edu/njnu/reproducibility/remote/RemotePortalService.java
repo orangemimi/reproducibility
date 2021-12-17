@@ -4,10 +4,7 @@ import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import edu.njnu.reproducibility.common.enums.ResultEnum;
 import edu.njnu.reproducibility.common.exception.MyException;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -85,6 +82,12 @@ public class RemotePortalService {
         return result;
     }
 
+    /**
+    * @Description:获取门户上的模型条目
+    * @Author: Yiming
+    * @Date: 2021/12/10
+    */
+
     public JSONObject getModelsByPortal(int page, int pageSize, String searchText) {
         String url = "http://geomodeling.njnu.edu.cn/modelItem/list";
         LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
@@ -107,6 +110,12 @@ public class RemotePortalService {
         ResponseEntity<JSONObject> responseEntity = restTemplate.exchange(url, HttpMethod.POST, httpEntity, JSONObject.class);
         return responseEntity.getBody();
     }
+
+    /**
+    * @Description:根据模型Id获取计算模型
+    * @Author: Yiming
+    * @Date: 2021/12/10
+    */
 
     public List<JSONObject> getComputableModels(String oid) {
         String url = "http://geomodeling.njnu.edu.cn/modelItem/searchByOid?oid=" + oid;
@@ -133,4 +142,55 @@ public class RemotePortalService {
         return list;
 
     }
+
+    /**
+    * @Description:获取门户上dataService的条目
+    * @Author: Yiming
+    * @Date: 2021/12/10
+    */
+
+    public JSONObject getDataServiceByPortal(String method, int page, int pageSize, String searchText) {
+        String url = "http://geomodeling.njnu.edu.cn/dataApplication/methods/getApplication";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("asc", false);
+        jsonObject.put("curQueryField", "name");
+        jsonObject.put("method", method);
+        jsonObject.put("page", new Integer(page));
+        jsonObject.put("pageSize", new Integer(pageSize));
+        jsonObject.put("searchText", searchText);
+        jsonObject.put("sortField", "viewCount");
+
+        HttpEntity httpEntity = new HttpEntity(jsonObject, headers);
+        RestTemplate restTemplate = new RestTemplate();
+
+
+        try {
+            ResponseEntity<JSONObject> result = restTemplate.exchange(url, HttpMethod.POST, httpEntity, JSONObject.class);
+            return result.getBody();
+        } catch (Exception e) {
+            System.out.println(e);
+            throw new MyException(ResultEnum.REMOTE_SERVICE_ERROR);
+        }
+
+    }
+
+    /**
+    * @Description:获取门户上dataService的详细信息（输入输出）
+    * @Author: Yiming
+    * @Date: 2021/12/13
+    */
+
+    public JSONObject getDataServiceInfo(String oid, String serviceId) {
+        String url = "http://geomodeling.njnu.edu.cn/dataApplication/getParemeter/" + oid + "/" + serviceId;
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
+        HttpEntity httpEntity = new HttpEntity(headers);
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<JSONObject> result = restTemplate.exchange(url, HttpMethod.GET, httpEntity, JSONObject.class);
+        return result.getBody().getJSONObject("data").getJSONObject("capability").getJSONObject("data").getJSONObject("metaDetail");
+    }
+
 }

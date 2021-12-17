@@ -52,4 +52,14 @@ public class RemotePortalController {
     JsonResult getComputableModels(@PathVariable String oid) {
         return ResultUtils.success(remotePortalService.getComputableModels(oid));
     }
+
+    @RequestMapping(value = "/getDataServiceByPortal", method = RequestMethod.POST)
+    public JsonResult getDataServiceByPortal(@RequestBody JSONObject jsonObject) {
+        return ResultUtils.success(remotePortalService.getDataServiceByPortal(jsonObject.getStr("method"), jsonObject.getInt("page"), jsonObject.getInt("pageSize"), jsonObject.getStr("searchText")));
+    }
+
+    @RequestMapping(value = "/getDataServiceInfo/{oid}/{serviceId}", method = RequestMethod.GET)
+    public JsonResult getDataServiceInfo(@PathVariable String oid, @PathVariable String serviceId) {
+        return ResultUtils.success(remotePortalService.getDataServiceInfo(oid, serviceId));
+    }
 }

@@ -3,7 +3,6 @@
     <div class="mainContainer">
       <div class="modelbarTop">
         <el-button @click="runGraph" size="mini">Run Task</el-button>
-        
       </div>
       <vue-scroll style="height: 850px; width: calc(100%)" :ops="ops">
         <div class="graphContainer" ref="container" @contextmenu.prevent></div>
@@ -11,54 +10,28 @@
     </div>
 
     <div class="rightBar">
-      <el-switch
-        style="display: block"
-        v-model="switchValue"
-        inactive-color="#13ce66"
-        active-color="#ff4949"
-        active-text="My Tasks"
-        inactive-text="Tasks"
-      ></el-switch>
       <div class="barBottom">
-        <div v-if="!switchValue">
-          <el-empty description="No Data" v-if="selectedInstances.length == 0"></el-empty>
-          <div class="instances">
-            <el-row v-if="instanceList.length != 0 && currentTask != null">
-              <div v-for="(item, index) in instanceList" :key="index" class="card" @click="clickCard(index)">
-                <instance-card :instanceItem="item" :taskItem="currentTask" :role="'reproductioner'" @showInstanceStatus="showInstanceStatus"></instance-card>
-              </div>
-            </el-row>
-          </div>
-          <div class="page">
-            <el-pagination
-              @current-change="handleCurrentChange($event, 'Task')"
-              :current-page.sync="instancePageFilter.page"
-              :page-size="instancePageFilter.pageSize"
-              background
-              layout="prev, pager, next"
-              :total="selectedInstances.length"
-            ></el-pagination>
+        <el-empty description="No Data" v-if="allMyTaskList.length == 0"></el-empty>
+        <div class="instances" v-else>
+          <div v-for="(item, index) in allMyTaskList" :key="index" class="card">
+            <instance-card
+              :instanceItem="item"
+              :taskItem="currentTask"
+              :role="'reproductioner-builder'"
+              @check="check"
+              @authority="authority($event, index)"
+            ></instance-card>
           </div>
         </div>
-        <div v-else-if="switchValue">
-          <el-empty description="No Data" v-if="allMyTaskList.length == 0"></el-empty>
-          <div class="instances">
-            <el-row v-if="myTaskList != [] && currentTask != null">
-              <div v-for="(item, index) in myTaskList" :key="index" class="card">
-                <instance-card :instanceItem="item" :taskItem="currentTask" :role="'reproductioner-builder'" @showInstanceStatus="showInstanceStatus" @instance="instance" @authority="authority($event, index)"></instance-card>
-              </div>
-            </el-row>
-          </div>
-          <div class="page">
-            <el-pagination
-              @current-change="handleCurrentChange($event, 'Mytasks')"
-              :current-page.sync="instancePageFilter.myTaskPage"
-              :page-size="instancePageFilter.pageSize"
-              background
-              layout="prev, pager, next"
-              :total="allMyTaskList.length"
-            ></el-pagination>
-          </div>
+        <div class="page">
+          <el-pagination
+            @current-change="handleCurrentChange"
+            :page-size="7"
+            background
+            layout="prev, pager, next"
+            :total="total"
+            small
+          ></el-pagination>
         </div>
       </div>
     </div>
@@ -139,31 +112,19 @@
 
       <el-divider></el-divider>
     </el-dialog>
-
   </div>
-
 </template>
 
 <script>
 import { mapState } from 'vuex';
 import mxgraph from '_com/MxGraph/index';
 import { genGraph } from '_com/MxGraph/initMx';
-import X2js from 'x2js'
-import {
-  saveIntegrateTaskInstance,
-
-  runtask,
-
-  getSelectedTaskByProjectId,
-  getSelectedInstancesByProjectId,
-  getAllInstances
-} from '@/api/request';
+import { saveIntegrateTaskInstance, runtask, getSelectedTaskByProjectId, getSelectedInstancesByProjectId, getAllInstances } from '@/api/request';
 import {
   // generateAction,
   generateXml1,
   // getCellStyle
 } from './components/configuration';
-
 
 import instanceCard from '_com/Cards/InstanceCard';
 
@@ -184,58 +145,9 @@ export default {
   data() {
     return {
       projectId: this.$route.params.id,
-
+      total: 0,
       graph: null,
-      
-      editCellVisible: false,
-
-      selectionCells: [],
-      deleteCellsVisible: false,
-      checked: false,
-      undoMng: null,
-
-      cellForm: {
-        name: '',
-      },
-
-      getXml: this.sendXml,
-      //modelbar
-      modelItemList: [],
-
-      doi: '',
-      cell: {}, //双击事件 cell
-      state: {},
-      inputItemList: [],
-      outputItemList: [],
-
-      dataNode: {},
-
-      modelClick: false,
-      modelDoubleClick: false,
-      dataClick: false,
-      dataDoubleClick: false,
-
-
-
-      stateList: [],
-      // dataItemModelbarKey: 0,
-
-      taskInfo: {
-        taskName: '',
-        taskDescription: '',
-      },
-
-      isNewTaskContainerShow: true,
-
       currentTask: null,
-
-      //document
-      nodeList: [],
-      dataItemList: [],
-
-      //task
-      taskList: [],
-
       //mxgraph scrollbar
       ops: {
         bar: {
@@ -251,33 +163,14 @@ export default {
         },
       },
 
-      record: {}, //task -->get output record
-      timer: {},
       container: null,
 
-      //select task to show
-      isSelectTaskInConsruction: true,
 
-      //dom
-      domFlag: 0,
-
-      //currentInstance;
-      currentTaskInstance: {},
-
-      //INSTANCE LIST
-      instancePageFilter: {
-        pageSize: 7,
-        page: 1,
-        myTaskPage: 1,
-      },
-      instanceList: [],
-      selectedInstances: [],
-      myTaskList: [],
+      selectedInstance: {},
       allMyTaskList: [],
-      switchValue: false,
       outputDialogVisible: false,
       inputDialogVisible: false,
-      type: '',
+
       clickedCell: '',
 
       linkEdgeList: '',
@@ -293,23 +186,9 @@ export default {
   },
 
   methods: {
-    handleCurrentChange(val, type) {
-      if(type == 'Mytasks') {
-        let index = 0
-        this.myTaskList = []
-        while(index < this.instancePageFilter.pageSize && (val - 1) * this.instancePageFilter.pageSize + index < this.allMyTaskList.length) {
-          this.myTaskList.push(this.allMyTaskList[(val - 1) * this.instancePageFilter.pageSize + index])
-          index++
-        }
-      }
-      if(type == 'Tasks') {
-        let index = 0
-        this.instanceList = []
-        while(index < this.instancePageFilter.pageSize && (val - 1) * this.instancePageFilter.pageSize + index < this.selectedInstances.length) {
-          this.instanceList.push(this.selectedInstances[(val - 1) * this.instancePageFilter.pageSize + index])
-          index++
-        }
-      }
+    async handleCurrentChange(val) {
+      let data = await getAllInstances(this.currentTask.id, val - 1, 7)
+      this.allMyTaskList = data.content
     },
 
     //初始化mxgraph
@@ -317,9 +196,9 @@ export default {
       this.container = this.$refs.container;
       await this.getSelectedTaskByProjectId();
       await this.getSelectedInstances();
-      
+
       this.createGraph();
-      this.createCell(0);
+      this.createCell();
       this.listenGraphEvent();
     },
 
@@ -333,9 +212,8 @@ export default {
       this.graph.setPanning(true);
     },
 
-    createCell(index) {
-      this.graph.removeCells(this.graph.getChildVertices(this.graph.getDefaultParent()));
-      this.graph.importGraph(this.instanceList[index].taskContent);
+    createCell() {
+      this.graph.importGraph(this.selectedInstance.taskContent);
       this.graph.getModel().beginUpdate();
       try {
         this.graph.setCellsResizable(false);
@@ -347,28 +225,12 @@ export default {
 
     async getSelectedInstances() {
       let data1 = await getSelectedInstancesByProjectId(this.projectId);
-      let data2 = await getAllInstances(this.currentTask.id)
-      this.selectedInstances = data1;
-      this.allMyTaskList = data2
-      this.getInstanceList();
-    },
-
-    getInstanceList() {
-      this.instanceList = [];
-      this.myTaskList = []
-      let index = 0;
-      while (
-        index < this.instancePageFilter.pageSize &&
-        (this.instancePageFilter.page - 1) * this.instancePageFilter.pageSize + index < this.selectedInstances.length
-      ) {
-        this.instanceList.push(this.selectedInstances[(this.instancePageFilter.page - 1) * this.instancePageFilter.pageSize + index]);
-        index++;
-      }
-      index = 0
-      while(index < this.instancePageFilter.pageSize && (this.instancePageFilter.page - 1) * this.instancePageFilter.pageSize + index < this.allMyTaskList.length) {
-        this.myTaskList.push(this.allMyTaskList[(this.instancePageFilter.page - 1) * this.instancePageFilter.pageSize + index]);
-        index++;
-      }
+      let data2 = await getAllInstances(this.currentTask.id, 0, 7);
+      this.selectedInstance = data1;
+      this.allMyTaskList = data2.content;
+      this.total = data2.total
+      console.log(this.allMyTaskList);
+      // this.getInstanceList();
     },
 
     listenGraphEvent() {
@@ -394,9 +256,6 @@ export default {
       });
     },
 
-    clickCard(index) {
-      this.createCell(index);
-    },
 
     getCells() {
       let modelListInGraph = [];
@@ -422,7 +281,7 @@ export default {
           } else if (cell.type == 'dataService') {
             dataServiceListInGraph.push(cell);
           } else if (cell.type == 'dataServiceOutput') {
-            cell.value = ''
+            cell.value = '';
             dataServiceOutputListInGraph.push(cell);
           } else if (cell.type == 'dataServiceInput') {
             dataServiceInputInGraph.push(cell);
@@ -465,7 +324,7 @@ export default {
         this.dataServiceLinkInGraph,
         this.dataServiceOutputListInGraph
       );
-      console.log(xml)
+
       let file = new File([xml], this.currentTask.taskName + '.xml', {
         type: 'text/xml',
       });
@@ -511,68 +370,41 @@ export default {
       let postJson = {
         name: this.currentTask.taskName + '-Instance',
         taskId: this.currentTask.id,
-        // action: generateAction(
-        //   this.currentTask.id,
-        //   this.modelListInGraph,
-        //   this.modelInputInGraph,
-        //   this.modelLinkInGraph,
-        //   this.modelOutputInGraph,
-        //   this.linkEdgeList,
-        //   'taskInstance'
-        // ),
         authority: 'public',
         taskInfo: taskInfo,
-        taskContent: this.changeXML(),
+        taskContent: this.currentTask.taskContent,
         status: 0,
         tid: tid,
       };
       let data = await saveIntegrateTaskInstance(postJson);
       console.log(data);
       // this.currentTaskInstance = data;
-      this.allMyTaskList.splice(0, 0, data);
-      if (this.myTaskList.length == this.instancePageFilter.pageSize) {
-        this.myTaskList.pop();
+      if(this.allMyTaskList.length == 7) {
+        this.allMyTaskList.pop()
+        this.total = this.total + 1
       }
-      this.myTaskList.splice(0, 0, data);
+      this.allMyTaskList.splice(0, 0, data);
+      
     },
 
-    instance(val) {
+
+    authority(val, index) {
       console.log(val);
-      this.allMyTaskList.forEach((instance) => {
-        if (instance.id == val.id) {
-          instance.status = val.status;
+      console.log(index);
+      this.allMyTaskList.forEach((task, index) => {
+        if (task.id == val.id) {
+          this.allMyTaskList.splice(index, 1, val)
         }
       });
     },
-
-    changeXML() {
-      let xml = this.graph.getGraphXml()
-      let x2js = new X2js()
-      let json = x2js.xml2js(xml)
-      json.mxGraphModel.root.mxCell.forEach(cell => {
-        if(cell._type == 'dataService') {
-          // console.log('dataService', cell)
-          cell._style = "fontColor=#f6f6f6;fillColor=#07689f;strokeColor=;shape=rectangle;strokeWidth=1.5;align=center;imageAlign=center;imageVerticalAlign=top"
-        } else if(cell._type == 'dataServiceOutput') {
-          // console.log('dataServiceOutput', cell)
-          cell._value = ''
+    check(val) {
+      this.allMyTaskList.forEach((item, index) => {
+        if(val.id == item.id) {
+          this.allMyTaskList.splice(index, 1, val)
         }
       })
-      return x2js.js2xml(json)
     },
 
-    authority(val, index) {
-      console.log(val)
-      console.log(index)
-      this.allMyTaskList.forEach(task => {
-        if(task.id == val.id) {
-          task.authority = val.authority
-        }
-      })
-      this.myTaskList[index].authority = val.authority
-    },
-
-    showInstanceStatus() {},
   },
 
   mounted() {
@@ -592,7 +424,7 @@ export default {
     position: relative;
     // top: 0;
     // left: 300px;
-    width: 85%;
+    width: 80%;
     height: 100%;
     .modelbarTop {
       background: rgb(251, 251, 251);
@@ -624,10 +456,10 @@ export default {
     .graphContainer {
       position: relative;
       overflow: hidden;
-      height: 100%;
-      width: 100%;
-      min-width: calc(100%);
-      min-height: 800px;
+      // height: 100%;
+      // width: 100%;
+      // min-width: calc(100%);
+      min-height: 850px;
       background: rgb(251, 251, 251) url('./../../assets/images/mxgraph/point.gif') 0 0 repeat;
       border-radius: 4px;
     }
@@ -636,7 +468,7 @@ export default {
   .rightBar {
     position: relative;
     right: 0;
-    width: 15%;
+    width: 20%;
     margin-left: 5px;
     padding: 0 5px;
     box-shadow: 0px 0px 5px rgb(207, 207, 207);
