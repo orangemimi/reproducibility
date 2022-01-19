@@ -1,12 +1,15 @@
 package edu.njnu.reproducibility.domain.project;
 
 
+import cn.hutool.json.JSONObject;
 import edu.njnu.reproducibility.annotation.JwtTokenParser;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
+import edu.njnu.reproducibility.domain.performance.dto.AddPerformanceDTO;
 import edu.njnu.reproducibility.domain.project.dto.AddProjectDTO;
 import edu.njnu.reproducibility.domain.project.dto.UpdateProjectDTO;
 import edu.njnu.reproducibility.domain.project.dto.UpdateProjectMembersDTO;
+import edu.njnu.reproducibility.domain.project.support.Record;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -70,13 +73,15 @@ public class ProjectController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public JsonResult create(@JwtTokenParser(key = "userId") String userId, @JwtTokenParser(key = "name") String name, @RequestBody AddProjectDTO add) {
-        return ResultUtils.success(projectService.create(userId, name, add));
+    public JsonResult create(@JwtTokenParser(key = "userId") String userId, @JwtTokenParser(key = "name") String name, @RequestBody JSONObject jsonObject) {
+        AddProjectDTO addProjectDTO = jsonObject.getJSONObject("project").toBean(AddProjectDTO.class);
+        AddPerformanceDTO addPerformanceDTO = jsonObject.getJSONObject("performance").toBean(AddPerformanceDTO.class);
+        return ResultUtils.success(projectService.create(userId, name, addProjectDTO, addPerformanceDTO));
     }
 
     @RequestMapping(value = "/fork", method = RequestMethod.POST)
-    public JsonResult folk(@JwtTokenParser(key = "userId") String userId, @JwtTokenParser(key = "name") String name, @RequestBody AddProjectDTO add) {
-        return ResultUtils.success(projectService.fork(userId, name, add));
+    public JsonResult folk(@RequestBody JSONObject jsonObject, @JwtTokenParser String userId, @JwtTokenParser String userName) {
+        return ResultUtils.success(projectService.fork(jsonObject, userId, userName));
     }
 
     @RequestMapping(value = "/{projectId}", method = RequestMethod.DELETE)
@@ -119,6 +124,22 @@ public class ProjectController {
         return ResultUtils.success(projectService.getPrivacyOfProject(projectId));
     }
 
+    @RequestMapping(value = "/getProjectsPage/{currentPage}/{pageSize}", method = RequestMethod.GET)
+    public JsonResult getProjectsPage(@PathVariable int currentPage, @PathVariable int pageSize) {
+        return ResultUtils.success(projectService.getProjectsPage(currentPage, pageSize));
+    }
 
+    @RequestMapping(value = "/saveRecord", method = RequestMethod.POST)
+    public JsonResult saveRecord(@RequestBody JSONObject jsonObject) {
+        Record record = jsonObject.getJSONObject("record").toBean(Record.class);
+        String projectId = jsonObject.getStr("projectId");
+        projectService.saveRecord(record, projectId);
+        return ResultUtils.success();
+    }
+
+    @RequestMapping(value = "/getRecords/{projectId}", method = RequestMethod.GET)
+    public JsonResult getRecords(@PathVariable String projectId) {
+        return ResultUtils.success(projectService.getRecords(projectId));
+    }
 
 }

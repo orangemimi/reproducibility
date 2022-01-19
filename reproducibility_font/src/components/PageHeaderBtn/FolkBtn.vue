@@ -1,17 +1,20 @@
 <!--  -->
 <template>
-  <div class="btn">
-    <el-button class="btn-left" :disabled="isDisable">
-      <div>
-        <i class="el-icon-edit"></i>
-        Folk
-      </div>
-    </el-button>
-    <div class="btn-right">
-      <div>
-        {{ count }}
+  <div>
+    <div class="btn">
+      <el-button class="btn-left" :disabled="isDisable" @click="folkClick">
+        <div>
+          <i class="el-icon-edit"></i>
+          Fork
+        </div>
+      </el-button>
+      <div class="btn-right">
+        <div>
+          {{ count }}
+        </div>
       </div>
     </div>
+
   </div>
 </template>
 
@@ -19,39 +22,32 @@
 export default {
   props: {
     count: {
-      type: Number
+      type: Number,
     },
     isDisable: {
-      type: Boolean
-    }
+      type: Boolean,
+    },
   },
   components: {},
-
-  // watch: {
-  //   isDisable: {
-  //     // handler(val) {
-  //     //   if (val) {
-  //     deep: true, // 深度监听
-  //     immediate: true, // 监听到后，立即执行 handler方法
-  //     handler(val) {
-  //       // if (newVal && newVal !== oldVal) {
-  //       this.$set(this, 'isDisable2', val);
-
-  //       // }
-  //     }
-  //     // deep: true
-  //   }
-  // },
 
   computed: {},
 
   data() {
-    return { isDisable2: this.isDisable };
+    return {
+      projectId: this.$route.params.id,
+      isDisable2: this.isDisable,
+    };
   },
 
-  methods: {},
+  methods: {
+    folkClick() {
+      this.$router.push({
+        path: `/project/fork/${this.projectId}`
+      })
+    },
+    
+  },
 
-  mounted() {}
 };
 </script>
 <style lang="scss" scoped>
@@ -98,4 +94,5 @@ export default {
     color: $blueEmplasisFont;
   }
 }
+
 </style>

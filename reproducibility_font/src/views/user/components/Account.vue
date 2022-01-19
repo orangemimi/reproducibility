@@ -1,49 +1,17 @@
 <!--  -->
 <template>
   <div>
-    <div style="text-align: center;">
-      <avatar
-        :username="avatar != 'undefined' && avatar != 'null' && avatar != undefined && avatar != '' ? avatar : this.$store.state.user.name"
-        :size="150"
-        style="margin: 20px auto 0px"
-      ></avatar>
-      <el-button class="button" type="text">Edit</el-button>
-    </div>
-    <div class="container">
-      <my-account />
-    </div>
+    <!-- <iframe src="http://cn.bing.com/" frameborder="0" scrolling="auto" style="height: 500px;width:100%"></iframe> -->
+    <iframe src="http://172.21.213.125:8888" frameborder="0" scrolling="auto" style="height: 500px;width:100%"></iframe>
+    <a href="http://172.21.213.125:8888">哈哈哈</a>
   </div>
 </template>
 
 <script>
-import Avatar from 'vue-avatar';
-import MyAccount from '../../../components/Account/MyAccount.vue';
 export default {
-  components: { Avatar, MyAccount },
-  watch: {},
 
-  computed: {},
-
-  data() {
-    return {
-      avatar: this.$store.state.user.avatar
-    };
-  },
-
-  methods: {
-
-  },
-
-  mounted() {
-  },
 };
 </script>
 <style lang="scss" scoped>
-.container {
-  margin: 10px auto;
-  width: 40%;
-}
-.button {
-  font-size: 18px;
-}
+
 </style>

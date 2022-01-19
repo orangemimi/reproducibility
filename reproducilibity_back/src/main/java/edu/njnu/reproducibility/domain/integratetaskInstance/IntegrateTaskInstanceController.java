@@ -1,5 +1,6 @@
 package edu.njnu.reproducibility.domain.integratetaskInstance;
 
+import cn.hutool.json.JSONObject;
 import edu.njnu.reproducibility.annotation.JwtTokenParser;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
@@ -87,6 +88,15 @@ public class IntegrateTaskInstanceController {
     @RequestMapping(value = "/getAllInstancesOfReproductionByProjectId/{projectId}", method = RequestMethod.GET)
     public JsonResult getAllInstancesOfReproductionByProjectId(@PathVariable String projectId) {
         return ResultUtils.success(integrateTaskInstanceService.getAllInstancesOfReproductionByProjectId(projectId));
+    }
+
+    @RequestMapping(value = "/deleteAndQuery", method = RequestMethod.DELETE)
+    public JsonResult deleteAndQuery(@RequestBody JSONObject jsonObject, @JwtTokenParser(key = "userId") String userId) {
+        String taskId = jsonObject.getStr("taskId");
+        String id = jsonObject.getStr("id");
+        int currentPage = jsonObject.getInt("currentPage");
+        int pageSize = jsonObject.getInt("pageSize");
+        return ResultUtils.success(integrateTaskInstanceService.deleteAndQuery(taskId, userId, id, currentPage, pageSize));
     }
 
 }

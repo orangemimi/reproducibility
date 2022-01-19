@@ -12,9 +12,9 @@
           </el-breadcrumb>
         </el-col>
         <el-col class="info-btn" :span="12">
-          <folk-btn :count="3" class="folk" :isDisable="this.role == 'builder' ? true : false" @click="forkProject"></folk-btn>
+          <folk-btn :count="projectInfo.folkCount" class="folk" :isDisable="this.role == 'builder' ? true : false"></folk-btn>
           <star-btn class="star"></star-btn>
-          <watch-btn :count="1" class="watch"></watch-btn>
+          <watch-btn :count="projectInfo.watchCount" class="watch"></watch-btn>
         </el-col>
       </div>
 
@@ -27,6 +27,8 @@
     <div class="page-content">
       <router-view class="scroll-item"></router-view>
     </div>
+
+    
   </div>
 </template>
 
@@ -74,7 +76,7 @@ export default {
       // let data = await getProjectById(this.projectId);
 
       let data = await getProjectAndUsers(this.projectId);
-
+      console.log(data)
       this.projectInfo = data.project;
       this.creator = data.creator;
       this.members = data.members;
@@ -92,15 +94,11 @@ export default {
       if (val != this.$router.currentRoute.name) {
         this.$router.push({
           name: val,
+          query: {
+            forkingProjectId: this.projectInfo.forkingProjectId
+          }
         });
       }
-    },
-
-    async forkProject() {
-      if (this.role == 'builder') {
-        return;
-      }
-      await this.createProject();
     },
 
     async createProject() {

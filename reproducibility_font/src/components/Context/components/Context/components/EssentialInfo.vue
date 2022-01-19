@@ -8,8 +8,7 @@
             <mavon-editor :value="value" language="en" style="height: 700px; margin-left: 10px" :toolbars="toolbars" ref="md" />
           </el-col>
           <el-col :span="8">
-            <div>
-              <!-- <el-button icon="el-icon-plus" circle style="float: right; margin-top: 10px" size="mini"></el-button> -->
+            <!-- <div>
               <el-dropdown trigger="click" style="float: right; margin-top: 10px" @command="handleCommand">
                 <span class="el-dropdown-link">
                   <el-button icon="el-icon-plus" circle size="mini"></el-button>
@@ -19,7 +18,7 @@
                   <el-dropdown-item icon="iconfont icon-Tool" command="spatialInfo">SpatialInfo</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
-            </div>
+            </div> -->
             <div class="right">
               <el-button icon="el-icon-edit" circle style="margin-right: 3px" @click="titleClick"></el-button>
               <span v-if="editTitle == false" class="title">{{ title }}</span>
@@ -55,14 +54,14 @@
               </el-form>
               <el-divider><i class="el-icon-mobile-phone"></i></el-divider>
             </div>
-            <div class="plus">
+            <!-- <div class="plus">
               <div v-if="temporalInfoFlag">
                 <temporal-info @close="temporalInfoClose" @date="getTemporalInfo" :temporalInfo="temporalInfo"/>
               </div>
               <div v-if="spatialInfoFlag" class="spatialInfo">
                 <spatial-info @close="spatialInfoClose" @selectData="getSpatialInfo" :spatialInfo="spatialInfo"/>
               </div>
-            </div>
+            </div> -->
           </el-col>
         </el-row>
       </el-col>
@@ -76,8 +75,8 @@
 <script>
 import { getContextByProject, updateContext } from '@/api/request';
 import { dateFormat } from '@/utils/utils'
-import temporalInfo from './TemporalInfo.vue';
-import spatialInfo from './SpatialInfo.vue';
+// import temporalInfo from './TemporalInfo.vue';
+// import spatialInfo from './SpatialInfo.vue';
 export default {
   data() {
     return {
@@ -135,10 +134,10 @@ export default {
     };
   },
 
-  components: {
-    temporalInfo,
-    spatialInfo,
-  },
+  // components: {
+  //   temporalInfo,
+  //   spatialInfo,
+  // },
   methods: {
     async titleClick() {
       this.editTitle = !this.editTitle;
@@ -179,15 +178,7 @@ export default {
       this.form.purpose = data.essentialInformation.purpose;
       this.dynamicTags = data.essentialInformation.keyWords;
       this.value = data.essentialInformation.abstractText;
-      if(data.spatialInfos.length > 0) {
-        this.spatialInfo = data.spatialInfos
-        this.spatialInfoFlag = true
-      }
-      if(data.temporalInfo.end != undefined && data.temporalInfo.end != null) {
-        this.temporalInfo.push(data.temporalInfo.start)
-        this.temporalInfo.push(data.temporalInfo.end)
-        this.temporalInfoFlag = true
-      }
+      
     },
 
     async updateContext() {

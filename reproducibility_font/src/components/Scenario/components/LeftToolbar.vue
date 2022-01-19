@@ -5,7 +5,7 @@
       <el-button slot="append" icon="el-icon-search"></el-button>
     </el-input>
 
-    <vue-scroll style="height: 850px; width: 100%" :ops="ops">
+    <vue-scroll style="height: 905px; width: 100%" :ops="ops">
       <el-collapse v-model="activeNames" class="collapse">
         <el-collapse-item title="General" name="general">
           <general-toolbar ref="generalBar" :showType="'rhombus'"></general-toolbar>
@@ -210,7 +210,12 @@ export default {
     },
 
     getSelectItemStyleAddToGraph(panel, item, x, y) {
-      let styleIn = differCellStyle(panel);
+      let styleIn = ''
+      if(panel == 'modelServiceInput' && item.isParam == 'true') {
+        styleIn = differCellStyle('parameter')
+      } else {
+        styleIn = differCellStyle(panel);
+      }
       let cellStyle = getCellStyle(styleIn, item);
       this.addCell(item, x, y, panel, cellStyle);
     },
@@ -327,7 +332,7 @@ export default {
           vertex.name = item.name;
           vertex.nodeAttribute.dataServiceId = item.dataServiceId;
           vertex.nodeAttribute.token = item.token;
-          vertex.nodeAttribute.oid = item.oid
+          vertex.nodeAttribute.oid = item.oid;
           // vertex.nodeAttribute.type = item.type; //Processing
         }
         if (type == 'modelServiceInput' || type == 'modelServiceOutput') {
@@ -363,7 +368,7 @@ export default {
               value: '',
               dataSelectId: '',
               name: '',
-              type: ''
+              type: '',
             };
             vertex.nodeAttribute.isParameter = item.isParam;
             this.addEdge(vertex, selectionCell);
@@ -406,7 +411,6 @@ export default {
             vertex.nodeAttribute.upload = false;
             this.addEdge(selectionCell, vertex);
             // vertex.upload = false;
-            
           }
         }
       } finally {
@@ -433,7 +437,7 @@ export default {
         if (evt.properties.cell != undefined && evt.properties.cell.type != undefined) {
           let cell = evt.properties.cell;
           let clickModelType = cell.type;
-          
+
           if (clickModelType == 'modelService') {
             console.log(cell);
             this.currentCell = cell;

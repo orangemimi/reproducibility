@@ -2,6 +2,7 @@ package edu.njnu.reproducibility.domain.integratetask;
 
 
 import cn.hutool.json.JSONObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.njnu.reproducibility.annotation.JwtTokenParser;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;

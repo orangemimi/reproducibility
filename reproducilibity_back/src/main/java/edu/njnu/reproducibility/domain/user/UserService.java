@@ -8,6 +8,8 @@ import edu.njnu.reproducibility.common.enums.ResultEnum;
 import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.common.untils.JwtUtils;
 import edu.njnu.reproducibility.domain.notice.NoticeService;
+import edu.njnu.reproducibility.domain.project.Project;
+import edu.njnu.reproducibility.domain.project.ProjectRepository;
 import edu.njnu.reproducibility.domain.user.dto.AddUserDTO;
 import edu.njnu.reproducibility.domain.user.dto.UpdateUserDTO;
 import edu.njnu.reproducibility.remote.UserServiceServie;
@@ -43,6 +45,9 @@ public class UserService {
 
     @Autowired
     NoticeService noticeService;
+
+    @Autowired
+    ProjectRepository projectRepository;
 
     public User findByName(String s) {
         return userRepository.findByName(s).orElse(null);
@@ -306,4 +311,31 @@ public class UserService {
         result.put("name", user.getName());
         return result;
     }
+
+    /**
+    * @Description:查询用户创建和加入的项目
+    * @Author: Yiming
+    * @Date: 2022/1/10
+    */
+    public JSONArray getUserProjects(String userId) {
+        User user = userRepository.findByUserId(userId).orElseThrow(MyException::noObject);
+        JSONArray result = new JSONArray();
+        for(String projectId : user.getCreatedProjects()) {
+            Project temp = projectRepository.findById(projectId).orElseThrow(MyException::noObject);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("userName", user.getName());
+            jsonObject.put("projectName", temp.getName());
+            result.add(jsonObject);
+        }
+        for(String projectId : user.getJoinedProjects()) {
+            Project temp = projectRepository.findById(projectId).orElseThrow(MyException::noObject);
+            JSONObject jsonObject = new JSONObject();
+            String userName = userRepository.findByUserId(temp.getCreator()).orElseThrow(MyException::noObject).getName();
+            jsonObject.put("userName", userName);
+            jsonObject.put("projectName", temp.getName());
+            result.add(jsonObject);
+        }
+        return result;
+    }
+
 }

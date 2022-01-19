@@ -1,16 +1,7 @@
 <!--  -->
 <template>
-  <div>
-    <!-- <el-row>
-      <div v-for="(task, index) in taskList" :key="index">
-        <el-col :span="22" :offset="1">
-          <el-card @click.native="selectTask(task)">
-            {{ task.taskName }}
-          </el-card>
-          <el-divider />
-        </el-col>
-      </div>
-    </el-row> -->
+  <div class="select">
+
     <el-dropdown @command="selectTask">
       <span class="el-dropdown-link">
         Select an Exist Task
@@ -61,4 +52,8 @@ export default {
   },
 };
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.select:hover {
+  cursor: pointer;
+}
+</style>

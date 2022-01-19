@@ -28,4 +28,6 @@ public interface IntegrateTaskInstanceRepository extends MongoRepository<Integra
     List<IntegrateTaskInstance> findAllByTaskId(String taskId, String userId);
 
     int countByTaskIdAndOperatorId(String taskId, String operator);
+
+
 }

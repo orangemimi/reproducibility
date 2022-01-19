@@ -1,6 +1,6 @@
 <template>
   <div class="spatialInfo" ref="spatialInfo">
-    <p style="margin-bottom: 10px">TemporalInfo</p>
+    <p style="margin-bottom: 10px">SpatialInfo</p>
     <el-select v-model="value1" placeholder="请选择" filterable @change="change1" size="mini" :disabled="visible ? true : false">
       <el-option v-for="(item, index) in options1" :key="index" :label="item.name" :value="index"></el-option>
     </el-select>
@@ -41,7 +41,7 @@
         </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
-    <el-button icon="el-icon-close" circle size="mini" style="float: right" @click="close"></el-button>
+    <!-- <el-button icon="el-icon-close" circle size="mini" style="float: right" @click="close"></el-button> -->
 
     <baidu-map class="map" :center="center" :scroll-wheel-zoom="true" @click="selectPoint" @ready="handleMap">
       <bm-control anchor="BMAP_ANCHOR_TOP_RIGHT">
@@ -104,6 +104,15 @@ export default {
     spatialInfo: {
       type: Array,
     },
+  },
+
+  watch: {
+    spatialInfo: {
+      handler(val) {
+        this.selectData = JSON.parse(JSON.stringify(val))
+      },
+      deep: true
+    }
   },
 
   methods: {
@@ -271,9 +280,9 @@ export default {
       this.$emit('selectData', this.selectData);
       this.visible = false;
     },
-    close() {
-      this.$emit('close');
-    },
+    // close() {
+    //   this.$emit('close');
+    // },
     init() {
       this.selectData = JSON.parse(JSON.stringify(this.spatialInfo));
       console.log(this.selectData);

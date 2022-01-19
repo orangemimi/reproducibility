@@ -3,10 +3,10 @@
     <el-row>
       <el-col :span="24">
         <div>
-          <div class="top">
+          <!-- <div class="top">
             <div class="title">{{ info.btnType }}</div>
             <div class="top-icon"><i class="el-icon-top-right"></i></div>
-          </div>
+          </div> -->
           <div class="content">
             <div class="content-comp">
               <component :is="typeMapping(info.btnType)"></component>
@@ -27,6 +27,7 @@ import ResultContent from '_com/Result/Result';
 import contentResource from '_com/Context/components/Resource/ContentResource.vue';
 import contentScenario from '_com/Context/components/Scenario/ContentScenario.vue';
 import contentContext from '_com/Context/components/Context/ContentContext.vue';
+import forkScenario from '_com/Scenario/ForkScenario.vue'
 
 // import AnalysisContent from "./AnalysisContent";
 export default {
@@ -38,6 +39,7 @@ export default {
     contentResource,
     contentScenario,
     contentContext,
+    forkScenario
   },
   props: {
     cardInfo: {
@@ -101,6 +103,10 @@ export default {
             vueType = 'contentContext';
           }
           break;
+        case 'forkScenario' :
+          {
+            vueType = 'forkScenario'
+          }
       }
       return vueType;
     },
@@ -111,35 +117,35 @@ export default {
 <style lang="scss" scoped>
 .card {
   background: #ffffff;
-  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
-  opacity: 1;
+  // box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
+  // opacity: 1;
   height: 100%;
   width: 100%;
   // margin: 10px;
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
+  // border-bottom-left-radius: 4px;
+  // border-bottom-right-radius: 4px;
 
-  .top {
-    background: $headerBackground;
-    color: rgb(255, 255, 255);
-    font-size: 16px;
-    line-height: 30px;
-    height: 30px;
-    border-top-right-radius: 4px;
-    border-top-left-radius: 4px;
-    .title {
-      margin-left: 10px;
-      //   width: 200px;
-      float: left;
-    }
-    .top-icon {
-      float: right;
-      margin-right: 10px;
-      width: 20px;
-    }
-  }
+  // .top {
+  //   // background: $headerBackground;
+  //   color: rgb(255, 255, 255);
+  //   font-size: 16px;
+  //   line-height: 30px;
+  //   height: 30px;
+  //   border-top-right-radius: 4px;
+  //   border-top-left-radius: 4px;
+  //   .title {
+  //     margin-left: 10px;
+  //     //   width: 200px;
+  //     float: left;
+  //   }
+  //   .top-icon {
+  //     float: right;
+  //     margin-right: 10px;
+  //     width: 20px;
+  //   }
+  // }
   .content-comp {
-    padding: 10px;
+    // padding: 10px;
     width: 100%;
     height: 100%;
   }

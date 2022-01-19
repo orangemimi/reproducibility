@@ -1,6 +1,8 @@
 <template>
   <div>
-    <el-upload action="#" list-type="picture-card" :auto-upload="false" ref="upload" :multiple="true" :on-change="change">
+    <el-upload class="avatar-uploader" action :auto-upload="false" :on-change="change" ref="upload" :multiple="false" list-type="picture-card">
+      <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+      <i v-else class="el-icon-plus avatar-uploader-icon"></i>
       <template #default>
         <i class="el-icon-plus"></i>
       </template>
@@ -11,15 +13,15 @@
             <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
               <i class="el-icon-zoom-in"></i>
             </span>
-            <span v-if="!disabled" class="el-upload-list__item-delete" @click="handleRemove(file)">
+            <span class="el-upload-list__item-delete" @click="handleRemove()">
               <i class="el-icon-delete"></i>
             </span>
           </span>
         </div>
       </template>
     </el-upload>
-    <el-dialog :visible.sync="dialogVisible" :modal="false" style="width: 100%">
-      <img width="100%" :src="dialogImageUrl" alt="" />
+    <el-dialog :visible.sync="dialogVisible" :modal="false">
+      <img width="100%" :src="imageUrl" alt="" />
     </el-dialog>
   </div>
 </template>
@@ -28,32 +30,51 @@
 export default {
   data() {
     return {
-      dialogImageUrl: '',
+      imageUrl: '',
       dialogVisible: false,
-      disabled: false,
-      fileList: [],
     };
   },
   methods: {
-    change(file, fileList) {
-      this.$emit("scenarioUser", fileList)
-    },
-
-    handleRemove(file) {
-      this.$refs.upload.$children[0].files.forEach((item, index) => {
-        if (file.uid == item.uid) {
-          this.$refs.upload.$children[0].files.splice(index, 1);
-        }
-      });
-      this.$emit("scenarioUser", this.$refs.upload.$children[0].files)
-    },
     handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url;
+      this.imageUrl = file.url;
       this.dialogVisible = true;
+    },
+    handleRemove() {
+      this.$refs.upload.$data.uploadFiles = [];
+    },
+    change(file, fileList) {
+      if (fileList.length > 1) {
+        fileList.splice(0, 1);
+      }
+      this.imageUrl = URL.createObjectURL(file.raw);
+      this.$emit("getfile", file)
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+// .avatar-uploader /deep/ .el-upload {
+//   border: 1px dashed #d9d9d9;
+//   border-radius: 6px;
+//   cursor: pointer;
+//   position: relative;
+//   overflow: hidden;
+// }
+// .avatar-uploader /deep/ .el-upload:hover {
+//   border-color: #409eff;
+// }
+// .avatar-uploader-icon {
+//   font-size: 28px;
+//   color: #8c939d;
+//   width: 178px;
+//   height: 178px;
+//   line-height: 178px;
+//   text-align: center;
+// }
+// .avatar {
+//   width: 178px;
+//   height: 178px;
+//   display: block;
+// }
 </style>

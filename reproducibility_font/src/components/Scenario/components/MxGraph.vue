@@ -49,8 +49,7 @@
           {{ currentTask.taskName }}
         </el-button>
         <el-button @click="runGraph" size="mini">Run Task</el-button>
-        <el-button @click="compareResult" size="mini">Compare Result</el-button>
-
+        <el-button size="mini" @click="saveProjectRecord">Issue</el-button>
 
         <el-button @click="clear" size="mini">Clear</el-button>
 
@@ -62,7 +61,7 @@
 
         <integrate-tasks @selectTask="selectTask" style="float: right"></integrate-tasks>
       </div>
-      <vue-scroll style="height: 850px; width: calc(100%)" :ops="ops" ref="scroll">
+      <vue-scroll style="height: 905px; width: calc(100%)" :ops="ops" ref="scroll">
         <div class="graphContainer" ref="container" @contextmenu.prevent></div>
       </vue-scroll>
     </div>
@@ -75,7 +74,7 @@
               :instanceItem="item"
               :taskItem="currentTask"
               :role="'builder'"
-
+              @delInstanceItem="delInstanceItem"
               @check="check"
               @changeSelectInstanceId="changeSelectInstanceId"
             ></instance-card>
@@ -85,12 +84,14 @@
       <div class="page">
         <el-pagination
           @current-change="handleCurrentChange"
-          :page-size="7"
+          :page-size="8"
           :pager-count="5"
           :small="true"
           background
           layout="prev, pager, next"
           :total="total"
+          :current-page.sync="currentPage"
+          ref="page"
         ></el-pagination>
       </div>
     </div>
@@ -156,11 +157,12 @@ import {
   checkTaskStatus,
   updatePerformanceById,
   updateScenarioByProjectId,
+  deleteAndQuery,
+  saveProjectRecord,
   // postDataContainer,
 } from '@/api/request';
 import { generateAction, generateXml1, getCellStyle } from './configuration';
 // import { hasProperty } from '@/utils/utils';
-
 import integrateTasks from '_com/IntegrateTasks';
 import instanceCard from '_com/Cards/InstanceCard';
 import comparison from '_com/Comparison/Comparison';
@@ -197,6 +199,7 @@ export default {
     return {
       size: 100,
       total: 0,
+      currentPage: 1,
       newTaskForm: {
         taskName: '',
         taskDescription: '',
@@ -216,7 +219,6 @@ export default {
         indexOfNextAdd: 1,
         history: [{}],
       },
-
 
       getXml: this.sendXml,
 
@@ -241,7 +243,7 @@ export default {
         taskDescription: '',
       },
 
-      isNewTaskContainerShow: false, 
+      isNewTaskContainerShow: false,
 
       currentTask: '',
 
@@ -281,7 +283,7 @@ export default {
 
       //INSTANCE LIST
       instancePageFilter: {
-        pageSize: 7,
+        pageSize: 8,
         page: 0,
       },
       instanceList: [],
@@ -291,7 +293,6 @@ export default {
       // selectInstanceId:''
     };
   },
-
 
   methods: {
     zoom(val) {
@@ -350,10 +351,6 @@ export default {
       this.instanceList = [];
     },
 
-    compareResult() {
-      this.comparisonDialogShow = true;
-    },
-
     async setAsSelectTaskInConstruction() {
       if (!this.isSelectTaskInConsruction) {
         let taskId = this.currentTask.id;
@@ -365,18 +362,15 @@ export default {
           type: 'warning',
         });
       }
-      
     },
     //--------------初始化 bar的modelItem的内容--由 AllModels组件返回
-
-
 
     //初始化mxgraph
     async init() {
       //创建画布
 
       this.currentTask = this.taskInfoInit;
-      console.log(this.taskInfoInit)
+      console.log(this.taskInfoInit);
       this.container = this.$refs.container;
       this.createGraph();
 
@@ -389,16 +383,13 @@ export default {
       await this.getAllInstances();
       // await this.getAllIntegrateTaskInstances(1);
       this.graph.importGraph(this.taskInfoInit.taskContent);
-
-      
-
     },
 
     async getScenario() {
       let data = await getScenarioByProjectId(this.projectId);
       this.selectId = data.selectTaskId;
       let flag = data.selectTaskId == this.currentTask.id;
-      this.isSelectTaskInConsruction = flag;;
+      this.isSelectTaskInConsruction = flag;
       this.graph.removeCells(this.graph.getChildVertices(this.graph.getDefaultParent()));
     },
 
@@ -687,7 +678,6 @@ export default {
     async runGraph() {
       this.getCells();
 
-
       //是否有input中有空 无法run
       if (!this.judgeInputList()) {
         return;
@@ -730,10 +720,10 @@ export default {
         if (this.record[tid].status == 1) {
           clearInterval(this.timer);
           this.instanceList.forEach((item, index) => {
-            if(item.id == this.record[tid].id) {
-              this.instanceList.splice(index, 1, this.record[tid])
+            if (item.id == this.record[tid].id) {
+              this.instanceList.splice(index, 1, this.record[tid]);
             }
-          })
+          });
           return;
         } else {
           let data = await checkTaskStatus(tid);
@@ -847,9 +837,7 @@ export default {
       this.graph.getModel().setStyle(item, styleIn);
     },
 
-    async putOutputToCell() {
-      
-    },
+    async putOutputToCell() {},
 
     async addTaskInstance(tid) {
       let taskInfo = {
@@ -897,12 +885,11 @@ export default {
       };
       let data = await saveIntegrateTaskInstance(postJson);
       this.currentTaskInstance = data;
-      if (this.instanceList.length == 7) {
+      if (this.instanceList.length == 8) {
         this.instanceList.pop();
-        this.total = this.total + 1
+        this.total = this.total + 1;
       }
       this.instanceList.splice(0, 0, data);
-
     },
 
     async updateTaskInstances(type) {
@@ -945,10 +932,10 @@ export default {
     },
 
     async getAllInstances() {
-      let data = await getAllInstances(this.currentTask.id, 0, 7);
+      let data = await getAllInstances(this.currentTask.id, 0, 8);
       this.instanceList = data.content;
-      this.total = data.total
-      console.log(data)
+      this.total = data.total;
+      console.log(data);
     },
 
     //instance list
@@ -969,22 +956,52 @@ export default {
     },
 
     async handleCurrentChange(val) {
-      let data = await getAllInstances(this.currentTask.id, val - 1, 7)
+      let data = await getAllInstances(this.currentTask.id, val - 1, 8);
       this.instanceList = data.content;
-      this.total = data.total
+      this.total = data.total;
     },
 
     changeSelectInstanceId(val) {
-      this.currentTask.selectInstanceId = val
+      this.currentTask.selectInstanceId = val;
     },
     check(val) {
       this.instanceList.forEach((item, index) => {
-        if(val.id == item.id) {
-          this.instanceList.splice(index, 1, val)
+        if (val.id == item.id) {
+          this.instanceList.splice(index, 1, val);
         }
-      })
-    }
-    
+      });
+    },
+    async delInstanceItem(val) {
+      console.log(val);
+      console.log(this.currentPage);
+      let jsonData = {
+        taskId: this.currentTask.id,
+        id: val,
+        currentPage: this.currentPage - 1,
+        pageSize: 8,
+      };
+      let data = await deleteAndQuery(jsonData);
+      console.log(data);
+      this.total = data.totalElements;
+      this.instanceList = data.content;
+    },
+    async saveProjectRecord() {
+      if (this.undoMng.history.length == 1) {
+        let jsonData = {
+          projectId: this.projectId,
+          record: {
+            taskContent: this.graph.getGraphXml()
+          },
+        };
+        await saveProjectRecord(jsonData);
+      } else {
+        this.$notify({
+          title: 'warning',
+          message: 'Please save the canvas first!',
+          type: 'warning',
+        });
+      }
+    },
   },
 
   mounted() {
@@ -1040,7 +1057,7 @@ export default {
       height: 100%;
       width: 100%;
       min-width: calc(100%);
-      min-height: 850px;
+      min-height: 905px;
       background: rgb(251, 251, 251) url('./../../../assets/images/mxgraph/point.gif') 0 0 repeat;
       border-radius: 4px;
     }
@@ -1057,17 +1074,6 @@ export default {
     background-color: rgba(243, 243, 243, 0.9);
     .instances {
       width: 100%;
-      .add_ins {
-        font-size: 30px;
-        margin-bottom: 10px;
-        text-align: center;
-        /deep/.el-card {
-          background-color: rgba($color: #ffffff, $alpha: 0.8);
-        }
-      }
-      .add_ins:hover {
-        cursor: pointer;
-      }
     }
     .page {
       // position: relative;

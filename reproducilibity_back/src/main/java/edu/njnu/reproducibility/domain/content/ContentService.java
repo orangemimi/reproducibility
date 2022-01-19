@@ -5,6 +5,8 @@ import edu.njnu.reproducibility.common.enums.ResultEnum;
 import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.domain.content.support.ContextCollection.Context;
 import edu.njnu.reproducibility.domain.content.support.ContextCollection.EssentialInformation;
+import edu.njnu.reproducibility.domain.content.support.ContextCollection.SpatialInfo;
+import edu.njnu.reproducibility.domain.content.support.ContextCollection.TemporalInfo;
 import edu.njnu.reproducibility.domain.content.support.ResourceCollection.*;
 import edu.njnu.reproducibility.domain.content.support.ScenarioCollection.FormGroup;
 import edu.njnu.reproducibility.domain.content.support.ScenarioCollection.PictureGroup;
@@ -82,6 +84,44 @@ public class ContentService {
             throw MyException.noObject();
         }
         content.setContext(context);
+        contentRepository.save(content);
+    }
+
+    //获取Temporal
+    public TemporalInfo getTemporal(String projectId) {
+        Content content = contentRepository.findByProjectId(projectId);
+        if(content == null) {
+            throw MyException.noObject();
+        }
+        return content.getContext().getTemporalInfo();
+    }
+
+    //修改Temporal
+    public void updateTemporal(TemporalInfo temporalInfo, String projectId) {
+        Content content = contentRepository.findByProjectId(projectId);
+        if(content == null) {
+            throw MyException.noObject();
+        }
+        content.getContext().setTemporalInfo(temporalInfo);
+        contentRepository.save(content);
+    }
+
+    //获取Spatial
+    public List<SpatialInfo> getSpatial(String projectId) {
+        Content content = contentRepository.findByProjectId(projectId);
+        if(content == null) {
+            throw MyException.noObject();
+        }
+        return content.getContext().getSpatialInfos();
+    }
+
+    //修改Spatial
+    public void updateSpatial(List<SpatialInfo> spatialInfo, String projectId) {
+        Content content = contentRepository.findByProjectId(projectId);
+        if(content == null) {
+            throw MyException.noObject();
+        }
+        content.getContext().setSpatialInfos(spatialInfo);
         contentRepository.save(content);
     }
 

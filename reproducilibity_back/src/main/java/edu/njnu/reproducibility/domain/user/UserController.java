@@ -112,4 +112,9 @@ public class UserController {
     public JsonResult getUserInfoByUserId(@PathVariable String userId) {
         return ResultUtils.success(userService.getUserInfoByUserId(userId));
     }
+
+    @RequestMapping(value = "/getUserProjects", method = RequestMethod.GET)
+    public JsonResult getUserProjects(@JwtTokenParser(key = "userId") String userId) {
+        return ResultUtils.success(userService.getUserProjects(userId));
+    }
 }

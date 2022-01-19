@@ -3,6 +3,16 @@
     <div class="mainContainer">
       <div class="modelbarTop">
         <el-button @click="runGraph" size="mini">Run Task</el-button>
+        <div class="annotate model"></div>
+        model
+        <div class="annotate dataService"></div>
+        dataService
+        <div class="annotate input"></div>
+        input
+        <div class="annotate parameter"></div>
+        parameter
+        <div class="annotate output"></div>
+        output
       </div>
       <vue-scroll style="height: 850px; width: calc(100%)" :ops="ops">
         <div class="graphContainer" ref="container" @contextmenu.prevent></div>
@@ -24,14 +34,7 @@
           </div>
         </div>
         <div class="page">
-          <el-pagination
-            @current-change="handleCurrentChange"
-            :page-size="7"
-            background
-            layout="prev, pager, next"
-            :total="total"
-            small
-          ></el-pagination>
+          <el-pagination @current-change="handleCurrentChange" :page-size="7" background layout="prev, pager, next" :total="total" small></el-pagination>
         </div>
       </div>
     </div>
@@ -123,17 +126,32 @@ import { saveIntegrateTaskInstance, runtask, getSelectedTaskByProjectId, getSele
 import {
   // generateAction,
   generateXml1,
+  differCellStyle,
+  getCellStyle
   // getCellStyle
 } from './components/configuration';
-
 import instanceCard from '_com/Cards/InstanceCard';
 
-const { mxEvent, mxGraphHandler } = mxgraph;
+const { mxEvent, mxGraphHandler, mxConstants } = mxgraph;
 
 export default {
   components: {
     // dataCellInfo,
     instanceCard,
+  },
+  props: {
+    id: {
+      type: String,
+    },
+  },
+  watch: {
+    id: {
+      handler(val, oldval) {
+        console.log(oldval);
+        console.log(val);
+        this.changeStyle(val, oldval)
+      },
+    },
   },
 
   computed: {
@@ -165,7 +183,6 @@ export default {
 
       container: null,
 
-
       selectedInstance: {},
       allMyTaskList: [],
       outputDialogVisible: false,
@@ -187,8 +204,8 @@ export default {
 
   methods: {
     async handleCurrentChange(val) {
-      let data = await getAllInstances(this.currentTask.id, val - 1, 7)
-      this.allMyTaskList = data.content
+      let data = await getAllInstances(this.currentTask.id, val - 1, 7);
+      this.allMyTaskList = data.content;
     },
 
     //初始化mxgraph
@@ -200,6 +217,68 @@ export default {
       this.createGraph();
       this.createCell();
       this.listenGraphEvent();
+      this.getCells();
+      let cells = {
+        linkEdgeList: this.linkEdgeList,
+        modelListInGraph: this.modelListInGraph,
+        modelOutputInGraph: this.modelOutputInGraph,
+        modelInputInGraph: this.modelInputInGraph,
+        modelLinkInGraph: this.modelLinkInGraph,
+        dataServiceListInGraph: this.dataServiceListInGraph,
+        dataServiceInputInGraph: this.dataServiceInputInGraph,
+        dataServiceOutputListInGraph: this.dataServiceOutputListInGraph,
+        dataServiceLinkInGraph: this.dataServiceLinkInGraph,
+      };
+      this.$emit('getCells', cells);
+    },
+
+    changeStyle(id, oldid) {
+      if(oldid != '') {
+        this.changeOldStyly(oldid)
+      }
+      if(id != '') {
+        this.changeNewStyle(id)
+      }
+    },
+
+    changeNewStyle(id) {
+      let style = {};
+      if (this.graph.model.cells[id].type == 'modelServiceInput' || this.graph.model.cells[id].type == 'dataServiceInput') {
+        if (this.graph.model.cells[id].nodeAttribute.isParameter == 'true') {
+          style = differCellStyle('parameter');
+        } else {
+          style = differCellStyle(this.graph.model.cells[id].type);
+        }
+      } else {
+        style = differCellStyle(this.graph.model.cells[id].type);
+      }
+      let styleObj = {
+        ...style,
+        strokeWidth: '3',
+        align: mxConstants.ALIGN_CENTER,
+        imageAlign: mxConstants.ALIGN_CENTER,
+        imageVerticalAlign: mxConstants.ALIGN_TOP,
+        strokeColor: '#15FE16',
+      };
+      const styleResult = Object.keys(styleObj)
+        .map((attr) => `${attr}=${styleObj[attr]}`)
+        .join(';');
+      this.graph.getModel().setStyle(this.graph.model.cells[id], styleResult);
+    },
+
+    changeOldStyly(oldId) {
+      let style = {};
+      if (this.graph.model.cells[oldId].type == 'modelServiceInput' || this.graph.model.cells[oldId].type == 'dataServiceInput') {
+        if (this.graph.model.cells[oldId].nodeAttribute.isParameter == 'true') {
+          style = differCellStyle('parameter');
+        } else {
+          style = differCellStyle(this.graph.model.cells[oldId].type);
+        }
+      } else {
+        style = differCellStyle(this.graph.model.cells[oldId].type);
+      }
+      let styleResult = getCellStyle(style, this.graph.model.cells[oldId])
+      this.graph.getModel().setStyle(this.graph.model.cells[oldId], styleResult);
     },
 
     async getSelectedTaskByProjectId() {
@@ -213,7 +292,9 @@ export default {
     },
 
     createCell() {
-      this.graph.importGraph(this.selectedInstance.taskContent);
+      if(this.selectedInstance != null) {
+        this.graph.importGraph(this.selectedInstance.taskContent);
+      }
       this.graph.getModel().beginUpdate();
       try {
         this.graph.setCellsResizable(false);
@@ -228,7 +309,7 @@ export default {
       let data2 = await getAllInstances(this.currentTask.id, 0, 7);
       this.selectedInstance = data1;
       this.allMyTaskList = data2.content;
-      this.total = data2.total
+      this.total = data2.total;
       console.log(this.allMyTaskList);
       // this.getInstanceList();
     },
@@ -255,7 +336,6 @@ export default {
         }
       });
     },
-
 
     getCells() {
       let modelListInGraph = [];
@@ -379,32 +459,29 @@ export default {
       let data = await saveIntegrateTaskInstance(postJson);
       console.log(data);
       // this.currentTaskInstance = data;
-      if(this.allMyTaskList.length == 7) {
-        this.allMyTaskList.pop()
-        this.total = this.total + 1
+      if (this.allMyTaskList.length == 7) {
+        this.allMyTaskList.pop();
+        this.total = this.total + 1;
       }
       this.allMyTaskList.splice(0, 0, data);
-      
     },
-
 
     authority(val, index) {
       console.log(val);
       console.log(index);
       this.allMyTaskList.forEach((task, index) => {
         if (task.id == val.id) {
-          this.allMyTaskList.splice(index, 1, val)
+          this.allMyTaskList.splice(index, 1, val);
         }
       });
     },
     check(val) {
       this.allMyTaskList.forEach((item, index) => {
-        if(val.id == item.id) {
-          this.allMyTaskList.splice(index, 1, val)
+        if (val.id == item.id) {
+          this.allMyTaskList.splice(index, 1, val);
         }
-      })
+      });
     },
-
   },
 
   mounted() {
@@ -431,26 +508,28 @@ export default {
       padding-left: 10px;
       border-radius: 4px;
       margin-bottom: 5px;
-
-      .fade-enter-active,
-      .fade-leave-active {
-        transition: opacity 0.3s ease;
+      display: flex;
+      .annotate {
+        height: 10px;
+        width: 10px;
+        margin-right: 5px;
+        margin-left: 10px;
+        margin-top: 8px;
       }
-      .fade-enter, .fade-leave-to
-/* .component-fade-leave-active for below version 2.1.8 */ {
-        opacity: 0;
+      .model {
+        background: #07689f;
       }
-
-      .bell {
-        float: left;
-        color: rgb(224, 75, 75);
-        margin: 0 8px;
-        font-size: 20px;
+      .dataService {
+        background: #00fff8;
       }
-
-      .bell:hover {
-        cursor: pointer;
-        transition: all 0.2s ease-in-out;
+      .input {
+        background: #fff0f0;
+      }
+      .parameter {
+        background: #f497e8;
+      }
+      .output {
+        background: #b9e6d3;
       }
     }
     .graphContainer {

@@ -1,6 +1,11 @@
 <!--  -->
 <template>
   <div class="main">
+    <div class="delete">
+      <el-popconfirm title="Are you sure you want to delete this record?" @confirm="delInstanceItem">
+        <i class="el-icon-delete" slot="reference"></i>
+      </el-popconfirm>
+    </div>
     <el-card :class="instanceItem.status == 1 ? 'successCard' : 'runningCard'" shadow="hover">
       <div class="task_name">
         {{ instanceItem.name }}
@@ -149,30 +154,43 @@ export default {
       }, 3000);
     },
 
+    delInstanceItem() {
+      this.$emit('delInstanceItem', this.instanceItem.id);
+    },
+
     async init() {
       if (this.instanceItem.status != 1) {
-        console.log(this.timer)
+        console.log(this.timer);
         await this.getOutputs(this.instanceItem.tid);
-        
       }
     },
   },
-  mounted() {
-    this.init();
+  async mounted() {
+    await this.init();
   },
   beforeDestroy() {
-    if(this.timer != '') {
+    if (this.timer != '') {
       clearInterval(this.timer);
     }
-  }
+  },
 };
 </script>
 <style lang="scss" scoped>
 .main {
   // min-height: 100px;
   width: 100%;
-  margin-bottom: 15px;
+  margin-bottom: 9px;
   text-align: center;
+  position: relative;
+  .delete {
+    position: absolute;
+    z-index: 1;
+    margin-top: 5px;
+    margin-left: calc(100% - 22px);
+  }
+  .delete:hover {
+    cursor: pointer;
+  }
   /deep/ .el-card {
     width: 100%;
     // height: 100%;

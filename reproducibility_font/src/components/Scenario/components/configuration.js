@@ -595,13 +595,21 @@ function generateGUID() {
 }
 
 export function differCellStyle(type) {
-  if (type == 'modelService' || type == 'dataService') {
+  if (type == 'modelService') {
     return {
       fontColor: '#f6f6f6',
       fillColor: '#07689f',
       strokeColor: '',
       shape: 'rectangle'
     };
+  }
+  if (type == 'dataService') {
+    return {
+      fontColor: '#f6f6f6',
+      fillColor: '#00FFF8',
+      strokeColor: '',
+      shape: 'rectangle'
+    }
   }
   if (type == 'modelServiceInput' || type == 'dataServiceInput') {
     return {
@@ -612,9 +620,20 @@ export function differCellStyle(type) {
       fixedSize: 1
     };
   }
+  if (type == 'parameter') {
+    return {
+      fillColor: '#F497E8',
+      fontColor: '#24292E',
+      strokeColor: '',
+      shape: 'parallelogram',
+      fixedSize: 1
+    }
+  }
   if (type == 'modelServiceLink' || type == 'dataServiceLink') {
     return {
-      fillColor: 'rgb(255, 220, 220)',
+      // fillColor: 'rgb(255, 220, 220)',
+      fillColor: '#FFF0F0',
+
       fontColor: '#24292E',
       strokeColor: '',
       shape: 'parallelogram',

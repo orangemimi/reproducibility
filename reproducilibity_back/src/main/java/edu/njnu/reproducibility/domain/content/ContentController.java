@@ -5,6 +5,8 @@ import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
 import edu.njnu.reproducibility.domain.content.support.ContextCollection.Context;
 import edu.njnu.reproducibility.domain.content.support.ContextCollection.EssentialInformation;
+import edu.njnu.reproducibility.domain.content.support.ContextCollection.SpatialInfo;
+import edu.njnu.reproducibility.domain.content.support.ContextCollection.TemporalInfo;
 import edu.njnu.reproducibility.domain.content.support.dto.AddContentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -77,6 +80,28 @@ public class ContentController {
     @RequestMapping(value = "/updateResource", method = RequestMethod.PATCH)
     public JsonResult updateResource(@RequestBody JSONObject jsonObject) {
         contentService.updateResource(jsonObject);
+        return ResultUtils.success();
+    }
+
+    @RequestMapping(value = "/getTemporal/{projectId}", method = RequestMethod.GET)
+    public JsonResult getTemporal(@PathVariable String projectId) {
+        return ResultUtils.success(contentService.getTemporal(projectId));
+    }
+
+    @RequestMapping(value = "/getSpatial/{projectId}", method = RequestMethod.GET)
+    public JsonResult getSpatial(@PathVariable String projectId) {
+        return ResultUtils.success(contentService.getSpatial(projectId));
+    }
+
+    @RequestMapping(value = "/updateTemporal/{projectId}", method = RequestMethod.PATCH)
+    public JsonResult updateTemporal(@RequestBody TemporalInfo temporalInfo, @PathVariable String projectId) {
+        contentService.updateTemporal(temporalInfo, projectId);
+        return ResultUtils.success();
+    }
+
+    @RequestMapping(value = "/updateSpatial/{projectId}", method = RequestMethod.PATCH)
+    public JsonResult updateSpatial(@RequestBody List<SpatialInfo> spatialInfos, @PathVariable String projectId) {
+        contentService.updateSpatial(spatialInfos, projectId);
         return ResultUtils.success();
     }
 }

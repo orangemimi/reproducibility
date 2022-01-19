@@ -218,7 +218,7 @@ export default {
   padding: 0 10px;
   height: 100%;
   width: 100%;
-
+  
   .row-style {
     padding: 0 10px;
     height: 100%;

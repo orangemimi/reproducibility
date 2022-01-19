@@ -20,4 +20,5 @@ public interface ProjectRepository extends MongoRepository<Project,String> {
     Optional<Project> findByIdAndCreator(String id,String userId);
     Page<Project> findByCreator(String creatorId, Pageable pageable);
     Page<Project> findByPrivacyInOrCreator(List<String> privacyList,String creatorId,Pageable pageable);
+    Page<Project> findByPrivacy(String privacy, Pageable pageable);
 }

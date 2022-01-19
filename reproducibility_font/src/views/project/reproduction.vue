@@ -6,7 +6,7 @@
         <el-row :gutter="20">
           <el-col :span="17">
             <div class="scenario">
-              <div ref="scenario"><re-scenario-content /></div>
+              <div ref="scenario"><re-scenario-content @getCells="getCells" :id="selectedNodeId"/></div>
               <div class="md" v-if="content.context != undefined" ref="abstract">
                 <div class="head">
                   <i class="iconfont icon-xiangqing" style="margin-left: 15px; margin-right: 15px"></i>
@@ -36,6 +36,62 @@
               </el-tag>
               <el-divider content-position="left">Purpose</el-divider>
               <h4>{{ content.context.essentialInformation.purpose }}</h4>
+
+              <el-divider content-position="left">
+                Resource
+                <div class="divider-text">{{ resourceCount }}</div>
+              </el-divider>
+              <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick" @node-collapse="handleNodeCollapse" highlight-current>
+                <span class="custom-tree-node" slot-scope="{ node, data }">
+                  <span v-if="data.classify == 'model'" class="tree-node-color">
+                    <div class="tree-color models"></div>
+                    {{ node.label }}
+                  </span>
+                  <span v-else-if="data.classify == 'dataService'" class="tree-node-color">
+                    <div class="tree-color dataServices"></div>
+                    {{ node.label }}
+                  </span>
+                  <span v-else-if="data.classify == 'input'" class="tree-node-color">
+                    <div class="tree-color inputs"></div>
+                    {{ node.label }}
+                  </span>
+                  <span v-else-if="data.classify == 'parameter'" class="tree-node-color">
+                    <div class="tree-color parameters"></div>
+                    {{ node.label }}
+                  </span>
+                </span>
+              </el-tree>
+              <el-descriptions direction="vertical" :column="3" border v-if="resourceFlag" style="margin-top: 20px">
+                <el-descriptions-item label="Name">{{ selectedNode.label }}</el-descriptions-item>
+                <!-- <el-descriptions-item label="Event Name">{{ selectedNode.eventName }}</el-descriptions-item>
+                <el-descriptions-item label="Type">
+                  <el-tag size="small" :type="getFormat">{{ selectedNode.format }}</el-tag>
+                </el-descriptions-item>
+                <el-descriptions-item label="Data Type" v-if="selectedNode.format == 'parameter' || selectedNode.format == 'output'">
+                  <el-tag size="small" :type="getType" effect="dark">{{ selectedNode.type }}</el-tag>
+                </el-descriptions-item>
+                <el-descriptions-item label="Description">
+                  {{ selectedNode.description }}
+                </el-descriptions-item> -->
+                <el-descriptions-item label="Type">
+                  <el-tag size="small" :type="getFormat">{{ selectedNode.classify }}</el-tag>
+                </el-descriptions-item>
+                <el-descriptions-item label="Download" v-if="selectedNode.classify == 'input' && selectedNode.type == 'value'">
+                  <el-button type="info" plain size="mini">view</el-button>
+                  <el-button type="warning" plain size="mini">download</el-button>
+                </el-descriptions-item>
+              </el-descriptions>
+
+              <el-divider></el-divider>
+              <div @click="toAbstract">
+                <i class="iconfont icon-read" style="margin-right: 10px"></i>
+                Abstract
+              </div>
+              <div @click="toScenario" style="margin-top: 10px">
+                <i class="el-icon-data-board" style="margin-right: 10px"></i>
+                Scenario
+              </div>
+
               <div v-if="content.context.spatialInfos.length > 0 || content.context.temporalInfo.start != null">
                 <el-divider>Scale</el-divider>
                 <div v-if="content.context.temporalInfo.start != null">
@@ -77,34 +133,6 @@
                   </baidu-map>
                 </div>
               </div>
-
-              <el-divider></el-divider>
-              <div @click="toAbstract">
-                <i class="iconfont icon-read" style="margin-right: 10px"></i>
-                Abstract
-              </div>
-              <div @click="toScenario" style="margin-top: 10px">
-                <i class="el-icon-data-board" style="margin-right: 10px"></i>
-                Scenario
-              </div>
-              <el-divider content-position="left">
-                Resource
-                <div class="divider-text">{{ resourceCount }}</div>
-              </el-divider>
-              <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick" @node-collapse="handleNodeCollapse"></el-tree>
-              <el-descriptions direction="vertical" :column="3" border v-if="resourceFlag" style="margin-top: 20px">
-                <el-descriptions-item label="Name">{{ selectedNode.label }}</el-descriptions-item>
-                <el-descriptions-item label="Event Name">{{ selectedNode.eventName }}</el-descriptions-item>
-                <el-descriptions-item label="Type">
-                  <el-tag size="small" :type="getFormat">{{ selectedNode.format }}</el-tag>
-                </el-descriptions-item>
-                <el-descriptions-item label="Data Type" v-if="selectedNode.format == 'parameter' || selectedNode.format == 'output'">
-                  <el-tag size="small" :type="getType" effect="dark">{{ selectedNode.type }}</el-tag>
-                </el-descriptions-item>
-                <el-descriptions-item label="Description">
-                  {{ selectedNode.description }}
-                </el-descriptions-item>
-              </el-descriptions>
               <el-divider></el-divider>
             </div>
           </el-col>
@@ -127,6 +155,7 @@ export default {
   data() {
     return {
       projectId: this.$route.params.id,
+      selectedNodeId: '',
       content: {},
       resourceCount: 0,
       data: [],
@@ -158,13 +187,13 @@ export default {
   },
   computed: {
     getFormat() {
-      if (this.selectedNode.format == 'input') {
+      if (this.selectedNode.classify == 'input') {
         return '';
-      } else if (this.selectedNode.format == 'parameter') {
+      } else if (this.selectedNode.classify == 'parameter') {
         return 'info';
-      } else if (this.selectedNode.format == 'output') {
+      } else if (this.selectedNode.classify == 'dataService') {
         return 'success';
-      } else if (this.selectedNode.format == 'model') {
+      } else if (this.selectedNode.classify == 'model') {
         return 'danger';
       } else {
         return 'warning';
@@ -197,15 +226,18 @@ export default {
       });
     },
     handleNodeClick(data) {
+      console.log(data);
       if (data.flag) {
         this.resourceFlag = true;
         this.selectedNode = data;
+        this.selectedNodeId = data.id
       } else {
         this.resourceFlag = false;
       }
     },
     handleNodeCollapse() {
       this.resourceFlag = false;
+      this.selectedNodeId = ''
     },
 
     async getContent() {
@@ -223,70 +255,220 @@ export default {
           }
         });
       }
-      if (this.content.resource != undefined) {
-        if (this.content.resource.inputs != undefined && this.content.resource.inputs.length != 0) {
-          this.resourceCount = this.resourceCount + this.content.resource.inputs.length;
-          this.data.push({
-            label: 'inputs',
-            children: [],
+      // if (this.content.resource != undefined) {
+      //   if (this.content.resource.inputs != undefined && this.content.resource.inputs.length != 0) {
+      //     this.resourceCount = this.resourceCount + this.content.resource.inputs.length;
+      //     this.data.push({
+      //       label: 'inputs',
+      //       children: [],
+      //     });
+      //     this.content.resource.inputs.forEach((item) => {
+      //       this.data[this.data.length - 1].children.push({
+      //         label: item.name,
+      //         eventName: item.eventName,
+      //         description: item.description,
+      //         format: 'input',
+      //         flag: true,
+      //       });
+      //       this.resourceMD.push({
+      //         name: item.name,
+      //         markDownHtml: item.markDownHtml,
+      //       });
+      //     });
+      //   }
+      //   if (this.content.resource.parameters != undefined) {
+      //     this.resourceCount = this.resourceCount + this.content.resource.parameters.length;
+      //     this.data.push({
+      //       label: 'parameters',
+      //       children: [],
+      //     });
+      //     this.content.resource.parameters.forEach((item) => {
+      //       this.data[this.data.length - 1].children.push({
+      //         label: item.name,
+      //         eventName: item.eventName,
+      //         description: item.description,
+      //         format: 'parameter',
+      //         type: item.type,
+      //         flag: true,
+      //       });
+      //       this.resourceMD.push({
+      //         name: item.name,
+      //         markDownHtml: item.markDownHtml,
+      //       });
+      //     });
+      //   }
+      //   if (this.content.resource.outputs != undefined) {
+      //     this.resourceCount = this.resourceCount + this.content.resource.outputs.length;
+      //     this.data.push({
+      //       label: 'output',
+      //       children: [],
+      //     });
+      //     this.content.resource.outputs.forEach((item) => {
+      //       this.data[this.data.length - 1].children.push({
+      //         label: item.name,
+      //         eventName: item.eventName,
+      //         description: item.description,
+      //         format: 'output',
+      //         type: item.type,
+      //         flag: true,
+      //       });
+      //       this.resourceMD.push({
+      //         name: item.name,
+      //         markDownHtml: item.markDownHtml,
+      //       });
+      //     });
+      //   }
+      // }
+    },
+
+    getCells(val) {
+      console.log(val);
+      this.data.push({
+        label: 'models',
+        children: [],
+        classify: 'model',
+      });
+      this.data.push({
+        label: 'dataServices',
+        children: [],
+        classify: 'dataService',
+      });
+      this.data.push({
+        label: 'inputs',
+        children: [],
+        classify: 'input',
+      });
+      this.data.push({
+        label: 'parameters',
+        children: [],
+        classify: 'parameter',
+      });
+      val.modelListInGraph.forEach((item) => {
+        this.data[0].children.push({
+          label: item.name,
+          classify: 'model',
+          flag: true,
+          id: item.id
+        });
+        this.resourceCount = this.resourceCount + 1;
+      });
+      val.dataServiceListInGraph.forEach((item) => {
+        this.data[1].children.push({
+          label: item.name,
+          classify: 'dataService',
+          flag: true,
+          id: item.id
+        });
+        this.resourceCount = this.resourceCount + 1;
+      });
+      val.modelInputInGraph.forEach((item) => {
+        if (item.nodeAttribute.isParameter == 'true') {
+          this.data[3].children.push({
+            label: item.nodeAttribute.dataSelect.name,
+            value: item.nodeAttribute.dataSelect.value,
+            type: 'value',
+            classify: 'parameter',
+            flag: true,
+            id: item.id
           });
-          this.content.resource.inputs.forEach((item) => {
-            this.data[this.data.length - 1].children.push({
-              label: item.name,
-              eventName: item.eventName,
-              description: item.description,
-              format: 'input',
-              flag: true,
-            });
-            this.resourceMD.push({
-              name: item.name,
-              markDownHtml: item.markDownHtml,
-            });
+          this.resourceCount = this.resourceCount + 1;
+        } else {
+          this.data[2].children.push({
+            label: item.nodeAttribute.dataSelect.name,
+            value: item.nodeAttribute.dataSelect.value,
+            type: 'value',
+            classify: 'input',
+            flag: true,
+            id: item.id
           });
+          this.resourceCount = this.resourceCount + 1;
         }
-        if (this.content.resource.parameters != undefined) {
-          this.resourceCount = this.resourceCount + this.content.resource.parameters.length;
-          this.data.push({
-            label: 'parameters',
-            children: [],
+      });
+      val.dataServiceInputInGraph.forEach((item) => {
+        if (item.nodeAttribute.isParameter == 'true') {
+          this.data[3].children.push({
+            label: item.nodeAttribute.dataSelect.name,
+            value: item.nodeAttribute.dataSelect.value,
+            type: 'value',
+            classify: 'parameter',
+            flag: true,
+            id: item.id
           });
-          this.content.resource.parameters.forEach((item) => {
-            this.data[this.data.length - 1].children.push({
-              label: item.name,
-              eventName: item.eventName,
-              description: item.description,
-              format: 'parameter',
-              type: item.type,
-              flag: true,
-            });
-            this.resourceMD.push({
-              name: item.name,
-              markDownHtml: item.markDownHtml,
-            });
+          this.resourceCount = this.resourceCount + 1;
+        } else {
+          this.data[2].children.push({
+            label: item.nodeAttribute.dataSelect.name,
+            value: item.nodeAttribute.dataSelect.value,
+            type: 'value',
+            classify: 'input',
+            flag: true,
+            id: item.id
           });
+          this.resourceCount = this.resourceCount + 1;
         }
-        if (this.content.resource.outputs != undefined) {
-          this.resourceCount = this.resourceCount + this.content.resource.outputs.length;
-          this.data.push({
-            label: 'output',
-            children: [],
+      });
+      val.modelLinkInGraph.forEach((item) => {
+        if (item.nodeAttribute.isParameter == 'true') {
+          item.edges.forEach((edge) => {
+            if (edge.target.id == item.id) {
+              this.data[3].children.push({
+                label: 'Intermediate result',
+                type: 'link',
+                from: edge.target,
+                classify: 'parameter',
+                flag: true,
+                id: item.id
+              });
+            }
           });
-          this.content.resource.outputs.forEach((item) => {
-            this.data[this.data.length - 1].children.push({
-              label: item.name,
-              eventName: item.eventName,
-              description: item.description,
-              format: 'output',
-              type: item.type,
-              flag: true,
-            });
-            this.resourceMD.push({
-              name: item.name,
-              markDownHtml: item.markDownHtml,
-            });
+          this.resourceCount = this.resourceCount + 1;
+        } else {
+          item.edges.forEach((edge) => {
+            if (edge.target.id == item.id) {
+              this.data[2].children.push({
+                label: 'Intermediate result',
+                type: 'link',
+                from: edge.target,
+                classify: 'input',
+                flag: true,
+                id: item.id
+              });
+            }
           });
+          this.resourceCount = this.resourceCount + 1;
         }
-      }
+      });
+      val.dataServiceLinkInGraph.forEach((item) => {
+        if (item.nodeAttribute.isParameter == 'true') {
+          item.edges.forEach((edge) => {
+            if (edge.target.id == item.id) {
+              this.data[3].children.push({
+                label: 'Intermediate result',
+                type: 'link',
+                from: edge.target,
+                classify: 'parameter',
+                flag: true,
+                id: item.id
+              });
+            }
+          });
+          this.resourceCount = this.resourceCount + 1;
+        } else {
+          item.edges.forEach((edge) => {
+            if (edge.target.id == item.id) {
+              this.data[2].children.push({
+                label: 'Intermediate result',
+                type: 'link',
+                from: edge.target,
+                classify: 'input',
+                flag: true,
+                id: item.id
+              });
+            }
+          });
+          this.resourceCount = this.resourceCount + 1;
+        }
+      });
     },
 
     handleMap({ BMap, map }) {
@@ -350,7 +532,7 @@ export default {
     },
     async init() {
       await this.getContent();
-      await this.getCityList()
+      await this.getCityList();
     },
   },
   created() {
@@ -367,6 +549,29 @@ export default {
     background-color: white;
     min-height: calc(100vh - 242px);
     padding: 20px 32px;
+    .custom-tree-node {
+      .tree-node-color {
+        display: flex;
+        .tree-color {
+          height: 10px;
+          width: 10px;
+          margin-top: 8px;
+          margin-right: 5px;
+        }
+        .models {
+          background: #07689f;
+        }
+        .dataServices {
+          background: #00fff8;
+        }
+        .inputs {
+          background: #fff0f0;
+        }
+        .parameters {
+          background: #f497e8;
+        }
+      }
+    }
   }
   .row-style {
     padding: 0 10px;

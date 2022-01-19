@@ -137,7 +137,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .main {
-  margin: 20px 0;
+  // margin: 20px 0;
   height: 100%;
   width: 100%;
 

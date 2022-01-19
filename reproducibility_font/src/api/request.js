@@ -80,6 +80,10 @@ export async function getUserInfoByUserId(userId) {
   return await get(`/users/getUserInfoByUserId/${userId}`)
 }
 
+export async function getUserProjects() {
+  return await get(`/users/getUserProjects`)
+}
+
 //----------------------------------------------------projects-----------------------------------------
 
 //获取project的star数
@@ -125,8 +129,8 @@ export async function saveProject(form) {
   return data;
 }
 
-export async function forkProject(form) {
-  let data = await post(`/projects/fork`, form);
+export async function forkProject(jsonData) {
+  let data = await post(`/projects/fork`, jsonData);
   // if (data != null) {
   //   successNotification('create', 'project');
   // }
@@ -156,6 +160,18 @@ export async function getPrivacy(projectId) {
 
 export async function getProjectsCreatedByMe() {
   return await get(`/projects/getProjectsCreatedByMe`)
+}
+
+export async function getProjectsPage(currentPage, pageSize) {
+  return await get(`/projects/getProjectsPage/${currentPage}/${pageSize}`)
+}
+
+export async function saveProjectRecord(jsonData) {
+  return await post(`/projects/saveRecord`, jsonData)
+}
+
+export async function getRecords(projectId) {
+  return await get(`/projects/getRecords/${projectId}`)
 }
 
 //---------------------------------------------------contextDefinition------------------------------------------
@@ -414,6 +430,10 @@ export async function getAllInstancesOfReproductionByProjectId(projectId) {
   return await get(`/integrateTaskInstances/getAllInstancesOfReproductionByProjectId/${projectId}`)
 }
 
+export async function deleteAndQuery(jsonData) {
+  return await del(`/integrateTaskInstances/deleteAndQuery`, null, jsonData)
+}
+
 
 //-------------------------------------------Content--------------------------------------------------
 
@@ -455,6 +475,22 @@ export async function updateContext(jsonData) {
 
 export async function updateResourceOfContent(jsonData) {
   return await patch(`/Content/updateResource`, jsonData)
+}
+
+export async function getTemporal(projectId) {
+  return await get(`/Content/getTemporal/${projectId}`)
+}
+
+export async function getSpatial(projectId) {
+  return await get(`/Content/getSpatial/${projectId}`)
+}
+
+export async function updateTemporal(jsonData, projectId) {
+  return await patch(`/Content/updateTemporal/${projectId}`, jsonData)
+}
+
+export async function updateSpatial(jsonData, projectId) {
+  return await patch(`/Content/updateSpatial/${projectId}`, jsonData)
 }
 
 //-------------------------------------------UserFile--------------------------------------------------

@@ -171,7 +171,7 @@ export const constantRoutes = [
             component: () => import('@/views/project/construction'),
             meta: {
               requireAuth: true,
-              roles: ['builder', 'rebuilder_explorer', 'rebuilder_operator'] // or you can only set roles in sub nav
+              roles: ['builder', 'rebuilder_explorer', 'rebuilder_operator', 'visitor'] // or you can only set roles in sub nav
             }
           },
           {
@@ -180,7 +180,7 @@ export const constantRoutes = [
             component: () => import('@/views/project/contributor'),
             meta: {
               requireAuth: true,
-              roles: ['builder'] // or you can only set roles in sub nav
+              roles: ['builder', 'rebuilder_explorer', 'rebuilder_operator', 'visitor'] // or you can only set roles in sub nav
             }
           },
           {
@@ -189,7 +189,7 @@ export const constantRoutes = [
             component: () => import('@/views/project/community'),
             meta: {
               requireAuth: true,
-              roles: ['builder', 'rebuilder_explorer', 'rebuilder_operator']
+              roles: ['builder', 'rebuilder_explorer', 'rebuilder_operator', 'visitor']
             }
           },
           {
@@ -198,7 +198,7 @@ export const constantRoutes = [
             component: () => import('@/views/project/reproduction'),
             meta: {
               requireAuth: true,
-              roles: ['builder', 'rebuilder_explorer', 'rebuilder_operator'] // or you can only set roles in sub nav
+              roles: ['builder', 'rebuilder_explorer', 'rebuilder_operator', 'visitor'] // or you can only set roles in sub nav
             }
           },
           {
@@ -207,9 +207,9 @@ export const constantRoutes = [
             component: () => import('@/views/project/construction1'),
             meta: {
               requireAuth: true,
-              roles: ['builder', 'rebuilder_explorer', 'rebuilder_operator'] // or you can only set roles in sub nav
+              roles: ['builder', 'rebuilder_explorer', 'rebuilder_operator', 'visitor'] // or you can only set roles in sub nav
             }
-          },
+          }
         ]
       },
       
@@ -295,7 +295,8 @@ export const constantRoutes = [
         path: '/project/context/:projectId',
         name: 'Context',
         meta: {
-          requireAuth: true
+          requireAuth: true,
+          roles: ['builder', 'rebuilder_explorer', 'rebuilder_operator']
         },
         components: {
           header: () => import('_com/layout/MyHeader.vue'),
@@ -304,10 +305,37 @@ export const constantRoutes = [
         }
       },
       {
+        path: '/project/spatial/:projectId',
+        name: 'Spatial',
+        meta: {
+          requireAuth: true,
+          roles: ['builder', 'rebuilder_explorer', 'rebuilder_operator']
+        },
+        components: {
+          header: () => import('_com/layout/MyHeader.vue'),
+          main: () => import('_com/Context/components/Context/components/Spatial.vue'),
+          footer: () => import('_com/layout/MyFooter.vue')
+        }
+      },
+      {
+        path: '/project/temporal/:projectId',
+        name: 'Temporal',
+        meta: {
+          requireAuth: true,
+          roles: ['builder', 'rebuilder_explorer', 'rebuilder_operator']
+        },
+        components: {
+          header: () => import('_com/layout/MyHeader.vue'),
+          main: () => import('_com/Context/components/Context/components/Temporal.vue'),
+          footer: () => import('_com/layout/MyFooter.vue')
+        }
+      },
+      {
         path: '/project/resource/:projectId',
         name: 'Resource',
         meta: {
-          requireAuth: true
+          requireAuth: true,
+          roles: ['builder', 'rebuilder_explorer', 'rebuilder_operator']
         },
         components: {
           header: () => import('_com/layout/MyHeader.vue'),
@@ -319,7 +347,8 @@ export const constantRoutes = [
         path: '/project/resourcecollection/:projectId',
         name: 'resourcecollection',
         meta: {
-          requireAuth: true
+          requireAuth: true,
+          roles: ['builder', 'rebuilder_explorer', 'rebuilder_operator']
         },
         components: {
           header: () => import('_com/layout/MyHeader.vue'),
@@ -327,6 +356,21 @@ export const constantRoutes = [
           footer: () => import('_com/layout/MyFooter.vue')
         }
       },
+      {
+        path: '/project/fork/:projectId',
+        name: 'fork',
+        components: {
+          header: () => import('_com/layout/MyHeader.vue'),
+          main: () => import('_com/PageHeaderBtn/components/FolkPage.vue'),
+          footer: () => import('_com/layout/MyFooter.vue')
+        },
+        meta: {
+          requireAuth: true,
+          title: 'fork',
+          roles: ['builder', 'rebuilder_explorer', 'rebuilder_operator']
+        }
+      }
+      
     ]
   }
 ];

@@ -122,6 +122,9 @@ public class IntegrateTaskInstanceService {
         String taskId = scenario.getSelectTaskId();
         IntegrateTask integrateTask = integrateTaskRepository.findById(taskId).orElseThrow(MyException::noObject);
         String selectedId = integrateTask.getSelectInstanceId();
+        if(selectedId == null || selectedId.equals("")) {
+            return null;
+        }
         return integrateTaskInstanceRepository.findById(selectedId).orElseThrow(MyException::noObject);
     }
 
@@ -148,4 +151,18 @@ public class IntegrateTaskInstanceService {
         result.put("private", pri);
         return result;
     }
+
+    /**
+    * @Description:删除Instance并查询当前分页的数据
+    * @Author: Yiming
+    * @Date: 2022/1/11
+    */
+
+    public Page<IntegrateTaskInstance> deleteAndQuery(String taskId, String userId, String id, int currentPage, int pageSize) {
+        integrateTaskInstanceRepository.deleteById(id);
+        PageRequest pageRequest = PageRequest.of(currentPage, pageSize);
+        Page<IntegrateTaskInstance> page = integrateTaskInstanceRepository.findAllByTaskIdAndOperatorId(taskId, userId, pageRequest);
+        return page;
+    }
+
 }

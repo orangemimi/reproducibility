@@ -1,22 +1,6 @@
 <template>
-  <div class="main" @click="clickHander" title="EssentialInformation">
-    <el-row>
-      <el-col :span="15">
-        <div class="left" v-if="type == 'EssentialInformation'">
-          <img :src="imgPath(context.snapshot, 'EssentialInformation')" style="height: 280px; width: 100%" />
-        </div>
-        <div class="left" v-else-if="type == 'dimension'">
-          
-        </div>
-      </el-col>
-      <el-col :span="9">
-        <div class="right">
-          <div class="view">
-            <i class="el-icon-view"></i>
-          </div>
-        </div>
-      </el-col>
-    </el-row>
+  <div class="main" @click="clickHander" :title="type" :class="type">
+    
   </div>
 </template>
 
@@ -45,10 +29,23 @@ export default {
     },
 
     clickHander() {
-      let routeData = this.$router.resolve({
-        path: `/project/context/${this.projectId}`,
-      });
-      window.open(routeData.href, '_blank');
+      switch (this.type) {
+        case 'EssentialInformation':
+          this.$router.push({
+            path: `/project/context/${this.projectId}`,
+          });
+          break
+        case 'Spatial':
+          this.$router.push({
+            path: `/project/spatial/${this.projectId}`
+          })
+          break
+        case 'Temporal':
+          this.$router.push({
+            path: `/project/temporal/${this.projectId}`
+          })
+          break
+      }
     },
   },
 };
@@ -59,26 +56,44 @@ export default {
   width: 100%;
   height: 300px;
   border-radius: 4px;
-  margin-bottom: 15px;
+  margin-top: 15px;
   background-color: white;
 
-  // border: solid 1px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
   /deep/ .el-card__body {
     padding: 0px;
   }
-  .left {
-    padding: 10px;
-  }
-  .right {
-    .view {
-      margin-right: 20px;
-      margin-top: 5px;
-      .el-icon-view {
-        float: right;
-      }
-    }
-  }
+  
+}
+.EssentialInformation{
+  background: url("../../../../assets/images/green1.jpg") no-repeat;
+  background-size: cover;
+  opacity: 0.4;
+}
+.Spatial{
+  background: url("../../../../assets/images/green2.jpg") no-repeat;
+  background-size: cover;
+  opacity: 0.4;
+}
+.Temporal{
+  background: url("../../../../assets/images/green3.jpg") no-repeat;
+  background-size: cover;
+  opacity: 0.4;
+}
+.test1 {
+  background: url("../../../../assets/images/green4.jpg") no-repeat;
+  background-size: cover;
+  opacity: 0.4;
+}
+.test2 {
+  background: url("../../../../assets/images/green5.jpg") no-repeat;
+  background-size: cover;
+  opacity: 0.4;
+}
+.test3 {
+  background: url("../../../../assets/images/green6.jpg") no-repeat;
+  background-size: cover;
+  opacity: 0.4;
 }
 .main:hover {
   cursor: pointer;
