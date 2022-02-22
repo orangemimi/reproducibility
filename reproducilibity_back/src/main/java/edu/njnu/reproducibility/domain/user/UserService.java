@@ -89,11 +89,11 @@ public class UserService {
         return userRepository.insert(user);
     }
 
-    public User updateByUserId(String userId, UpdateUserDTO update, String email, String password) throws IllegalAccessException {
+    public JSONObject updateByUserId(String userId, UpdateUserDTO update, String email, String password) throws IllegalAccessException {
         User userFromDB = userRepository.findByUserId(userId).orElseThrow(MyException::noObject);
         update.updateTo(userFromDB);
-        userServiceServie.updateUserinfo(email, password, update);
-        return userRepository.save(userFromDB);
+        userRepository.save(userFromDB);
+        return userServiceServie.updateUserinfo(email, password, update);
     }
 
     public User updateJoinedProjects(String userId, String update) {
@@ -324,6 +324,7 @@ public class UserService {
             Project temp = projectRepository.findById(projectId).orElseThrow(MyException::noObject);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("userName", user.getName());
+            jsonObject.put("picture", temp.getPicture());
             jsonObject.put("projectName", temp.getName());
             result.add(jsonObject);
         }
@@ -332,6 +333,7 @@ public class UserService {
             JSONObject jsonObject = new JSONObject();
             String userName = userRepository.findByUserId(temp.getCreator()).orElseThrow(MyException::noObject).getName();
             jsonObject.put("userName", userName);
+            jsonObject.put("picture", temp.getPicture());
             jsonObject.put("projectName", temp.getName());
             result.add(jsonObject);
         }

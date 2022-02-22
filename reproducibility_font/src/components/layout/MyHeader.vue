@@ -25,11 +25,12 @@
       <el-col v-else class="user" :span="2" :offset="8">
         <el-dropdown placement="bottom-start" @command="handleCommond">
           <div class="personal">
-            <avatar
-              :username="user.avatar != 'undefined' && user.avatar != 'null' && user.avatar != undefined && user.avatar != '' ? user.avatar : user.name"
+            <!-- <avatar
+              :username="user.avatar != 'undefined' && user.avatar != 'null' && user.avatar != undefined && user.avatar != '' ? 'http://172.21.212.103:8088/userServer' + user.avatar : user.name"
               :size="40"
               style="margin-top: 10px"
-            ></avatar>
+            ></avatar> -->
+            <el-avatar :src="pictureURL" :size="40" style="margin-top: 10px">{{user.name}}</el-avatar>
           </div>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="homepage">
@@ -68,7 +69,7 @@
   </div>
 </template>
 <script>
-import Avatar from 'vue-avatar';
+// import Avatar from 'vue-avatar';
 import { mapState, mapActions } from 'vuex';
 import drawerCard from './components/DrawerCard.vue';
 export default {
@@ -77,6 +78,7 @@ export default {
       activeIndex: 1,
       selectModelCount: this.$store.state.user.selectNum,
       drawer: false,
+      pictureURL: this.$store.state.user.avatar == '' ? '' : 'http://172.21.212.103:8088/userServer' + this.$store.state.user.avatar
     };
   },
   computed: {
@@ -88,6 +90,11 @@ export default {
         this.selectModelCount = val;
       },
     },
+    '$store.state.user.avatar': {
+      handler(val) {
+        this.pictureURL = 'http://172.21.212.103:8088/userServer' + val
+      }
+    }
   },
 
 
@@ -202,7 +209,7 @@ export default {
   },
   mounted() {},
   components: {
-    Avatar,
+    // Avatar,
     drawerCard,
   },
 };
@@ -218,6 +225,7 @@ export default {
 .item {
   font-size: 18px;
   margin-right: 10px;
+  margin-bottom: 25px;
 }
 
 .app-head {

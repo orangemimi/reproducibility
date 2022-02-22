@@ -10,17 +10,14 @@
     <div>
       <div class="details">
         <i class="el-icon-star-on" style="margin-right: 10px">{{ project.starCount }}</i>
-        <i class="el-icon-share">{{ project.folkCount }}</i>
+        <i class="iconfont icon-fork" style="font-size: 13px;margin-right: 10px">{{ project.folkCount }}</i>
+        <i class="el-icon-view" style="margin-right: 2px"></i>{{ project.watchCount }}
       </div>
       <div class="tags">
-        <div v-for="(item, index) in 2" :key="index" style="display: flex">
-          <div class="circle"></div>
-          <p class="tag">hah</p>
+        <div v-for="(item, index) in tags" :key="index" style="display: flex">
+          <div class="circle" :style="getColor(item)"></div>
+          <p class="tag">{{ item }}</p>
         </div>
-        <!-- <div v-for="(item, index) in tags" :key="index">
-          <div class="circle"></div>
-          <p class="tag">hah</p>
-        </div> -->
       </div>
     </div>
   </div>
@@ -34,14 +31,36 @@ export default {
       type: String,
     },
     type: {
-      type: String
-    }
+      type: String,
+    },
   },
   data() {
     return {
       project: '',
       tags: [],
     };
+  },
+
+  computed: {
+    getColor() {
+      return function (tag) {
+        let temp = '';
+        for (let i = 0; i < tag.length; i++) {
+          temp += tag[i].charCodeAt().toString(16);
+        }
+        if (temp.length > 6) {
+          // 长度大于6时取后6位作为颜色值
+          temp = temp.substr(-6);
+        } else if (temp.length > 3) {
+          // 长度小于6大于3时取后3位作为颜色值
+          temp = temp.substr(-3);
+        } else {
+          // 若长度小于三则设置默认色
+          temp = 'aquamarine';
+        }
+        return 'background-color: #' + temp;
+      };
+    },
   },
 
   methods: {
@@ -53,23 +72,18 @@ export default {
       } else {
         this.tags = data.tags;
       }
-      console.log(data);
+      // console.log(data);
     },
   },
   mounted() {
-    console.log(this.projectId);
     this.init();
-    console.log(this.$route.params.userId)
-    console.log(this.type)
-    console.log(this.$store)
   },
 };
 </script>
 
 <style lang="scss" scoped>
-
 [v-cloak] {
-    display: none !important;
+  display: none !important;
 }
 .card {
   width: 100%;
@@ -106,7 +120,7 @@ export default {
       border-radius: 50%;
       width: 11px;
       height: 11px;
-      background-color: black;
+      // background-color: black;
       margin-top: 5px;
       margin-left: 15px;
     }

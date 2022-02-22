@@ -1,6 +1,8 @@
 package edu.njnu.reproducibility.remote;
 
 import cn.hutool.json.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import edu.njnu.reproducibility.common.enums.ResultEnum;
 import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.domain.user.User;
@@ -150,7 +152,12 @@ public class UserServiceServie {
         }
     }
 
-    //更新用户信息
+    /**
+    * @Description:更新用户信息
+    * @Author: Yiming
+    * @Date: 2022/1/20
+    */
+
     public JSONObject updateUserinfo(String email, String password, UpdateUserDTO user) throws IllegalAccessException {
         JSONObject jsonObj = get_token(email, password);
         String token = (String) jsonObj.get("access_token");
@@ -159,16 +166,21 @@ public class UserServiceServie {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + token);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        Map<String, String> paramMap = new HashMap<>();
-        Class clu = user.getClass();
-        Field []fields = clu.getDeclaredFields();
-        for(Field f : fields) {
-            f.setAccessible(true);
-            if(f.get(user) != null) {
-                paramMap.put(f.getName(), (String) f.get(user));
-            }
-        }
-        HttpEntity<Map<String, String>> httpEntity = new HttpEntity<>(paramMap, headers);
+//        Map<String, String> paramMap = new HashMap<>();
+//        paramMap.put("name", user.getName());
+//        paramMap.put("country", user.getCountry());
+//        paramMap.put("organizations", user.getOrganizations());
+//        paramMap.put("title", user.getTitle());
+//        paramMap.put("phone", user.getPhone());
+        ObjectNode jsonObject = new ObjectMapper().createObjectNode();
+//        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", user.getName());
+        jsonObject.put("country", user.getCountry());
+        jsonObject.put("organizations", user.getOrganizations());
+        jsonObject.put("title", user.getTitle());
+        jsonObject.put("phone", user.getPhone());
+        jsonObject.put("avatar", user.getAvatar());
+        HttpEntity httpEntity = new HttpEntity(jsonObject.toString(), headers);
         try{
             ResponseEntity<JSONObject> result = restTemplate.exchange(url, HttpMethod.POST, httpEntity, JSONObject.class);
             return result.getBody();

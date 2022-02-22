@@ -47,8 +47,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ClassUtils;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.text.SimpleDateFormat;
@@ -137,7 +141,13 @@ public class ProjectService {
         JSONObject creatorJson = new JSONObject();
         creatorJson.put("id", creator.getUserId());
         creatorJson.put("name", creator.getName());
-
+        RestTemplate template = new RestTemplate();
+        ResponseEntity<JSONObject> responseEntity = template.getForEntity("http://172.21.212.103:8088/userServer/user/getAvatar/" + creator.getEmail(), JSONObject.class);
+        if(responseEntity.getBody().getStr("msg") == null) {
+            creatorJson.put("avatar", "");
+        } else {
+            creatorJson.put("avatar", responseEntity.getBody().getStr("msg"));
+        }
         List<Member> memberIdList = project.getMembers();
         List<JSONObject> memberList = new ArrayList<>();
         JSONObject json = new JSONObject();
@@ -148,6 +158,9 @@ public class ProjectService {
             for (int i = 0; i < memberIdList.size(); i++) {
                 User member = userService.getUserInfoById(memberIdList.get(i).getMemberId());
                 JSONObject jsonObject = new JSONObject();
+                RestTemplate restTemplate = new RestTemplate();
+                ResponseEntity<JSONObject> result = restTemplate.getForEntity("http://172.21.212.103:8088/userServer/user/getAvatar/" + member.getEmail(), JSONObject.class);
+                jsonObject.put("avatar", result.getBody().getStr("msg"));
                 jsonObject.put("id", member.getUserId());
                 jsonObject.put("name", member.getName());
                 jsonObject.put("role", memberIdList.get(i).getRole());

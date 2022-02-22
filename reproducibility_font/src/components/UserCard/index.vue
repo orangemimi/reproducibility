@@ -3,14 +3,14 @@
   <div class="user">
     <div v-if="user.role == 'builder'" class="builder">
       <div class="block">
-        <el-avatar :size="50" src="https://t7.baidu.com/it/u=1595072465,3644073269&fm=193&f=GIF" :title="user.name" @click.native="click"></el-avatar>
+        <el-avatar :size="50" :src="user.avatar == '' ? '' : 'http://172.21.212.103:8088/userServer' + user.avatar" :title="user.name" @click.native="click">{{user.name}}</el-avatar>
       </div>
       <div class="text" :title="user.name" @click="click">{{ user.name }}</div>
     </div>
     <div v-else class="member">
       <!-- <div class="member"> -->
       <div class="block">
-        <el-avatar :size="50" src="https://t7.baidu.com/it/u=1595072465,3644073269&fm=193&f=GIF" :title="user.name" @click.native="click"></el-avatar>
+        <el-avatar :size="50" :src="user.avatar == '' ? '' : 'http://172.21.212.103:8088/userServer' + user.avatar" :title="user.name" @click.native="click"></el-avatar>
       </div>
       <div class="text" :title="user.name" @click="click">{{ user.name }}</div>
     </div>

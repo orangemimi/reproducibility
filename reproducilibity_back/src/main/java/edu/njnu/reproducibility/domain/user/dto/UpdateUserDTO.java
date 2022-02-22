@@ -23,12 +23,13 @@ public class UpdateUserDTO implements ToDomainConverter<User> {
     /**
      * User server
      */
-//    String avatar;
+    String avatar;
     String phone;
     String title;
     String country;
-    String state;    // County / State / Province
-    String city;
+    String organizations;
+//    String state;    // County / State / Province
+//    String city;
 //    String homepage;
 //    String introduction;
 //    String createdTime;

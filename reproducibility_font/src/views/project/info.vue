@@ -102,16 +102,11 @@
                 </div>
               </div>
 
-              <div class="content">
+              <div class="content" v-if="creator.avatar != undefined">
                 <vue-scroll :ops="ops" class="scroll" style="height: calc(100vh - 554px)">
-                  <user-card :user="{ name: creator.name, role: 'builder', id: $store.state.user.userId }" class=""></user-card>
+                  <user-card :user="{ name: creator.name, role: 'builder', id: creator.id, avatar: creator.avatar }" class=""></user-card>
                   <el-row>
-                    <!-- <div v-for="(item, index) in 103" :key="index">
-                      <el-col :span="3"><user-card :user="members[0]"></user-card></el-col>
-                    </div>
-                    <el-col :span="3">
-                      <el-avatar :size="50" icon="el-icon-more"></el-avatar>
-                    </el-col> -->
+
                     <div v-if="members.length > 103">
                       <div v-for="(item, index) in 103" :key="index">
                         <el-col :span="3"><user-card :user="members[index]"></user-card></el-col>

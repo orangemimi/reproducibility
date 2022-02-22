@@ -1,6 +1,6 @@
 import { get, post, patch, del } from '@/axios';
 import { successNotification } from '@/utils/notification';
-
+import axios from 'axios';
 //-------------------------------------------------users--------------------------------------
 
 //判断是否是已经Star的项目
@@ -28,13 +28,6 @@ export async function updateUserByJwtUserId(form) {
   return data;
 }
 
-export async function updateUserJoinedProjects(form) {
-  let data = await patch(`/users`, form);
-  // if (data != null) {
-  //   successNotification('update', 'user');
-  // }
-  return data;
-}
 export async function updateUserCreatedProjects(form) {
   let data = await patch(`/users`, form);
   // if (data != null) {
@@ -718,3 +711,6 @@ export async function getPerformanceByProjectId(projectId) {
 }
 
 //===============================extra=================================================
+export async function postFile(form) {
+  return await axios.post('http://221.226.60.2:8082/data', form)
+}

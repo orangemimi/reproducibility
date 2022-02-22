@@ -10,9 +10,10 @@
           </div>
           <el-input placeholder="Please enter the content" size="small" prefix-icon="el-icon-search"></el-input>
           <div v-if="myProjects.length > 0">
-            <div v-for="(item, index) in myProjects" :key="index" style="display: flex">
-              <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" :size="30"></el-avatar>
-              <div style="height: 30px; line-height: 30px">
+            <div v-for="(item, index) in myProjects" :key="index" style="display: flex;margin-bottom: 5px;">
+              <el-avatar :src="item.picture" :size="30" style="margin-right: 5px;" v-if="item.picture != '' && item.picture != undefined"></el-avatar>
+              <el-avatar :src="imgBase64(item.projectName)" :size="30" style="margin-right: 5px;" v-else></el-avatar>
+              <div style="height: 30px; line-height: 30px;">
                 {{ item.userName }}
                 <span>/</span>
                 {{ item.projectName }}
@@ -78,8 +79,9 @@
 </template>
 
 <script>
-import { getUserProjects, getProjectsPage, saveProject } from '@/api/request';
+import { getUserProjects, getProjectsPage, saveProject, postFile } from '@/api/request';
 // import { oneOf } from '@/utils/utils';
+import { imgBase64 } from '@/lib/utils';
 import projectCard from './components/ProjectCard';
 import addImage from '_com/AddImage/index1.vue';
 import { mapState } from 'vuex';
@@ -113,15 +115,21 @@ export default {
         purpose: '',
         privacy: 'public',
       },
+      pictureFile: '',
     };
   },
 
   methods: {
     async init() {
       this.myProjects = await getUserProjects();
+      console.log(this.myProjects)
       let data = await getProjectsPage(0, 10);
       this.projectList = data.content;
       this.total = data.totalElements;
+    },
+
+    imgBase64(projectName) {
+      return imgBase64(projectName)
     },
 
     async change(val) {
@@ -157,8 +165,13 @@ export default {
     },
     getfile(val) {
       console.log(val);
+      this.pictureFile = val
     },
     async saveProject() {
+      let form = new FormData()
+      form.append('datafile', this.pictureFile.raw)
+      form.append('name', this.form.name)
+      let pictureData = await postFile(form)
       let jsonData = {
         project: {
           name: this.form.name,
@@ -166,6 +179,7 @@ export default {
           purpose: this.form.purpose,
           privacy: this.form.privacy,
           tags: this.dynamicTags,
+          picture: 'http://221.226.60.2:8082/data/' + pictureData.data.data.id
         },
         performance: {
           completion: {
@@ -231,5 +245,6 @@ export default {
 .picture {
   margin-top: 10px;
   margin-left: 10px;
+  
 }
 </style>
