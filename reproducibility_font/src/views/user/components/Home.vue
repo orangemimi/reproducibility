@@ -4,7 +4,7 @@
     <div class="main-top">
       <div>
         <div class="title"><h3 class="h3">My Space</h3></div>
-        <div class="subtitle"><h5 class="h5">You can manage your model and data here</h5></div>
+        <div class="subtitle"><h5 class="h5">You can manage your resources and projects here</h5></div>
       </div>
     </div>
 
@@ -14,15 +14,15 @@
           <user-home-card>
             <template v-slot:tit>
               <img src="http://geomodeling.njnu.edu.cn/static/img/model/model.png" alt="" style="width: 24px" />
-              Model
+              Resources
             </template>
             <template v-slot:describe>
-              <p>You can manage model provided by yourself</p>
+              <p>You can manage resources provided by yourself!</p>
             </template>
             <template v-slot:man>
               <h4>Manage</h4>
               <h4 style="margin-top: 10px; margin-bottom: 10px">my</h4>
-              <h4>model</h4>
+              <h4>resources</h4>
             </template>
             <template v-slot:nav>
               <el-button icon="el-icon-right" type="primary" circle @click="butclick('UserResource')" :plain="true"></el-button>
@@ -33,18 +33,18 @@
           <user-home-card>
             <template v-slot:tit>
               <img src="http://geomodeling.njnu.edu.cn/static/img/model/calcModel.png" alt="" style="width: 24px" />
-              dataservice
+              Projects
             </template>
             <template v-slot:describe>
-              <p>You can manage model provided by yourself</p>
+              <p>You can manage projects provided by yourself!</p>
             </template>
             <template v-slot:man>
               <h4>Manage</h4>
               <h4 style="margin-top: 10px; margin-bottom: 10px">my</h4>
-              <h4>model</h4>
+              <h4>projects</h4>
             </template>
             <template v-slot:nav>
-              <el-button icon="el-icon-right" type="primary" circle @click="butclick('UserModel')" :plain="true"></el-button>
+              <el-button icon="el-icon-right" type="primary" circle @click="butclick('UserProject')" :plain="true"></el-button>
             </template>
           </user-home-card>
         </el-col>
@@ -54,18 +54,18 @@
           <user-home-card>
             <template v-slot:tit>
               <img src="http://geomodeling.njnu.edu.cn/static/img/model/logical.png" alt="" style="width: 24px" />
-              projects
+              Message
             </template>
             <template v-slot:describe>
-              <p>You can manage model provided by yourself</p>
+              <p>You can manage your related message!</p>
             </template>
             <template v-slot:man>
               <h4>Manage</h4>
               <h4 style="margin-top: 10px; margin-bottom: 10px">my</h4>
-              <h4>model</h4>
+              <h4>message</h4>
             </template>
             <template v-slot:nav>
-              <el-button icon="el-icon-right" type="primary" circle @click="butclick('UserAccount')" :plain="true"></el-button>
+              <el-button icon="el-icon-right" type="primary" circle @click="butclick('UserMessage')" :plain="true"></el-button>
             </template>
           </user-home-card>
         </el-col>
@@ -73,15 +73,15 @@
           <user-home-card>
             <template v-slot:tit>
               <img src="http://geomodeling.njnu.edu.cn/static/img/model/conceptual.png" alt="" style="width: 24px" />
-              dataservice
+              Feedbacks
             </template>
             <template v-slot:describe>
-              <p>You can manage model provided by yourself</p>
+              <p>You can give us the Feedbacks!</p>
             </template>
             <template v-slot:man>
-              <h4>Manage</h4>
+              <h4>Give</h4>
               <h4 style="margin-top: 10px; margin-bottom: 10px">my</h4>
-              <h4>model</h4>
+              <h4>feedbacks</h4>
             </template>
             <template v-slot:nav>
               <el-button icon="el-icon-right" type="primary" circle @click="butclick('UserMessage')" :plain="true"></el-button>

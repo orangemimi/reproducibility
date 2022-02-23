@@ -88,18 +88,19 @@ export default {
 .card {
   width: 100%;
   height: 170px;
-
+  // box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
   border-radius: 4px;
   border: 1px solid #c0c4cc;
   .head {
     display: flex;
+    position: relative;
     .title {
       font-weight: bolder;
       color: #409eff;
     }
     .privacy {
-      position: relative;
-      left: 70%;
+      position: absolute;
+      left: 75%;
       opacity: 0.5;
     }
     font-size: 13px;

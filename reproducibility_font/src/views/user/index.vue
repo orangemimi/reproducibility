@@ -15,18 +15,18 @@
           <i class="el-icon-document"></i>
           <template #title>Projects</template>
         </el-menu-item>
-        <el-menu-item index="4">
+        <!-- <el-menu-item index="4">
           <i class="el-icon-document"></i>
           <template #title>Models</template>
         </el-menu-item>
         <el-menu-item index="5">
           <i class="el-icon-document"></i>
           <template #title>DataServices</template>
-        </el-menu-item>
-        <el-menu-item index="6">
+        </el-menu-item> -->
+        <!-- <el-menu-item index="6">
           <i class="el-icon-setting"></i>
           <template #title>Account</template>
-        </el-menu-item>
+        </el-menu-item> -->
         <el-menu-item index="7">
           <i class="el-icon-setting"></i>
           <template #title>Message</template>

@@ -1,117 +1,132 @@
 <template>
   <div>
-    <el-card class="box-card">
-      <template #header>
-        <div class="card-header">
-          <div class="title" :title="projectInfo.name">{{ projectInfo.name }}</div>
-          <div>
-            <el-button type="primary" icon="el-icon-edit" circle @click.native="editProjectInfoDialogShow = true"></el-button>
-            <el-button type="danger" icon="el-icon-delete" circle></el-button>
-          </div>
-        </div>
-      </template>
+    <el-card class="box-card" shadow="hover">
       <div class="body" @click="clickProjectCard">
-        <div class="text item" :title="projectInfo.description">
-          <label>Description：</label>
-          {{ projectInfo.description }}
-        </div>
-        <div class="text item" :title="projectInfo.createTime">
-          <label>Create Time：</label>
-          {{ projectInfo.createTime }}
-        </div>
-        <div class="text item" :title="projectInfo.privacy">
-          <label>Privacy：</label>
-          {{ projectInfo.privacy }}
+        <el-avatar
+          :size="60"
+          shape="square"
+          :src="project.picture != '' && project.picture != undefined ? project.picture : imgBase64(project.name)"
+        ></el-avatar>
+        <p class="title">{{ project.name }}</p>
+        <p class="introduction" :title="project.introduction">{{ project.introduction }}</p>
+      </div>
+      <div class="details">
+        <i class="el-icon-star-on" style="margin-right: 10px">{{ project.starCount }}</i>
+        <i class="iconfont icon-fork" style="font-size: 13px; margin-right: 10px">{{ project.folkCount }}</i>
+        <i class="el-icon-view" style="margin-right: 2px"></i>
+        {{ project.watchCount }}
+      </div>
+      <div class="tags">
+        <div v-for="(item, index) in tags" :key="index" style="display: flex">
+          <div class="circle" :style="getColor(item)"></div>
+          <p class="tag">{{ item }}</p>
         </div>
       </div>
     </el-card>
-
-    <el-dialog title="Edit Project Info" :visible.sync="editProjectInfoDialogShow" width="40%" :close-on-click-modal="false">
-      <edit-info-form :projectInfo="project" @editProjectInfoResponse="editProjectInfoResponse"></edit-info-form>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-import editInfoForm from '../../project/components/EditProjectInfo.vue';
+
+import { imgBase64 } from '@/lib/utils';
 export default {
   props: {
     project: {
       type: Object,
     },
   },
-  components: { editInfoForm },
+
+  computed: {
+    getColor() {
+      return function (tag) {
+        let temp = '';
+        for (let i = 0; i < tag.length; i++) {
+          temp += tag[i].charCodeAt().toString(16);
+        }
+        if (temp.length > 6) {
+          // 长度大于6时取后6位作为颜色值
+          temp = temp.substr(-6);
+        } else if (temp.length > 3) {
+          // 长度小于6大于3时取后3位作为颜色值
+          temp = temp.substr(-3);
+        } else {
+          // 若长度小于三则设置默认色
+          temp = 'aquamarine';
+        }
+        return 'background-color: #' + temp;
+      };
+    },
+  },
   data() {
     return {
-      editProjectInfoDialogShow: false,
-      projectInfo: '',
+      tags: [],
     };
   },
   methods: {
-    async editProjectInfoResponse(val) {
-      if (val) {
-        this.editProjectInfoDialogShow = false;
-        this.projectInfo = val.data;
-        this.$notify({
-          title: 'Success',
-          message: 'You have update the project successfully!',
-          type: 'success',
-        });
-      }
+    
+    imgBase64(projectName) {
+      return imgBase64(projectName);
     },
     async clickProjectCard() {
       await this.$store.dispatch('permission/getRole', {
         project: this.project,
         userId: this.$store.userId,
       });
-      this.$router.push({ path: `/project/${this.projectInfo.id}/info` });
+      this.$router.push({ path: `/project/${this.project.id}/info` });
     },
   },
   created() {
-    this.projectInfo = this.project;
+    if (this.project.tags == null) {
+      this.tags = [];
+    } else {
+      this.tags = this.project.tags;
+    }
   },
 };
 </script>
 
 <style scoped lang="scss">
 .el-card {
-  width: 250px;
-  .text {
-    font-size: 16px;
+  margin-bottom: 20px;
+  .body {
+    text-align: center;
+    height: 200px;
+    .el-avatar {
+      margin-bottom: 20px;
+    }
+    .title {
+      font-size: 19px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    .introduction {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      overflow: hidden;
+    }
   }
-
-  .title:hover {
-    cursor: pointer;
+  .details {
+    margin-left: 13px;
+    // margin-top: 8px;
+    font-size: 13px;
   }
-  .title {
-    width: 100px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    font-size: 20px;
-    font-weight: 500;
-    color: #409EFF;
-  }
-
-  .item, label:hover {
-    cursor: pointer;
-  }
-  .item {
-    margin-bottom: 18px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-  label {
-    font-weight: bolder;
-  }
-}
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  .el-link {
-    font-size: 20px;
+  .tags {
+    display: flex;
+    height: 17px;
+    margin-top: 10px;
+    .circle {
+      border-radius: 50%;
+      width: 11px;
+      height: 11px;
+      // background-color: black;
+      margin-top: 5px;
+      margin-left: 15px;
+    }
+    .tag {
+      margin-left: 3px;
+      font-size: 13px;
+    }
   }
 }
 </style>

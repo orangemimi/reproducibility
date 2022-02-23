@@ -16,28 +16,35 @@
       </el-row>
     </div>
 
-    <div class="project">
-      <el-row>
-        <el-col :span="4" v-for="(project, index) in projectList" :key="index">
-          <div v-if="project.creator == userId">
-            <div class="project-card" v-show="create">
-              <project-card :project="project"></project-card>
+    <vue-scroll style="max-height:calc(100% - 50px)">
+      <div class="project">
+        <el-row :gutter="20">
+          <el-col v-for="(project, index) in projectList" :key="index" class="el-col-4-8">
+            <div v-if="project.creator == userId">
+              <div class="project-card" v-show="create">
+                <project-card :project="project"></project-card>
+              </div>
             </div>
-          </div>
-          <div v-else>
-            <div class="project-card" v-show="join">
-              <project-card :project="project"></project-card>
+            <div v-else>
+              <div class="project-card" v-show="join">
+                <project-card :project="project"></project-card>
+              </div>
             </div>
-          </div>
-        </el-col>
-      </el-row>
-    </div>
+          </el-col>
+        </el-row>
+      </div>
+    </vue-scroll>
+
+    <el-dialog title="New Project" :visible.sync="dialogNewProject" width="30%">
+      <create @dialogShow="dialogShow"/>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { getMyProjects } from '@/api/request';
 import projectCard from './ProjectCard.vue';
+import create from '../../projects/components/create.vue'
 
 export default {
   data() {
@@ -47,9 +54,10 @@ export default {
       userId: this.$store.state.user.userId,
       create: true,
       join: true,
+      dialogNewProject: false
     };
   },
-  components: { projectCard },
+  components: { projectCard, create },
   methods: {
     async getprojects() {
       this.projectList = await getMyProjects();
@@ -72,10 +80,12 @@ export default {
       }
     },
     createProject() {
-      console.log(this.$router);
-      this.$router.push('/newproject');
-      // this.$router.currentRoute.fullPath = '/newproject'
+      this.dialogNewProject = true
     },
+
+    dialogShow(val) {
+      this.dialogNewProject = val
+    }
   },
   mounted() {
     this.getprojects();
@@ -88,7 +98,7 @@ export default {
   width: 90%;
   margin: 30px auto;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
-  height: 90%;
+  height: 779px;
   background: white;
   border-radius: 4px;
   .check {
@@ -105,8 +115,13 @@ export default {
 }
 .project {
   padding: 20px 20px; // for col
+
   .project-card:hover {
     cursor: pointer;
   }
+  .el-col-4-8 {
+    width: 20%;
+  }
 }
+
 </style>

@@ -178,9 +178,12 @@ export default {
   methods: {
     async init() {
       let data = await getAllUserInfo(this.userId);
+      console.log(data)
       this.localuser = data.localhost;
       this.remoteuser = data.remote.data;
-      this.pictureURL = 'http://172.21.212.103:8088/userServer' + data.remote.data.avatar
+      if(data.remote.data.avatar != '' && data.remote.data.avatar != undefined) {
+        this.pictureURL = 'http://172.21.212.103:8088/userServer' + data.remote.data.avatar
+      } 
       console.log(this.remoteuser);
       if (this.remoteuser.name != undefined && this.remoteuser.name != null && this.remoteuser.name != '') {
         this.form.name = this.remoteuser.name;
