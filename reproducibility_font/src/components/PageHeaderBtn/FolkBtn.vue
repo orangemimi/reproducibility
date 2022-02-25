@@ -4,7 +4,7 @@
     <div class="btn">
       <el-button class="btn-left" :disabled="isDisable" @click="folkClick">
         <div>
-          <i class="el-icon-edit"></i>
+          <i class="iconfont icon-fork"></i>
           Fork
         </div>
       </el-button>

@@ -51,8 +51,18 @@ export default {
       userId: (state) => state.user.userId,
     }),
   },
+ 
+  async beforeRouteUpdate(to, from, next) {
+    this.projectId = to.params.id
+    await this.init()
+    next()
+  },
 
-  watch: {},
+  // watch: {
+  //   $route(val) {
+  //     console.log(val)
+  //   }
+  // },
 
   data() {
     return {

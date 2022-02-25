@@ -15,6 +15,7 @@ import 'mavon-editor/dist/css/index.css'
 import './assets/iconfont/iconfont.css';
 import './assets/iconfont1/iconfont.css'
 import './assets/iconfont1/iconfont.js'
+import './assets/font/font.css'
 import '@/router/permission'; // permission control
 import vuescroll from 'vuescroll';
 import vueJsonEditor from 'vue-json-editor';

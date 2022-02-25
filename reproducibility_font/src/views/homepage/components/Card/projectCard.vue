@@ -5,13 +5,14 @@
       <p class="privacy" v-show="type == 'projects' && $route.params.userId == $store.state.user.userId">{{ project.privacy }}</p>
     </div>
     <div class="des">
-      <p>{{ project.description }}</p>
+      <p>{{ project.introduction }}</p>
     </div>
     <div>
       <div class="details">
         <i class="el-icon-star-on" style="margin-right: 10px">{{ project.starCount }}</i>
-        <i class="iconfont icon-fork" style="font-size: 13px;margin-right: 10px">{{ project.folkCount }}</i>
-        <i class="el-icon-view" style="margin-right: 2px"></i>{{ project.watchCount }}
+        <i class="iconfont icon-fork" style="font-size: 13px; margin-right: 10px">{{ project.folkCount }}</i>
+        <i class="el-icon-view" style="margin-right: 2px"></i>
+        {{ project.watchCount }}
       </div>
       <div class="tags">
         <div v-for="(item, index) in tags" :key="index" style="display: flex">
@@ -90,6 +91,7 @@ export default {
   height: 170px;
   // box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
   border-radius: 4px;
+  padding-right: 10px;
   border: 1px solid #c0c4cc;
   .head {
     display: flex;
@@ -108,11 +110,16 @@ export default {
     margin-left: 15px;
   }
   .des {
+    padding-top: 5px;
     margin-top: 10px;
     margin-left: 15px;
     font-size: 13px;
     margin-bottom: 13px;
     height: 40px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
   }
   .tags {
     display: flex;

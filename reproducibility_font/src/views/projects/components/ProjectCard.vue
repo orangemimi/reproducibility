@@ -10,7 +10,7 @@
         <img :src="imgPath(project.picture, project.name)" />
         <div class="content">
           <h3 class="title" :title="project.name">{{ project.name }}</h3>
-          <p class="desc" :title="project.description">{{ project.description }}</p>
+          <p class="desc" :title="project.description">{{ project.introduction }}</p>
         </div>
       </div>
 

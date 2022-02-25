@@ -7,37 +7,45 @@
           <div class="info-card">
             <div class="info-card-top">
               <div class="info-detail" v-if="Object.keys(projectInfo).length != 0">
-                <div class="content">
-                  <strong>Title:</strong>
-                  {{ projectInfo.name }}
-                </div>
-                <div class="content">
-                  <strong>Privacy:</strong>
-                  {{ projectInfo.privacy }}
-                </div>
-                <div class="content">
-                  <strong>Category:</strong>
-                  Reproduction
-                </div>
-                <div class="content">
-                  <strong style="float: left">Tag:</strong>
-                  <div v-if="projectInfo.tag != null">
-                    <div v-for="(item, index) in projectInfo.tag" :key="index">
-                      <el-tag type="success" style="float: left">{{ item }}</el-tag>
-                    </div>
+                <div class="title">
+                  <h2>{{ projectInfo.name }}</h2>
+                  <div v-if="projectInfo.forkingProjectId != '' && projectInfo.forkingProjectId != undefined" class="prompt">
+                    from <router-link :to="{path:`/project/${projectInfo.forkingProjectId}/info`}">this project</router-link>
                   </div>
-                  <div v-else>
-                    <el-tag type="success" style="float: left"><i class="el-icon-edit"></i></el-tag>
+                </div>
+                <div class="content">
+                  <div class="head">
+                    <div class="mark"></div>
+                    <div><strong>Category:</strong></div>
+                    <div class="line"></div>
+                  </div>
+                  <div class="text">Reproduction</div>
+                </div>
+                <div class="content">
+                  <div class="head">
+                    <div class="mark"></div>
+                    <div><strong>Tag:</strong></div>
+                    <div class="line"></div>
+                  </div>
+                  <div class="tags">
+                    <div v-if="projectInfo.tags != null">
+                      <div v-for="(item, index) in projectInfo.tags" :key="index">
+                        <el-tag type="success" style="float: left">{{ item }}</el-tag>
+                      </div>
+                    </div>
+                    <div v-else>
+                      <el-tag type="success" style="float: left"><i class="el-icon-edit"></i></el-tag>
+                    </div>
                   </div>
                 </div>
 
                 <div class="content">
-                  <strong>Create time: </strong>
-                  <span class="time">{{ dateFormat(projectInfo.createTime) }}</span>
-                </div>
-                <div class="content">
-                  <strong>Update time: </strong>
-                  <span class="time">{{ dateFormat(projectInfo.updateTime) }}</span>
+                  <div class="head">
+                    <div class="mark"></div>
+                    <div style="width: 35%"><strong>Create time:</strong></div>
+                    <div class="line"></div>
+                  </div>
+                  <div class="time text">{{ dateFormat(projectInfo.createTime) }}</div>
                 </div>
               </div>
 
@@ -68,22 +76,33 @@
               </div>
             </div>
             <div class="info-card-bottom">
-              <div class="des">
-                <strong>Description:</strong>
-                <div class="content" v-if="projectInfo.description != null && projectInfo.description != ''">
-                  {{ projectInfo.description }}
-                </div>
-                <div v-else class="content">
-                  <p class="nocontent">No description</p>
-                </div>
-              </div>
               <div class="intro">
-                <strong>Introduction:</strong>
+                <div class="head">
+                  <div class="mark"></div>
+                  <div><strong>Introduction:</strong></div>
+                  <div class="line"></div>
+                </div>
                 <div class="content" v-if="projectInfo.introduction != null && projectInfo.introduction != ''">
                   {{ projectInfo.introduction }}
                 </div>
                 <div v-else class="content">
                   <p class="nocontent">No introduction</p>
+                </div>
+              </div>
+              <div class="des">
+                <div class="head">
+                  <div class="mark"></div>
+                  <div><strong>Description:</strong></div>
+                  <div class="line"></div>
+                </div>
+                <div class="content" v-if="projectInfo.description != null && projectInfo.description != ''">
+                  <!-- {{ projectInfo.description }} -->
+                  <div class="item-box w-e-text" v-html="projectInfo.description"></div>
+
+                  <!-- <div class="w-e-text-container" v-html="projectInfo.description"></div> -->
+                </div>
+                <div v-else class="content">
+                  <p class="nocontent">No description</p>
                 </div>
               </div>
             </div>
@@ -93,9 +112,10 @@
           <div class="info-card-right">
             <div class="participants">
               <div class="info">
+                <div class="mark"></div>
                 <div class="title">Participants</div>
                 <div class="add-participant">
-                  <el-button size="small" @click="addParticipantDialogShow = true">
+                  <el-button size="mini" @click="addParticipantDialogShow = true">
                     Add participant
                     <i class="el-icon-user-solid"></i>
                   </el-button>
@@ -106,7 +126,6 @@
                 <vue-scroll :ops="ops" class="scroll" style="height: calc(100vh - 554px)">
                   <user-card :user="{ name: creator.name, role: 'builder', id: creator.id, avatar: creator.avatar }" class=""></user-card>
                   <el-row>
-
                     <div v-if="members.length > 103">
                       <div v-for="(item, index) in 103" :key="index">
                         <el-col :span="3"><user-card :user="members[index]"></user-card></el-col>
@@ -126,9 +145,10 @@
             </div>
             <div class="citation">
               <div class="info">
+                <div class="mark"></div>
                 <div class="title">Citation</div>
                 <div class="edit">
-                  <el-button size="small" v-show="role == 'builder'">Edit</el-button>
+                  <el-button size="mini" v-show="role == 'builder'">Edit</el-button>
                 </div>
               </div>
 
@@ -172,14 +192,19 @@ export default {
     // reBuilderCard
   },
 
-  watch: {},
-
   computed: {
     ...mapState({
       // userId: state => state.user.userId,
       role: (state) => state.permission.role,
       // token: state => state.user.token
     }),
+  },
+
+
+  async beforeRouteUpdate(to, from, next) {
+    this.projectId = to.params.id
+    await this.init()
+    next()
   },
 
   data() {
@@ -210,7 +235,10 @@ export default {
       this.projectInfo = data.project;
       this.creator = data.creator;
       if (data.members != null) {
-        this.members = data.members;
+        //防止出现数组修改不响应的情况
+        this.$set(this, 'members', data.members)
+      } else {
+        this.$set(this, 'members', [])
       }
     },
 
@@ -264,17 +292,47 @@ export default {
         width: 60%;
         height: 100%;
         float: left;
-        .content {
+        .title {
           margin-bottom: 20px;
-          clear: both;
-          height: 20px;
-          .el-tag {
-            display: inline;
-            font-size: 14px;
-            margin: 0 5px;
+          .prompt {
+            font-size: 10px;
+            font-weight: 500;
+            // color:#B3D8FF
           }
-          .time {
-            font: italic 1em Georgia, serif;
+        }
+        .content {
+          margin-bottom: 10px;
+          clear: both;
+          .head {
+            display: flex;
+            height: 20px;
+            margin-bottom: 10px;
+            line-height: 20px;
+            .mark {
+              width: 10px;
+              background: #67c6a6;
+              margin-right: 10px;
+            }
+            .line {
+              height: 10px;
+              border-bottom-style: solid;
+              border-bottom-color: #e9e9e9;
+              border-bottom-width: 0.7px;
+              width: 100%;
+              margin-top: 4px;
+              margin-left: 7px;
+            }
+          }
+          .tags {
+            height: 30px;
+            .el-tag {
+              display: inline;
+              font-size: 14px;
+              margin: 0 5px;
+            }
+          }
+          .text {
+            text-indent: 10px;
           }
         }
       }
@@ -300,21 +358,39 @@ export default {
       margin-top: 10px;
       word-wrap: break-word;
       word-break: normal;
-
+      .intro {
+        margin-bottom: 10px;
+        .content {
+          margin-top: 5px;
+          // height: 110px;
+          text-indent: 25px;
+        }
+      }
       .des {
         margin-bottom: 5px;
         .content {
           margin-top: 5px;
-          height: 100px;
-          border: 1px dotted $btnBorder;
         }
       }
-      .intro {
-        margin-bottom: 5px;
-        .content {
-          margin-top: 5px;
-          height: 200px;
-          border: 1px dotted $btnBorder;
+
+      .head {
+        display: flex;
+        height: 20px;
+        margin-bottom: 10px;
+        line-height: 20px;
+        .mark {
+          width: 10px;
+          background: #3c85e5;
+          margin-right: 10px;
+        }
+        .line {
+          height: 10px;
+          border-bottom-style: solid;
+          border-bottom-color: #e9e9e9;
+          border-bottom-width: 0.7px;
+          width: 100%;
+          margin-top: 4px;
+          margin-left: 7px;
         }
       }
     }
@@ -324,60 +400,54 @@ export default {
     background-color: white;
     min-height: calc(100vh - 242px);
     padding: 20px 32px;
-    .participants {
-      .info {
-        height: 32px;
-        line-height: 32px;
-        margin-bottom: 5px;
-        .title {
-          float: left;
-          font-weight: 800;
+    .info {
+      height: 32px;
+      line-height: 32px;
+      margin-bottom: 5px;
+      display: flex;
+      .mark {
+        width: 10px;
+        margin-right: 10px;
+        background: #e3c381;
+        height: 20px;
+        margin-top: 6px;
+      }
+      .title {
+        font-weight: 800;
+        font-size: 20px;
+      }
+      .add-participant {
+        margin-left: auto;
+        .el-button {
+          background-color: $contain2Background;
+          color: $normalFontColor;
+          font-weight: 400;
+          font-family: inherit;
         }
-        .add-participant {
-          float: right;
-          .el-button {
-            background-color: $contain2Background;
-            color: $normalFontColor;
-            font-weight: 400;
-            font-family: inherit;
-          }
-          .el-button:hover {
-            color: $normalFontColor;
-            border-color: $btnBorder;
-            background-color: $btnHoverBg;
-          }
+        .el-button:hover {
+          color: $normalFontColor;
+          border-color: $btnBorder;
+          background-color: $btnHoverBg;
         }
       }
-      // .content {
-      //   // .scroll {
-      //   // }
-      // }
+      .edit {
+        margin-left: auto;
+        .el-button {
+          background-color: $contain2Background;
+          color: $normalFontColor;
+          font-weight: 400;
+          font-family: inherit;
+        }
+        .el-button:hover {
+          color: $normalFontColor;
+          border-color: $btnBorder;
+          background-color: $btnHoverBg;
+        }
+      }
+
     }
 
     .citation {
-      .info {
-        margin-bottom: 5px;
-
-        .title {
-          float: left;
-          font-weight: 800;
-        }
-        .edit {
-          float: right;
-          .el-button {
-            background-color: $contain2Background;
-            color: $normalFontColor;
-            font-weight: 400;
-            font-family: inherit;
-          }
-          .el-button:hover {
-            color: $normalFontColor;
-            border-color: $btnBorder;
-            background-color: $btnHoverBg;
-          }
-        }
-      }
-
       .content {
         margin-top: 5px;
         height: 200px;

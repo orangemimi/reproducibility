@@ -1,6 +1,7 @@
 <template>
   <div class="editor">
-    <div id="e"></div>
+    <div id="e">
+    </div>
   </div>
 </template>
 
@@ -18,6 +19,7 @@ export default {
       info_: null,
     };
   },
+  
   model: {
     prop: 'desc',
     event: 'change',
@@ -47,12 +49,16 @@ export default {
       type: Boolean,
       default: false,
     },
+    html: {
+      type: String,
+      default: ''
+    }
   },
 
   methods: {
     initE() {
       this.editor = new E('#e');
-      this.editor.config.height = 700;
+      this.editor.config.height = 200;
       this.editor.config.placeholder = 'Please enter the context';
       this.editor.config.menuTooltipPosition = 'down';
       this.editor.highlight = hljs;
@@ -60,8 +66,9 @@ export default {
       this.editor.i18next = i18next;
       this.editor.config.onchange = (val) => {
         this.content = val;
+        this.click()
       };
-      console.log(this.editor);
+      // console.log(this.editor);
       //   this.editor.customConfig.onchangeTimeout = 1000; // 单位 ms
       //   this.editor.customConfig.uploadFileName = 'file';
       //   this.editor.customConfig.uploadImgServer = `url`; // 你的服务器地址
@@ -132,16 +139,19 @@ export default {
       //     'redo', // 重复
       //   ];
       this.editor.create();
+      this.editor.txt.html(this.html)
       // this.editor.txt.html(this.desc)
       //  this.editor.txt.html(this.desc)
     },
     click() {
-      console.log(this.content);
-      console.log(this.editor.tex)
+      // console.log(this.content);
+      // console.log(this.editor)
+      this.$emit("textChange", this.content)
     },
   },
   mounted() {
     this.initE();
+
   },
 };
 </script>

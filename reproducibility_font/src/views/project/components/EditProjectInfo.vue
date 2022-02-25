@@ -7,15 +7,12 @@
           <el-form-item label="Name">
             <el-input v-model="form.name" />
           </el-form-item>
-          <el-form-item label="Description">
-            <el-input v-model="form.description" />
-          </el-form-item>
           <el-form-item label="Introduction">
             <el-input v-model="form.introduction" />
           </el-form-item>
-          <el-form-item label="Purpose">
+          <!-- <el-form-item label="Purpose">
             <el-input v-model="form.purpose" />
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="Privacy">
             <el-radio-group v-model="form.privacy">
               <el-radio label="public">Public</el-radio>
@@ -37,6 +34,10 @@
           <el-form-item label="Image">
             <add-image @uploadImgResponse="uploadImgResponse" :fileUrl="form.picture" :uploadPath="'projects/picture'"></add-image>
           </el-form-item>
+          <el-form-item label="Description">
+            <!-- <el-input v-model="form.description" /> -->
+            <wang-editor :html="form.description" @textChange="textChange"/>
+          </el-form-item>
         </el-form>
       </el-col>
     </el-row>
@@ -46,6 +47,8 @@
 
 <script>
 import addImage from '_com/AddImage';
+import wangEditor from '_com/WangEditor/WangEditor.vue';
+
 import { updateProject } from '@/api/request';
 export default {
   props: {
@@ -54,7 +57,7 @@ export default {
     }
   },
 
-  components: { addImage },
+  components: { addImage, wangEditor },
 
   // watch: {
   //   projectInfomation: {
@@ -110,6 +113,10 @@ export default {
       console.log(val);
       this.$set(this.form, 'picture', val);
       this.form.picture = val;
+    },
+
+    textChange(val) {
+      this.form.description = val
     }
   }
 };
