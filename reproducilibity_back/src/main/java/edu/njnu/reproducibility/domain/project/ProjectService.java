@@ -34,6 +34,7 @@ import edu.njnu.reproducibility.domain.performance.dto.AddPerformanceDTO;
 import edu.njnu.reproducibility.domain.project.dto.AddProjectDTO;
 import edu.njnu.reproducibility.domain.project.dto.UpdateProjectDTO;
 import edu.njnu.reproducibility.domain.project.dto.UpdateProjectMembersDTO;
+import edu.njnu.reproducibility.domain.project.support.Citation;
 import edu.njnu.reproducibility.domain.project.support.Record;
 import edu.njnu.reproducibility.domain.scenario.Scenario;
 import edu.njnu.reproducibility.domain.scenario.ScenarioRepository;
@@ -160,7 +161,11 @@ public class ProjectService {
                 JSONObject jsonObject = new JSONObject();
                 RestTemplate restTemplate = new RestTemplate();
                 ResponseEntity<JSONObject> result = restTemplate.getForEntity("http://172.21.212.103:8088/userServer/user/getAvatar/" + member.getEmail(), JSONObject.class);
-                jsonObject.put("avatar", result.getBody().getStr("msg"));
+                if(result.getBody().getStr("msg") == null) {
+                    jsonObject.put("avatar", "");
+                } else {
+                    jsonObject.put("avatar", result.getBody().getStr("msg"));
+                }
                 jsonObject.put("id", member.getUserId());
                 jsonObject.put("name", member.getName());
                 jsonObject.put("role", memberIdList.get(i).getRole());
@@ -278,7 +283,7 @@ public class ProjectService {
         AddIntegrateTaskDTO addIntegrateTaskDTO = new AddIntegrateTaskDTO();
         addIntegrateTaskDTO.setProjectId(project.getId());
         addIntegrateTaskDTO.setCreator(userId);
-        addIntegrateTaskDTO.setUserName(userName);
+//        addIntegrateTaskDTO.setUserName(userName);
         addIntegrateTaskDTO.setTaskName(name);
         addIntegrateTaskDTO.setTaskDescription("");
         addIntegrateTaskDTO.setTaskContent("<mxGraphModel>\n" +
@@ -434,7 +439,7 @@ public class ProjectService {
         projectRepository.save(project);
     }
     /**
-    * @Description:获取所有record
+    * @Description:获取fork项目的所有record
     * @Author: Yiming
     * @Date: 2022/1/18
     */
@@ -449,6 +454,30 @@ public class ProjectService {
         }
         return records;
     }
+
+    /**
+    * @Description:获取一个项目的所以record，注意和上一个方法的区别
+    * @Author: Yiming
+    * @Date: 2022/3/4
+    */
+
+    public List<Record> getRecordsByMyself(String projectId) {
+        Project project = projectRepository.findById(projectId).orElseThrow(MyException::noObject);
+        return project.getRecords();
+    }
+
+    /**
+    * @Description:修改citation字段
+    * @Author: Yiming
+    * @Date: 2022/3/5
+    */
+
+    public void updateCitation(String projectId, Citation citation) {
+        Project project = projectRepository.findById(projectId).orElseThrow(MyException::noObject);
+        project.setCitation(citation);
+        projectRepository.save(project);
+    }
+
 
 
 

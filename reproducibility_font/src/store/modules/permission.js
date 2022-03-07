@@ -72,6 +72,7 @@ const actions = {
   // },
 
   getRole({ commit }, { project, userId }) {
+    console.log(project)
     return new Promise(resolve => {
       // debugger;
       if (project.creator == userId) {

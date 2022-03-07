@@ -90,9 +90,9 @@ export default {
       let data = await getModelInfo(this.doi); //获得模型所有信息
       console.log('getModelInfo', data);
       this.modelIntroduction = data;
-      await this.getInAndOut();
+      this.getInAndOut();
     },
-    async getInAndOut() {
+    getInAndOut() {
       let stateList = this.modelIntroduction;
       let input = [];
       let output = [];

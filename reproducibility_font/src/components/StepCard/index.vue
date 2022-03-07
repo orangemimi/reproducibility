@@ -24,7 +24,8 @@ import ScenarioContent from '_com/Scenario/Scenario';
 // import ReScenarioContent from '_com/Scenario/reScenario';
 import ResourceContent from '_com/Resource/Resource';
 import ResultContent from '_com/Result/Result';
-import contentResource from '_com/Context/components/Resource/ContentResource.vue';
+// import contentResource from '_com/Context/components/Resource/ContentResource.vue';
+import ResourceDefinition from '_com/Resource/components/ResourceDefinition.vue'
 import contentScenario from '_com/Context/components/Scenario/ContentScenario.vue';
 import contentContext from '_com/Context/components/Context/ContentContext.vue';
 import forkScenario from '_com/Scenario/ForkScenario.vue'
@@ -36,7 +37,8 @@ export default {
     ScenarioContent,
     ResourceContent,
     ResultContent,
-    contentResource,
+    // contentResource,
+    ResourceDefinition,
     contentScenario,
     contentContext,
     forkScenario
@@ -90,7 +92,7 @@ export default {
           break;
         case 'Resource Definition':
           {
-            vueType = 'contentResource';
+            vueType = 'ResourceDefinition';
           }
           break;
         case 'Scenario Definition':

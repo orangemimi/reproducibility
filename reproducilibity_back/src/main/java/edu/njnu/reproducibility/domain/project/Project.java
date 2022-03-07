@@ -1,6 +1,7 @@
 package edu.njnu.reproducibility.domain.project;
 
 import edu.njnu.reproducibility.common.entity.BaseEntity;
+import edu.njnu.reproducibility.domain.project.support.Citation;
 import edu.njnu.reproducibility.domain.project.support.Record;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -38,7 +39,7 @@ public class Project extends BaseEntity {
     Integer starCount;
     Integer watchCount;
     Integer folkCount;
-    String citation;
+    Citation citation;
 
     //fork detail
 //    Boolean isForking; //是否从别的项目Fork出来

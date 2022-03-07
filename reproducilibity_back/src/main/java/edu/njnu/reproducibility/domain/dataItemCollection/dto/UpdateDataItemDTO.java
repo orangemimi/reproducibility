@@ -12,22 +12,8 @@ import java.util.List;
 @Data
 public class UpdateDataItemDTO implements ToDomainConverter<DataItemCollection> {
     String name;
+    String format;
     String description;
-    List<String> keywords;
-    //    String duty;
-    String format;//file/parameter/sharedFile
-    String value;//url or value
-    String size;
-
-    String projectId;
-    String userId;//creatorId
-
-
-    Restriction restriction;
-
-    String version;
-    String state;//published ;
-
-    ActivityAttribute activityAttribute;
-    AgentAttribute agentAttribute;
+    String type;
+    String value;
 }

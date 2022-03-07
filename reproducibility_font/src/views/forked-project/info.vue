@@ -308,10 +308,7 @@ export default {
           }
         }
       }
-      .content {
-        .scroll {
-        }
-      }
+
     }
 
     .citation {

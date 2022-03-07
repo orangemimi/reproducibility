@@ -22,7 +22,6 @@ router.beforeEach((to, from, next) => {
   } catch (e) {
     console.warn('load title warning!');
   }
-
   const role = localStorage.getItem('role');
   const token = localStorage.getItem('token');
 
@@ -34,12 +33,18 @@ router.beforeEach((to, from, next) => {
       } else {
         //如果没有权限抛出自定义的错误
         ElementUI.Notification.error('You have no access to get in this page!');
+        // if(role == null) {
+        //   next({
+        //     path
+        //   })
+        // }
         next({
           path: from.fullPath
         });
       }
     } else {
       //no token
+
       next({
         name: 'Login', // 跳转到home页
         query: { redirect: to.fullPath } //把要跳转的地址作为参数传到下一步,重定向

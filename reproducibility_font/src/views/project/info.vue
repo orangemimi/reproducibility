@@ -10,7 +10,8 @@
                 <div class="title">
                   <h2>{{ projectInfo.name }}</h2>
                   <div v-if="projectInfo.forkingProjectId != '' && projectInfo.forkingProjectId != undefined" class="prompt">
-                    from <router-link :to="{path:`/project/${projectInfo.forkingProjectId}/info`}">this project</router-link>
+                    from
+                    <router-link :to="{ path: `/project/${projectInfo.forkingProjectId}/info` }">this project</router-link>
                   </div>
                 </div>
                 <div class="content">
@@ -123,7 +124,7 @@
               </div>
 
               <div class="content" v-if="creator.avatar != undefined">
-                <vue-scroll :ops="ops" class="scroll" style="height: calc(100vh - 554px)">
+                <vue-scroll :ops="ops" class="scroll" style="height: calc(100vh - 754px)">
                   <user-card :user="{ name: creator.name, role: 'builder', id: creator.id, avatar: creator.avatar }" class=""></user-card>
                   <el-row>
                     <div v-if="members.length > 103">
@@ -148,13 +149,25 @@
                 <div class="mark"></div>
                 <div class="title">Citation</div>
                 <div class="edit">
-                  <el-button size="mini" v-show="role == 'builder'">Edit</el-button>
+                  <el-button size="mini" v-show="role == 'builder'" @click="editCitation = true">Edit</el-button>
                 </div>
               </div>
 
-              <!-- bind with document -->
-              <div class="content">
-                <el-input v-model="projectInfo.citation" :disabled="true"></el-input>
+              <div class="content" v-if="projectInfo.citation != undefined && projectInfo.citation != null">
+                <el-descriptions direction="vertical" :column="4" border>
+                  <el-descriptions-item label="class">{{ projectInfo.citation.type }}</el-descriptions-item>
+                  <el-descriptions-item :label="projectInfo.citation.type == 'Book' ? 'Book name' : 'Title'">
+                    {{ projectInfo.citation.name }}
+                  </el-descriptions-item>
+                  <el-descriptions-item :label="getAuthorLabel(projectInfo.citation.type)" :span="2">{{ projectInfo.citation.author }}</el-descriptions-item>
+                  <el-descriptions-item :label="getSourceLable(projectInfo.citation.type)">
+                    <el-tag size="small">{{ projectInfo.citation.source }}</el-tag>
+                  </el-descriptions-item>
+                  <el-descriptions-item label="Date">{{ getDate(projectInfo.citation.date, projectInfo.citation.dateType) }}</el-descriptions-item>
+                </el-descriptions>
+              </div>
+              <div v-else>
+                <p class="nocontent">No description</p>
               </div>
             </div>
           </div>
@@ -171,6 +184,10 @@
     <el-dialog :title="'Invite a collaborator to ' + projectInfo.name" :visible.sync="addParticipantDialogShow" width="40%" :close-on-click-modal="false">
       <share-project></share-project>
     </el-dialog>
+
+    <el-dialog title="Edit citation" :visible.sync="editCitation" width="900px" :close-on-click-modal="false">
+      <citation-form @citation="getCitation" :citationData="projectInfo.citation" v-if="editCitation"></citation-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -182,6 +199,7 @@ import Avatar from 'vue-avatar';
 import userCard from '_com/UserCard';
 import editInfoForm from './components/EditProjectInfo';
 import shareProject from '_com/ShareProject';
+import citationForm from './components/CitationForm.vue';
 // import reBuilderCard from '_com/UserCard/ReBuilderCard';
 export default {
   components: {
@@ -189,22 +207,14 @@ export default {
     userCard,
     editInfoForm,
     shareProject,
+    citationForm,
     // reBuilderCard
   },
 
-  computed: {
-    ...mapState({
-      // userId: state => state.user.userId,
-      role: (state) => state.permission.role,
-      // token: state => state.user.token
-    }),
-  },
-
-
   async beforeRouteUpdate(to, from, next) {
-    this.projectId = to.params.id
-    await this.init()
-    next()
+    this.projectId = to.params.id;
+    await this.init();
+    next();
   },
 
   data() {
@@ -220,7 +230,53 @@ export default {
       },
       editProjectInfoDialogShow: false,
       addParticipantDialogShow: false,
+      editCitation: false,
     };
+  },
+
+  computed: {
+    ...mapState({
+      // userId: state => state.user.userId,
+      role: (state) => state.permission.role,
+
+      // token: state => state.user.token
+    }),
+    getAuthorLabel() {
+      return function (type) {
+        if (type == 'Almanac') {
+          return 'Almanac name';
+        } else if (type == 'Standard') {
+          return 'Standard number';
+        } else if (type == 'Achievement') {
+          return 'Finisher';
+        } else {
+          return 'Author';
+        }
+      };
+    },
+    getSourceLable() {
+      return function (type) {
+        if (type == 'Thesis') {
+          return 'Periodical';
+        } else if (type == 'Dissertation') {
+          return 'Degree-granting unit';
+        } else if (type == 'Meeting') {
+          return 'Meeting name';
+        } else if (type == 'Newspaper') {
+          return 'Newspaper name';
+        } else if (type == 'Almanac') {
+          return 'Column';
+        } else if (type == 'Book') {
+          return 'Publishing house';
+        } else if (type == 'Patent') {
+          return 'applicant';
+        } else if (type == 'Standard') {
+          return 'Source';
+        } else if (type == 'Achievement') {
+          return 'First completion unit';
+        }
+      };
+    },
   },
 
   methods: {
@@ -236,9 +292,9 @@ export default {
       this.creator = data.creator;
       if (data.members != null) {
         //防止出现数组修改不响应的情况
-        this.$set(this, 'members', data.members)
+        this.$set(this, 'members', data.members);
       } else {
-        this.$set(this, 'members', [])
+        this.$set(this, 'members', []);
       }
     },
 
@@ -261,8 +317,23 @@ export default {
       }
     },
 
-    dateFormat(time) {
-      return dateFormat(time);
+    getDate(date, dateType) {
+      if (dateType == 'year') {
+        return this.dateFormat(date, 'yyyy');
+      } else if (dateType == 'month') {
+        return this.dateFormat(date, 'yyyy-MM');
+      } else {
+        return this.dateFormat(date, 'yyyy-MM-dd');
+      }
+    },
+
+    getCitation(val) {
+      this.projectInfo.citation = val;
+      this.editCitation = false;
+    },
+
+    dateFormat(time, format = 'yyyy-MM-dd hh:mm:ss') {
+      return dateFormat(time, format);
     },
   },
 
@@ -403,7 +474,7 @@ export default {
     .info {
       height: 32px;
       line-height: 32px;
-      margin-bottom: 5px;
+      margin-bottom: 10px;
       display: flex;
       .mark {
         width: 10px;
@@ -444,7 +515,6 @@ export default {
           background-color: $btnHoverBg;
         }
       }
-
     }
 
     .citation {

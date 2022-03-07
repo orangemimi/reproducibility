@@ -167,6 +167,14 @@ export async function getRecords(projectId) {
   return await get(`/projects/getRecords/${projectId}`)
 }
 
+export async function getRecordsByMyself(projectId) {
+  return await get(`/projects/getRecordsByMyself/${projectId}`)
+}
+
+export async function updateCitation(projectId, jsonData) {
+  return await patch(`/projects/updateCitation/${projectId}`, jsonData)
+}
+
 //---------------------------------------------------contextDefinition------------------------------------------
 
 // export async function updateContexByProjectId(projectId) {
@@ -314,6 +322,14 @@ export async function saveDataItemOfNoUpload(formData) {
 
 export async function batchDelete(jsonData) {
   return await del(`/dataItems/batchDelete`, '', jsonData)
+}
+
+export async function updateDataItemOfUploaded(jsonData) {
+  return await patch(`/dataItems/updateDataItemOfUploaded`, jsonData)
+}
+
+export async function updateDataItemOfNoUpload(formData) {
+  return await patch(`/dataItems/updateDataItemOfNoUpload`, formData)
 }
 
 // export async function getDataItemsByProjectId(projectId) {

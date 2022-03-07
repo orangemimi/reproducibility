@@ -10,7 +10,7 @@
     <div v-else class="member">
       <!-- <div class="member"> -->
       <div class="block">
-        <el-avatar :size="50" :src="user.avatar == '' ? '' : 'http://172.21.212.103:8088/userServer' + user.avatar" :title="user.name" @click.native="click"></el-avatar>
+        <el-avatar :size="50" :src="user.avatar == '' ? '' : 'http://172.21.212.103:8088/userServer' + user.avatar" :title="user.name" @click.native="click">{{user.name}}</el-avatar>
       </div>
       <div class="text" :title="user.name" @click="click">{{ user.name }}</div>
     </div>
@@ -47,14 +47,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .user {
-  // height: 50px;
-  // line-height: 50px;
-  // width: 280px;
-  // padding: 0 15px;
-  // margin-bottom: 5px;
-  // border: 1px solid $btnBorder;
-  // vertical-align: middle;
-  // font-family: inherit;
+
 
   .text {
     text-overflow: ellipsis;

@@ -78,16 +78,16 @@
                 </el-descriptions-item>
                 <el-descriptions-item label="Download" v-if="selectedNode.classify == 'input' && selectedNode.type == 'value'">
                   <el-button type="info" plain size="mini">view</el-button>
-                  <el-button type="warning" plain size="mini">download</el-button>
+                  <el-button type="warning" plain size="mini" @click="download(selectedNode)">download</el-button>
                 </el-descriptions-item>
               </el-descriptions>
 
               <el-divider></el-divider>
-              <div @click="toAbstract">
+              <div @click="toAbstract" class="nav">
                 <i class="iconfont icon-read" style="margin-right: 10px"></i>
                 Abstract
               </div>
-              <div @click="toScenario" style="margin-top: 10px">
+              <div @click="toScenario" style="margin-top: 10px" class="nav">
                 <i class="el-icon-data-board" style="margin-right: 10px"></i>
                 Scenario
               </div>
@@ -220,6 +220,9 @@ export default {
     //   }
     //   console.log((size / 1024).toFixed(2));
     // },
+    download(val) {
+      location.href = val.value
+    },
     async getCityList() {
       await axios.get('/json/Region.json').then((res) => {
         this.options1 = res.data.districts[0].districts;
@@ -572,6 +575,10 @@ export default {
         }
       }
     }
+    .nav:hover {
+      cursor: pointer;
+      color: #27A5C4;
+    }
   }
   .row-style {
     padding: 0 10px;
@@ -590,7 +597,11 @@ export default {
         height: 45px;
         line-height: 45px;
         font-weight: bolder;
+        &:hover {
+          cursor: pointer;
+        }
       }
+
       .el-divider {
         margin-top: 0px;
       }

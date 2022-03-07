@@ -21,10 +21,15 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item label="Tag">
-            <el-input v-model="inputTagValue" ref="addTagRef" size="small" @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm" style="margin-bottom:5px">
-              <template slot="append">
-                + New Tag
-              </template>
+            <el-input
+              v-model="inputTagValue"
+              ref="addTagRef"
+              size="small"
+              @keyup.enter.native="handleInputConfirm"
+              @blur="handleInputConfirm"
+              style="margin-bottom: 5px"
+            >
+              <template slot="append">+ New Tag</template>
             </el-input>
 
             <el-tag :key="tag" v-for="tag in form.tags" closable :disable-transitions="false" @close="handleClose(tag)">
@@ -32,11 +37,12 @@
             </el-tag>
           </el-form-item>
           <el-form-item label="Image">
-            <add-image @uploadImgResponse="uploadImgResponse" :fileUrl="form.picture" :uploadPath="'projects/picture'"></add-image>
+            <!-- <add-image @uploadImgResponse="uploadImgResponse" :fileUrl="form.picture" :uploadPath="'projects/picture'"></add-image> -->
+            <add-image @getfile="getfile" class="picture" />
           </el-form-item>
           <el-form-item label="Description">
             <!-- <el-input v-model="form.description" /> -->
-            <wang-editor :html="form.description" @textChange="textChange"/>
+            <wang-editor :html="form.description" @textChange="textChange" />
           </el-form-item>
         </el-form>
       </el-col>
@@ -46,15 +52,16 @@
 </template>
 
 <script>
-import addImage from '_com/AddImage';
+// import addImage from '_com/AddImage';
+import addImage from '_com/AddImage/index1.vue';
 import wangEditor from '_com/WangEditor/WangEditor.vue';
 
-import { updateProject } from '@/api/request';
+import { updateProject, postFile } from '@/api/request';
 export default {
   props: {
     projectInfo: {
-      type: Object
-    }
+      type: Object,
+    },
   },
 
   components: { addImage, wangEditor },
@@ -74,26 +81,25 @@ export default {
   data() {
     return {
       form: JSON.parse(JSON.stringify(this.projectInfo)),
-      inputTagValue: ''
-      // form: {
-      //   name: '',
-      //   description: '',
-      //   introduction: '',
-      //   purpose: '',
-      //   privacy: '',
-      //   tag: [],
-      //   picture: '',
-      //   userInfo: {}
-      // }
+      inputTagValue: '',
+      pictureFile: '',
     };
   },
 
   methods: {
     async submitEdit() {
-      console.log(this.form);
+      if (this.pictureFile != '') {
+        let temp = new FormData();
+        temp.append('datafile', this.pictureFile.raw);
+        temp.append('name', this.form.name);
+        let pictureData = await postFile(temp);
+        this.form.picture = 'http://221.226.60.2:8082/data/' + pictureData.data.data.id;
+        console.log(this.form);
+      }
+
       let data = await updateProject(this.projectInfo.id, this.form);
       console.log(data);
-      let result = {data: data, flag: true}
+      let result = { data: data, flag: true };
       this.$emit('editProjectInfoResponse', result);
     },
 
@@ -109,16 +115,14 @@ export default {
       this.inputTagValue = '';
     },
 
-    uploadImgResponse(val) {
-      console.log(val);
-      this.$set(this.form, 'picture', val);
-      this.form.picture = val;
+    getfile(val) {
+      this.pictureFile = val;
     },
 
     textChange(val) {
-      this.form.description = val
-    }
-  }
+      this.form.description = val;
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>

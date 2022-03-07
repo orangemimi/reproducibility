@@ -122,7 +122,7 @@
 import { mapState } from 'vuex';
 import mxgraph from '_com/MxGraph/index';
 import { genGraph } from '_com/MxGraph/initMx';
-import { saveIntegrateTaskInstance, runtask, getSelectedTaskByProjectId, getSelectedInstancesByProjectId, getAllInstances } from '@/api/request';
+import { saveIntegrateTaskInstance, runtask, getSelectedTaskByProjectId, getAllInstances, getRecordsByMyself } from '@/api/request';
 import {
   // generateAction,
   generateXml1,
@@ -166,6 +166,7 @@ export default {
       total: 0,
       graph: null,
       currentTask: null,
+      records: [],
       //mxgraph scrollbar
       ops: {
         bar: {
@@ -183,7 +184,6 @@ export default {
 
       container: null,
 
-      selectedInstance: {},
       allMyTaskList: [],
       outputDialogVisible: false,
       inputDialogVisible: false,
@@ -292,8 +292,8 @@ export default {
     },
 
     createCell() {
-      if(this.selectedInstance != null) {
-        this.graph.importGraph(this.selectedInstance.taskContent);
+      if(this.records.length > 0) {
+        this.graph.importGraph(this.records[this.records.length - 1].taskContent);
       }
       this.graph.getModel().beginUpdate();
       try {
@@ -305,9 +305,10 @@ export default {
     },
 
     async getSelectedInstances() {
-      let data1 = await getSelectedInstancesByProjectId(this.projectId);
+      // let data1 = await getSelectedInstancesByProjectId(this.projectId);
+      this.records = await getRecordsByMyself(this.projectId)
+      
       let data2 = await getAllInstances(this.currentTask.id, 0, 7);
-      this.selectedInstance = data1;
       this.allMyTaskList = data2.content;
       this.total = data2.total;
       console.log(this.allMyTaskList);
@@ -537,7 +538,7 @@ export default {
       overflow: hidden;
       // height: 100%;
       // width: 100%;
-      // min-width: calc(100%);
+      min-width: calc(100%);
       min-height: 850px;
       background: rgb(251, 251, 251) url('./../../assets/images/mxgraph/point.gif') 0 0 repeat;
       border-radius: 4px;

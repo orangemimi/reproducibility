@@ -55,16 +55,23 @@
           </el-row>
         </template>
         <template #default="scope">
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">EDIT</el-button>
+          <el-button size="mini" @click="handleEdit(scope.row)">EDIT</el-button>
           <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">DEL</el-button>
           <el-button size="mini" class="el-icon-view"></el-button>
-          <el-button size="mini" class="el-icon-download"></el-button>
+          <el-link :href="scope.row.value" style="margin-left: 10px"> 
+            <el-button size="mini" class="el-icon-download"></el-button>
+          </el-link>
+          
         </template>
       </el-table-column>
     </el-table>
 
     <el-dialog title="Add resource" :visible.sync="addResourceDialogShow" width="40%" :close-on-click-modal="false" v-if="addResourceDialogShow">
       <add-resource @dataItem="dataItem" />
+    </el-dialog>
+
+    <el-dialog title="Edit resource" :visible.sync="editResourceDialogShow" width="40%" :close-on-click-modal="false" v-if="editResourceDialogShow">
+      <add-resource :parameter="editParameter" @update="update"/>
     </el-dialog>
   </div>
 </template>
@@ -86,6 +93,8 @@ export default {
       dataItemListFromResource: [],
       projectId: this.$route.params.id,
       addResourceDialogShow: false,
+      editResourceDialogShow: false,
+      editParameter: {},
       selection: [],
     };
   },
@@ -110,8 +119,25 @@ export default {
       });
       this.addResourceDialogShow = false;
     },
-    handleEdit(index, row) {
-      console.log(index, row);
+
+    update(val) {
+      console.log(val)
+      this.dataItemList.forEach(dataItem => {
+        if(dataItem.id == val.id) {
+          dataItem.name = val.name
+          dataItem.format = val.type
+          dataItem.type = val.dataType
+          dataItem.description = val.desc
+        }
+      })
+      console.log(this.dataItemList)
+      this.editResourceDialogShow = false
+    },
+
+    handleEdit(row) {
+      console.log(row)
+      this.editParameter = row
+      this.editResourceDialogShow = true
     },
     async handleDelete(index, row) {
       this.$confirm('This operation will permanently delete the file. Do you want to continue?', 'Tips', {
@@ -138,6 +164,7 @@ export default {
           });
         });
     },
+
 
     select(selection) {
       this.selection = [];

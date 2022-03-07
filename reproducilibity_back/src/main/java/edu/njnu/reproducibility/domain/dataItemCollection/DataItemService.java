@@ -116,6 +116,23 @@ public class DataItemService {
     }
 
     /**
+    * @Description:修改为用户文件夹下（即已经上传）的DataItem
+    * @Author: Yiming
+    * @Date: 2022/3/3
+    */
+
+    public int updateDataItemOfUploaded(UpdateDataItemDTO updateDataItemDTO, JSONObject jsonObject, String userId, String dataId) {
+        String id = jsonObject.getString("id");
+        String storey = jsonObject.getString("storey");
+        FileItem fileItem = fileItemRepository.findByStoreyAndUploaderIdAndId(storey, userId, id);
+        DataItemCollection dataItemCollection = dataItemRepository.findById(dataId).orElseThrow(MyException::noObject);
+        updateDataItemDTO.convertTo(dataItemCollection);
+        dataItemCollection.setValue(fileItem.getAddress());
+        dataItemRepository.save(dataItemCollection);
+        return 1;
+    }
+
+    /**
     * @Description:保存用户文件夹下没有的（即没有上传的）DataItem
     * @Author: Yiming
     * @Date: 2021/11/24
@@ -141,6 +158,32 @@ public class DataItemService {
         addDataItemDTO.convertTo(dataItemCollection);
         return dataItemRepository.save(dataItemCollection).getId();
     }
+
+    /**
+    * @Description:修改为用户文件夹下没有的（即没有上传的）DataItem
+    * @Author: Yiming
+    * @Date: 2022/3/3
+    */
+
+    public int updateDataItemOfNoUpload(MultipartFile multipartFile, String name, String format, String description, String type, String dataId) throws IOException {
+        MultiValueMap<String, Object> multiValueMap = new LinkedMultiValueMap<>();
+        String suffix="."+ FilenameUtils.getExtension(multipartFile.getOriginalFilename());
+        File temp = File.createTempFile("temp", suffix);
+        multipartFile.transferTo(temp);
+        FileSystemResource resource = new FileSystemResource(temp);
+        multiValueMap.add("datafile", resource);
+        multiValueMap.add("name", name);
+        String address = dataContainerService.upload(multiValueMap).getStr("id");
+        DataItemCollection dataItemCollection = dataItemRepository.findById(dataId).orElseThrow(MyException::noObject);
+        dataItemCollection.setName(name);
+        dataItemCollection.setFormat(format);
+        dataItemCollection.setDescription(description);
+        dataItemCollection.setType(type);
+        dataItemCollection.setValue("http://221.226.60.2:8082/data/" + address);
+        dataItemRepository.save(dataItemCollection);
+        return 1;
+    }
+
 
     /**
     * @Description:批量删除

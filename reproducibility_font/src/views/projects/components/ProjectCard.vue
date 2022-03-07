@@ -113,7 +113,13 @@ export default {
       word-wrap: break-word;
       min-height: 115px;
       max-height: 115px;
-      .title,
+      .title {
+        max-height: 25px;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+        overflow: hidden;
+      }
       .desc {
         max-height: 44px;
         display: -webkit-box;

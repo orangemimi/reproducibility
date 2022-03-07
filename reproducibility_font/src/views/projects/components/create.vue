@@ -4,8 +4,8 @@
       <el-form-item label="Name">
         <el-input v-model="form.name"></el-input>
       </el-form-item>
-      <el-form-item label="Purpose">
-        <el-input v-model="form.purpose"></el-input>
+      <el-form-item label="Introduction">
+        <el-input v-model="form.introduction"></el-input>
       </el-form-item>
       <el-form-item label="Description">
         <el-input type="textarea" v-model="form.description" resize="none"></el-input>
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { saveProject, postFile } from '@/api/request';
+import { saveProject, postFile, saveScenario } from '@/api/request';
 import addImage from '_com/AddImage/index1.vue';
 export default {
   components: { addImage },
@@ -49,7 +49,7 @@ export default {
       form: {
         name: '',
         description: '',
-        purpose: '',
+        introduction: '',
         privacy: 'public',
       },
       dynamicTags: [],
@@ -97,7 +97,7 @@ export default {
         project: {
           name: this.form.name,
           description: this.form.description,
-          purpose: this.form.purpose,
+          introduction: this.form.introduction,
           privacy: this.form.privacy,
           tags: this.dynamicTags,
           picture: 'http://221.226.60.2:8082/data/' + pictureData.data.data.id,
@@ -112,6 +112,7 @@ export default {
         },
       };
       let data = await saveProject(jsonData);
+      await saveScenario({ projectId: data.id });
       console.log(data);
       this.cancel()
     },

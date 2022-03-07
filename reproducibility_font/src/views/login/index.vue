@@ -24,7 +24,7 @@
           </div>
         </div>
         <div v-show="tab == 'register'">
-          <register/>
+          <register />
         </div>
       </div>
     </div>
@@ -35,7 +35,8 @@
 // import { post } from '@/axios';
 import { mapActions } from 'vuex';
 import SendEmailAndChangePWD from './components/SendEmailAndChangePWD.vue';
-import register from '../register/index.vue'
+import register from '../register/index.vue';
+import { getProjectById } from '@/api/request';
 // import md5 from 'js-md5';
 // import jwtDecode from 'jwt-decode';
 export default {
@@ -59,6 +60,10 @@ export default {
 
         let redirect = decodeURIComponent(this.$route.query.redirect || '/');
         if (redirect != undefined) {
+          let arr = redirect.split('/');
+          if (arr.length >= 3 && arr[1] == 'project') {
+            await this.judgeRole(arr[2]);
+          }
           this.$router.push({
             path: redirect,
           });
@@ -69,15 +74,18 @@ export default {
         this.$throw(error);
       }
     },
-    submit() {
-      this.handleClick();
+
+    async judgeRole(projectId) {
+      let projectInfo = await getProjectById(projectId);
+      let userId = this.$store.state.user.userId;
+      await this.$store.dispatch('permission/getRole', { project: projectInfo, userId: userId });
     },
   },
   mounted() {
-    if(this.$route.params.tab == 'register') {
-      this.tab = 'register'
+    if (this.$route.params.tab == 'register') {
+      this.tab = 'register';
     }
-  }
+  },
 };
 </script>
 

@@ -66,7 +66,8 @@
       </el-form-item>
     </el-form>
     <div style="text-align: center">
-      <el-button type="primary" @click="onSubmit" size="mini">Create</el-button>
+      <el-button type="primary" @click="update" size="mini" v-if="parameter != undefined && parameter != null">Update</el-button>
+      <el-button type="primary" @click="onSubmit" size="mini" v-else>Create</el-button>
     </div>
 
     <el-dialog :visible.sync="userFile" width="40%" :close-on-click-modal="false" v-if="userFile" append-to-body>
@@ -77,7 +78,7 @@
 
 <script>
 import fileSelect from './FileSelect.vue';
-import { saveDataItemOfUploaded, saveDataItem, saveDataItemOfNoUpload } from '@/api/request';
+import { saveDataItemOfUploaded, saveDataItem, saveDataItemOfNoUpload, updateDataItemById, updateDataItemOfUploaded, updateDataItemOfNoUpload } from '@/api/request';
 export default {
   data() {
     return {
@@ -97,6 +98,13 @@ export default {
       localFile: '',
     };
   },
+
+  props: {
+    parameter: {
+      type: Object,
+    },
+  },
+
   components: {
     fileSelect,
   },
@@ -115,7 +123,7 @@ export default {
           this.$emit('dataItem', data);
         } else if (this.form.radio == '2' && this.form.inputLocal != '') {
           let data = await this.saveDataItemOfNoUpload();
-          this.$emit('dataItem', data)
+          this.$emit('dataItem', data);
         }
       } else if (this.form.type == 'parameter') {
         if (this.form.value == '') {
@@ -133,6 +141,72 @@ export default {
         }
       }
     },
+
+    async update() {
+      if (this.form.name == '') {
+        this.message('warning', 'Name cannot be empty!');
+      } else if (this.form.type == '') {
+        this.message('warning', 'Please select a type!');
+      }
+      if (this.form.type == 'input') {
+        if ((this.form.radio == '1' && this.form.inputUser == '') || (this.form.radio == '2' && this.form.inputLocal == '')) {
+          this.message('warning', 'Please select the file to upload!');
+        } else if (this.form.radio == '1' && this.form.inputUser != '') {
+          await this.updateDataItemById('uploaded');
+        } else if (this.form.radio == '2' && this.form.inputLocal != '') {
+          await this.updateDataItemById('noUpload');
+        }
+      } else if (this.form.type == 'parameter') {
+        if (this.form.value == '') {
+          this.message('warning', 'Value cannot be empty!');
+        } else {
+          await this.updateDataItemById('parameter');
+        }
+      } else if (this.form.type == 'share_file') {
+        if (this.form.shareId == '') {
+          this.message('warning', 'Share_Id cannot be empty!');
+        } else {
+          await this.updateDataItemById('share_file');
+        }
+      }
+      this.form.id = this.parameter.id
+      this.$emit('update', this.form)
+    },
+
+    async updateDataItemById(type) {
+      if (type == 'parameter' || type == 'share_file') {
+        let form = {
+          name: this.form.name,
+          description: this.form.desc,
+          format: this.form.type,
+          type: this.form.dataType,
+          value: this.form.value,
+        };
+        await updateDataItemById(this.parameter.id, form);
+      } else if (type == 'uploaded') {
+        let form = {
+          resource: this.resource,
+          dataId: this.parameter.id,
+          dataItem: {
+            name: this.form.name,
+            description: this.form.desc,
+            format: this.form.type,
+            type: this.form.dataType
+          }
+        }
+        await updateDataItemOfUploaded(form)
+      } else if(type == 'noUpload') {
+        let form = new FormData();
+        form.append('name', this.form.name)
+        form.append('format', this.form.type)
+        form.append('description', this.form.desc)
+        form.append('type', this.form.dataType)
+        form.append('dataId', this.parameter.id)
+        form.append('multipartFile', this.localFile)
+        await updateDataItemOfNoUpload(form)
+      }
+    },
+
     message(type, text) {
       this.$notify({
         title: type,
@@ -154,8 +228,8 @@ export default {
         },
       };
       let data = await saveDataItemOfUploaded(form);
-      form.dataItem.id = data
-      console.log(data)
+      form.dataItem.id = data;
+      console.log(data);
       return form.dataItem;
     },
     //保存未上传过的文件
@@ -173,7 +247,7 @@ export default {
         description: this.form.desc,
         format: this.form.type,
         type: this.form.dataType,
-        id: data
+        id: data,
       };
     },
 
@@ -206,6 +280,8 @@ export default {
       if (val == 'input') {
         this.form.radio = '1';
         this.form.dataType = 'FILE';
+        this.form.value = ''
+        this.form.shareId = ''
       } else if (val == 'parameter') {
         this.form.radio = '';
         this.form.dataType = 'STRING';
@@ -242,8 +318,32 @@ export default {
     btnChange() {
       this.$refs.file.click();
     },
+
+    init() {
+      if (this.parameter != undefined && this.parameter != null) {
+        console.log(this.parameter);
+        this.form.name = this.parameter.name;
+        this.form.desc = this.parameter.description;
+        if (this.parameter.format == 'input') {
+          this.form.type = 'input';
+          this.form.dataType = this.parameter.type;
+          this.form.radio = '1';
+        } else if (this.parameter.format == 'parameter') {
+          this.form.type = 'parameter';
+          this.form.radio = '';
+          this.form.dataType = this.parameter.type;
+          this.form.value = this.parameter.value;
+        } else if (this.parameter.format == 'share_file') {
+          this.form.type = 'share_file';
+          this.form.radio = '';
+          this.form.dataType = 'FILE';
+        }
+      }
+    },
   },
-  mounted() {},
+  mounted() {
+    this.init();
+  },
 };
 </script>
 

@@ -14,7 +14,6 @@ import lombok.Data;
 @Data
 public class AddIntegrateTaskDTO implements ToDomainConverter<IntegrateTask> {
     String projectId;//project id
-    String userName;
     String creator;
 
     String taskName;

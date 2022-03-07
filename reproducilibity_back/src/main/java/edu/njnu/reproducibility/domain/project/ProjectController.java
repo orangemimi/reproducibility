@@ -9,6 +9,7 @@ import edu.njnu.reproducibility.domain.performance.dto.AddPerformanceDTO;
 import edu.njnu.reproducibility.domain.project.dto.AddProjectDTO;
 import edu.njnu.reproducibility.domain.project.dto.UpdateProjectDTO;
 import edu.njnu.reproducibility.domain.project.dto.UpdateProjectMembersDTO;
+import edu.njnu.reproducibility.domain.project.support.Citation;
 import edu.njnu.reproducibility.domain.project.support.Record;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -140,6 +141,17 @@ public class ProjectController {
     @RequestMapping(value = "/getRecords/{projectId}", method = RequestMethod.GET)
     public JsonResult getRecords(@PathVariable String projectId) {
         return ResultUtils.success(projectService.getRecords(projectId));
+    }
+
+    @RequestMapping(value = "/getRecordsByMyself/{projectId}", method = RequestMethod.GET)
+    public JsonResult getRecordsByMyself(@PathVariable String projectId) {
+        return ResultUtils.success(projectService.getRecordsByMyself(projectId));
+    }
+
+    @RequestMapping(value = "/updateCitation/{projectId}", method = RequestMethod.PATCH)
+    public JsonResult updateCitation(@RequestBody Citation citation, @PathVariable String projectId) {
+        projectService.updateCitation(projectId, citation);
+        return ResultUtils.success();
     }
 
 }

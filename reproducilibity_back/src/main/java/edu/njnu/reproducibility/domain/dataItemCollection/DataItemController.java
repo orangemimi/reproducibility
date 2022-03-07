@@ -40,7 +40,7 @@ public class DataItemController {
     }
 
     @RequestMapping(value = "/{id}", produces = {"application/json;charset=UTF-8"},method = RequestMethod.PATCH)
-    public JsonResult updateResourceData(@PathVariable("id") String id,@RequestBody UpdateDataItemDTO update){
+    public JsonResult updateResourceData(@PathVariable("id") String id, @RequestBody UpdateDataItemDTO update){
         return ResultUtils.success(dataItemService.updateResourceData(id, update));
     }
 //
@@ -81,6 +81,13 @@ public class DataItemController {
         return ResultUtils.success(dataItemService.saveDataItemOfUploaded(addDataItemDTO, jsonObject.getJSONObject("resource"), userId));
     }
 
+    @RequestMapping(value = "/updateDataItemOfUploaded", method = RequestMethod.PATCH)
+    public JsonResult updateDataItemOfUploaded(@RequestBody JSONObject jsonObject, @JwtTokenParser(key = "userId") String userId) {
+        JSONObject temp = jsonObject.getJSONObject("dataItem");
+        UpdateDataItemDTO updateDataItemDTO = JSONObject.toJavaObject(temp, UpdateDataItemDTO.class);
+        return ResultUtils.success(dataItemService.updateDataItemOfUploaded(updateDataItemDTO, jsonObject.getJSONObject("resource"), userId, jsonObject.getString("dataId")));
+    }
+
     @RequestMapping(value = "/saveDataItemOfNoUpload", method = RequestMethod.POST)
     public JsonResult saveDataItemOfNoUpload(HttpServletRequest httpServletRequest, @JwtTokenParser(key = "userId") String userId) throws IOException {
         MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) httpServletRequest;
@@ -91,6 +98,11 @@ public class DataItemController {
         String type = multipartHttpServletRequest.getParameter("type");
         String projectId = multipartHttpServletRequest.getParameter("projectId");
         return ResultUtils.success(dataItemService.saveDataItemOfNoUpload(multipartFile, name, description, userId, format, type, projectId));
+    }
+
+    @RequestMapping(value = "/updateDataItemOfNoUpload", method = RequestMethod.PATCH)
+    public JsonResult updateDataItemOfNoUpload(@RequestParam MultipartFile multipartFile, @RequestParam String name, @RequestParam String format, @RequestParam String description, @RequestParam String type, @RequestParam String dataId) throws IOException {
+        return ResultUtils.success(dataItemService.updateDataItemOfNoUpload(multipartFile, name, format, description, type, dataId));
     }
 
     @RequestMapping(value = "/batchDelete", method = RequestMethod.DELETE)

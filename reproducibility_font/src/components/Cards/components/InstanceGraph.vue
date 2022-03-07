@@ -49,7 +49,7 @@
             </div>
           </el-row>
           <div class="btn" v-if="getOutputValue">
-            <el-button type="primary" plain size="small">Download</el-button>
+            <el-button type="primary" plain size="small" @click="download('output')">Download</el-button>
           </div>
         </el-tab-pane>
         <el-tab-pane>
@@ -90,7 +90,7 @@
             </div>
           </el-row>
           <div class="btn" v-if="clickedCell.nodeAttribute.isParameter == 'false'">
-            <el-button type="primary" plain size="small">Download</el-button>
+            <el-button type="primary" plain size="small" @click="download('input')">Download</el-button>
           </div>
         </el-tab-pane>
         <el-tab-pane>
@@ -127,9 +127,9 @@ export default {
     getOutputValue() {
       let id = this.clickedCell.id;
       if (this.clickedCell.type == 'modelServiceOutput') {
-        for(let i = 0; i < this.taskInfo.modelActionList.completed.length; i++) {
-          let temp = this.taskInfo.modelActionList.completed[i].outputData.outputs
-          for(let j = 0; j < temp.length; j++) {
+        for (let i = 0; i < this.taskInfo.modelActionList.completed.length; i++) {
+          let temp = this.taskInfo.modelActionList.completed[i].outputData.outputs;
+          for (let j = 0; j < temp.length; j++) {
             if (temp[j].dataId == id) {
               return true;
             }
@@ -137,9 +137,9 @@ export default {
         }
       }
       if (this.clickedCell.type == 'dataServiceOutput') {
-        for(let i = 0; i < this.taskInfo.dataProcessingList.completed.length; i++) {
-          let temp = this.taskInfo.dataProcessingList.completed[i].outputData.outputs
-          for(let j = 0; j < temp.length; j++) {
+        for (let i = 0; i < this.taskInfo.dataProcessingList.completed.length; i++) {
+          let temp = this.taskInfo.dataProcessingList.completed[i].outputData.outputs;
+          for (let j = 0; j < temp.length; j++) {
             if (temp[j].dataId == id) {
               return true;
             }
@@ -231,9 +231,24 @@ export default {
         }
       });
     },
-    download(url) {
-      console.log(url);
-      location.href = url;
+    download(type) {
+      if (type == 'output') {
+        let modelList = this.instance.taskInfo.modelActionList.completed;
+        let dataList = this.instance.taskInfo.dataProcessingList.completed;
+        let list = modelList.concat(dataList);
+        console.log(list);
+        for (let i = 0; i < list.length; i++) {
+          for (let j = 0; j < list[i].outputData.outputs.length; j++) {
+            if (this.clickedCell.id == list[i].outputData.outputs[j].dataId) {
+              location.href = list[i].outputData.outputs[j].dataContent.value;
+              return;
+            }
+          }
+        }
+      }
+      if(type == 'input') {
+        location.href = this.clickedCell.nodeAttribute.dataSelect.value
+      }
     },
 
     changeCell() {

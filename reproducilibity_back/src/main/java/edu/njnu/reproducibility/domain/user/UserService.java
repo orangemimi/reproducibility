@@ -326,6 +326,7 @@ public class UserService {
             jsonObject.put("userName", user.getName());
             jsonObject.put("picture", temp.getPicture());
             jsonObject.put("projectName", temp.getName());
+            jsonObject.put("projectId", temp.getId());
             result.add(jsonObject);
         }
         for(String projectId : user.getJoinedProjects()) {
@@ -335,6 +336,7 @@ public class UserService {
             jsonObject.put("userName", userName);
             jsonObject.put("picture", temp.getPicture());
             jsonObject.put("projectName", temp.getName());
+            jsonObject.put("projectId", temp.getId());
             result.add(jsonObject);
         }
         return result;
