@@ -17,7 +17,7 @@ import java.util.List;
 @Data
 public class AddPerformanceDTO implements ToDomainConverter<Performance> {
     String projectId;
-    Completion completion;//百分比
+    Completion completion = new Completion();
     String userId;
 
 //    String role;//creator/ rebuilder...

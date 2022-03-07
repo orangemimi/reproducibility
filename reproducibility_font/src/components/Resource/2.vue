@@ -325,7 +325,7 @@ export default {
         dataItemCollection: filter
       });
 
-      let content = { content: 'Resource Collection', degree: '100%', type: 'success', icon: 'el-icon-folder' };
+      let content = { content: 'haha', updateTime: getTime() };
 
       await updatePerformanceById('resource', this.projectId, content);
     },

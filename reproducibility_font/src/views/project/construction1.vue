@@ -8,7 +8,7 @@
               <i class="el-icon-document"></i>
               Context
             </span>
-            
+
             <step-card :cardInfo="{ btnType: 'Context Definition' }"></step-card>
           </el-tab-pane>
           <el-tab-pane>
@@ -31,7 +31,11 @@
               Scenario
             </span>
             <el-col :span="24">
-              <step-card :cardInfo="{ btnType: 'Simulation Scenario' }" style="height: 950px; width: 100%" v-if="forkingProjectId == undefined"></step-card>
+              <step-card
+                :cardInfo="{ btnType: 'Simulation Scenario' }"
+                style="height: 950px; width: 100%"
+                v-if="forkingProjectId == undefined || forkingProjectId == null"
+              ></step-card>
               <step-card :cardInfo="{ btnType: 'forkScenario' }" v-else></step-card>
             </el-col>
           </el-tab-pane>
@@ -57,39 +61,39 @@
         <div class="block">
           <el-timeline>
             <el-timeline-item
-              :icon="completion.context.icon"
-              :type="completion.context.type"
+              icon="el-icon-edit"
+              :type="completion.context.length > 0 ? 'success' : 'warning'"
               size="large"
-              :timestamp="dateFormat(completion.context.updateTime)"
+              :timestamp="dateFormat(completion.context.length > 0 ? completion.context[completion.context.length - 1].updateTime : '')"
             >
-              {{ completion.context.content }}
+              Context Definition
             </el-timeline-item>
 
             <el-timeline-item
-              :icon="completion.resource.icon"
-              :type="completion.resource.type"
+              icon="el-icon-folder"
+              :type="completion.resource.length > 0 ? 'success' : 'warning'"
               size="large"
-              :timestamp="dateFormat(completion.resource.updateTime)"
+              :timestamp="dateFormat(completion.resource.length > 0 ? completion.resource[completion.resource.length - 1].updateTime : '')"
             >
-              {{ completion.resource.content }}
+              Resource Collection
             </el-timeline-item>
 
             <el-timeline-item
-              :icon="completion.scenario.icon"
-              :type="completion.scenario.type"
+              icon="el-icon-sunny"
+              :type="completion.scenario.length > 0 ? 'success' : 'warning'"
               size="large"
-              :timestamp="dateFormat(completion.scenario.updateTime)"
+              :timestamp="dateFormat(completion.scenario.length > 0 ? completion.scenario[completion.scenario.length - 1].updateTime : '')"
             >
-              {{ completion.scenario.content }}
+              Simulation Scenario
             </el-timeline-item>
 
             <el-timeline-item
-              :icon="completion.results.icon"
-              :type="completion.results.type"
+              icon="el-icon-document"
+              :type="completion.results.length > 0 ? 'success' : 'warning'"
               size="large"
-              :timestamp="dateFormat(completion.results.updateTime)"
+              :timestamp="dateFormat(completion.results.length > 0 ? completion.results[completion.results.length - 1].updateTime : '')"
             >
-              {{ completion.results.content }}
+              Excepted Results
             </el-timeline-item>
           </el-timeline>
         </div>
@@ -118,10 +122,10 @@ export default {
       projectId: this.$route.params.id,
       forkingProjectId: this.$route.query.forkingProjectId,
       completion: {
-        context: { icon: '', type: '', updateTime: '' },
-        resource: { icon: '', type: '', updateTime: '' },
-        scenario: { icon: '', type: '', updateTime: '' },
-        results: { icon: '', type: '', updateTime: '' },
+        context: [],
+        resource: [],
+        scenario: [],
+        results: [],
       },
       dialogVisible: false,
     };
@@ -132,14 +136,14 @@ export default {
       this.completion = data.completion;
     },
     dateFormat(time) {
-      if (time == null) {
+      if (time == undefined || time == null || time == '') {
         return 'You have not do any operation';
       }
       return dateFormat(time);
     },
     init() {
       this.getPerformance();
-      console.log(this.$route.query.forkingProjectId)
+      console.log(this.$route.query.forkingProjectId);
     },
   },
   mounted() {

@@ -66,18 +66,18 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog title="Add resource" :visible.sync="addResourceDialogShow" width="40%" :close-on-click-modal="false" v-if="addResourceDialogShow">
-      <add-resource @dataItem="dataItem" />
+    <el-dialog title="Add resource" :visible.sync="addResourceDialogShow" width="40%" :close-on-click-modal="false" >
+      <add-resource @dataItem="dataItem" v-if="addResourceDialogShow"/>
     </el-dialog>
 
-    <el-dialog title="Edit resource" :visible.sync="editResourceDialogShow" width="40%" :close-on-click-modal="false" v-if="editResourceDialogShow">
-      <add-resource :parameter="editParameter" @update="update"/>
+    <el-dialog title="Edit resource" :visible.sync="editResourceDialogShow" width="40%" :close-on-click-modal="false" >
+      <add-resource :parameter="editParameter" @update="update" v-if="editResourceDialogShow"/>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getDataItemsByProjectId, deleteDataItemById, batchDelete } from '@/api/request';
+import { getDataItemsByProjectId, deleteDataItemById, batchDelete, updatePerformanceById } from '@/api/request';
 import addResource from './components/AddResource.vue';
 import { dateFormat } from '@/utils/utils';
 import { mapState } from 'vuex';
@@ -105,7 +105,8 @@ export default {
   },
 
   methods: {
-    dataItem(val) {
+    async dataItem(val) {
+      await updatePerformanceById('resource', this.projectId, {content: 'add resource'})
       console.log(val);
       let date = new Date();
       console.log(dateFormat(date, 'yyyy/MM/dd hh:mm'));
@@ -120,7 +121,8 @@ export default {
       this.addResourceDialogShow = false;
     },
 
-    update(val) {
+    async update(val) {
+      await updatePerformanceById('resource', this.projectId, 'update resource')
       console.log(val)
       this.dataItemList.forEach(dataItem => {
         if(dataItem.id == val.id) {
@@ -147,6 +149,7 @@ export default {
       })
         .then(async () => {
           await deleteDataItemById(row.id);
+          await updatePerformanceById('resource', this.projectId, 'delete resource')
           this.dataItemList.forEach((item, itemIndex) => {
             if (item.id == row.id) {
               this.dataItemList.splice(itemIndex, 1);
@@ -187,6 +190,7 @@ export default {
         })
           .then(async () => {
             await batchDelete(this.selection);
+            await updatePerformanceById('resource', this.projectId, 'delete resource')
             this.dataItemList.forEach((item, itemIndex) => {
               this.selection.forEach((select) => {
                 if (item.id == select) {

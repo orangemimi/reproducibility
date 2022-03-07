@@ -209,7 +209,7 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
-    public Project create(String userId, String userName, AddProjectDTO add, AddPerformanceDTO addPerformanceDTO) {
+    public Project create(String userId, String userName, AddProjectDTO add) {
         Project project = new Project();
         add.setCreator(userId);
         add.convertTo(project);
@@ -234,7 +234,9 @@ public class ProjectService {
         addContentDTO.convertTo(content);
         contentRepository.insert(content);
 
+        AddPerformanceDTO addPerformanceDTO = new AddPerformanceDTO();
         addPerformanceDTO.setProjectId(result.getId());
+        addPerformanceDTO.setUserId(userId);
         performanceService.savePerformance(addPerformanceDTO, userId);
 
         return result;

@@ -101,15 +101,7 @@ export default {
           privacy: this.form.privacy,
           tags: this.dynamicTags,
           picture: 'http://221.226.60.2:8082/data/' + pictureData.data.data.id,
-        },
-        performance: {
-          completion: {
-            context: { content: 'Context Definition', degree: '0%', type: 'warning', icon: 'el-icon-edit' },
-            resource: { content: 'Resource Collection', degree: '0%', type: 'warning', icon: 'el-icon-folder' },
-            scenario: { content: 'Simulation Scenario', degree: '0%', type: 'warning', icon: 'el-icon-sunny' },
-            results: { content: 'Excepted Results', degree: '0%', type: 'warning', icon: 'el-icon-document' },
-          },
-        },
+        }
       };
       let data = await saveProject(jsonData);
       await saveScenario({ projectId: data.id });

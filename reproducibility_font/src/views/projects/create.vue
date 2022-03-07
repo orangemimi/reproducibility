@@ -82,12 +82,6 @@ export default {
       await saveContext({ projectId: data.id });
 
       let completionJson = {
-        completion: {
-          context: { content: 'Context Definition', degree: '0%', type: 'warning', icon: 'el-icon-edit' },
-          resource: { content: 'Resource Collection', degree: '0%', type: 'warning', icon: 'el-icon-folder' },
-          scenario: { content: 'Simulation Scenario', degree: '0%', type: 'warning', icon: 'el-icon-sunny' },
-          results: { content: 'Excepted Results', degree: '0%', type: 'warning', icon: 'el-icon-document' }
-        },
         projectId: data.id
       };
 

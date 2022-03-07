@@ -2,9 +2,12 @@ package edu.njnu.reproducibility.domain.record;
 
 
 import edu.njnu.reproducibility.common.entity.BaseEntity;
+import edu.njnu.reproducibility.domain.record.support.UpdateType;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.List;
 
 /**
  * @Author ：Zhiyi
@@ -17,11 +20,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Record extends BaseEntity {
     @Id
     String id;
-    String nodeId;//context/resource.id
     String userId;
     String projectId;
-    String description;
-    String content;
-    String nodeType; //context definition or resource collection or process...
+    List<UpdateType> content;
 
 }

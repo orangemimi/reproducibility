@@ -38,27 +38,24 @@ public class PerformanceService {
         return performanceRepository.insert(performance);
     }
 
-    public Object updatePerformance(String type, String projectId, Content update, String userId) {
+    public Object updatePerformance(String type, String projectId, Content update) {
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
+        update.setUpdateTime(date);
         Performance performance = performanceRepository.findByProjectId(projectId).orElseThrow(MyException::noObject);
         if (type.equals("context") ) {
-            performance.getCompletion().setContext(update);
-            performance.getCompletion().getContext().setUpdateTime(date);
+            performance.getCompletion().getContext().add(update);
         }
         if(type.equals("resource") ){
-            performance.getCompletion().setResource(update);
-            performance.getCompletion().getResource().setUpdateTime(date);
+            performance.getCompletion().getResource().add(update);
         }
         if(type.equals("scenario") ){
-            performance.getCompletion().setScenario(update);
-            performance.getCompletion().getScenario().setUpdateTime(date);
+            performance.getCompletion().getScenario().add(update);
         }
         if(type.equals("results") ){
-            performance.getCompletion().setResults(update);
-            performance.getCompletion().getResults().setUpdateTime(date);
+            performance.getCompletion().getResults().add(update);
         }
+
         return performanceRepository.save(performance);
     }
 

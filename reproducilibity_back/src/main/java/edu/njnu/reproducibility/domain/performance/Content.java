@@ -14,11 +14,11 @@ import java.util.Date;
 public class Content{
 //    String type;//different
     String content;
-    String degree;
-
-    //style
-    String type;
-    String icon;
+//    String degree;
+//
+//    //style
+//    String type;
+//    String icon;
 //    String color;
     Date updateTime;
 }

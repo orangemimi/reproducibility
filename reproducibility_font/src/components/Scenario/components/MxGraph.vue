@@ -615,14 +615,7 @@ export default {
       };
 
       await updateIntegrateTask(this.currentTask.id, postJson);
-      let content = {
-        content: 'Simulation Scenario',
-        degree: '100%',
-        type: 'success',
-        icon: 'el-icon-sunny',
-      };
 
-      await updatePerformanceById('context', this.projectId, content);
       // await patch(`/integrateTasks/${this.currentTask.id}`, postJson);
       // console.log(data);
       this.undoMng.history = [this.undoMng.history[this.undoMng.indexOfNextAdd - 1]];
@@ -994,6 +987,7 @@ export default {
           },
         };
         await saveProjectRecord(jsonData);
+        await updatePerformanceById('scenario', this.projectId, {content: 'update scenario'})
       } else {
         this.$notify({
           title: 'warning',

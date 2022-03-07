@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import { getContextByProject, updateContext } from '@/api/request';
+import { getContextByProject, updateContext, updatePerformanceById } from '@/api/request';
 import { dateFormat } from '@/utils/utils'
 // import temporalInfo from './TemporalInfo.vue';
 // import spatialInfo from './SpatialInfo.vue';
@@ -219,6 +219,7 @@ export default {
         jsonData.context.temporalInfo.end = dateFormat(this.temporalInfo[1])
       }
       await updateContext(jsonData);
+      await updatePerformanceById('context', this.projectId, {content: 'update context'})
     },
 
     handleCommand(val) {

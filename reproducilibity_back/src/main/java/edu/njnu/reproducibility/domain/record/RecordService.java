@@ -34,10 +34,10 @@ public class RecordService {
         return  recordList;
     }
 
-    public Record saveRecord(AddRecordDTO add,String userId) {
+    public Record saveRecord(AddRecordDTO add, String userId) {
         Record record = new Record();
-        record.setUserId(userId);
         add.convertTo(record);
+        add.setUserId(userId);
         return recordRepository.insert(record);
     }
 

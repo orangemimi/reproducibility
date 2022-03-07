@@ -89,8 +89,7 @@
 <script>
 import { getContextByProjectId, updateContexByProjectId, saveRecord, updatePerformanceById } from '@/api/request';
 import { mapState } from 'vuex';
-import { hasProperty } from '@/utils/utils';
-
+import { hasProperty, getTime } from '@/utils/utils';
 
 import description from './components/description.vue';
 import other from './components/other.vue';
@@ -253,25 +252,22 @@ export default {
       this.contextForm.spatialInfo = this.spatialInfoForm;
       this.contextForm.temporalInfo = this.temporalInfoForm;
 
-      let data = await updateContexByProjectId(this.projectId, this.contextForm);
-      await this.saveRecord(data, 'updated');
+      await updateContexByProjectId(this.projectId, this.contextForm);
+      await this.saveRecord();
       await this.updatePerformance();
       // }
       // });
       this.$emit('closeForm', false);
     },
 
-    async saveRecord(context, tag) {
+    async saveRecord() {
       let record = {};
-      record.nodeId = context.id;
-      record.nodeType = 'contextDefinition';
       record.projectId = this.projectId;
-      record.content = `${this.userName} has ${tag} a context definition in this reproducible project`;
       await saveRecord(record);
     },
 
     async updatePerformance() {
-      let content = { content: 'Context Definition', degree: '100%', type: 'success', icon: 'el-icon-edit' };
+      let content = { content: 'hahah', updateTime: getTime() };
 
       await updatePerformanceById('context', this.projectId, content);
     },

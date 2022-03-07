@@ -3,7 +3,11 @@ package edu.njnu.reproducibility.domain.record.dto;
 
 import edu.njnu.reproducibility.common.dto.ToDomainConverter;
 import edu.njnu.reproducibility.domain.record.Record;
+import edu.njnu.reproducibility.domain.record.support.UpdateType;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author ：Zhiyi
@@ -14,10 +18,7 @@ import lombok.Data;
 
 @Data
 public class AddRecordDTO implements ToDomainConverter<Record> {
-    String nodeId;//context/resource.id
-    String userId;
     String projectId;
-    String description;
-    String content;
-    String nodeType; //context definition or resource collection or process...
+    String userId;
+    List<UpdateType> content = new ArrayList<>();
 }

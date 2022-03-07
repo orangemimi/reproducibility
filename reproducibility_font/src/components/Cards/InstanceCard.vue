@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { updateIntegrateTaskInstance, updatePerformanceById, checkTaskStatus, updateIntegrateTaskInstanceById } from '@/api/request';
+import { updateIntegrateTaskInstance, checkTaskStatus, updateIntegrateTaskInstanceById } from '@/api/request';
 import instanceGraph from './components/InstanceGraph.vue';
 import { dateFormat } from '@/utils/utils';
 export default {
@@ -109,7 +109,7 @@ export default {
           instanceId: this.instanceItem.id,
         };
         await updateIntegrateTaskInstance(form);
-        await this.updatePerformance();
+
         this.$emit('changeSelectInstanceId', this.instanceItem.id);
       }
       if (isStar) {
@@ -122,10 +122,7 @@ export default {
         this.$emit('changeSelectInstanceId', '');
       }
     },
-    async updatePerformance() {
-      let content = { content: 'Simulation Scenario', degree: '100%', type: 'success', icon: 'el-icon-sunny' };
-      await updatePerformanceById('scenario', this.projectId, content);
-    },
+
 
     async updateIntegrateTaskInstanceById(authority) {
       let json = { authority: '' };

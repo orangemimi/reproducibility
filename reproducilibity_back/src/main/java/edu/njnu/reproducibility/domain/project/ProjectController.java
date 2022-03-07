@@ -76,8 +76,7 @@ public class ProjectController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     public JsonResult create(@JwtTokenParser(key = "userId") String userId, @JwtTokenParser(key = "name") String name, @RequestBody JSONObject jsonObject) {
         AddProjectDTO addProjectDTO = jsonObject.getJSONObject("project").toBean(AddProjectDTO.class);
-        AddPerformanceDTO addPerformanceDTO = jsonObject.getJSONObject("performance").toBean(AddPerformanceDTO.class);
-        return ResultUtils.success(projectService.create(userId, name, addProjectDTO, addPerformanceDTO));
+        return ResultUtils.success(projectService.create(userId, name, addProjectDTO));
     }
 
     @RequestMapping(value = "/fork", method = RequestMethod.POST)

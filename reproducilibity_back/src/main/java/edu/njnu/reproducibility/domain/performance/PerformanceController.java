@@ -37,8 +37,8 @@ public class PerformanceController {
     }
 
     @RequestMapping(value = "/{type}/{projectId}", method = RequestMethod.PATCH)
-    public JsonResult updatePerformanceContext(@PathVariable("type") String type,@PathVariable("projectId") String projectId, @RequestBody Content update, @JwtTokenParser(key="userId") String userId) {
-        return  ResultUtils.success(performanceService.updatePerformance(type,projectId,update,userId));
+    public JsonResult updatePerformanceContext(@PathVariable("type") String type,@PathVariable("projectId") String projectId, @RequestBody Content update) {
+        return  ResultUtils.success(performanceService.updatePerformance(type, projectId, update));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

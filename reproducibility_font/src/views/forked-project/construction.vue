@@ -24,20 +24,20 @@
       <div class="record">
         <div class="block">
           <el-timeline>
-            <el-timeline-item :icon="completion.context.icon" :type="completion.context.type" size="large" :timestamp="dateFormat(completion.context.updateTime)">
-              {{ completion.context.content }}
+            <el-timeline-item icon="el-icon-edit" :type="completion.context.length > 0 ? 'success' : 'warning'" size="large" :timestamp="dateFormat(completion.context.updateTime)">
+              Context Definition
             </el-timeline-item>
 
-            <el-timeline-item :icon="completion.resource.icon" :type="completion.resource.type" size="large" :timestamp="dateFormat(completion.resource.updateTime)">
-              {{ completion.resource.content }}
+            <el-timeline-item icon="el-icon-folder" :type="completion.resource.length > 0 ? 'success' : 'warning'" size="large" :timestamp="dateFormat(completion.resource.updateTime)">
+              Resource Collection
             </el-timeline-item>
 
-            <el-timeline-item :icon="completion.scenario.icon" :type="completion.scenario.type" size="large" :timestamp="dateFormat(completion.scenario.updateTime)">
-              {{ completion.scenario.content }}
+            <el-timeline-item icon="el-icon-sunny" :type="completion.scenario.length > 0 ? 'success' : 'warning'" size="large" :timestamp="dateFormat(completion.scenario.updateTime)">
+              Simulation Scenario
             </el-timeline-item>
 
-            <el-timeline-item :icon="completion.results.icon" :type="completion.results.type" size="large" :timestamp="dateFormat(completion.results.updateTime)">
-              {{ completion.results.content }}
+            <el-timeline-item icon="el-icon-document" :type="completion.results.length > 0 ? 'success' : 'warning'" size="large" :timestamp="dateFormat(completion.results.updateTime)">
+              Excepted Results
             </el-timeline-item>
           </el-timeline>
         </div>

@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import { getProjectsCreatedByMe, saveModelsToProject, saveDataServicesToProject } from '@/api/request';
+import { getProjectsCreatedByMe, saveModelsToProject, saveDataServicesToProject, updatePerformanceById } from '@/api/request';
 import { imgBase64 } from '@/lib/utils';
 export default {
   data() {
@@ -149,6 +149,7 @@ export default {
       } else {
         if (this.modelList.length != 0) {
           await this.saveModelsToProject();
+          await updatePerformanceById('resource', this.projectList[this.selectNum].projectId, {content: 'add models'})
           let temp = {
             computableModels: [],
             modelItem: [],
@@ -157,6 +158,7 @@ export default {
         }
         if(this.dataServiceList.length != 0) {
           await this.saveDataServicesToProject()
+          await updatePerformanceById('resource', this.projectList[this.selectNum].projectId, {content: 'add dataservers'})
           let temp = {
             dataServiceItem: {},
             dataServices: []

@@ -4,16 +4,15 @@
       <div class="main-card">
         <el-row :gutter="20">
           <el-col :span="24">
-            <step-card :cardInfo="{ btnType: 'Content Definition' }" style="height:450px;width:100%"></step-card>
+            <step-card :cardInfo="{ btnType: 'Content Definition' }" style="height: 450px; width: 100%"></step-card>
           </el-col>
           <el-col :span="24">
-            <step-card :cardInfo="{ btnType: 'Resource Collection' }" :projectInfo="projectInfo" style="height:450px;width:100%"></step-card>
+            <step-card :cardInfo="{ btnType: 'Resource Collection' }" :projectInfo="projectInfo" style="height: 450px; width: 100%"></step-card>
           </el-col>
-
         </el-row>
         <el-row>
           <el-col :span="24">
-            <step-card :cardInfo="{ btnType: 'Simulation Scenario' }" style="height:950px;width:100%"></step-card>
+            <step-card :cardInfo="{ btnType: 'Simulation Scenario' }" style="height: 950px; width: 100%"></step-card>
           </el-col>
         </el-row>
       </div>
@@ -21,24 +20,39 @@
         <div class="block">
           <el-timeline>
             <el-timeline-item
-              :icon="completion.context.icon"
-              :type="completion.context.type"
+              icon="el-icon-edit"
+              :type="completion.context.length > 0 ? 'success' : 'warning'"
               size="large"
               :timestamp="dateFormat(completion.context.updateTime)"
             >
-              {{ completion.context.content }}
+              Context Definition
             </el-timeline-item>
 
-            <el-timeline-item :icon="completion.resource.icon" :type="completion.resource.type" size="large" :timestamp="dateFormat(completion.resource.updateTime)">
-              {{ completion.resource.content }}
+            <el-timeline-item
+              icon="el-icon-folder"
+              :type="completion.resource.length > 0 ? 'success' : 'warning'"
+              size="large"
+              :timestamp="dateFormat(completion.resource.updateTime)"
+            >
+              Resource Collection
             </el-timeline-item>
 
-            <el-timeline-item :icon="completion.scenario.icon" :type="completion.scenario.type" size="large" :timestamp="dateFormat(completion.scenario.updateTime)">
-              {{ completion.scenario.content }}
+            <el-timeline-item
+              icon="el-icon-sunny"
+              :type="completion.scenario.length > 0 ? 'success' : 'warning'"
+              size="large"
+              :timestamp="dateFormat(completion.scenario.updateTime)"
+            >
+              Simulation Scenario
             </el-timeline-item>
 
-            <el-timeline-item :icon="completion.results.icon" :type="completion.results.type" size="large" :timestamp="dateFormat(completion.results.updateTime)">
-              {{ completion.results.content }}
+            <el-timeline-item
+              icon="el-icon-document"
+              :type="completion.results.length > 0 ? 'success' : 'warning'"
+              size="large"
+              :timestamp="dateFormat(completion.results.updateTime)"
+            >
+              Excepted Results
             </el-timeline-item>
           </el-timeline>
         </div>
@@ -60,23 +74,23 @@ import { getProjectAndUsers, getPerformanceByProjectId } from '@/api/request';
 import { dateFormat } from '@/utils/utils';
 export default {
   components: {
-    stepCard
+    stepCard,
     // recordList
   },
   data() {
     return {
       projectId: this.$route.params.id,
       projectInfo: {},
-      completion:{
-          context:{icon: '',type: '',updateTime:''},
-          resource:{icon: '',type: '',updateTime:''},
-          scenario:{icon: '',type: '',updateTime:''},
-          results:{icon: '',type: '',updateTime:''}
+      completion: {
+        context: [],
+        resource: [],
+        scenario: [],
+        results: [],
       },
       context: {},
       resource: {},
       scenario: {},
-      results: {}
+      results: {},
       // cardInfos: [{ btnType: 'Context Definition' }, { btnType: 'Resource Collection' }]
     };
   },
@@ -105,11 +119,11 @@ export default {
         return 'You have not do any operation';
       }
       return dateFormat(time);
-    }
+    },
   },
   created() {
     this.init();
-  }
+  },
 };
 </script>
 

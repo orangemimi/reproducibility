@@ -3,6 +3,7 @@ package edu.njnu.reproducibility.domain.performance;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Author ：Zhiyi
@@ -12,8 +13,8 @@ import java.util.Date;
  */
 @Data
 public class Completion {
-    Content context;
-    Content resource;
-    Content scenario;
-    Content results;
+    List<Content> context;
+    List<Content> resource;
+    List<Content> scenario;
+    List<Content> results;
 }
