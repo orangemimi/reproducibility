@@ -89,7 +89,7 @@
 <script>
 import { getContextByProjectId, updateContexByProjectId, saveRecord, updatePerformanceById } from '@/api/request';
 import { mapState } from 'vuex';
-import { hasProperty, getTime } from '@/utils/utils';
+import { hasProperty } from '@/utils/utils';
 
 import description from './components/description.vue';
 import other from './components/other.vue';
@@ -267,7 +267,7 @@ export default {
     },
 
     async updatePerformance() {
-      let content = { content: 'hahah', updateTime: getTime() };
+      let content = { content: 'hahah'};
 
       await updatePerformanceById('context', this.projectId, content);
     },

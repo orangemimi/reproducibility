@@ -89,7 +89,7 @@ import {
 } from '@/api/request';
 // import dataUpload from './DataUpload'; //dialogcontent
 import dataUploadInfo from './DataUploadInfo'; //dialogcontent
-import { getUuid, getSuffix, renderSize, getTime } from '@/utils/utils';
+import { getUuid, getSuffix, renderSize } from '@/utils/utils';
 import { mapState } from 'vuex';
 
 export default {
@@ -325,7 +325,7 @@ export default {
         dataItemCollection: filter
       });
 
-      let content = { content: 'haha', updateTime: getTime() };
+      let content = { content: 'haha' };
 
       await updatePerformanceById('resource', this.projectId, content);
     },

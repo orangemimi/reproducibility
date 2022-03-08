@@ -3,6 +3,7 @@ package edu.njnu.reproducibility.domain.modelItemCollection;
 
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
+import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.common.untils.JsonResult;
 import edu.njnu.reproducibility.common.untils.ResultUtils;
 import edu.njnu.reproducibility.domain.modelItemCollection.dto.AddModelItemDTO;
@@ -119,6 +120,14 @@ public class ModelItemService {
         }
     }
 
+    public String getPictureByDOI(String doi) {
+        ModelItemColletion modelItemColletion = modelItemRepository.findByDoi(doi);
+        if(modelItemColletion == null) {
+            throw MyException.noObject();
+        } else {
+            return modelItemColletion.getImage();
+        }
+    }
 
 
 }

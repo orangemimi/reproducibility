@@ -61,18 +61,8 @@
                   </span>
                 </span>
               </el-tree>
-              <el-descriptions direction="vertical" :column="3" border v-if="resourceFlag" style="margin-top: 20px">
+              <el-descriptions direction="vertical" :column="3" border v-if="resourceFlag && (selectedNode.classify != 'model' && selectedNode.classify != 'dataService')" style="margin-top: 20px">
                 <el-descriptions-item label="Name">{{ selectedNode.label }}</el-descriptions-item>
-                <!-- <el-descriptions-item label="Event Name">{{ selectedNode.eventName }}</el-descriptions-item>
-                <el-descriptions-item label="Type">
-                  <el-tag size="small" :type="getFormat">{{ selectedNode.format }}</el-tag>
-                </el-descriptions-item>
-                <el-descriptions-item label="Data Type" v-if="selectedNode.format == 'parameter' || selectedNode.format == 'output'">
-                  <el-tag size="small" :type="getType" effect="dark">{{ selectedNode.type }}</el-tag>
-                </el-descriptions-item>
-                <el-descriptions-item label="Description">
-                  {{ selectedNode.description }}
-                </el-descriptions-item> -->
                 <el-descriptions-item label="Type">
                   <el-tag size="small" :type="getFormat">{{ selectedNode.classify }}</el-tag>
                 </el-descriptions-item>
@@ -81,6 +71,8 @@
                   <el-button type="warning" plain size="mini" @click="download(selectedNode)">download</el-button>
                 </el-descriptions-item>
               </el-descriptions>
+
+              <model-item :modelItem="selectedNode" v-if="resourceFlag && (selectedNode.classify == 'model' || selectedNode.classify == 'dataService')"></model-item>
 
               <el-divider></el-divider>
               <div @click="toAbstract" class="nav">
@@ -91,6 +83,7 @@
                 <i class="el-icon-data-board" style="margin-right: 10px"></i>
                 Scenario
               </div>
+
 
               <div v-if="content.context.spatialInfos.length > 0 || content.context.temporalInfo.start != null">
                 <el-divider>Scale</el-divider>
@@ -147,10 +140,12 @@
 import { getContent } from '@/api/request';
 import axios from 'axios';
 import ReScenarioContent from '_com/Scenario/reScenario';
+import ModelItem from './components/Modeltem.vue'
 
 export default {
   components: {
     ReScenarioContent,
+    ModelItem
   },
   data() {
     return {
@@ -351,7 +346,9 @@ export default {
           label: item.name,
           classify: 'model',
           flag: true,
-          id: item.id
+          id: item.id,
+          doi: item.nodeAttribute.doi,
+          md5: item.nodeAttribute.md5
         });
         this.resourceCount = this.resourceCount + 1;
       });

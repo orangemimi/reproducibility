@@ -77,4 +77,9 @@ public class ModelItemController {
     public JsonResult getModelsByProjectId(@PathVariable String projectId) {
         return ResultUtils.success(modelItemService.getModelsByProjectId(projectId));
     }
+
+    @RequestMapping(value = "/getPictureByDOI/{Doi}", method = RequestMethod.GET)
+    public JsonResult getPictureByDOI(@PathVariable String Doi) {
+        return ResultUtils.success(modelItemService.getPictureByDOI(Doi));
+    }
 }

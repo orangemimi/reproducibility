@@ -538,6 +538,10 @@ export async function getModelsByProjectId(projectId) {
   return await get(`/modelItems/getModelsByProjectId/${projectId}`)
 }
 
+export async function getPictureByDOI(doi) {
+  return await get(`/modelItems/getPictureByDOI/${doi}`)
+}
+
 //------------------------------------------methods-----------------------------------
 
 export async function saveMethod(form) {

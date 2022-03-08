@@ -19,4 +19,5 @@ public interface ModelItemRepository extends MongoRepository<ModelItemColletion,
 //    void deleteByTid(String tid);
 //    Optional<List<ModelItem>> findAllBy
     List<ModelItemColletion> findAllByProjectId(String projectId);
+    ModelItemColletion findByDoi(String doi);
 }
