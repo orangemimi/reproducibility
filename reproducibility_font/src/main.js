@@ -10,12 +10,12 @@ import enLocale from '../node_modules/element-ui/lib/locale/lang/en'; //英文
 
 import { errorHandler } from '@/lib/error';
 import mavonEditor from 'mavon-editor';
-import 'mavon-editor/dist/css/index.css'
+import 'mavon-editor/dist/css/index.css';
 
 import './assets/iconfont/iconfont.css';
-import './assets/iconfont1/iconfont.css'
-import './assets/iconfont1/iconfont.js'
-import './assets/font/font.css'
+import './assets/iconfont1/iconfont.css';
+import './assets/iconfont1/iconfont.js';
+import './assets/font/font.css';
 import '@/router/permission'; // permission control
 import vuescroll from 'vuescroll';
 import vueJsonEditor from 'vue-json-editor';
@@ -24,9 +24,7 @@ import vueJsonEditor from 'vue-json-editor';
 import { codemirror } from 'vue-codemirror';
 import 'codemirror/lib/codemirror.css';
 
-import BaiduMap from 'vue-baidu-map'
-
-
+import BaiduMap from 'vue-baidu-map';
 
 // import Descriptions from '_com/Description/index.js';
 Vue.config.devtools = true;
@@ -39,8 +37,7 @@ Vue.use(vuescroll);
 Vue.use(codemirror);
 Vue.use(BaiduMap, {
   ak: 'duBHPLUvDk5T3GgLF2o66hqSG3hnGTw5'
-})
-
+});
 
 Vue.component('vue-json-editor', vueJsonEditor);
 // Vue.use(vueJsonEditor);
@@ -53,8 +50,8 @@ new Vue({
   render: h => h(App)
 }).$mount('#app');
 
-import x2js from 'x2js' // xml数据处理插件
-Vue.prototype.$x2js = new x2js() // 创建x2js对象，挂到vue原型上
+import x2js from 'x2js'; // xml数据处理插件
+Vue.prototype.$x2js = new x2js(); // 创建x2js对象，挂到vue原型上
 
 // const app = createApp(App)
 // app.use(mavonEditor),

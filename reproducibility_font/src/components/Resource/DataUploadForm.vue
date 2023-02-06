@@ -156,11 +156,11 @@ import fileUpload from './FileUpload';
 export default {
   props: {
     formType: {
-      type: String,
+      type: String
     },
     initFormData: {
-      type: Object,
-    },
+      type: Object
+    }
   },
 
   watch: {
@@ -170,8 +170,8 @@ export default {
           this.form = val;
         }
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   components: {
     // addImage,
@@ -181,7 +181,7 @@ export default {
     temporalInfoDialog,
     spatialInfoDialog,
     unitDrawer,
-    fileUpload,
+    fileUpload
     // addChildValue
   },
 
@@ -198,20 +198,20 @@ export default {
         keywords: [],
         agentAttribute: {
           organization: {},
-          reference: '',
+          reference: ''
         },
         activityAttribute: {
           relatedActivity: {
             name: '',
-            description: '',
+            description: ''
           },
           relatedResource: {
             name: '',
-            description: '',
+            description: ''
           },
           relationshipLink: {
-            description: '',
-          },
+            description: ''
+          }
         },
         state: 'Public',
         version: '1.0',
@@ -222,13 +222,13 @@ export default {
           content: '',
           unit: { value: '' },
           spatialInfo: {},
-          temporalInfo: {},
-        },
+          temporalInfo: {}
+        }
       },
 
       Rules: {
         name: [{ required: true, message: 'Name cannot be empty', trigg: 'blur' }],
-        value: [{ required: true, message: 'Data cannot be empty'}],
+        value: [{ required: true, message: 'Data cannot be empty' }],
         version: [{ required: true, message: 'Version cannot be empty', trigg: 'blur' }],
         token: [{ required: true, message: 'Token cannot be empty', trigg: 'blur' }]
       },
@@ -243,7 +243,7 @@ export default {
         source: '',
         thumbnail: '',
         userUpload: '',
-        address: '',
+        address: ''
       },
 
       typeEnums: ['String', 'Number', 'Date'],
@@ -254,8 +254,8 @@ export default {
       //   file: {},
       ops: {
         bar: {
-          background: '#808695',
-        },
+          background: '#808695'
+        }
       },
       nodeInfo: this.nodeInformation,
 
@@ -265,8 +265,8 @@ export default {
           name: 'Name',
           value: 'Description',
           id: 1,
-          pid: 0,
-        },
+          pid: 0
+        }
       ]),
       // addChildDialogShow: false
 
@@ -274,28 +274,28 @@ export default {
         enable: false,
         spatialReference: {
           general: '',
-          wkt: '',
+          wkt: ''
         },
         spatialDimension: '',
         spatialScale: {
           type: '',
-          description: '',
+          description: ''
         },
         spatialExtentList: [],
-        resolutionConstraintList: [],
+        resolutionConstraintList: []
       },
 
       temporalInfoForm: {
         enable: false,
         temporalScale: {
           type: '',
-          description: '',
+          description: ''
         },
         temporalReference: {
-          value: '',
+          value: ''
         },
         temporalExtentList: [],
-        stepConstraintList: [],
+        stepConstraintList: []
       },
 
       //unit drawer
@@ -305,7 +305,7 @@ export default {
       addTemporalInfodialogVisible: false,
 
       //file uolad related
-      currentFile: {},
+      currentFile: {}
     };
   },
 
@@ -360,11 +360,11 @@ export default {
     //data item保存到数据库
     //上传数据直接保存到fileItems,即用户的资源可全部显示，之后选择所需的数据，之后保存选择的数据之后 保存到resource数据表里面去
     submit() {
-      this.$refs['form'].validate(async (valid) => {
+      this.$refs['form'].validate(async valid => {
         if (!valid) {
           this.$notify.error({
             title: 'Error',
-            message: 'Validation failed',
+            message: 'Validation failed'
           });
           return;
         }
@@ -377,12 +377,12 @@ export default {
         this.form.restriction.spatialInfo = this.spatialInfoForm;
         this.form.restriction.temporalInfo = this.temporalInfoForm;
         this.form.projectId = this.projectId;
-        console.log(this.form)
+        console.log(this.form);
         let data = await saveDataItem(this.form);
-        console.log(data)
+        console.log(data);
         let result = {
           data: data,
-          flag: true,
+          flag: true
         };
         this.$emit('uploadSuccess', result);
       });
@@ -405,7 +405,7 @@ export default {
 
     returnFileUrl(val) {
       console.log(val);
-      this.form.value = val.address
+      this.form.value = val.address;
     },
 
     //tree
@@ -429,13 +429,13 @@ export default {
     selectUnit(val) {
       console.log(val);
       this.form.restriction.unit = val.name;
-    },
+    }
   },
 
   mounted() {
     // console.log(this.formType)
     // console.log(this.initFormData)
-  },
+  }
 };
 </script>
 <style lang="scss" scoped>

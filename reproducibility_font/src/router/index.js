@@ -212,7 +212,7 @@ export const constantRoutes = [
           }
         ]
       },
-      
+
       {
         path: '/newmodel',
         name: 'NewModel',
@@ -289,7 +289,7 @@ export const constantRoutes = [
           header: () => import('_com/layout/MyHeader.vue'),
           main: () => import('@/views/homepage'),
           footer: () => import('_com/layout/MyFooter.vue')
-        },
+        }
       },
       {
         path: '/project/context/:projectId',
@@ -370,7 +370,6 @@ export const constantRoutes = [
           roles: ['builder', 'rebuilder_explorer', 'rebuilder_operator']
         }
       }
-      
     ]
   }
 ];

@@ -1,7 +1,6 @@
 <template>
   <div class="editor">
-    <div id="e">
-    </div>
+    <div id="e"></div>
   </div>
 </template>
 
@@ -16,13 +15,13 @@ export default {
     return {
       content: '',
       editor: null,
-      info_: null,
+      info_: null
     };
   },
-  
+
   model: {
     prop: 'desc',
-    event: 'change',
+    event: 'change'
   },
   watch: {
     isClear(val) {
@@ -37,17 +36,17 @@ export default {
       if (value != this.editor.txt.html()) {
         this.editor.txt.html(this.desc);
       }
-    },
+    }
   },
   props: {
     desc: {
       type: String,
-      default: '',
+      default: ''
     },
     //业务中我们经常会有添加操作和编辑操作，添加操作时，我们需清除上一操作留下的缓存
     isClear: {
       type: Boolean,
-      default: false,
+      default: false
     },
     html: {
       type: String,
@@ -64,9 +63,9 @@ export default {
       this.editor.highlight = hljs;
       this.editor.config.lang = 'en';
       this.editor.i18next = i18next;
-      this.editor.config.onchange = (val) => {
+      this.editor.config.onchange = val => {
         this.content = val;
-        this.click()
+        this.click();
       };
       // console.log(this.editor);
       //   this.editor.customConfig.onchangeTimeout = 1000; // 单位 ms
@@ -139,22 +138,20 @@ export default {
       //     'redo', // 重复
       //   ];
       this.editor.create();
-      this.editor.txt.html(this.html)
+      this.editor.txt.html(this.html);
       // this.editor.txt.html(this.desc)
       //  this.editor.txt.html(this.desc)
     },
     click() {
       // console.log(this.content);
       // console.log(this.editor)
-      this.$emit("textChange", this.content)
-    },
+      this.$emit('textChange', this.content);
+    }
   },
   mounted() {
     this.initE();
-
-  },
+  }
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

@@ -14,7 +14,13 @@
           <el-timeline-item v-if="record.nodeType == 'dataProcessing'" icon="el-icon-coin" type="success" color="#0bbd87" :timestamp="record.createTime">
             <div>3{{ record.content }}</div>
           </el-timeline-item>
-          <el-timeline-item v-if="record.nodeType == 'simulationExecution'" icon="el-icon-coordinate" type="success" color="#0bbd87" :timestamp="record.createTime">
+          <el-timeline-item
+            v-if="record.nodeType == 'simulationExecution'"
+            icon="el-icon-coordinate"
+            type="success"
+            color="#0bbd87"
+            :timestamp="record.createTime"
+          >
             <div>4{{ record.content }}</div>
           </el-timeline-item>
           <el-timeline-item v-if="record.nodeType == 'resultAnalysis'" icon="el-icon-reading" type="success" color="#0bbd87" :timestamp="record.createTime">

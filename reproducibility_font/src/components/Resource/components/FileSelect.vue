@@ -90,13 +90,13 @@ export default {
     return {
       tableData: [],
       stack: ['-1'],
-      arrayStack: [],
+      arrayStack: []
     };
   },
   methods: {
     async getFileItemByStoreyAndParent() {
       let data = await getFileItemByStoreyAndParent('0', '-1');
-      data.forEach((item) => {
+      data.forEach(item => {
         item.date = dateFormat(item.date, 'yyyy/MM/dd hh:mm');
       });
       this.tableData = data;
@@ -121,27 +121,27 @@ export default {
     async rowDblclick(row) {
       if (row.folder) {
         let data = await getFileItemByStoreyAndParent(this.stack.length.toString(), row.id);
-        data.forEach((item) => {
+        data.forEach(item => {
           item.date = dateFormat(item.date, 'yyyy/MM/dd hh:mm');
         });
         this.stack.push({
-            id: row.id,
-            name: row.name
+          id: row.id,
+          name: row.name
         });
         this.arrayStack.push(this.tableData);
         this.tableData = data;
       } else {
         let data = {
           row: row,
-          stack: this.stack,
+          stack: this.stack
         };
         this.$emit('selectFile', data);
       }
-    },
+    }
   },
   mounted() {
     this.init();
-  },
+  }
 };
 </script>
 

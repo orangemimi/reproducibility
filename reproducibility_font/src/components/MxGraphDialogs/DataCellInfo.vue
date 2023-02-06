@@ -124,14 +124,14 @@ import { getDataItemsByProjectId } from '@/api/request';
 export default {
   props: {
     cell: {
-      type: Object,
-    },
+      type: Object
+    }
   },
 
   computed: {
     ...mapState({
-      role: (state) => state.permission.role,
-    }),
+      role: state => state.permission.role
+    })
   },
 
   data() {
@@ -145,11 +145,11 @@ export default {
       ops: {
         bar: {
           background: '#808695',
-          keepShow: true,
-        },
+          keepShow: true
+        }
       },
       selectDataName: '',
-      selectDataItem: {},
+      selectDataItem: {}
     };
   },
 
@@ -181,19 +181,19 @@ export default {
         name: '',
         type: ''
       };
-      this.dataItemList.forEach((item) => {
+      this.dataItemList.forEach(item => {
         if (item.id == id) {
           dataSelect.value = item.value;
           dataSelect.dataSelectId = id;
           dataSelect.name = item.name;
-          dataSelect.type = item.format
+          dataSelect.type = item.format;
         }
       });
 
       this.selectDataItem = dataSelect;
 
       this.$emit('dataSelect', dataSelect);
-    },
+    }
   },
   mounted() {
     console.log(this.cell);
@@ -209,7 +209,7 @@ export default {
       }
     }
     this.init();
-  },
+  }
 };
 </script>
 

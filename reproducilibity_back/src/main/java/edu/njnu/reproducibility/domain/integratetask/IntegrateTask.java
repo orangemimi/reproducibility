@@ -3,9 +3,14 @@ package edu.njnu.reproducibility.domain.integratetask;
 
 import edu.njnu.reproducibility.common.entity.BaseEntity;
 import edu.njnu.reproducibility.domain.integratetask.support.Action;
+import edu.njnu.reproducibility.domain.integratetask.support.Process;
+import edu.njnu.reproducibility.domain.integratetask.support.Result;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author Zhiyi
@@ -29,5 +34,7 @@ public class IntegrateTask extends BaseEntity {
     String selectInstanceId;
 
 //    String selectInstanceId; //mxgraph+note
-//    String type;//Integrate Task; notebook
+    String type;//Integrate Task; notebook
+    List<Process> processes = new ArrayList<>();
+    Result result = new Result();
 }

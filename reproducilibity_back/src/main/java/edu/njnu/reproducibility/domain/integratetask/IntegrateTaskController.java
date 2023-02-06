@@ -9,6 +9,9 @@ import edu.njnu.reproducibility.common.untils.ResultUtils;
 import edu.njnu.reproducibility.domain.integratetask.dto.AddIntegrateTaskDTO;
 import edu.njnu.reproducibility.domain.integratetask.dto.UpdateCurrentActionInTaskDTO;
 import edu.njnu.reproducibility.domain.integratetask.dto.UpdateIntegratedTaskDTO;
+import edu.njnu.reproducibility.domain.integratetask.support.Process;
+import edu.njnu.reproducibility.domain.integratetask.support.Result;
+import edu.njnu.reproducibility.domain.integratetask.support.ResultValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -85,5 +88,50 @@ public class IntegrateTaskController {
         return ResultUtils.success(integrateTaskService.getSelectedTaskByProjectId(projectId));
     }
 
+    @RequestMapping(value = "/addProcess/{id}", method = RequestMethod.PATCH)
+    public JsonResult addProcess(@PathVariable String id,@RequestBody Process process) {
+        integrateTaskService.addProcess(id,process);
+        return ResultUtils.success();
+    }
+    @RequestMapping(value = "/editProcess/{id}", method = RequestMethod.PATCH)
+    public JsonResult editProcess(@PathVariable String id,@RequestBody JSONObject jsonObject) {
+        Process process = jsonObject.get("form",Process.class);
+        Integer index = jsonObject.getInt("index");
+        integrateTaskService.editProcess(id,process,index);
+        return ResultUtils.success();
+    }
+    @RequestMapping(value = "/deleteProcess/{id}", method = RequestMethod.PATCH)
+    public JsonResult deleteProcess(@PathVariable String id,@RequestBody JSONObject jsonObject) {
+        Integer index = jsonObject.getInt("index");
+        integrateTaskService.deleteProcess(id,index);
+        return ResultUtils.success();
+    }
+    @RequestMapping(value = "/getIntegrateTaskResultByTaskId/{id}", method = RequestMethod.GET)
+    public JsonResult getIntegrateTaskResultByTaskId(@PathVariable String id) {
+        return ResultUtils.success(integrateTaskService.getIntegrateTaskResultByTaskId(id));
+    }
+    @RequestMapping(value = "/saveResult/{id}",method = RequestMethod.PATCH)
+    public JsonResult saveResult(@RequestBody Result result, @PathVariable String id){
+        integrateTaskService.saveResult(id, result);
+        return ResultUtils.success();
+    }
+    @RequestMapping(value = "/deleteResultValidation/{id}",method = RequestMethod.PATCH)
+    public JsonResult deleteResultValidation(@RequestBody ResultValidation resultValidation, @PathVariable String id){
+        integrateTaskService.deleteResultValidation(id, resultValidation);
+        return ResultUtils.success();
+    }
 
+    @RequestMapping(value = "/saveResultValidation/{id}", method = RequestMethod.PATCH)
+    public JsonResult saveResultValidation(@RequestBody ResultValidation resultValidation, @PathVariable String id) {
+        integrateTaskService.saveResultValidation(id, resultValidation);
+        return ResultUtils.success();
+    }
+
+    @RequestMapping(value = "/updateResultValidation/{id}", method = RequestMethod.PATCH)
+    public JsonResult updateResultValidation(@RequestBody com.alibaba.fastjson.JSONObject jsonObject, @PathVariable String id) {
+        ResultValidation resultValidation = jsonObject.getObject("data",ResultValidation.class);
+        Integer index = jsonObject.getInteger("index");
+        integrateTaskService.updateResultValidation(id, index, resultValidation);
+        return ResultUtils.success();
+    }
 }

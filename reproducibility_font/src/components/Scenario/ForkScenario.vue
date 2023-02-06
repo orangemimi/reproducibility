@@ -5,19 +5,19 @@
         <mx-graph-card :record="item"></mx-graph-card>
       </el-carousel-item>
     </el-carousel>
-    <scenario/>
+    <scenario />
   </div>
 </template>
 
 <script>
 import mxGraphCard from './components/MxGraphCard.vue';
-import scenario from './Scenario.vue'
+import scenario from './Scenario.vue';
 import { getRecords } from '@/api/request';
 export default {
   data() {
     return {
       projectId: this.$route.params.id,
-      taskContentList: [],
+      taskContentList: []
     };
   },
   components: {
@@ -28,11 +28,11 @@ export default {
     async getRecords() {
       let data = await getRecords(this.projectId);
       this.taskContentList = data;
-    },
+    }
   },
   async mounted() {
     await this.getRecords();
-  },
+  }
 };
 </script>
 

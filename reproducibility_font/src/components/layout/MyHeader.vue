@@ -30,7 +30,7 @@
               :size="40"
               style="margin-top: 10px"
             ></avatar> -->
-            <el-avatar :src="pictureURL" :size="40" style="margin-top: 10px">{{user.name}}</el-avatar>
+            <el-avatar :src="pictureURL" :size="40" style="margin-top: 10px">{{ user.name }}</el-avatar>
           </div>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="homepage">
@@ -82,21 +82,20 @@ export default {
     };
   },
   computed: {
-    ...mapState(['user']),
+    ...mapState(['user'])
   },
   watch: {
     '$store.state.user.selectNum': {
       handler(val) {
         this.selectModelCount = val;
-      },
+      }
     },
     '$store.state.user.avatar': {
       handler(val) {
-        this.pictureURL = 'http://172.21.212.103:8088/userServer' + val
+        this.pictureURL = 'http://172.21.212.103:8088/userServer' + val;
       }
     }
   },
-
 
   methods: {
     ...mapActions({ handleLogOut: 'user/handleLogOut' }),
@@ -117,7 +116,7 @@ export default {
           {
             if (this.$router.currentRoute.name != 'Home') {
               this.$router.push({
-                name: 'Home',
+                name: 'Home'
               });
             }
           }
@@ -126,7 +125,7 @@ export default {
           {
             if (this.$router.currentRoute.name != 'Projects') {
               this.$router.push({
-                name: 'Projects',
+                name: 'Projects'
               });
             }
           }
@@ -135,7 +134,7 @@ export default {
           {
             if (this.$router.currentRoute.name != 'Models') {
               this.$router.push({
-                name: 'Models',
+                name: 'Models'
               });
             }
           }
@@ -144,7 +143,7 @@ export default {
           {
             if (this.$router.currentRoute.name != 'OfficialData') {
               this.$router.push({
-                name: 'OfficialData',
+                name: 'OfficialData'
               });
             }
           }
@@ -153,7 +152,7 @@ export default {
           {
             if (this.$router.currentRoute.name != 'CommunityData') {
               this.$router.push({
-                name: 'CommunityData',
+                name: 'CommunityData'
               });
             }
           }
@@ -176,18 +175,18 @@ export default {
     register() {
       this.$router.push({
         name: 'Login',
-        params: { tab: 'register' },
+        params: { tab: 'register' }
       });
     },
     login() {
       this.$router.push({
-        name: 'Login',
+        name: 'Login'
       });
     },
     toNotice() {
       if (this.$router.currentRoute.name != 'UserMessage') {
         this.$router.push({
-          name: 'UserMessage',
+          name: 'UserMessage'
         });
       }
     },
@@ -195,23 +194,23 @@ export default {
     toUserPage() {
       if (this.$router.currentRoute.name != 'UserHome') {
         this.$router.push({
-          name: 'UserHome',
+          name: 'UserHome'
         });
       }
     },
     toHomePage() {
       if (this.$router.currentRoute.name != 'Homepage') {
         this.$router.push({
-          path: `/Homepage/${this.$store.state.user.userId}`,
+          path: `/Homepage/${this.$store.state.user.userId}`
         });
       }
-    },
+    }
   },
   mounted() {},
   components: {
     // Avatar,
-    drawerCard,
-  },
+    drawerCard
+  }
 };
 </script>
 

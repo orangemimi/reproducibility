@@ -74,7 +74,7 @@ import { getProjectAndUsers, getPerformanceByProjectId } from '@/api/request';
 import { dateFormat } from '@/utils/utils';
 export default {
   components: {
-    stepCard,
+    stepCard
     // recordList
   },
   data() {
@@ -85,12 +85,12 @@ export default {
         context: [],
         resource: [],
         scenario: [],
-        results: [],
+        results: []
       },
       context: {},
       resource: {},
       scenario: {},
-      results: {},
+      results: {}
       // cardInfos: [{ btnType: 'Context Definition' }, { btnType: 'Resource Collection' }]
     };
   },
@@ -119,11 +119,11 @@ export default {
         return 'You have not do any operation';
       }
       return dateFormat(time);
-    },
+    }
   },
   created() {
     this.init();
-  },
+  }
 };
 </script>
 

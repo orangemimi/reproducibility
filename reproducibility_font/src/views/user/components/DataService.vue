@@ -39,7 +39,7 @@ export default {
       dataServices: [],
       checkList: [],
       publicType: true,
-      privateType: true,
+      privateType: true
     };
   },
   components: { dataServiceCard },
@@ -49,28 +49,26 @@ export default {
       console.log(this.dataServices);
     },
     handleCheckAllChange(val) {
-      if(val.length == 2) {
-        this.publicType = true
-        this.privateType = true
-      }
-      else if(val.length == 0) {
-        this.publicType = false
-        this.privateType = false
-      }
-      else {
-        if(val[0] == 'Public') {
-          this.publicType = true
-          this.privateType = false
+      if (val.length == 2) {
+        this.publicType = true;
+        this.privateType = true;
+      } else if (val.length == 0) {
+        this.publicType = false;
+        this.privateType = false;
+      } else {
+        if (val[0] == 'Public') {
+          this.publicType = true;
+          this.privateType = false;
         } else {
-          this.publicType = false
-          this.privateType = true
+          this.publicType = false;
+          this.privateType = true;
         }
       }
     }
   },
   mounted() {
     this.getDataService();
-  },
+  }
 };
 </script>
 

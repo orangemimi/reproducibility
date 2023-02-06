@@ -69,7 +69,7 @@ export default {
       value: '',
       method: 'conversion',
       select: 1,
-      addModelDialogShow: false,
+      addModelDialogShow: false
     };
   },
 
@@ -97,7 +97,7 @@ export default {
         method: method,
         page: 1,
         pageSize: 12,
-        searchText: searchText,
+        searchText: searchText
       };
       let data = await getDataServiceByPortal(jsonData);
 
@@ -110,17 +110,17 @@ export default {
         method: method,
         page: val,
         pageSize: 12,
-        searchText: '',
+        searchText: ''
       };
       let data = await getDataServiceByPortal(jsonData);
       this.data = data.data.list;
       this.total = data.data.total;
-    },
+    }
   },
   mounted() {
     this.getData(this.method, '');
   },
-  components: { dataServiceCard, createModel },
+  components: { dataServiceCard, createModel }
 };
 </script>
 

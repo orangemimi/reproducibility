@@ -49,12 +49,7 @@ PAGE_FORMATS['a7'] = {
 PAGE_FORMATS['letter'] = {
   name: 'letter',
   text: 'US-Letter (8,5" x 11")',
-  format: new mxRectangle(
-    0,
-    0,
-    mxConstants.PAGE_FORMAT_LETTER_PORTRAIT.height,
-    mxConstants.PAGE_FORMAT_LETTER_PORTRAIT.width
-  )
+  format: new mxRectangle(0, 0, mxConstants.PAGE_FORMAT_LETTER_PORTRAIT.height, mxConstants.PAGE_FORMAT_LETTER_PORTRAIT.width)
 };
 PAGE_FORMATS['legal'] = {
   name: 'legal',

@@ -1,4 +1,3 @@
-
 <template>
   <div>
     <el-button type="primary" @click="dialogVisible = true">Change Password</el-button>
@@ -23,28 +22,27 @@ export default {
       dialogVisible: false,
       oldPWD: '',
       newPWD: '',
-      confirm: '',
+      confirm: ''
     };
   },
   methods: {
-
     async submit() {
       if (this.oldPWD == '') {
         this.$message({
           type: 'error',
-          message: 'Old password cannot be empty!',
+          message: 'Old password cannot be empty!'
         });
         return;
       } else if (this.newPWD == '') {
         this.$message({
           type: 'error',
-          message: 'New password cannot be empty!',
+          message: 'New password cannot be empty!'
         });
         return;
       } else if (this.newPWD != this.confirm) {
         this.$message({
           type: 'error',
-          message: 'Inconsistent passwords!',
+          message: 'Inconsistent passwords!'
         });
         return;
       } else {
@@ -52,18 +50,18 @@ export default {
           await changePassword(md5(this.oldPWD), md5(this.newPWD));
           this.$message({
             type: 'success',
-            message: 'Password modified successfully!',
+            message: 'Password modified successfully!'
           });
           this.dialogVisible = false;
         } catch {
           this.$message({
             type: 'error',
-            message: 'Password modified failed, please check whether the password is entered correctly!',
+            message: 'Password modified failed, please check whether the password is entered correctly!'
           });
         }
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

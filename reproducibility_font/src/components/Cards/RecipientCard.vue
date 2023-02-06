@@ -91,7 +91,7 @@ export default {
       let notice = this.notice;
 
       await changeNoticeState(notice.id, 'approve');
-      
+
       await updateProjectMembers(notice.content.projectId, { memberId: notice.senderId, role: notice.content.role });
 
       this.joinProjectDialog = false;

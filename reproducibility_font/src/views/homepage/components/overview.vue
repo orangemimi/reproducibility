@@ -28,23 +28,19 @@
 import projectCard from './Card/projectCard.vue';
 export default {
   data() {
-    return {
-    
-    };
+    return {};
   },
   props: {
     publicProjects: {
-      type: Array,
-    },
+      type: Array
+    }
   },
 
   components: {
-    projectCard,
+    projectCard
   },
-  methods: {
-
-  },
-  mounted() {},
+  methods: {},
+  mounted() {}
 };
 </script>
 

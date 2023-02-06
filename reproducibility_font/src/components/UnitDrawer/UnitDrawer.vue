@@ -1,8 +1,17 @@
 <!-- unit drawer -->
 <template>
   <div class="main">
-
-    <el-drawer title="Unit" :visible.sync="flag" :with-header="false" direction="rtl" :append-to-body="true" class="drawer" size="20%" :before-close="beforeClose" :destroy-on-close="true">
+    <el-drawer
+      title="Unit"
+      :visible.sync="flag"
+      :with-header="false"
+      direction="rtl"
+      :append-to-body="true"
+      class="drawer"
+      size="20%"
+      :before-close="beforeClose"
+      :destroy-on-close="true"
+    >
       <el-row>
         <div v-for="(unit, index) in unitList" :key="index">
           <el-button type="text" @click="selectUnit(unit)">{{ unit.name }}</el-button>
@@ -12,7 +21,7 @@
         <div class="page">
           <el-pagination
             @current-change="handleCurrentChange"
-            :current-page.sync="pageFilter.page" 
+            :current-page.sync="pageFilter.page"
             :page-size="pageFilter.pageSize"
             :pager-count="5"
             background
@@ -41,7 +50,7 @@ export default {
       handler(val) {
         if (val) {
           this.init();
-          this.flag = val
+          this.flag = val;
         }
       },
       deep: true,
@@ -60,7 +69,7 @@ export default {
         page: 0
       },
       unitList: [],
-      total: 0,
+      total: 0
     };
   },
 
@@ -79,11 +88,10 @@ export default {
         return;
       }
 
-
-      this.total = data.total
+      this.total = data.total;
       this.unitList = data.content;
       // this.pageFilter.page++;
-      this.pageFilter.page = page + 1
+      this.pageFilter.page = page + 1;
       // console.log('instances', data);
     },
 
@@ -97,8 +105,8 @@ export default {
 
     beforeClose(done) {
       // console.log(done)
-      done()
-      console.log(222)
+      done();
+      console.log(222);
       this.$emit('closeDrawer', true);
     }
   }

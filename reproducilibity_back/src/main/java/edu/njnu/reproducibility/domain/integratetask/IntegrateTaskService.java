@@ -7,6 +7,9 @@ import edu.njnu.reproducibility.common.exception.MyException;
 import edu.njnu.reproducibility.domain.integratetask.dto.AddIntegrateTaskDTO;
 import edu.njnu.reproducibility.domain.integratetask.dto.UpdateCurrentActionInTaskDTO;
 import edu.njnu.reproducibility.domain.integratetask.dto.UpdateIntegratedTaskDTO;
+import edu.njnu.reproducibility.domain.integratetask.support.Process;
+import edu.njnu.reproducibility.domain.integratetask.support.Result;
+import edu.njnu.reproducibility.domain.integratetask.support.ResultValidation;
 import edu.njnu.reproducibility.domain.scenario.Scenario;
 import edu.njnu.reproducibility.domain.scenario.ScenarioRepository;
 import org.apache.commons.io.FilenameUtils;
@@ -22,7 +25,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @Author Zhiyi
@@ -112,5 +117,90 @@ public class IntegrateTaskService {
         return integrateTaskRepository.findById(taskId).orElseThrow(MyException::noObject);
     }
 
+    public void addProcess(String id, Process process) {
+        Optional<IntegrateTask> optionalIntegrateTask = integrateTaskRepository.findByProjectId(id);
+        if(!optionalIntegrateTask.isPresent()) {
+            throw new MyException(ResultEnum.NO_OBJECT);
+        }
+        IntegrateTask integrateTask = optionalIntegrateTask.get();
+        integrateTask.getProcesses().add(process);
+        integrateTaskRepository.save(integrateTask);
+    }
 
+    public void editProcess(String id, Process process,Integer index) {
+        Optional<IntegrateTask> optionalIntegrateTask = integrateTaskRepository.findByProjectId(id);
+        if(!optionalIntegrateTask.isPresent()) {
+            throw new MyException(ResultEnum.NO_OBJECT);
+        }
+        IntegrateTask integrateTask = optionalIntegrateTask.get();
+        integrateTask.getProcesses().set(index, process);
+        integrateTaskRepository.save(integrateTask);
+    }
+
+    public void deleteProcess(String id, Integer index) {
+        Optional<IntegrateTask> optionalIntegrateTask = integrateTaskRepository.findByProjectId(id);
+        if(!optionalIntegrateTask.isPresent()) {
+            throw new MyException(ResultEnum.NO_OBJECT);
+        }
+        IntegrateTask integrateTask = optionalIntegrateTask.get();
+        List<Process> processes = integrateTask.getProcesses();
+        List<Process> newprocesses = new ArrayList<>();
+        for(int i = 0; i < processes.size(); ++i){
+            if(i==index){}
+            else{
+                newprocesses.add(processes.get(i));
+            }
+        }
+        integrateTask.setProcesses(newprocesses);
+        integrateTaskRepository.save(integrateTask);
+    }
+
+    public Result getIntegrateTaskResultByTaskId(String id) {
+        Optional<IntegrateTask> optionalIntegrateTask = integrateTaskRepository.findByProjectId(id);
+        if(!optionalIntegrateTask.isPresent()) {
+            throw new MyException(ResultEnum.NO_OBJECT);
+        }
+        IntegrateTask integrateTask = optionalIntegrateTask.get();
+        return integrateTask.getResult();
+    }
+
+    public void deleteResultValidation(String id, ResultValidation resultValidation) {
+        Optional<IntegrateTask> optionalIntegrateTask = integrateTaskRepository.findByProjectId(id);
+        if(!optionalIntegrateTask.isPresent()) {
+            throw new MyException(ResultEnum.NO_OBJECT);
+        }
+        IntegrateTask integrateTask = optionalIntegrateTask.get();
+        integrateTask.getResult().getResultValidations().remove(resultValidation);
+        integrateTaskRepository.save(integrateTask);
+    }
+
+    public void updateResultValidation(String id, Integer index, ResultValidation resultValidation) {
+        Optional<IntegrateTask> optionalIntegrateTask = integrateTaskRepository.findByProjectId(id);
+        if(!optionalIntegrateTask.isPresent()) {
+            throw new MyException(ResultEnum.NO_OBJECT);
+        }
+        IntegrateTask integrateTask = optionalIntegrateTask.get();
+        integrateTask.getResult().getResultValidations().set(index,resultValidation);
+        integrateTaskRepository.save(integrateTask);
+    }
+
+    public void saveResultValidation(String id, ResultValidation resultValidation) {
+        Optional<IntegrateTask> optionalIntegrateTask = integrateTaskRepository.findByProjectId(id);
+        if(!optionalIntegrateTask.isPresent()) {
+            throw new MyException(ResultEnum.NO_OBJECT);
+        }
+        IntegrateTask integrateTask = optionalIntegrateTask.get();
+        integrateTask.getResult().getResultValidations().add(resultValidation);
+        integrateTaskRepository.save(integrateTask);
+    }
+
+    public void saveResult(String id, Result result) {
+        Optional<IntegrateTask> optionalIntegrateTask = integrateTaskRepository.findByProjectId(id);
+        if(!optionalIntegrateTask.isPresent()) {
+            throw new MyException(ResultEnum.NO_OBJECT);
+        }
+        IntegrateTask integrateTask = optionalIntegrateTask.get();
+        integrateTask.setResult(result);
+        integrateTaskRepository.save(integrateTask);
+    }
 }

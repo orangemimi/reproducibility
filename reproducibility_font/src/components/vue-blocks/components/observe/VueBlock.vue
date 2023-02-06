@@ -6,21 +6,17 @@
     <div class="inputs">
       <div class="input" v-for="(slot, index) in inputs" :key="index">
         <div class="circle inputSlot" :class="{ active: slot.active }"></div>
-        <span
-          style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;display: block;"
-        >
-          {{ slot.name }}</span
-        >
+        <span style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;display: block;">
+          {{ slot.name }}
+        </span>
       </div>
     </div>
     <div class="outputs">
       <div class="output" v-for="(slot, index) in outputs" :key="index">
         <div class="circle" :class="{ active: slot.active }"></div>
-        <span
-          style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;display: block;"
-        >
-          {{ slot.name }}</span
-        >
+        <span style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;display: block;">
+          {{ slot.name }}
+        </span>
       </div>
     </div>
   </div>
@@ -29,26 +25,26 @@
 <script>
 // import shave from "shave";
 export default {
-  name: "VueBlock",
+  name: 'VueBlock',
   props: {
     x: {
       type: Number,
       default: 0,
       validator: function(val) {
-        return typeof val === "number";
+        return typeof val === 'number';
       }
     },
     y: {
       type: Number,
       default: 0,
       validator: function(val) {
-        return typeof val === "number";
+        return typeof val === 'number';
       }
     },
     selected: Boolean,
     name: {
       type: String,
-      default: "Name"
+      default: 'Name'
     },
     inputs: Array,
     outputs: Array,
@@ -68,16 +64,16 @@ export default {
   computed: {
     style() {
       return {
-        top: this.options.center.y + this.y * this.options.scale + "px",
-        left: this.options.center.x + this.x * this.options.scale + "px",
-        width: this.width + "px",
-        transform: "scale(" + (this.options.scale + "") + ")",
-        transformOrigin: "top left"
+        top: this.options.center.y + this.y * this.options.scale + 'px',
+        left: this.options.center.x + this.x * this.options.scale + 'px',
+        width: this.width + 'px',
+        transform: 'scale(' + (this.options.scale + '') + ')',
+        transformOrigin: 'top left'
       };
     },
     headerStyle() {
       return {
-        height: this.options.titleHeight + "px"
+        height: this.options.titleHeight + 'px'
       };
     }
   },
@@ -109,7 +105,7 @@ export default {
       if (this.$el.contains(target) && e.which === 1) {
         this.dragging = true;
 
-        this.$emit("select");
+        this.$emit('select');
 
         if (e.preventDefault) e.preventDefault();
       }
@@ -129,14 +125,14 @@ export default {
       }
     },
     save() {
-      this.$emit("update");
+      this.$emit('update');
     },
     moveWithDiff(diffX, diffY) {
       let left = this.x + diffX / this.options.scale;
       let top = this.y + diffY / this.options.scale;
 
-      this.$emit("update:x", left);
-      this.$emit("update:y", top);
+      this.$emit('update:x', left);
+      this.$emit('update:y', top);
     }
   },
   created() {
@@ -150,17 +146,9 @@ export default {
     this.dragging = false;
   },
   mounted() {
-    document.documentElement.addEventListener(
-      "mousemove",
-      this.handleMove,
-      true
-    );
-    document.documentElement.addEventListener(
-      "mousedown",
-      this.handleDown,
-      true
-    );
-    document.documentElement.addEventListener("mouseup", this.handleUp, true);
+    document.documentElement.addEventListener('mousemove', this.handleMove, true);
+    document.documentElement.addEventListener('mousedown', this.handleDown, true);
+    document.documentElement.addEventListener('mouseup', this.handleUp, true);
     // this.$nextTick(() => {
     //   shave(".inputs", 50);
     //   shave(".outputs", 50);
@@ -168,21 +156,9 @@ export default {
     // });
   },
   beforeDestroy() {
-    document.documentElement.removeEventListener(
-      "mousemove",
-      this.handleMove,
-      true
-    );
-    document.documentElement.removeEventListener(
-      "mousedown",
-      this.handleDown,
-      true
-    );
-    document.documentElement.removeEventListener(
-      "mouseup",
-      this.handleUp,
-      true
-    );
+    document.documentElement.removeEventListener('mousemove', this.handleMove, true);
+    document.documentElement.removeEventListener('mousedown', this.handleDown, true);
+    document.documentElement.removeEventListener('mouseup', this.handleUp, true);
   }
 };
 </script>

@@ -18,7 +18,7 @@
 import scenarioCard from './ScenarioCard.vue';
 export default {
   components: {
-    scenarioCard,
+    scenarioCard
   },
   data() {
     return {
@@ -32,15 +32,15 @@ export default {
           specifyBorderRadius: false,
           minSize: 0,
           size: '6px',
-          disable: false,
+          disable: false
         },
         scrollPanel: {
           scrollingY: false,
-          scrollingX: true,
-        },
-      },
+          scrollingX: true
+        }
+      }
     };
-  },
+  }
 };
 </script>
 

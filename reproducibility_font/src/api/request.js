@@ -5,7 +5,7 @@ import axios from 'axios';
 
 //判断是否是已经Star的项目
 export async function isStarProject(projectId) {
-  return await get(`/users/isSart/${projectId}`)
+  return await get(`/users/isSart/${projectId}`);
 }
 
 export async function getUserByEmailLike(email) {
@@ -46,42 +46,42 @@ export async function saveUser(form) {
 
 //发送验证码邮件
 export async function sendCodeEmail(email) {
-  return await get(`/users/sendEmail/${email}`)
+  return await get(`/users/sendEmail/${email}`);
 }
 
 //通过验证码修改密码
 export async function changePWDbyCode(email, code, password) {
-  return await patch(`/users/${email}/${code}/${password}`)
+  return await patch(`/users/${email}/${code}/${password}`);
 }
 
 //通过原密码修改密码
 export async function changePassword(oldPWD, newPWD) {
-  return await patch(`/users/changePWD/${oldPWD}/${newPWD}`)
+  return await patch(`/users/changePWD/${oldPWD}/${newPWD}`);
 }
 
 //调用远程服务器获取用户信息
 export async function getUserinfo() {
-  return await get(`/users/getuserinfo`)
+  return await get(`/users/getuserinfo`);
 }
 
 //获取本地和远程所有用户信息
 export async function getAllUserInfo(userId) {
-  return await get(`/users/getAllInfo/${userId}`)
+  return await get(`/users/getAllInfo/${userId}`);
 }
 
 export async function getUserInfoByUserId(userId) {
-  return await get(`/users/getUserInfoByUserId/${userId}`)
+  return await get(`/users/getUserInfoByUserId/${userId}`);
 }
 
 export async function getUserProjects() {
-  return await get(`/users/getUserProjects`)
+  return await get(`/users/getUserProjects`);
 }
 
 //----------------------------------------------------projects-----------------------------------------
 
 //获取project的star数
 export async function getStarCount(projectId) {
-  return await get(`/projects/getStarCount/${projectId}`)
+  return await get(`/projects/getStarCount/${projectId}`);
 }
 
 export async function getProjectAndUsers(projectId) {
@@ -90,7 +90,6 @@ export async function getProjectAndUsers(projectId) {
 
 export async function getAllProjects(currentPage, pagesize) {
   let data = await get(`/projects/${currentPage}/${pagesize}`);
-  console.log(data);
   return data;
 }
 
@@ -132,47 +131,46 @@ export async function forkProject(jsonData) {
 
 //获取个人所有的projects
 export async function getMyProjects() {
-  return await get(`/projects/getmyprojects`)
+  return await get(`/projects/getmyprojects`);
 }
-
 
 //star项目
 export async function starProject(projectId) {
-  return await patch(`/projects/star/${projectId}`)
+  return await patch(`/projects/star/${projectId}`);
 }
 
 //unstar项目
 export async function unStarProject(projectId) {
-  return await patch(`/projects/unStar/${projectId}`)
+  return await patch(`/projects/unStar/${projectId}`);
 }
 
 //获取project的Privacy
 export async function getPrivacy(projectId) {
-  return await get(`/projects/getPrivacy/${projectId}`)
+  return await get(`/projects/getPrivacy/${projectId}`);
 }
 
 export async function getProjectsCreatedByMe() {
-  return await get(`/projects/getProjectsCreatedByMe`)
+  return await get(`/projects/getProjectsCreatedByMe`);
 }
 
 export async function getProjectsPage(currentPage, pageSize) {
-  return await get(`/projects/getProjectsPage/${currentPage}/${pageSize}`)
+  return await get(`/projects/getProjectsPage/${currentPage}/${pageSize}`);
 }
 
 export async function saveProjectRecord(jsonData) {
-  return await post(`/projects/saveRecord`, jsonData)
+  return await post(`/projects/saveRecord`, jsonData);
 }
 
 export async function getRecords(projectId) {
-  return await get(`/projects/getRecords/${projectId}`)
+  return await get(`/projects/getRecords/${projectId}`);
 }
 
 export async function getRecordsByMyself(projectId) {
-  return await get(`/projects/getRecordsByMyself/${projectId}`)
+  return await get(`/projects/getRecordsByMyself/${projectId}`);
 }
 
 export async function updateCitation(projectId, jsonData) {
-  return await patch(`/projects/updateCitation/${projectId}`, jsonData)
+  return await patch(`/projects/updateCitation/${projectId}`, jsonData);
 }
 
 //---------------------------------------------------contextDefinition------------------------------------------
@@ -242,7 +240,7 @@ export async function updateResource(projectId, form) {
 }
 
 export async function upload(form) {
-  return await post(`/dataContainer/upload`, form)
+  return await post(`/dataContainer/upload`, form);
 }
 
 //-----------------------------------------------fileItems---------------------------------------------
@@ -271,23 +269,23 @@ export async function getFileItemByCreatorId(projectId) {
 }
 
 export async function getFileItemByStoreyAndParent(storey, parent) {
-  return await get(`/fileItems/getFileItemByStoreyAndParent/${storey}/${parent}`)
+  return await get(`/fileItems/getFileItemByStoreyAndParent/${storey}/${parent}`);
 }
 
 export async function Rename(form) {
-  return await patch(`/fileItems/Rename`, form)
+  return await patch(`/fileItems/Rename`, form);
 }
 
 export async function addFileItem(form) {
-  return await post(`/fileItems/addFileItem`, form)
+  return await post(`/fileItems/addFileItem`, form);
 }
 
 export async function delFile(storey, id, parent) {
-  return await del(`/fileItems/delFile/${storey}/${id}/${parent}`)
+  return await del(`/fileItems/delFile/${storey}/${id}/${parent}`);
 }
 
 export async function delFolder(storey, id, parent) {
-  return await del(`/fileItems/delFolder/${storey}/${id}/${parent}`)
+  return await del(`/fileItems/delFolder/${storey}/${id}/${parent}`);
 }
 
 //-----------------------------------------------dataitems---------------------------------------------
@@ -313,23 +311,23 @@ export async function getDataItemsByProjectId(projectId) {
 }
 
 export async function saveDataItemOfUploaded(jsonData) {
-  return await post(`/dataItems/saveDataItemOfUploaded`, jsonData)
+  return await post(`/dataItems/saveDataItemOfUploaded`, jsonData);
 }
 
 export async function saveDataItemOfNoUpload(formData) {
-  return await post(`/dataItems/saveDataItemOfNoUpload`, formData)
+  return await post(`/dataItems/saveDataItemOfNoUpload`, formData);
 }
 
 export async function batchDelete(jsonData) {
-  return await del(`/dataItems/batchDelete`, '', jsonData)
+  return await del(`/dataItems/batchDelete`, '', jsonData);
 }
 
 export async function updateDataItemOfUploaded(jsonData) {
-  return await patch(`/dataItems/updateDataItemOfUploaded`, jsonData)
+  return await patch(`/dataItems/updateDataItemOfUploaded`, jsonData);
 }
 
 export async function updateDataItemOfNoUpload(formData) {
-  return await patch(`/dataItems/updateDataItemOfNoUpload`, formData)
+  return await patch(`/dataItems/updateDataItemOfNoUpload`, formData);
 }
 
 // export async function getDataItemsByProjectId(projectId) {
@@ -353,7 +351,21 @@ export async function getAllIntegrateTasksByProjectId(projectId) {
 export async function getIntegrateTaskByTaskId(taskId) {
   return await get(`/integrateTasks/${taskId}`);
 }
-
+export async function getResultByTaskId(projectId) {
+  return await get(`/integrateTasks/getIntegrateTaskResultByTaskId/${projectId}`);
+}
+export async function deleteResultValidation(id, jsonData) {
+  return await patch(`/integrateTasks/deleteResultValidation/${id}`, jsonData)
+}
+export async function saveResultValidation(id,jsonData) {
+  return await patch(`/integrateTasks/saveResultValidation/${id}`,jsonData)
+}
+export async function updateResultValidation(id,jsonData) {
+  return await patch(`/integrateTasks/updateResultValidation/${id}`,jsonData)
+}
+export async function saveResult(id,jsonData) {
+  return await patch(`/integrateTasks/saveResult/${id}`,jsonData)
+}
 export async function saveIntegrateTask(postJson) {
   let data = await post(`/integrateTasks`, postJson);
   if (data != null) {
@@ -369,7 +381,18 @@ export async function updateIntegrateTask(taskId, postJson) {
   }
   return data;
 }
-
+export async function addProcess(id, form) {
+  let data = await patch(`/integrateTasks/addProcess/${id}`, form);
+  return data
+}
+export async function editProcess(id, form, index) {
+  let data = await patch(`/integrateTasks/editProcess/${id}`, form, index);
+  return data
+}
+export async function deleteProcess(id, jsonData) {
+  let data = await patch(`/integrateTasks/deleteProcess/${id}`, jsonData);
+  return data
+}
 export async function updateIntegrateTaskInstance(form) {
   let data = await patch(`/integrateTasks/changeSelectInstance`, form);
 
@@ -377,7 +400,7 @@ export async function updateIntegrateTaskInstance(form) {
 }
 
 export async function getSelectedTaskByProjectId(projectId) {
-  return await get(`/integrateTasks/getSelectedTaskByProjectId/${projectId}`)
+  return await get(`/integrateTasks/getSelectedTaskByProjectId/${projectId}`);
 }
 
 //--------------------------------------integrateTaskInstances--------------------------------------------
@@ -417,100 +440,98 @@ export async function updateNoteTaskInstanceById(id, postJson) {
 }
 
 export async function getInstanceOfUncompleted(taskId) {
-  return await get(`/integrateTaskInstances/getInstanceOfUncompleted/${taskId}`)
+  return await get(`/integrateTaskInstances/getInstanceOfUncompleted/${taskId}`);
 }
 
 export async function getInstanceXML(instanceId) {
-  return await get(`/integrateTaskInstances/getInstanceXML/${instanceId}`)
+  return await get(`/integrateTaskInstances/getInstanceXML/${instanceId}`);
 }
 
 export async function getTaskInfo(instanceId) {
-  return await get(`/integrateTaskInstances/getTaskInfo/${instanceId}`)
+  return await get(`/integrateTaskInstances/getTaskInfo/${instanceId}`);
 }
 
 export async function getAllInstances(taskId, page, size) {
-  return await get(`/integrateTaskInstances/getAllIntegrateTaskInstance/${taskId}/${page}/${size}`)
+  return await get(`/integrateTaskInstances/getAllIntegrateTaskInstance/${taskId}/${page}/${size}`);
 }
 export async function getSelectedInstancesByProjectId(projectId) {
-  return await get(`/integrateTaskInstances/getSelectedInstancesByProjectId/${projectId}`)
+  return await get(`/integrateTaskInstances/getSelectedInstancesByProjectId/${projectId}`);
 }
 
 export async function getAllInstancesOfReproductionByProjectId(projectId) {
-  return await get(`/integrateTaskInstances/getAllInstancesOfReproductionByProjectId/${projectId}`)
+  return await get(`/integrateTaskInstances/getAllInstancesOfReproductionByProjectId/${projectId}`);
 }
 
 export async function deleteAndQuery(jsonData) {
-  return await del(`/integrateTaskInstances/deleteAndQuery`, null, jsonData)
+  return await del(`/integrateTaskInstances/deleteAndQuery`, null, jsonData);
 }
-
 
 //-------------------------------------------Content--------------------------------------------------
 
 export async function addContent(content) {
-  return await post(`/Content/addContent`, content)
+  return await post(`/Content/addContent`, content);
 }
 
 export async function getContent(projectId) {
-  return await get(`/Content/getContent/${projectId}`)
+  return await get(`/Content/getContent/${projectId}`);
 }
 
 export async function getContextByProject(projectId) {
-  return await get(`/Content/getContextByProject/${projectId}`)
+  return await get(`/Content/getContextByProject/${projectId}`);
 }
 
 export async function addResourceCard(jsonData) {
-  return await patch(`/Content/addResourceCard`, jsonData)
+  return await patch(`/Content/addResourceCard`, jsonData);
 }
 
 export async function getAllResource(projectId) {
-  return await get(`/Content/getAllResource/${projectId}`)
+  return await get(`/Content/getAllResource/${projectId}`);
 }
 
 export async function addPictureGroup(jsonData) {
-  return await post(`/Content/addPictureGroup`, jsonData)
+  return await post(`/Content/addPictureGroup`, jsonData);
 }
 
 export async function addTextGroup(jsonData) {
-  return await post(`/Content/addTextGroup`, jsonData)
+  return await post(`/Content/addTextGroup`, jsonData);
 }
 
 export async function addFormGroup(jsonData) {
-  return await post(`/Content/addFormGroup`, jsonData)
+  return await post(`/Content/addFormGroup`, jsonData);
 }
 
 export async function updateContext(jsonData) {
-  return await patch(`/Content/updateContext`, jsonData)
+  return await patch(`/Content/updateContext`, jsonData);
 }
 
 export async function updateResourceOfContent(jsonData) {
-  return await patch(`/Content/updateResource`, jsonData)
+  return await patch(`/Content/updateResource`, jsonData);
 }
 
 export async function getTemporal(projectId) {
-  return await get(`/Content/getTemporal/${projectId}`)
+  return await get(`/Content/getTemporal/${projectId}`);
 }
 
 export async function getSpatial(projectId) {
-  return await get(`/Content/getSpatial/${projectId}`)
+  return await get(`/Content/getSpatial/${projectId}`);
 }
 
 export async function updateTemporal(jsonData, projectId) {
-  return await patch(`/Content/updateTemporal/${projectId}`, jsonData)
+  return await patch(`/Content/updateTemporal/${projectId}`, jsonData);
 }
 
 export async function updateSpatial(jsonData, projectId) {
-  return await patch(`/Content/updateSpatial/${projectId}`, jsonData)
+  return await patch(`/Content/updateSpatial/${projectId}`, jsonData);
 }
 
 //-------------------------------------------UserFile--------------------------------------------------
 export async function addUserFile(jsonData) {
-  return await post(`/UserFile/addUserFile`, jsonData)
+  return await post(`/UserFile/addUserFile`, jsonData);
 }
 
 export async function getUserFileByFidAndStorey(fid, storey) {
-  return await get(`/UserFile/getUserFileByFidAndStorey/${fid}/${storey}`)
+  return await get(`/UserFile/getUserFileByFidAndStorey/${fid}/${storey}`);
 }
-
 
 //-------------------------------------------modelitems--------------------------------------------------
 
@@ -527,19 +548,19 @@ export async function getModelItemsByProvider(currentPage, pagesize) {
 }
 
 export async function saveToProject(jsonData) {
-  return await post(`/modelItems/saveToProject`, jsonData)
+  return await post(`/modelItems/saveToProject`, jsonData);
 }
 
 export async function saveModelsToProject(jsonData) {
-  return await post(`/modelItems/saveModelsToProject`, jsonData)
+  return await post(`/modelItems/saveModelsToProject`, jsonData);
 }
 
 export async function getModelsByProjectId(projectId) {
-  return await get(`/modelItems/getModelsByProjectId/${projectId}`)
+  return await get(`/modelItems/getModelsByProjectId/${projectId}`);
 }
 
 export async function getPictureByDOI(doi) {
-  return await get(`/modelItems/getPictureByDOI/${doi}`)
+  return await get(`/modelItems/getPictureByDOI/${doi}`);
 }
 
 //------------------------------------------methods-----------------------------------
@@ -573,9 +594,7 @@ export async function updateScenarioByProjectId(projectId, postJson) {
 //------------------------------------------notices------------------------------------
 
 export async function saveNotice(form) {
-  console.log(form);
   let data = await post(`/notices`, form);
-  console.log(data);
   return data;
 }
 
@@ -600,21 +619,21 @@ export async function changeNoticeState(id, state) {
 }
 
 export async function deleteNotice(noticeId) {
-  return await del(`/notices/${noticeId}`)
+  return await del(`/notices/${noticeId}`);
 }
 
 //使recipient的消息不可见，即删除
 export async function changeRecState(noticeId) {
-  return await patch(`/notices/delrec/${noticeId}`)
+  return await patch(`/notices/delrec/${noticeId}`);
 }
 //使sender的消息不可见,即删除
 export async function changeSenState(noticeId) {
-  return await patch(`/notices/delsen/${noticeId}`)
+  return await patch(`/notices/delsen/${noticeId}`);
 }
 
 //改变回复消息是否已读的状态，只要用户点击到回复消息的页面，即认为回复消息已读了
 export async function changeAllReplyisread() {
-  return await patch(`/notices/changeallreply`)
+  return await patch(`/notices/changeallreply`);
 }
 
 //------------------------------------------emails------------------------------------
@@ -626,8 +645,6 @@ export async function saveEmails(form) {
   return data;
 }
 
-
-
 //------------------------------------------records------------------------------------
 
 export async function getRecordByProjectId(projectId) {
@@ -637,7 +654,6 @@ export async function getRecordByProjectId(projectId) {
 export async function saveRecord(form) {
   return await post(`/records`, form);
 }
-
 
 //------------------------------------------portal------------------------------------
 
@@ -650,19 +666,19 @@ export async function getAllUnitsFromPoral(currentPage, pagesize) {
 }
 
 export async function getModelList(params) {
-  return await get(`/portal/getModelList`, params)
+  return await get(`/portal/getModelList`, params);
 }
 
 export async function getComputableModels(oid) {
-  return await get(`/portal/getComputableModels/${oid}`)
+  return await get(`/portal/getComputableModels/${oid}`);
 }
 
 export async function getDataServiceByPortal(jsonData) {
-  return await post(`/portal/getDataServiceByPortal`, jsonData)
+  return await post(`/portal/getDataServiceByPortal`, jsonData);
 }
 
 export async function getDataServiceInfoByPortal(oid, serviceId) {
-  return await get(`/portal/getDataServiceInfo/${oid}/${serviceId}`)
+  return await get(`/portal/getDataServiceInfo/${oid}/${serviceId}`);
 }
 
 //------------------------------------------dataService------------------------------------
@@ -677,15 +693,15 @@ export async function saveDataService(form) {
 
 //获取自己的dataService
 export async function getMyDataService() {
-  return await get(`/dataServices/getmydataservices`)
+  return await get(`/dataServices/getmydataservices`);
 }
 
 export async function saveDataServicesToProject(jsonData) {
-  return await post(`/dataServices/saveDataServicesToProject`, jsonData)
+  return await post(`/dataServices/saveDataServicesToProject`, jsonData);
 }
 
 export async function getAllByProjectId(projectId) {
-  return await get(`/dataServices/getAllByProjectId/${projectId}`)
+  return await get(`/dataServices/getAllByProjectId/${projectId}`);
 }
 
 export async function getDataServiceInfo(form) {
@@ -695,12 +711,11 @@ export async function getDataServiceInfo(form) {
 }
 
 export async function getDataServiceInfo1(form) {
-
   return await post(`/dataContainer/dataService/findData`, form);
 }
 
 export async function getAllProcessing(list) {
-  return await get(`/dataContainer/dataService/getAllProcessing`, list)
+  return await get(`/dataContainer/dataService/getAllProcessing`, list);
 }
 //------------------------------------------dataServiceCode------------------------------------
 
@@ -732,5 +747,5 @@ export async function getPerformanceByProjectId(projectId) {
 
 //===============================extra=================================================
 export async function postFile(form) {
-  return await axios.post('http://221.226.60.2:8082/data', form)
+  return await axios.post('http://221.226.60.2:8082/data', form);
 }

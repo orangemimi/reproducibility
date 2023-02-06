@@ -71,7 +71,6 @@
 </template>
 
 <script>
-
 import axios from 'axios';
 export default {
   data() {
@@ -96,20 +95,20 @@ export default {
       paths: [],
       visible: false,
       input: '',
-      type: '',
+      type: ''
     };
   },
 
   props: {
     spatialInfo: {
-      type: Array,
-    },
+      type: Array
+    }
   },
 
   watch: {
     spatialInfo: {
       handler(val) {
-        this.selectData = JSON.parse(JSON.stringify(val))
+        this.selectData = JSON.parse(JSON.stringify(val));
       },
       deep: true
     }
@@ -128,8 +127,8 @@ export default {
       }
     },
     async getCityList() {
-      await axios.get('/json/Region.json').then((res) => {
-        this.options1 = res.data.districts[0].districts
+      await axios.get('/json/Region.json').then(res => {
+        this.options1 = res.data.districts[0].districts;
       });
     },
     change1(val) {
@@ -225,7 +224,7 @@ export default {
         if (this.boundaryName == '') {
           this.$notify({
             type: 'error',
-            message: 'Please select data!',
+            message: 'Please select data!'
           });
           this.visible = false;
         } else {
@@ -242,7 +241,7 @@ export default {
         } else {
           this.$notify({
             type: 'error',
-            message: 'Polygons need to select at least three points!',
+            message: 'Polygons need to select at least three points!'
           });
           this.visible = false;
         }
@@ -252,7 +251,7 @@ export default {
       if (this.editFlag && this.editMethod == 'Manual') {
         this.polygonPath.push({
           lng: e.Bg.lng,
-          lat: e.Bg.lat,
+          lat: e.Bg.lat
         });
       }
     },
@@ -265,7 +264,7 @@ export default {
         this.selectData.push({
           name: this.input,
           type: this.type,
-          value: this.boundaryName,
+          value: this.boundaryName
         });
         this.boundaryName = '';
       } else if (this.type == 'polygon') {
@@ -273,7 +272,7 @@ export default {
         this.selectData.push({
           name: this.input,
           type: this.type,
-          points: this.polygonPath,
+          points: this.polygonPath
         });
         this.polygonPath = [];
       }
@@ -286,19 +285,19 @@ export default {
     init() {
       this.selectData = JSON.parse(JSON.stringify(this.spatialInfo));
       console.log(this.selectData);
-      this.selectData.forEach((item) => {
+      this.selectData.forEach(item => {
         if (item.type == 'polygon') {
           this.paths.push(item.points);
         } else if (item.type == 'boundary') {
           this.selectBoundary.push(item.value);
         }
       });
-    },
+    }
   },
   mounted() {
     this.getCityList();
     this.init();
-  },
+  }
 };
 </script>
 

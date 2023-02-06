@@ -53,7 +53,14 @@
                   </el-button-group>
                 </div>
                 <div>
-                  <avatar username="projectInfo.name" :src="projectInfo.picture" :size="150" style="margin-top: 10px" :rounded="false" class="avatar-img"></avatar>
+                  <avatar
+                    username="projectInfo.name"
+                    :src="projectInfo.picture"
+                    :size="150"
+                    style="margin-top: 10px"
+                    :rounded="false"
+                    class="avatar-img"
+                  ></avatar>
                 </div>
               </div>
             </div>
@@ -308,7 +315,6 @@ export default {
           }
         }
       }
-
     }
 
     .citation {

@@ -5,14 +5,14 @@
       <div v-if="$route.params.userId == $store.state.user.userId">
         <el-row :gutter="20">
           <div v-for="(item, index) in joinedProjects" :key="index">
-            <el-col :span="12"><project-card :projectId="item" :type="'projects'" class="card"/></el-col>
+            <el-col :span="12"><project-card :projectId="item" :type="'projects'" class="card" /></el-col>
           </div>
         </el-row>
       </div>
       <div v-else>
         <el-row :gutter="20">
           <div v-for="(item, index) in publicProjects" :key="index">
-            <el-col :span="12"><project-card :projectId="item" :type="'projects'" class="card"/></el-col>
+            <el-col :span="12"><project-card :projectId="item" :type="'projects'" class="card" /></el-col>
           </div>
         </el-row>
       </div>
@@ -25,29 +25,26 @@ import projectCard from './Card/projectCard.vue';
 export default {
   props: {
     joinedProjects: {
-      type: Array,
+      type: Array
     },
     publicProjects: {
-      type: Array,
-    },
+      type: Array
+    }
   },
 
   data() {
-    return {
-    };
+    return {};
   },
 
-  methods: {
-
-  },
+  methods: {},
 
   components: {
-    projectCard,
+    projectCard
   },
 
   mounted() {
     // this.init();
-  },
+  }
 };
 </script>
 

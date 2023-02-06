@@ -158,7 +158,7 @@ import {
   updatePerformanceById,
   updateScenarioByProjectId,
   deleteAndQuery,
-  saveProjectRecord,
+  saveProjectRecord
   // postDataContainer,
 } from '@/api/request';
 import { generateAction, generateXml1, getCellStyle } from './configuration';
@@ -172,27 +172,27 @@ const {
   // mxGraph,
   mxEvent,
   mxUtils,
-  mxCodec,
+  mxCodec
 } = mxgraph;
 
 export default {
   props: {
     taskInfoInit: {
-      type: Object,
-    },
+      type: Object
+    }
   },
 
   components: {
     integrateTasks,
     instanceCard,
     comparison,
-    leftToolbar,
+    leftToolbar
   },
 
   computed: {
     ...mapState({
-      role: (state) => state.permission.role,
-    }),
+      role: state => state.permission.role
+    })
   },
 
   data() {
@@ -204,7 +204,7 @@ export default {
         taskName: '',
         taskDescription: '',
         type: 'integrateTask',
-        typeOptions: [{ label: 'Integrate Task', value: 'integrateTask' }],
+        typeOptions: [{ label: 'Integrate Task', value: 'integrateTask' }]
       },
       formLabelWidth: '120px',
       selectId: '',
@@ -217,7 +217,7 @@ export default {
       checked: false,
       undoMng: {
         indexOfNextAdd: 1,
-        history: [{}],
+        history: [{}]
       },
 
       getXml: this.sendXml,
@@ -240,7 +240,7 @@ export default {
 
       taskInfo: {
         taskName: '',
-        taskDescription: '',
+        taskDescription: ''
       },
 
       isNewTaskContainerShow: false,
@@ -264,11 +264,11 @@ export default {
           specifyBorderRadius: false,
           minSize: 0,
           size: '6px',
-          disable: false,
+          disable: false
         },
         rail: {
-          keepShow: true,
-        },
+          keepShow: true
+        }
       },
 
       record: {}, //task -->get output record
@@ -284,12 +284,12 @@ export default {
       //INSTANCE LIST
       instancePageFilter: {
         pageSize: 8,
-        page: 0,
+        page: 0
       },
       instanceList: [],
       allInstanceList: [],
 
-      comparisonDialogShow: false,
+      comparisonDialogShow: false
       // selectInstanceId:''
     };
   },
@@ -319,7 +319,7 @@ export default {
     },
 
     getSelectionCells() {
-      bus.$on('go', (data) => {
+      bus.$on('go', data => {
         this.selectionCells = data;
       });
     },
@@ -330,7 +330,7 @@ export default {
         taskContent: '',
         taskName: this.newTaskForm.taskName,
         taskDescription: this.newTaskForm.taskDescription,
-        creator: this.currentTask.creator,
+        creator: this.currentTask.creator
       };
       if (this.newTaskForm.type == 'integrateTask') {
         postJson.taskContent = '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/></root></mxGraphModel>';
@@ -359,7 +359,7 @@ export default {
       } else {
         this.$notify({
           message: 'It is already the SelectTask',
-          type: 'warning',
+          type: 'warning'
         });
       }
     },
@@ -411,7 +411,7 @@ export default {
 
       console.log(this.graph.getModel().cells);
 
-      Object.values(this.graph.getModel().cells).forEach((cell) => {
+      Object.values(this.graph.getModel().cells).forEach(cell => {
         if (cell.style != undefined) {
           if (cell.type == 'modelService') {
             modelListInGraph.push(cell);
@@ -432,7 +432,7 @@ export default {
           }
         }
       });
-      let links = Object.values(this.graph.getModel().cells).filter((cell) => Object.prototype.hasOwnProperty.call(cell, 'edge'));
+      let links = Object.values(this.graph.getModel().cells).filter(cell => Object.prototype.hasOwnProperty.call(cell, 'edge'));
 
       this.linkEdgeList = links;
       this.modelListInGraph = modelListInGraph;
@@ -449,12 +449,12 @@ export default {
     judgeInputList() {
       let modelInputInGraph = this.modelInputInGraph;
       // console.log(modelInputInGraph)
-      modelInputInGraph.forEach((input) => {
+      modelInputInGraph.forEach(input => {
         // console.log(input)
         if (input.nodeAttribute.dataSelect.value == '') {
           this.$notify.error({
             title: 'Error',
-            message: 'You have not bind the data',
+            message: 'You have not bind the data'
           });
           return false;
         }
@@ -481,7 +481,7 @@ export default {
       let cells = this.selectionCells;
       let tmpSet = new Set(this.selectionCells);
 
-      cells.forEach((cell) => {
+      cells.forEach(cell => {
         this.findDeleteCell(cell, tmpSet);
       });
       this.deleteCellsVisible = false;
@@ -492,7 +492,7 @@ export default {
     findDeleteCell(cell, deleteSet) {
       deleteSet.add(cell);
       if (cell.edges) {
-        cell.edges.forEach((tmpEdge) => {
+        cell.edges.forEach(tmpEdge => {
           if (tmpEdge.target !== cell) {
             deleteSet.add(tmpEdge.target);
             this.findDeleteCell(tmpEdge.target, deleteSet);
@@ -507,7 +507,7 @@ export default {
         let undoIndex = this.undoMng.indexOfNextAdd - 1;
 
         if (this.undoMng.history[undoIndex]) {
-          cells = this.undoMng.history[undoIndex].changes.map((change) => {
+          cells = this.undoMng.history[undoIndex].changes.map(change => {
             if (change.child) {
               return change.child;
             } else {
@@ -521,7 +521,7 @@ export default {
     //mxUndoManager初始化
     initUndoMng() {
       let undoMng = new mxgraph.mxUndoManager();
-      let listener = function (sender, evt) {
+      let listener = function(sender, evt) {
         undoMng.undoableEditHappened(evt.getProperty('edit'));
       };
       // console.log(this.graph.getModel());
@@ -558,7 +558,7 @@ export default {
     async createNewTask() {
       let postJson = {
         projectId: this.projectId,
-        ...this.taskInfo,
+        ...this.taskInfo
       };
       // console.log(postJson);
       // let data = await post(`/integrateTasks`, postJson);
@@ -611,7 +611,7 @@ export default {
         // modelActions: modelActions,modelACTIONlIST
         taskName: this.currentTask.taskName,
         taskDescription: this.currentTask.taskDescription,
-        action: action,
+        action: action
       };
 
       await updateIntegrateTask(this.currentTask.id, postJson);
@@ -660,8 +660,8 @@ export default {
     getInstanceAction(action) {
       let outputList = this.modelOutputInGraph;
       let dataItem = action.dataItemList;
-      outputList.forEach((out) => {
-        let dataOutputValue = dataItem.filter((item) => item.id == out.fileId);
+      outputList.forEach(out => {
+        let dataOutputValue = dataItem.filter(item => item.id == out.fileId);
         if (dataOutputValue.length != 0) {
           out.value = dataOutputValue.value;
         }
@@ -690,7 +690,7 @@ export default {
       );
 
       let file = new File([xml], this.currentTask.taskName + '.xml', {
-        type: 'text/xml',
+        type: 'text/xml'
       });
 
       let formData = new FormData();
@@ -742,15 +742,15 @@ export default {
       let modelListInGraph = this.modelListInGraph;
       let dataServiceListInGraph = this.dataServiceListInGraph;
 
-      modelListInGraph.forEach((modelCell) => {
+      modelListInGraph.forEach(modelCell => {
         //判断runnign里面是否有model
-        if (runningTask.some((task) => task.id == modelCell.id)) {
+        if (runningTask.some(task => task.id == modelCell.id)) {
           //change color
           this.changeCellStyleByStatus(0, modelCell, false);
           this.changeDataCellByStatus(0, modelCell, false);
         }
         //判断completedTask里面是否有model
-        if (completedTask.some((task) => task.id == modelCell.id)) {
+        if (completedTask.some(task => task.id == modelCell.id)) {
           //change color
 
           this.changeCellStyleByStatus(1, modelCell, false);
@@ -758,7 +758,7 @@ export default {
           this.changeDataCellByStatus(1, modelCell, false);
         }
         //判断failedTask里面是否有model
-        if (failedTask.some((task) => task.id == modelCell.id)) {
+        if (failedTask.some(task => task.id == modelCell.id)) {
           //change color
           this.changeCellStyleByStatus(2, modelCell, false);
 
@@ -766,12 +766,12 @@ export default {
         }
       });
 
-      dataServiceListInGraph.forEach((cell) => {
-        if (processingRunningTask.some((task) => task.id == cell.id)) {
+      dataServiceListInGraph.forEach(cell => {
+        if (processingRunningTask.some(task => task.id == cell.id)) {
           this.changeCellStyleByStatus(0, cell, false);
           this.changeDataCellByStatus(0, cell, false);
         }
-        if (processingCompleteTask.some((task) => task.id == cell.id)) {
+        if (processingCompleteTask.some(task => task.id == cell.id)) {
           //change color
 
           this.changeCellStyleByStatus(1, cell, false);
@@ -779,7 +779,7 @@ export default {
           this.changeDataCellByStatus(1, cell, false);
         }
         //判断failedTask里面是否有model
-        if (processingFailedTask.some((task) => task.id == cell.id)) {
+        if (processingFailedTask.some(task => task.id == cell.id)) {
           //change color
           this.changeCellStyleByStatus(2, cell, false);
 
@@ -790,12 +790,12 @@ export default {
 
     changeDataCellByStatus(status, modelCell) {
       let list = [...this.modelInputInGraph, ...this.modelLinkInGraph];
-      let inputList = list.filter((event) => event.md5 == modelCell.md5);
-      let outputList = this.modelOutputInGraph.filter((event) => event.md5 == modelCell.md5);
-      inputList.forEach((item) => {
+      let inputList = list.filter(event => event.md5 == modelCell.md5);
+      let outputList = this.modelOutputInGraph.filter(event => event.md5 == modelCell.md5);
+      inputList.forEach(item => {
         this.changeCellStyleByStatus(status, item, true);
       });
-      outputList.forEach((item) => {
+      outputList.forEach(item => {
         this.changeCellStyleByStatus(status, item, true);
       });
     },
@@ -806,20 +806,20 @@ export default {
       if (status == 0) {
         style = {
           fontColor: '#f6f6f6',
-          fillColor: '#E6A23C',
+          fillColor: '#E6A23C'
         };
       }
       //finish
       if (status == 1) {
         style = {
           fillColor: '#67C23A',
-          fontColor: '#24292E',
+          fontColor: '#24292E'
         };
       } //error
       if (status == 2) {
         style = {
           fillColor: '#ce1212',
-          fontColor: '#f6f6f6',
+          fontColor: '#f6f6f6'
         };
       }
       if (isData) {
@@ -838,25 +838,25 @@ export default {
           completed: [],
           running: [],
           waiting: [],
-          failed: [],
+          failed: []
         },
         dataProcessingList: {
           completed: [],
           running: [],
           waiting: [],
-          failed: [],
-        },
+          failed: []
+        }
       };
-      this.modelListInGraph.forEach((cell) => {
+      this.modelListInGraph.forEach(cell => {
         taskInfo.modelActionList.waiting.push({
           id: cell.id,
-          name: cell.name,
+          name: cell.name
         });
       });
-      this.dataServiceListInGraph.forEach((cell) => {
+      this.dataServiceListInGraph.forEach(cell => {
         taskInfo.dataProcessingList.waiting.push({
           id: cell.id,
-          name: cell.name,
+          name: cell.name
         });
       });
       let postJson = {
@@ -874,7 +874,7 @@ export default {
         taskInfo: taskInfo,
         taskContent: this.currentTask.taskContent,
         status: 0,
-        tid: tid,
+        tid: tid
       };
       let data = await saveIntegrateTaskInstance(postJson);
       this.currentTaskInstance = data;
@@ -898,7 +898,7 @@ export default {
             this.linkEdgeList,
             'taskInstance'
           ),
-          status: 1,
+          status: 1
         };
       } else if (type == 'dataProcessing') {
         postJson = {
@@ -911,13 +911,13 @@ export default {
             this.linkEdgeList,
             'taskInstance'
           ),
-          status: 1,
+          status: 1
         };
       }
       // console.log(postJson, this.currentTaskInstance.id);
 
       await updateIntegrateTaskInstanceById(this.currentTaskInstance.id, postJson);
-      this.allInstanceList.forEach((instance) => {
+      this.allInstanceList.forEach(instance => {
         if (instance.id == this.currentTaskInstance.id) {
           instance.status = 1;
         }
@@ -971,7 +971,7 @@ export default {
         taskId: this.currentTask.id,
         id: val,
         currentPage: this.currentPage - 1,
-        pageSize: 8,
+        pageSize: 8
       };
       let data = await deleteAndQuery(jsonData);
       console.log(data);
@@ -984,23 +984,23 @@ export default {
           projectId: this.projectId,
           record: {
             taskContent: this.graph.getGraphXml()
-          },
+          }
         };
         await saveProjectRecord(jsonData);
-        await updatePerformanceById('scenario', this.projectId, {content: 'update scenario'})
+        await updatePerformanceById('scenario', this.projectId, { content: 'update scenario' });
       } else {
         this.$notify({
           title: 'warning',
           message: 'Please save the canvas first!',
-          type: 'warning',
+          type: 'warning'
         });
       }
-    },
+    }
   },
 
   mounted() {
     this.init();
-  },
+  }
 };
 </script>
 

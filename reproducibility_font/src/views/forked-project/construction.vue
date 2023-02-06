@@ -24,19 +24,39 @@
       <div class="record">
         <div class="block">
           <el-timeline>
-            <el-timeline-item icon="el-icon-edit" :type="completion.context.length > 0 ? 'success' : 'warning'" size="large" :timestamp="dateFormat(completion.context.updateTime)">
+            <el-timeline-item
+              icon="el-icon-edit"
+              :type="completion.context.length > 0 ? 'success' : 'warning'"
+              size="large"
+              :timestamp="dateFormat(completion.context.updateTime)"
+            >
               Context Definition
             </el-timeline-item>
 
-            <el-timeline-item icon="el-icon-folder" :type="completion.resource.length > 0 ? 'success' : 'warning'" size="large" :timestamp="dateFormat(completion.resource.updateTime)">
+            <el-timeline-item
+              icon="el-icon-folder"
+              :type="completion.resource.length > 0 ? 'success' : 'warning'"
+              size="large"
+              :timestamp="dateFormat(completion.resource.updateTime)"
+            >
               Resource Collection
             </el-timeline-item>
 
-            <el-timeline-item icon="el-icon-sunny" :type="completion.scenario.length > 0 ? 'success' : 'warning'" size="large" :timestamp="dateFormat(completion.scenario.updateTime)">
+            <el-timeline-item
+              icon="el-icon-sunny"
+              :type="completion.scenario.length > 0 ? 'success' : 'warning'"
+              size="large"
+              :timestamp="dateFormat(completion.scenario.updateTime)"
+            >
               Simulation Scenario
             </el-timeline-item>
 
-            <el-timeline-item icon="el-icon-document" :type="completion.results.length > 0 ? 'success' : 'warning'" size="large" :timestamp="dateFormat(completion.results.updateTime)">
+            <el-timeline-item
+              icon="el-icon-document"
+              :type="completion.results.length > 0 ? 'success' : 'warning'"
+              size="large"
+              :timestamp="dateFormat(completion.results.updateTime)"
+            >
               Excepted Results
             </el-timeline-item>
           </el-timeline>

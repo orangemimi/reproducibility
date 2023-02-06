@@ -63,13 +63,13 @@ export default {
         name: '',
         description: '',
         purpose: '',
-        privacy: 'public',
+        privacy: 'public'
       },
       dynamicTags: [],
       inputVisible: false,
       inputValue: '',
       value: [],
-      data: [],
+      data: []
     };
   },
   methods: {
@@ -82,7 +82,7 @@ export default {
         this.$notify({
           title: 'warning',
           message: 'The same label exists!',
-          type: 'warning',
+          type: 'warning'
         });
       } else {
         if (inputValue) {
@@ -105,21 +105,21 @@ export default {
       let x2js = new X2js();
       let json = x2js.xml2js(data.taskContent).mxGraphModel.root.mxCell;
       console.log(json);
-      json.forEach((item) => {
+      json.forEach(item => {
         if (item._type == 'modelService') {
           this.data.push({
             key: this.data.length,
             label: item._name,
             type: item._type,
             doi: item.Object._doi,
-            md5: item.Object._md5,
+            md5: item.Object._md5
           });
         } else if (item._type == 'modelServiceInput' || item._type == 'dataServiceInput') {
           this.data.push({
             key: this.data.length,
             label: item.Object.Object._name,
             type: item.Object._isParameter == 'true' ? 'parameter' : 'input',
-            value: item.Object.Object._value,
+            value: item.Object.Object._value
           });
         } else if (item._type == 'dataService') {
           console.log('dataService暂时还没写！');
@@ -132,21 +132,21 @@ export default {
         this.data.push({
           key: this.data.length,
           label: 'essentialInformation',
-          obj: data.essentialInformation,
+          obj: data.essentialInformation
         });
       }
       if (data.spatialInfos != null) {
         this.data.push({
           key: this.data.length,
           label: 'spatialInfos',
-          obj: data.spatialInfos,
+          obj: data.spatialInfos
         });
       }
       if (data.temporalInfo != null) {
         this.data.push({
           key: this.data.length,
           label: 'temporalInfo',
-          obj: data.temporalInfo,
+          obj: data.temporalInfo
         });
       }
     },
@@ -168,11 +168,11 @@ export default {
             context: { content: 'Context Definition', degree: '0%', type: 'warning', icon: 'el-icon-edit' },
             resource: { content: 'Resource Collection', degree: '0%', type: 'warning', icon: 'el-icon-folder' },
             scenario: { content: 'Simulation Scenario', degree: '0%', type: 'warning', icon: 'el-icon-sunny' },
-            results: { content: 'Excepted Results', degree: '0%', type: 'warning', icon: 'el-icon-document' },
+            results: { content: 'Excepted Results', degree: '0%', type: 'warning', icon: 'el-icon-document' }
           }
-        },
+        }
       };
-      this.value.forEach((item) => {
+      this.value.forEach(item => {
         if (this.data[item].label == 'essentialInformation') {
           jsonData['essentialInformation'] = this.data[item].obj;
         } else if (this.data[item].label == 'temporalInfo') {
@@ -188,7 +188,7 @@ export default {
       let forkProjectId = await forkProject(jsonData);
       console.log(forkProjectId);
       this.$router.push({
-        path: `/project/${forkProjectId}/info`,
+        path: `/project/${forkProjectId}/info`
       });
     },
     test() {
@@ -199,12 +199,12 @@ export default {
     async init() {
       await this.getContextByProject();
       await this.getTaskContent();
-    },
+    }
   },
   async mounted() {
     console.log(this.$route.params);
     await this.init();
-  },
+  }
 };
 </script>
 

@@ -1,6 +1,8 @@
 <!--a time extent -->
 <template>
-  <div><el-date-picker v-model="timeExtents" type="datetimerange" range-separator="To" start-placeholder="Start time" end-placeholder="End time"></el-date-picker></div>
+  <div>
+    <el-date-picker v-model="timeExtents" type="datetimerange" range-separator="To" start-placeholder="Start time" end-placeholder="End time"></el-date-picker>
+  </div>
 </template>
 
 <script>

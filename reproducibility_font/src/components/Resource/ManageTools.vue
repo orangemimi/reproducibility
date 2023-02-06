@@ -8,11 +8,7 @@
             <el-row v-show="switchValue">Public Tools</el-row>
             <el-row v-show="!switchValue">Private Tools</el-row>
           </div>
-          <el-switch
-            v-model="switchValue"
-            active-color="#13ce66"
-            inactive-color="#ff4949"
-          ></el-switch>
+          <el-switch v-model="switchValue" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
         </div>
         <el-card shadow="never" v-show="switchValue" class="card_contain">
           <vue-scroll :ops="ops" style="height: 480px">
@@ -55,24 +51,14 @@
             this project
           </div>
           <vue-scroll :ops="ops" style="height: 480px">
-            <draggable
-              element="ul"
-              :group="{ name: 'tool', put: true, pull: false }"
-              v-model="sentTools"
-              @add="addSentTool"
-              style="min-height: 480px"
-            >
+            <draggable element="ul" :group="{ name: 'tool', put: true, pull: false }" v-model="sentTools" @add="addSentTool" style="min-height: 480px">
               <div v-for="(tool, index) in sentTools" :key="tool.index">
                 <div>
                   <el-card class="select_tools_contain">
                     <div class="ellipsis" style="width: 150px">
                       {{ tool.toolName }}
                     </div>
-                    <i
-                      class="el-icon-remove changeRedColor"
-                      size="small"
-                      @click="removeSelectedTools(index)"
-                    ></i>
+                    <i class="el-icon-remove changeRedColor" size="small" @click="removeSelectedTools(index)"></i>
                   </el-card>
                 </div>
               </div>

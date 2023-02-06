@@ -30,37 +30,37 @@ export default {
       ops: {
         bar: {
           background: '#808695',
-          keepShow: true,
-        },
+          keepShow: true
+        }
       },
 
-      dataServiceFilter: { page: 0, pageSize: 8 },
+      dataServiceFilter: { page: 0, pageSize: 8 }
     };
   },
   watch: {
-    dataProcessing: function () {
-      this.$nextTick(function () {
+    dataProcessing: function() {
+      this.$nextTick(function() {
         this.$emit('getDataServices', this.dataProcessing);
       });
-    },
+    }
   },
 
   methods: {
     async getAllInfo() {
-      let content  = await getAllByProjectId(this.projectId);
-      console.log(content)
+      let content = await getAllByProjectId(this.projectId);
+      console.log(content);
       this.$set(this, 'dataProcessing', content);
     },
 
     getModelInfo() {
       return this.$refs['dataServiceItemList'];
       // this.$emit('chooseModel',model)
-    },
+    }
   },
   created() {
     this.getAllInfo();
     // this.getPersonalModels();
-  },
+  }
 };
 </script>
 <style lang="scss" scoped>

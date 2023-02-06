@@ -21,8 +21,8 @@ export default {
   },
   props: {
     modelItem: {
-      type: Object,
-    },
+      type: Object
+    }
   },
 
   methods: {
@@ -35,8 +35,8 @@ export default {
     },
     cardClick() {
       window.open('http://geomodeling.njnu.edu.cn/computableModel/' + this.modelItem.data.doi, '_blank');
-    },
-  },
+    }
+  }
 };
 </script>
 

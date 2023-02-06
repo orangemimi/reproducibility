@@ -32,11 +32,11 @@ import { mapState } from 'vuex';
 export default {
   props: {
     fileUrl: {
-      type: String,
+      type: String
     },
     uploadPath: {
-      type: String,
-    },
+      type: String
+    }
   },
 
   components: {},
@@ -48,14 +48,14 @@ export default {
           this.fileList = [{ url: this.fileUrl }];
         }
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
 
   computed: {
     ...mapState({
-      userId: (state) => state.user.userId,
-    }),
+      userId: state => state.user.userId
+    })
   },
 
   data() {
@@ -66,7 +66,7 @@ export default {
       uploadFileForm: new FormData(), //上传文件的form
       fileList: [], //el-upload上传的文件列表,
       dataItemList: [],
-      file: {},
+      file: {}
       // ordinaryFileUrl:
     };
   },
@@ -93,7 +93,7 @@ export default {
     },
 
     async submitUpload({ file }) {
-      console.log(file)
+      console.log(file);
       let form = new FormData();
       form.append('pictureFile', file);
       let fileName = await post(`${this.uploadPath}`, form);
@@ -105,12 +105,12 @@ export default {
     clear() {
       this.file = {};
       this.fileUrl = '';
-    },
+    }
   },
 
   mounted() {
     // this.clear();
-  },
+  }
 };
 </script>
 <style scoped lang="scss">

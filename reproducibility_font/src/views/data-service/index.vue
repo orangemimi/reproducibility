@@ -51,9 +51,9 @@ export default {
       value: '',
       pageFilter: {
         pageSize: 8,
-        page: 0,
+        page: 0
       },
-      addModelDialogShow: false,
+      addModelDialogShow: false
     };
   },
   computed: {
@@ -62,7 +62,7 @@ export default {
     },
     disabled() {
       return this.loading || this.noMore;
-    },
+    }
   },
   methods: {
     searchData() {
@@ -90,13 +90,13 @@ export default {
       this.getData();
     },
 
-    addModelItem() {},
+    addModelItem() {}
   },
   mounted() {
     this.getData();
     // window.addEventListener('scroll', this.scrollDown);
   },
-  components: { dataServiceCard, createModel },
+  components: { dataServiceCard, createModel }
 };
 </script>
 

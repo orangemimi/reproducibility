@@ -82,7 +82,7 @@ export default {
       let result = {
         url: this.form.value,
         token: this.form.token
-      }
+      };
       this.$emit('returnResourceUrl', result);
     }
     //get all the file

@@ -50,12 +50,12 @@ export default {
         name: '',
         description: '',
         introduction: '',
-        privacy: 'public',
+        privacy: 'public'
       },
       dynamicTags: [],
       inputVisible: false,
       inputValue: '',
-      pictureFile: '',
+      pictureFile: ''
     };
   },
   methods: {
@@ -68,7 +68,7 @@ export default {
         this.$notify({
           title: 'warning',
           message: 'The same label exists!',
-          type: 'warning',
+          type: 'warning'
         });
       } else {
         if (inputValue) {
@@ -100,19 +100,19 @@ export default {
           introduction: this.form.introduction,
           privacy: this.form.privacy,
           tags: this.dynamicTags,
-          picture: 'http://221.226.60.2:8082/data/' + pictureData.data.data.id,
+          picture: 'http://221.226.60.2:8082/data/' + pictureData.data.data.id
         }
       };
       let data = await saveProject(jsonData);
       await saveScenario({ projectId: data.id });
       console.log(data);
-      this.cancel()
+      this.cancel();
     },
 
     cancel() {
       this.$emit('dialogShow', false);
-    },
-  },
+    }
+  }
 };
 </script>
 

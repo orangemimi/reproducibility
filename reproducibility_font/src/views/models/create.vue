@@ -34,13 +34,7 @@
               </template>
             </el-input>
 
-            <el-tag
-              :key="tag"
-              v-for="tag in form.tags"
-              closable
-              :disable-transitions="false"
-              @close="handleClose(tag)"
-            >
+            <el-tag :key="tag" v-for="tag in form.tags" closable :disable-transitions="false" @close="handleClose(tag)">
               {{ tag }}
             </el-tag>
           </el-form-item>
@@ -48,10 +42,7 @@
             <el-input v-model="form.source" />
           </el-form-item>
           <el-form-item label="Image">
-            <add-image
-              @uploadImgResponse="uploadImgResponse"
-              :uploadPath="'models/picture'"
-            ></add-image>
+            <add-image @uploadImgResponse="uploadImgResponse" :uploadPath="'models/picture'"></add-image>
           </el-form-item>
         </el-form>
       </el-col>

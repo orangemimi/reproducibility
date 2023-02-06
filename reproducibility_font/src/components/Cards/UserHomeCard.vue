@@ -36,7 +36,7 @@ export default {
 
   methods: {},
 
-  mounted() {},
+  mounted() {}
 };
 </script>
 
@@ -45,7 +45,8 @@ export default {
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
   background: #ffffff;
-  .l-top, .r-top {
+  .l-top,
+  .r-top {
     margin-top: 20px;
     margin-left: 20px;
   }
@@ -63,7 +64,7 @@ export default {
     margin-bottom: 18px;
   }
   .right {
-    border-left: 1px solid #E5E5E5;
+    border-left: 1px solid #e5e5e5;
   }
 }
 </style>

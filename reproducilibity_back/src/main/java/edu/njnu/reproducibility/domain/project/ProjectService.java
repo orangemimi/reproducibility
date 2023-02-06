@@ -143,7 +143,8 @@ public class ProjectService {
         creatorJson.put("id", creator.getUserId());
         creatorJson.put("name", creator.getName());
         RestTemplate template = new RestTemplate();
-        ResponseEntity<JSONObject> responseEntity = template.getForEntity("http://172.21.212.103:8088/userServer/user/getAvatar/" + creator.getEmail(), JSONObject.class);
+//        ResponseEntity<JSONObject> responseEntity = template.getForEntity("http://172.21.212.103:8088/userServer/user/getAvatar/" + creator.getEmail(), JSONObject.class);
+        ResponseEntity<JSONObject> responseEntity = template.getForEntity("http://172.21.213.245:8088/userServer/user/getAvatar/" + creator.getEmail(), JSONObject.class);
         if(responseEntity.getBody().getStr("msg") == null) {
             creatorJson.put("avatar", "");
         } else {
@@ -160,7 +161,8 @@ public class ProjectService {
                 User member = userService.getUserInfoById(memberIdList.get(i).getMemberId());
                 JSONObject jsonObject = new JSONObject();
                 RestTemplate restTemplate = new RestTemplate();
-                ResponseEntity<JSONObject> result = restTemplate.getForEntity("http://172.21.212.103:8088/userServer/user/getAvatar/" + member.getEmail(), JSONObject.class);
+//                ResponseEntity<JSONObject> result = restTemplate.getForEntity("http://172.21.212.103:8088/userServer/user/getAvatar/" + member.getEmail(), JSONObject.class);
+                ResponseEntity<JSONObject> result = restTemplate.getForEntity("http://172.21.213.245:8088/userServer/user/getAvatar/" + member.getEmail(), JSONObject.class);
                 if(result.getBody().getStr("msg") == null) {
                     jsonObject.put("avatar", "");
                 } else {

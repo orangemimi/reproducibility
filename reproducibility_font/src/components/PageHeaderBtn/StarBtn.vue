@@ -22,7 +22,6 @@
 <script>
 import { starProject, isStarProject, getStarCount, unStarProject } from '@/api/request';
 export default {
-  
   components: {},
 
   watch: {},
@@ -38,36 +37,35 @@ export default {
   },
 
   methods: {
-
     async init() {
-      let data = await isStarProject(this.projectId)
-      console.log(data)
-      if(data == 1) {
-        this.isStar = true
-      }else {
-        this.isStar = false
+      let data = await isStarProject(this.projectId);
+      console.log(data);
+      if (data == 1) {
+        this.isStar = true;
+      } else {
+        this.isStar = false;
       }
-      this.starNumber = await getStarCount(this.projectId)
+      this.starNumber = await getStarCount(this.projectId);
     },
 
     async star() {
-      let data = await starProject(this.projectId)
-      console.log(data) 
-      this.isStar = true
-      this.starNumber = data.starCount
+      let data = await starProject(this.projectId);
+      console.log(data);
+      this.isStar = true;
+      this.starNumber = data.starCount;
     },
 
     async unStar() {
-      let data = await unStarProject(this.projectId)
-      console.log(data)
-      this.isStar = false
-      this.starNumber = data.starCount
+      let data = await unStarProject(this.projectId);
+      console.log(data);
+      this.isStar = false;
+      this.starNumber = data.starCount;
     }
   },
 
   mounted() {
-    console.log(this.$store.state.user.userId)
-    this.init()
+    console.log(this.$store.state.user.userId);
+    this.init();
   }
 };
 </script>

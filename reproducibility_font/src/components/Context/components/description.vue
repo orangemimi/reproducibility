@@ -11,13 +11,12 @@ export default {
     return {
       textarea: ''
     };
-  },
+  }
 };
 </script>
 
 <style lang="scss" scoped>
 .main {
-    text-align: center;
-    
+  text-align: center;
 }
 </style>

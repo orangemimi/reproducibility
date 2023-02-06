@@ -32,17 +32,17 @@ export default {
           specifyBorderRadius: false,
           minSize: 0,
           size: '6px',
-          disable: false,
+          disable: false
         },
         scrollPanel: {
           scrollingY: false,
-          scrollingX: true,
-        },
-      },
+          scrollingX: true
+        }
+      }
     };
   },
   components: {
-    ResourceCard,
+    ResourceCard
   },
 
   methods: {
@@ -57,11 +57,11 @@ export default {
     async init() {
       await this.getModelsByProjectId();
       await this.getAllByProjectId();
-    },
+    }
   },
   async mounted() {
     await this.init();
-  },
+  }
 };
 </script>
 

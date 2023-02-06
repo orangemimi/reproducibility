@@ -9,7 +9,6 @@
       <el-button class="config-btn" type="text" @click="view(item.id)">View</el-button>
     </el-card>
 
-    
     <el-card class="box-card" v-if="type == 'Model'" :style="select ? 'box-shadow: 0px 0px 20px #666;' : ''">
       <img :src="'http://geomodeling.njnu.edu.cn' + item.image" v-if="item.image != ''" />
       <img src="http://geomodeling.njnu.edu.cn/static/img/model/model.png" alt="" v-else />
@@ -62,7 +61,7 @@ export default {
       selectNum: -1,
       selectNumArr: [],
       selectArr: [],
-      badgeNum: 0,
+      badgeNum: 0
     };
   },
   watch: {
@@ -77,13 +76,13 @@ export default {
             this.select = false;
           }
         }
-      },
+      }
     },
     '$store.state.user.selectNum': {
       handler(val) {
-        if(val == 0) {
-          this.select = false
-          this.badgeNum = 0
+        if (val == 0) {
+          this.select = false;
+          this.badgeNum = 0;
         }
       }
     }
@@ -110,7 +109,7 @@ export default {
     },
     view(id) {
       this.$router.push({
-        path: `/resource/${id}/${this.type}`,
+        path: `/resource/${id}/${this.type}`
       });
     },
     modelView() {
@@ -118,7 +117,7 @@ export default {
     },
     async selectClick() {
       await this.getComputableModels();
-      console.log(this.computableModels)
+      console.log(this.computableModels);
       if (this.select) {
         let temp = JSON.parse(localStorage.selectModels);
         for (let i = 0; i < this.computableModels.length; i++) {
@@ -143,7 +142,7 @@ export default {
           this.$notify({
             title: 'Warning',
             message: 'The model has no computing resources!',
-            type: 'warning',
+            type: 'warning'
           });
         }
       }
@@ -173,7 +172,7 @@ export default {
       if (localStorage.selectModels == undefined) {
         temp = {
           modelItem: [],
-          computableModels: [],
+          computableModels: []
         };
       } else {
         temp = JSON.parse(localStorage.selectModels);
@@ -183,9 +182,9 @@ export default {
           for (let j = 0; j < this.computableModels.length; j++) {
             if (this.computableModels[j].doi == temp.computableModels[i].doi) {
               temp.computableModels.splice(i, 1);
-              console.log(temp.computableModels.length)
+              console.log(temp.computableModels.length);
               i--;
-              break
+              break;
             }
           }
         }
@@ -208,10 +207,10 @@ export default {
         if (this.badgeNum == 0) {
           temp.modelItem.push({
             id: this.item.oid,
-            count: this.selectArr.length,
+            count: this.selectArr.length
           });
         } else {
-          temp.modelItem.forEach((item) => {
+          temp.modelItem.forEach(item => {
             if (item.id == this.item.oid) {
               item.count = this.selectArr.length;
             }
@@ -219,7 +218,7 @@ export default {
         }
       }
       localStorage.setItem('selectModels', JSON.stringify(temp));
-      this.$store.state.user.selectNum = this.$store.state.user.selectNum + this.selectArr.length - this.badgeNum
+      this.$store.state.user.selectNum = this.$store.state.user.selectNum + this.selectArr.length - this.badgeNum;
       if (this.selectArr.length > 0) {
         this.select = true;
         this.badgeNum = this.selectArr.length;
@@ -232,13 +231,13 @@ export default {
     },
     cancel() {
       this.dialogVisible = false;
-    },
+    }
   },
   mounted() {
     this.init();
     // console.log(this.item)
     // console.log(this.item.snapshot)
-  },
+  }
 };
 </script>
 

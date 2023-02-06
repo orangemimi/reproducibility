@@ -89,7 +89,7 @@ export default {
       projectList: [],
       projectFlag: false,
       selectNum: -1,
-      select: 1,
+      select: 1
     };
   },
   methods: {
@@ -128,7 +128,7 @@ export default {
     async saveModelsToProject() {
       let jsonData = {
         models: this.modelList,
-        projectId: this.projectList[this.selectNum].projectId,
+        projectId: this.projectList[this.selectNum].projectId
       };
       await saveModelsToProject(jsonData);
     },
@@ -136,37 +136,37 @@ export default {
       let jsonData = {
         dataServices: this.dataServiceList,
         projectId: this.projectList[this.selectNum].projectId
-      }
-      await saveDataServicesToProject(jsonData)
+      };
+      await saveDataServicesToProject(jsonData);
     },
     async confirm() {
       if (this.modelList.length == 0 && this.dataServiceList.length == 0) {
         this.$notify({
           type: 'warning',
           message: 'No models!',
-          title: 'Warning',
+          title: 'Warning'
         });
       } else {
         if (this.modelList.length != 0) {
           await this.saveModelsToProject();
-          await updatePerformanceById('resource', this.projectList[this.selectNum].projectId, {content: 'add models'})
+          await updatePerformanceById('resource', this.projectList[this.selectNum].projectId, { content: 'add models' });
           let temp = {
             computableModels: [],
-            modelItem: [],
+            modelItem: []
           };
           localStorage.selectModels = JSON.stringify(temp);
         }
-        if(this.dataServiceList.length != 0) {
-          await this.saveDataServicesToProject()
-          await updatePerformanceById('resource', this.projectList[this.selectNum].projectId, {content: 'add dataservers'})
+        if (this.dataServiceList.length != 0) {
+          await this.saveDataServicesToProject();
+          await updatePerformanceById('resource', this.projectList[this.selectNum].projectId, { content: 'add dataservers' });
           let temp = {
             dataServiceItem: {},
             dataServices: []
-          }
-          localStorage.selectDataServices = JSON.stringify(temp)
+          };
+          localStorage.selectDataServices = JSON.stringify(temp);
         }
         this.modelList = [];
-        this.dataServiceList = []
+        this.dataServiceList = [];
         this.$emit('success', 0);
       }
     },
@@ -175,11 +175,11 @@ export default {
       // if(val == 1) {
 
       // }
-    },
+    }
   },
   mounted() {
     this.init();
-  },
+  }
 };
 </script>
 

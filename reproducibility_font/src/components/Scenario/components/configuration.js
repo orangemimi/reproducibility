@@ -1,5 +1,5 @@
 import mxgraph from '_com/MxGraph/index';
-import X2js from 'x2js'
+import X2js from 'x2js';
 // import Shapes from './Shapes';
 // import { init } from 'echarts';
 // import _ from 'lodash';
@@ -317,69 +317,69 @@ export function generateXml1(
   dataServiceLinkInGraph,
   dataServiceOutputListInGraph
 ) {
-  console.log(taskName)
-  console.log(modelListInGraph)
-  console.log(modelInputInGraph)
-  console.log(modelLinkInGraph)
-  console.log(modelOutputInGraph)
-  console.log(linkEdgeList)
-  console.log(dataServiceListInGraph)
-  console.log(dataServiceInputInGraph)
-  console.log(dataServiceLinkInGraph)
-  console.log(dataServiceOutputListInGraph)
+  console.log(taskName);
+  console.log(modelListInGraph);
+  console.log(modelInputInGraph);
+  console.log(modelLinkInGraph);
+  console.log(modelOutputInGraph);
+  console.log(linkEdgeList);
+  console.log(dataServiceListInGraph);
+  console.log(dataServiceInputInGraph);
+  console.log(dataServiceLinkInGraph);
+  console.log(dataServiceOutputListInGraph);
   let jsonObj = {
     TaskConfiguration: {
       _uid: generateGUID(),
       _name: taskName,
-      _version: "1.0"
+      _version: '1.0'
     }
-  }
+  };
 
   let Models = {
     Model: []
-  }
+  };
   modelListInGraph.forEach(model => {
     Models.Model.push({
       _name: model.name,
-      _description: "",
+      _description: '',
       _pid: model.nodeAttribute.md5
-    })
+    });
   });
 
   let ModelActions = {
     ModelAction: []
-  }
+  };
   modelListInGraph.forEach((model, index) => {
-    let inputList = []
-    let outputList = []
+    let inputList = [];
+    let outputList = [];
     model.edges.forEach(edge => {
-      if(edge.target.id == model.id) {
-        inputList.push(edge.source)
+      if (edge.target.id == model.id) {
+        inputList.push(edge.source);
       }
-      if(edge.source.id == model.id) {
-        outputList.push(edge.target)
+      if (edge.source.id == model.id) {
+        outputList.push(edge.target);
       }
-    })
-    console.log(inputList)
+    });
+    console.log(inputList);
     ModelActions.ModelAction.push({
       _id: model.id,
       _name: model.name,
-      _description: "",
+      _description: '',
       _model: model.nodeAttribute.md5,
       _iterationNum: model.iterationNum,
       _step: index,
       Inputs: {
-        DataConfiguration: [],
+        DataConfiguration: []
       },
       Outputs: {
         DataConfiguration: []
       }
-    })
+    });
     inputList.forEach(item => {
       if (item.type == 'modelServiceInput') {
-        let type = "url"
+        let type = 'url';
         if (item.nodeAttribute.dataSelect.type == 'shared_file') {
-          type = 'insituData'
+          type = 'insituData';
           ModelActions.ModelAction[index].Inputs.DataConfiguration.push({
             _id: item.id,
             _state: item.nodeAttribute.stateName,
@@ -388,7 +388,7 @@ export function generateXml1(
               _value: item.nodeAttribute.dataSelect.value,
               _type: type
             }
-          })
+          });
         }
         if (item.nodeAttribute.dataSelect.type == 'parameter') {
           ModelActions.ModelAction[index].Inputs.DataConfiguration.push({
@@ -399,7 +399,7 @@ export function generateXml1(
               _value: item.nodeAttribute.dataSelect.value,
               _type: type
             }
-          })
+          });
         } else {
           ModelActions.ModelAction[index].Inputs.DataConfiguration.push({
             _id: item.id,
@@ -409,80 +409,79 @@ export function generateXml1(
               _value: item.nodeAttribute.dataSelect.value,
               _type: type
             }
-          })
+          });
         }
       } else if (item.type == 'modelServiceLink') {
-        console.log(1)
-        let link = {}
+        console.log(1);
+        let link = {};
         item.edges.forEach(edge => {
-          if(edge.target.id == item.id) {
-            link = edge.source
+          if (edge.target.id == item.id) {
+            link = edge.source;
           }
-        })
+        });
         ModelActions.ModelAction[index].Inputs.DataConfiguration.push({
           _id: item.id,
           _state: item.nodeAttribute.stateName,
           _event: item.nodeAttribute.eventName,
           Data: {
             _link: link.id,
-            _type: "link"
+            _type: 'link'
           }
-        })
+        });
       }
     });
-    outputList.forEach((item) => {
+    outputList.forEach(item => {
       ModelActions.ModelAction[index].Outputs.DataConfiguration.push({
         _id: item.id,
         _state: item.nodeAttribute.stateName,
-        _event: item.nodeAttribute.eventName,
-      })
+        _event: item.nodeAttribute.eventName
+      });
     });
   });
 
   let ProcessingTools = {
     ProcessingTool: []
-  }
+  };
   dataServiceListInGraph.forEach(service => {
     ProcessingTools.ProcessingTool.push({
       _name: service.name,
       _description: service.description,
       _service: service.nodeAttribute.dataServiceId,
-      _source: "internal"
-    })
+      _source: 'internal'
+    });
   });
 
   let DataProcessings = {
     DataProcessing: []
-  }
+  };
   dataServiceListInGraph.forEach((service, index) => {
     // let list = [...dataServiceInputInGraph, ...dataServiceLinkInGraph];
-    let inputList = []
-    let outputList = []
+    let inputList = [];
+    let outputList = [];
     service.edges.forEach(edge => {
-      if(edge.target.id == service.id) {
-        inputList.push(edge.source)
+      if (edge.target.id == service.id) {
+        inputList.push(edge.source);
       }
-      if(edge.source.id == service.id) {
-        outputList.push(edge.target)
+      if (edge.source.id == service.id) {
+        outputList.push(edge.target);
       }
-    })
-    
+    });
 
-    console.log(inputList)
+    console.log(inputList);
     DataProcessings.DataProcessing.push({
       _id: service.id,
       _token: service.nodeAttribute.token,
       _name: service.name,
-      _description: "",
-      _type: "dataService",
+      _description: '',
+      _type: 'dataService',
       _service: service.nodeAttribute.dataServiceId,
       Inputs: {
-        DataConfiguration: [],
+        DataConfiguration: []
       },
       Outputs: {
         DataConfiguration: []
       }
-    })
+    });
     inputList.forEach(item => {
       if (item.type == 'dataServiceInput') {
         if (item.nodeAttribute.dataSelect.type == 'shared_file') {
@@ -493,7 +492,7 @@ export function generateXml1(
               _value: item.nodeAttribute.dataSelect.value,
               _type: 'insituData'
             }
-          })
+          });
         }
         if (item.nodeAttribute.dataSelect.type == 'parameter') {
           DataProcessings.DataProcessing[index].Inputs.DataConfiguration.push({
@@ -503,9 +502,9 @@ export function generateXml1(
               _value: item.nodeAttribute.dataSelect.value,
               _type: 'param'
             }
-          })
+          });
         } else {
-          console.log(1)
+          console.log(1);
           DataProcessings.DataProcessing[index].Inputs.DataConfiguration.push({
             _id: item.id,
             _event: item.name,
@@ -513,72 +512,69 @@ export function generateXml1(
               _value: item.nodeAttribute.dataSelect.value,
               _type: 'url'
             }
-          })
+          });
         }
-
-
       } else if (item.type == 'dataServiceLink') {
-        let link = {}
+        let link = {};
         item.edges.forEach(edge => {
-          if(edge.target.id == item.id) {
-            link = edge.source
+          if (edge.target.id == item.id) {
+            link = edge.source;
           }
-        })
+        });
         DataProcessings.DataProcessing[index].Inputs.DataConfiguration.push({
           _id: item.id,
           _event: item.name,
           Data: {
             _link: link.id,
-            _type: "link"
+            _type: 'link'
           }
-        })
+        });
       }
     });
     outputList.forEach((item, n) => {
       DataProcessings.DataProcessing[index].Outputs.DataConfiguration.push({
         _id: item.id,
-        _event: item.name,
-      })
+        _event: item.name
+      });
       if (!item.nodeAttribute.upload) {
         DataProcessings.DataProcessing[index].Outputs.DataConfiguration[n].Data = {
-          _type: "insituData"
-        }
+          _type: 'insituData'
+        };
       }
     });
   });
   let DataLinks = {
     DataLink: []
-  }
+  };
   modelLinkInGraph.forEach(item => {
     item.edges.forEach(edge => {
       if (edge.target.id == item.id) {
         DataLinks.DataLink.push({
           _from: edge.source.id,
           _to: item.id
-        })
+        });
       }
-    })
-  })
+    });
+  });
 
   if (Models.Model.length > 0) {
-    jsonObj.TaskConfiguration.Models = Models
+    jsonObj.TaskConfiguration.Models = Models;
   }
   if (ModelActions.ModelAction.length > 0) {
-    jsonObj.TaskConfiguration.ModelActions = ModelActions
+    jsonObj.TaskConfiguration.ModelActions = ModelActions;
   }
   if (ProcessingTools.ProcessingTool.length > 0) {
-    jsonObj.TaskConfiguration.ProcessingTools = ProcessingTools
+    jsonObj.TaskConfiguration.ProcessingTools = ProcessingTools;
   }
   if (DataProcessings.DataProcessing.length > 0) {
-    jsonObj.TaskConfiguration.DataProcessings = DataProcessings
+    jsonObj.TaskConfiguration.DataProcessings = DataProcessings;
   }
   if (DataLinks.DataLink.length > 0) {
-    jsonObj.TaskConfiguration.DataLinks = DataLinks
+    jsonObj.TaskConfiguration.DataLinks = DataLinks;
   }
-  let x2js = new X2js()
+  let x2js = new X2js();
   // console.log(x2js.js2xml(jsonObj))
-  return x2js.js2xml(jsonObj)
-
+  return x2js.js2xml(jsonObj);
 }
 
 function generateGUID() {
@@ -609,7 +605,7 @@ export function differCellStyle(type) {
       fillColor: '#00FFF8',
       strokeColor: '',
       shape: 'rectangle'
-    }
+    };
   }
   if (type == 'modelServiceInput' || type == 'dataServiceInput') {
     return {
@@ -627,7 +623,7 @@ export function differCellStyle(type) {
       strokeColor: '',
       shape: 'parallelogram',
       fixedSize: 1
-    }
+    };
   }
   if (type == 'modelServiceLink' || type == 'dataServiceLink') {
     return {

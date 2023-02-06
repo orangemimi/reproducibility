@@ -31,7 +31,7 @@ export default {
   data() {
     return {
       imageUrl: '',
-      dialogVisible: false,
+      dialogVisible: false
     };
   },
   methods: {
@@ -47,9 +47,9 @@ export default {
         fileList.splice(0, 1);
       }
       this.imageUrl = URL.createObjectURL(file.raw);
-      this.$emit("getfile", file)
-    },
-  },
+      this.$emit('getfile', file);
+    }
+  }
 };
 </script>
 

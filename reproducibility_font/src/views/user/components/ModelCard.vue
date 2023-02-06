@@ -36,9 +36,9 @@
 export default {
   props: {
     model: {
-      type: Object,
-    },
-  },
+      type: Object
+    }
+  }
 };
 </script>
 
@@ -58,10 +58,11 @@ export default {
     white-space: nowrap;
     font-size: 20px;
     font-weight: 500;
-    color: #409EFF;
+    color: #409eff;
   }
 
-  .item, label:hover {
+  .item,
+  label:hover {
     cursor: pointer;
   }
   .item {
@@ -82,5 +83,4 @@ export default {
     font-size: 20px;
   }
 }
-
 </style>

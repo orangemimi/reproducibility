@@ -56,7 +56,6 @@ router.beforeEach((to, from, next) => {
   }
 });
 
-
 function filterPermission(routes, role) {
   let flag = true;
   routes.forEach(route => {
@@ -73,8 +72,6 @@ function filterPermission(routes, role) {
   return flag;
 }
 
-
-
 function hasPermission(role, route) {
   //false=> no permission
   //true=>1no meta.roles 2.has role
@@ -88,7 +85,5 @@ function hasPermission(role, route) {
 router.afterEach(() => {
   window.scrollTo(0, 0);
 });
-
-
 
 export default router;

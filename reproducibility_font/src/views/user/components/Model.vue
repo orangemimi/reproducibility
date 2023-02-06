@@ -22,12 +22,12 @@
         <el-col :span="4" v-for="(item, index) in models" :key="index">
           <div v-if="item.privacy == 'public'">
             <div v-show="publicType">
-              <model-card :model="item"/>
+              <model-card :model="item" />
             </div>
           </div>
           <div v-else>
             <div v-show="privateType">
-              <model-card :model="item"/>
+              <model-card :model="item" />
             </div>
           </div>
         </el-col>
@@ -52,8 +52,8 @@ export default {
       privateType: true,
       pageFilter: {
         pageSize: 8,
-        page: 0,
-      },
+        page: 0
+      }
     };
   },
 
@@ -79,12 +79,12 @@ export default {
           this.privateType = true;
         }
       }
-    },
+    }
   },
 
   mounted() {
     this.getModel();
-  },
+  }
 };
 </script>
 

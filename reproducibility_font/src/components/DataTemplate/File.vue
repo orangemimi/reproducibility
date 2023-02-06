@@ -87,9 +87,7 @@ export default {
     //创建配置文件
     createAndUploadParamFile() {
       let file = this.fileList[0];
-      let fileEvent = this.stateList[this.stateEventIndex.stateIndex].Event[
-        this.stateEventIndex.eventIndex
-      ];
+      let fileEvent = this.stateList[this.stateEventIndex.stateIndex].Event[this.stateEventIndex.eventIndex];
       // let datasets = this.datasetItems;
       // let itemData = datasets.filter((item) => {
       //   return item.name == fileEvent.ResponseParameter[0].datasetReference;

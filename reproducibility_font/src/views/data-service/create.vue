@@ -16,10 +16,8 @@
                 <el-button icon="el-icon-more-outline"></el-button>
                 <el-dropdown-menu slot="dropdown">
                   <div v-for="(item, index) in dataServiceInfo" :key="index">
-                    <el-dropdown-item :command="index">{{item.name}}</el-dropdown-item>
+                    <el-dropdown-item :command="index">{{ item.name }}</el-dropdown-item>
                   </div>
-                  
-                  
                 </el-dropdown-menu>
               </el-dropdown>
             </el-input>
@@ -85,7 +83,6 @@ export default {
         tags: [],
         Privacy: '',
         type: 'service'
-        
       },
       inputTagValue: '',
       dataServiceInfo: []
@@ -99,29 +96,28 @@ export default {
       this.$notify({
         title: 'Success',
         message: 'You have add the model service successfully!',
-        type: 'success',
+        type: 'success'
       });
     },
 
     handclick(val) {
       // console.log(val)
-      this.form.name = this.dataServiceInfo[val].name
-      this.form.dataServiceId = this.dataServiceInfo[val].id
+      this.form.name = this.dataServiceInfo[val].name;
+      this.form.dataServiceId = this.dataServiceInfo[val].id;
       // console.log(this.form.name)
       // console.log(this.form.dataServiceId)
     },
-    
+
     async findData(token) {
-      let data = await getAllProcessing({"token": token})
-      
-      let testJson = eval("(" + data + ")")
-      for(let i = 0;i < testJson.length;i++) {
+      let data = await getAllProcessing({ token: token });
+
+      let testJson = eval('(' + data + ')');
+      for (let i = 0; i < testJson.length; i++) {
         this.dataServiceInfo.push({
           name: testJson[i].list.name,
           id: testJson[i].list.id
-        })
+        });
       }
-      
     },
 
     uploadImgResponse(val) {
@@ -138,12 +134,12 @@ export default {
         this.form.tags.push(inputTagValue);
       }
       this.inputTagValue = '';
-    },
+    }
   },
 
   mounted() {
     // this.findData("uGi4gMg94+ux4nuugF0M9tlqpCtZFRqem1kl/J2Vra8=")
-  },
+  }
 };
 </script>
 <style lang="scss" scoped>

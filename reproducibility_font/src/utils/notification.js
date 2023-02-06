@@ -20,3 +20,11 @@ export function errorNotification(message) {
     type: 'error'
   });
 }
+
+export function successNot(message) {
+  ElementUI.Notification({
+    title: 'Success',
+    message: message,
+    type: 'success'
+  });
+}

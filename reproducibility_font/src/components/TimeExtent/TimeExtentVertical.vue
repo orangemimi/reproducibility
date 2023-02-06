@@ -32,7 +32,14 @@
           <el-option v-for="item in options" :key="item" :label="item" :value="item"></el-option>
         </el-select>
       </div>
-      <el-time-picker is-range v-model="timeExtents.second" range-separator="To" start-placeholder="Start second" end-placeholder="End second" placeholder="选择时间范围"></el-time-picker>
+      <el-time-picker
+        is-range
+        v-model="timeExtents.second"
+        range-separator="To"
+        start-placeholder="Start second"
+        end-placeholder="End second"
+        placeholder="选择时间范围"
+      ></el-time-picker>
     </el-card>
   </div>
 </template>

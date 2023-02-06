@@ -4,7 +4,16 @@
       <el-col :span="3" :offset="4">
         <div class="left">
           <div class="block">
-            <input type="file" class="input" :width="size" :style="'font-size:' + size + 'px'" v-if="editFlag" accept="image/*" title="change the picture" @change="onchange"/>
+            <input
+              type="file"
+              class="input"
+              :width="size"
+              :style="'font-size:' + size + 'px'"
+              v-if="editFlag"
+              accept="image/*"
+              title="change the picture"
+              @change="onchange"
+            />
             <el-avatar :size="size" class="avatar 1" :src="pictureURL" v-if="editFlag == false">user</el-avatar>
             <el-avatar :size="size" class="avatar 2" :src="editURL" v-if="editFlag">user</el-avatar>
           </div>
@@ -127,7 +136,6 @@
         </div>
       </el-col>
     </el-row>
-
   </div>
 </template>
 
@@ -164,7 +172,7 @@ export default {
         { label: 'Miss', value: 'Miss' },
         { label: 'Mrs', value: 'Mrs' },
         { label: 'Mx', value: 'Mx' },
-        { label: 'Other', value: 'Unfilled' },
+        { label: 'Other', value: 'Unfilled' }
       ],
       editAvatarFlag: false,
       pictureURL: '',
@@ -178,12 +186,12 @@ export default {
   methods: {
     async init() {
       let data = await getAllUserInfo(this.userId);
-      console.log(data)
+      console.log(data);
       this.localuser = data.localhost;
       this.remoteuser = data.remote.data;
-      if(data.remote.data.avatar != '' && data.remote.data.avatar != undefined) {
-        this.pictureURL = 'http://172.21.212.103:8088/userServer' + data.remote.data.avatar
-      } 
+      if (data.remote.data.avatar != '' && data.remote.data.avatar != undefined) {
+        this.pictureURL = 'http://172.21.212.103:8088/userServer' + data.remote.data.avatar;
+      }
       console.log(this.remoteuser);
       if (this.remoteuser.name != undefined && this.remoteuser.name != null && this.remoteuser.name != '') {
         this.form.name = this.remoteuser.name;
@@ -221,7 +229,7 @@ export default {
     handleClick() {},
 
     async updateUserByJwtUserId() {
-      this.form.avatar = this.editURL
+      this.form.avatar = this.editURL;
       let data = await updateUserByJwtUserId(this.form);
       console.log(data);
       this.remoteuser.name = this.form.name;
@@ -229,35 +237,35 @@ export default {
       this.remoteuser.organizations[0] = this.form.organizations;
       this.remoteuser.title = this.form.title;
       this.remoteuser.phone = this.form.phone;
-      this.pictureURL = this.editURL
-      console.log(this.$store)
-      this.$store.commit('user/setAvatar', data.data.avatar)
-      this.$store.commit('user/setName', data.data.name)
+      this.pictureURL = this.editURL;
+      console.log(this.$store);
+      this.$store.commit('user/setAvatar', data.data.avatar);
+      this.$store.commit('user/setName', data.data.name);
       this.editFlag = false;
     },
 
     editProfile() {
-      this.editFlag = true
-      this.editURL = this.pictureURL
+      this.editFlag = true;
+      this.editURL = this.pictureURL;
     },
 
     onchange(val) {
-      let read = new FileReader()
-      read.readAsDataURL(val.target.files[0])
+      let read = new FileReader();
+      read.readAsDataURL(val.target.files[0]);
       read.onload = e => {
-        console.log(e.target.result)
-        this.editURL = e.target.result
-      }
+        console.log(e.target.result);
+        this.editURL = e.target.result;
+      };
     },
 
     getfile(val) {
       console.log(val);
-    },
+    }
   },
   mounted() {
     this.init();
     // console.log(this.$route.params)
-  },
+  }
 };
 </script>
 
@@ -274,7 +282,6 @@ export default {
     top: 0;
     opacity: 0;
   }
-  
 }
 .edit-btn {
   margin-top: 10px;

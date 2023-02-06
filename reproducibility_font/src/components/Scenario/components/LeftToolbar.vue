@@ -79,16 +79,16 @@ export default {
     dataServiceToolbar,
     dataCellInfo,
     dataServiceCodeConfiguration,
-    dataServiceConfiguration,
+    dataServiceConfiguration
   },
 
   computed: {
     rhombusList: () => {
-      return generalList.filter((item) => item.style.shape == 'rhombus');
+      return generalList.filter(item => item.style.shape == 'rhombus');
     }, // general toolbar
     rectangleList: () => {
-      return generalList.filter((item) => item.style.shape == 'rectangle');
-    },
+      return generalList.filter(item => item.style.shape == 'rectangle');
+    }
   },
 
   data() {
@@ -125,27 +125,27 @@ export default {
           specifyBorderRadius: false,
           minSize: 0,
           size: '6px',
-          disable: false,
-        },
+          disable: false
+        }
       },
       currentCell: {},
       flag: {
         modelFlag: 0,
-        dataFlag: 0,
-      },
+        dataFlag: 0
+      }
     };
   },
 
   watch: {
     flag: {
-      handler: function () {
+      handler: function() {
         if (this.flag.dataFlag == 1 && this.flag.modelFlag == 1) {
           this.init();
           this.listenGraphEvent();
         }
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
 
   methods: {
@@ -210,9 +210,9 @@ export default {
     },
 
     getSelectItemStyleAddToGraph(panel, item, x, y) {
-      let styleIn = ''
-      if(panel == 'modelServiceInput' && item.isParam == 'true') {
-        styleIn = differCellStyle('parameter')
+      let styleIn = '';
+      if (panel == 'modelServiceInput' && item.isParam == 'true') {
+        styleIn = differCellStyle('parameter');
       } else {
         styleIn = differCellStyle(panel);
       }
@@ -340,7 +340,7 @@ export default {
           if (this.selectionCells.length == 0) {
             this.$notify.error({
               title: 'Error',
-              message: 'You have not select any model',
+              message: 'You have not select any model'
             });
 
             return;
@@ -368,7 +368,7 @@ export default {
               value: '',
               dataSelectId: '',
               name: '',
-              type: '',
+              type: ''
             };
             vertex.nodeAttribute.isParameter = item.isParam;
             this.addEdge(vertex, selectionCell);
@@ -382,7 +382,7 @@ export default {
           if (this.selectionCells.length == 0) {
             this.$notify.error({
               title: 'Error',
-              message: 'You have not select any model',
+              message: 'You have not select any model'
             });
             return;
           }
@@ -403,7 +403,7 @@ export default {
               dataSelectId: '',
               value: '',
               name: '',
-              type: '',
+              type: ''
             };
             this.addEdge(vertex, selectionCell);
           } else if (type == 'dataServiceOutput') {
@@ -526,10 +526,10 @@ export default {
       // this.mxGraphSelectionModel = this.graph.getSelectionModel();
       // this.mxGraphSelectionModel.addListener(mxEvent.CHANGE, this.handleSelectionChange);
       // console.log(this.mxGraphSelectionModel);
-    },
+    }
   },
 
-  mounted() {},
+  mounted() {}
 };
 </script>
 <style lang="scss" scoped>

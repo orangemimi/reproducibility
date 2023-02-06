@@ -19,7 +19,7 @@ import { getInstanceOfUncompleted } from '@/api/request';
 export default {
   data() {
     return {
-      tidList: [],
+      tidList: []
     };
   },
   methods: {
@@ -28,15 +28,14 @@ export default {
       this.tidList = data;
     },
     async handClick(val) {
-      this.$emit("getTid", val)
-    },
+      this.$emit('getTid', val);
+    }
   },
   created() {
     this.getInstanceOfUncompleted();
     console.log(1);
-  },
+  }
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

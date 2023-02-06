@@ -18,7 +18,7 @@ import resourceCard from './ResourceCard.vue';
 import { getAllResource } from '@/api/request';
 export default {
   components: {
-    resourceCard,
+    resourceCard
   },
   data() {
     return {
@@ -34,13 +34,13 @@ export default {
           specifyBorderRadius: false,
           minSize: 0,
           size: '6px',
-          disable: false,
+          disable: false
         },
         scrollPanel: {
           scrollingY: false,
-          scrollingX: true,
-        },
-      },
+          scrollingX: true
+        }
+      }
     };
   },
   methods: {
@@ -50,11 +50,11 @@ export default {
     async getAllResource() {
       let data = await getAllResource(this.projectId);
       this.resourceInfo = data;
-    },
+    }
   },
   created() {
     this.init();
-  },
+  }
 };
 </script>
 

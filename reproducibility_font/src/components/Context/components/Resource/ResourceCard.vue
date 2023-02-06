@@ -43,7 +43,7 @@ export default {
   data() {
     return {
       // textarea: '',
-      projectId: this.$route.params.id,
+      projectId: this.$route.params.id
     };
   },
   computed: {
@@ -55,15 +55,15 @@ export default {
       } else {
         return 'success';
       }
-    },
+    }
   },
   props: {
     type: {
-      type: String,
+      type: String
     },
     resourceItem: {
-      type: Object,
-    },
+      type: Object
+    }
   },
   methods: {
     // init() {
@@ -72,19 +72,19 @@ export default {
     // },
     go() {
       let temp = JSON.parse(JSON.stringify(this.resourceItem));
-      temp.format = this.type
-      let obj=JSON.stringify(temp)
+      temp.format = this.type;
+      let obj = JSON.stringify(temp);
       let routeData = this.$router.resolve({
         path: `/project/resourcecollection/${this.projectId}`,
-        query: { resourceItem: encodeURIComponent(obj) },
+        query: { resourceItem: encodeURIComponent(obj) }
       });
       window.open(routeData.href, '_blank');
-    },
+    }
   },
   mounted() {
     // this.init()
     // console.log(this.resourceItem)
-  },
+  }
 };
 </script>
 

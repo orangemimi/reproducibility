@@ -25,10 +25,10 @@ import ScenarioContent from '_com/Scenario/Scenario';
 import ResourceContent from '_com/Resource/Resource';
 import ResultContent from '_com/Result/Result';
 // import contentResource from '_com/Context/components/Resource/ContentResource.vue';
-import ResourceDefinition from '_com/Resource/components/ResourceDefinition.vue'
+import ResourceDefinition from '_com/Resource/components/ResourceDefinition.vue';
 import contentScenario from '_com/Context/components/Scenario/ContentScenario.vue';
 import contentContext from '_com/Context/components/Context/ContentContext.vue';
-import forkScenario from '_com/Scenario/ForkScenario.vue'
+import forkScenario from '_com/Scenario/ForkScenario.vue';
 
 // import AnalysisContent from "./AnalysisContent";
 export default {
@@ -45,20 +45,20 @@ export default {
   },
   props: {
     cardInfo: {
-      type: Object,
-    },
+      type: Object
+    }
   },
   watch: {
     cardInfo: {
       handler(val) {
         this.info = val;
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   data() {
     return {
-      info: this.cardInfo,
+      info: this.cardInfo
     };
   },
   methods: {
@@ -105,14 +105,13 @@ export default {
             vueType = 'contentContext';
           }
           break;
-        case 'forkScenario' :
-          {
-            vueType = 'forkScenario'
-          }
+        case 'forkScenario': {
+          vueType = 'forkScenario';
+        }
       }
       return vueType;
-    },
-  },
+    }
+  }
 };
 </script>
 

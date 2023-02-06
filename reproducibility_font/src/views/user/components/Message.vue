@@ -6,7 +6,9 @@
         <div v-bind:class="{ active: tabselected == 1 }" @click="tabselect(1)" class="sel" style="margin-left: 20px">
           <el-badge :is-dot="this.$store.state.user.unreadApplynum != 0 ? true : false" class="item">Apply</el-badge>
         </div>
-        <div v-bind:class="{ active: tabselected == 2 }" @click="tabselect(2)" class="sel"><el-badge :is-dot="this.$store.state.user.unreadReplynum != 0 ? true : false" class="item">Reply</el-badge></div>
+        <div v-bind:class="{ active: tabselected == 2 }" @click="tabselect(2)" class="sel">
+          <el-badge :is-dot="this.$store.state.user.unreadReplynum != 0 ? true : false" class="item">Reply</el-badge>
+        </div>
         <div v-bind:class="{ active: tabselected == 3 }" @click="tabselect(3)" class="sel" style="margin-right: 20px">
           <el-badge :is-dot="false" class="item">Notice</el-badge>
         </div>
@@ -27,17 +29,17 @@ import { changeAllReplyisread } from '@/api/request';
 export default {
   data() {
     return {
-      tabselected: 1,
+      tabselected: 1
     };
   },
   components: { JoinProjects, ReplyNotice },
   methods: {
     async tabselect(num) {
       this.tabselected = num;
-      if(num == 2 && this.$store.state.user.unreadReplynum != 0) {
-        await changeAllReplyisread()
-        localStorage.setItem("unreadReplynum", 0)
-        this.$store.state.user.unreadReplynum = 0
+      if (num == 2 && this.$store.state.user.unreadReplynum != 0) {
+        await changeAllReplyisread();
+        localStorage.setItem('unreadReplynum', 0);
+        this.$store.state.user.unreadReplynum = 0;
       }
     }
   }
@@ -66,7 +68,7 @@ p {
     display: flex;
     flex-direction: row;
     .sel:hover {
-      cursor: pointer
+      cursor: pointer;
     }
     .sel {
       flex: 1;

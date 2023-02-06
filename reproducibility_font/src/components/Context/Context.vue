@@ -1,6 +1,5 @@
 <template>
   <div class="main">
-
     <el-tabs type="border-card">
       <el-tab-pane>
         <el-dropdown split-button type="text" slot="label">
@@ -34,9 +33,9 @@
           <div class="resource">
             <resource-card :type="'plus'" />
             <!-- :key="'info-'+ index"这种写法原因，这里写了两个for循环，尽管都加上了key值,然而又将key的值都写成index，会导致vue警告 -->
-            <resource-card :type="'input'" :resourceItem="item" v-for="(item, index) in resourceInfo.inputs" :key="'info-'+ index"/>
-            <resource-card :type="'parameter'" :resourceItem="item" v-for="(item, index) in resourceInfo.parameters" :key="'info1-'+ index"/>
-            <resource-card :type="'output'" :resourceItem="item" v-for="(item, index) in resourceInfo.outputs" :key="'info2-'+ index"/>
+            <resource-card :type="'input'" :resourceItem="item" v-for="(item, index) in resourceInfo.inputs" :key="'info-' + index" />
+            <resource-card :type="'parameter'" :resourceItem="item" v-for="(item, index) in resourceInfo.parameters" :key="'info1-' + index" />
+            <resource-card :type="'output'" :resourceItem="item" v-for="(item, index) in resourceInfo.outputs" :key="'info2-' + index" />
           </div>
         </vue-scroll>
       </el-tab-pane>
@@ -81,7 +80,7 @@
       <other />
     </el-dialog>
     <el-dialog :visible.sync="temporalInfo" width="40%" class="temporalInfoDialog" title="TemporalInfo" v-if="temporalInfo">
-      <temporal-info/>
+      <temporal-info />
     </el-dialog>
   </div>
 </template>
@@ -97,17 +96,17 @@ import infoCard from './components/Cards/InfoCard.vue';
 import contextCard from './components/Cards/ContextCard.vue';
 import resourceCard from './components/Resource/ResourceCard.vue';
 import scenarioCard from './components/Scenario/ScenarioCard.vue';
-import temporalInfo from './components/temporalInfo.vue'
+import temporalInfo from './components/temporalInfo.vue';
 // import spatialInfo from './components/spatialInfo.vue'
 
-import { getAllResource } from '@/api/request'
+import { getAllResource } from '@/api/request';
 export default {
   computed: {
     ...mapState({
-      userId: (state) => state.user.userId,
-      userName: (state) => state.user.name,
-      role: (state) => state.permission.role,
-    }),
+      userId: state => state.user.userId,
+      userName: state => state.user.name,
+      role: state => state.permission.role
+    })
   },
   components: {
     infoCard,
@@ -129,7 +128,7 @@ export default {
         spatialInfo: {},
         temporalInfo: {},
         methods: '',
-        discussion: '',
+        discussion: ''
       },
 
       themeTag: '',
@@ -142,28 +141,28 @@ export default {
         enable: false,
         spatialReference: {
           general: '',
-          wkt: '',
+          wkt: ''
         },
         spatialDimension: '',
         spatialScale: {
           type: '',
-          description: '',
+          description: ''
         },
         spatialExtentList: [],
-        resolutionConstraintList: [],
+        resolutionConstraintList: []
       },
 
       temporalInfoForm: {
         enable: false,
         temporalScale: {
           type: '',
-          description: '',
+          description: ''
         },
         temporalReference: {
-          value: '',
+          value: ''
         },
         temporalExtentList: [],
-        stepConstraintList: [],
+        stepConstraintList: []
       },
 
       // updateContext: true
@@ -178,42 +177,39 @@ export default {
           specifyBorderRadius: false,
           minSize: 0,
           size: '6px',
-          disable: false,
+          disable: false
         },
         scrollPanel: {
           scrollingY: false,
-          scrollingX: true,
-        },
+          scrollingX: true
+        }
       },
-
-
-
 
       defaultProps: {
         children: 'children',
-        label: 'label',
+        label: 'label'
       },
       data: [
         {
           label: 'Add',
           children: [
             {
-              label: 'Description',
+              label: 'Description'
             },
             {
-              label: 'TemporalInfo',
+              label: 'TemporalInfo'
             },
             {
-              label: 'SpatialInfo',
+              label: 'SpatialInfo'
             },
             {
-              label: 'Other',
+              label: 'Other'
             },
             {
-              label: 'Boundary',
-            },
-          ],
-        },
+              label: 'Boundary'
+            }
+          ]
+        }
       ],
       description: false,
       temporalInfo: false,
@@ -230,7 +226,7 @@ export default {
       if (this.projectId == null) {
         this.$message({
           message: 'Get information error!',
-          type: 'error',
+          type: 'error'
         });
         return;
       }
@@ -267,7 +263,7 @@ export default {
     },
 
     async updatePerformance() {
-      let content = { content: 'hahah'};
+      let content = { content: 'hahah' };
 
       await updatePerformanceById('context', this.projectId, content);
     },
@@ -315,16 +311,13 @@ export default {
       this.addTemporalInfodialogVisible = false;
     },
 
-
-
     init() {
-      this.getAllResource()
+      this.getAllResource();
     },
     async getAllResource() {
-      let data = await getAllResource(this.projectId)
-      console.log(data)
-      this.resourceInfo = data
-
+      let data = await getAllResource(this.projectId);
+      console.log(data);
+      this.resourceInfo = data;
     },
     handleClick(val) {
       if (val.label == 'Description') {
@@ -343,13 +336,13 @@ export default {
         this.other = true;
         this.temporalInfo = this.spatialInfo = this.boundary = this.description = false;
       }
-    },
+    }
   },
 
   created() {
     this.getContext();
-    this.init()
-  },
+    this.init();
+  }
 };
 </script>
 <style lang="scss" scoped>
@@ -388,6 +381,5 @@ export default {
     position: relative;
     left: 75%;
   }
-
 }
 </style>

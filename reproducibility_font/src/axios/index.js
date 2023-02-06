@@ -103,5 +103,3 @@ export const del = (url, params, data, pathVariable = null, loading = false) =>
     data: data,
     loading
   });
-
-

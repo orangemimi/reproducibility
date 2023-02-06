@@ -49,8 +49,8 @@ import { hasProperty } from '@/utils/utils';
 export default {
   props: {
     cell: {
-      type: Object,
-    },
+      type: Object
+    }
   },
   components: { selectCard },
   // watch: {
@@ -77,7 +77,7 @@ export default {
       stateListInput: [],
       stateListOutput: [],
       activeName: 'input',
-      selectItemListToGraph: [],
+      selectItemListToGraph: []
     };
   },
 
@@ -96,16 +96,16 @@ export default {
       let stateList = this.modelIntroduction;
       let input = [];
       let output = [];
-      stateList.inputs.forEach((state) => {
-        state.type = 'input'
-        state.md5 = this.cell.nodeAttribute.md5
-        input.push(state)
+      stateList.inputs.forEach(state => {
+        state.type = 'input';
+        state.md5 = this.cell.nodeAttribute.md5;
+        input.push(state);
       });
       stateList.outputs.forEach(state => {
-        state.type = 'output'
-        state.md5 = this.cell.nodeAttribute.md5
-        output.push(state)
-      })
+        state.type = 'output';
+        state.md5 = this.cell.nodeAttribute.md5;
+        output.push(state);
+      });
       this.stateListInput = input;
       this.stateListOutput = output;
       // await initSetTimeOut();
@@ -114,15 +114,15 @@ export default {
     addSelectItem(item) {
       // console.log(item);
       if (hasProperty(item, 'isSelect') && item.isSelect) {
-        this.selectItemListToGraph.splice(this.selectItemListToGraph.findIndex((arrItem) => arrItem.eventId == item.eventId));
-        item.isSelect = false
+        this.selectItemListToGraph.splice(this.selectItemListToGraph.findIndex(arrItem => arrItem.eventId == item.eventId));
+        item.isSelect = false;
       } else {
         item.isSelect = true;
         this.selectItemListToGraph.push(item);
       }
     },
     removeItem(item) {
-      let index = this.selectItemListToGraph.findIndex((arrItem) => arrItem.eventId == item.eventId);
+      let index = this.selectItemListToGraph.findIndex(arrItem => arrItem.eventId == item.eventId);
       // console.log('index', index);
       this.selectItemListToGraph.splice(index, 1);
       item.isSelect = false;
@@ -131,13 +131,13 @@ export default {
       // console.log(this.selectItemListToGraph);
 
       this.$emit('selectItemListToGraph', this.selectItemListToGraph);
-      console.log(this.selectItemListToGraph)
-    },
+      console.log(this.selectItemListToGraph);
+    }
   },
   mounted() {
     this.doi = this.cell.nodeAttribute.doi;
     this.init();
-  },
+  }
 };
 </script>
 

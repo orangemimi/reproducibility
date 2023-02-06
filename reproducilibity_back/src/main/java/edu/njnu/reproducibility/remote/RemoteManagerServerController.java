@@ -92,7 +92,7 @@ public class RemoteManagerServerController {
         FileSystemResource resource = new FileSystemResource(temp);
 
         RestTemplate restTemplate = new RestTemplate();
-        String urlStr ="http://172.21.212.167:8084/GeoModeling/task/runTask";
+        String urlStr ="http://172.21.213.245:8084/GeoModeling/task/runTask";
 //        JSONObject form = new JSONObject();
         MultiValueMap<String, Object> param = new LinkedMultiValueMap<>();
         param.add("file", resource);
@@ -118,7 +118,7 @@ public class RemoteManagerServerController {
     JsonResult checkTaskStatus(@PathVariable("tid") String tid, @JwtTokenParser(key = "userId") String userId){
 
 //        String urlStr ="http://"+managerServerIpAndPort +"/GeoModeling/task/checkTaskStatus?taskId="+taskId;
-        String urlStr ="http://172.21.212.167:8084/GeoModeling/task/checkTaskStatus?taskId="+tid;
+        String urlStr ="http://172.21.213.245:8084/GeoModeling/task/checkTaskStatus?taskId="+tid;
 
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<JSONObject>  jsonObjectResponseEntity = restTemplate.getForEntity(urlStr, JSONObject.class);

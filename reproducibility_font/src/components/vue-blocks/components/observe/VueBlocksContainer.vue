@@ -1,25 +1,18 @@
 <template>
   <div class="vue-container">
     <VueLink :lines="lines" />
-    <VueBlock
-      v-for="block in blocks"
-      :key="block.id"
-      v-bind.sync="block"
-      :options="optionsForChild"
-      @update="updateScene"
-      @select="blockSelect(block)"
-    />
+    <VueBlock v-for="block in blocks" :key="block.id" v-bind.sync="block" :options="optionsForChild" @update="updateScene" @select="blockSelect(block)" />
   </div>
 </template>
 
 <script>
-import merge from "deepmerge";
-import mouseHelper from "../../helpers/mouse";
-import VueBlock from "./VueBlock";
-import VueLink from "../VueLink";
+import merge from 'deepmerge';
+import mouseHelper from '../../helpers/mouse';
+import VueBlock from './VueBlock';
+import VueLink from '../VueLink';
 
 export default {
-  name: "VueBlockContainer",
+  name: 'VueBlockContainer',
   props: {
     blocksContent: {
       type: Array,
@@ -96,30 +89,22 @@ export default {
         });
 
         if (!originBlock || !targetBlock) {
-          console.log("Remove invalid link", link);
+          console.log('Remove invalid link', link);
           this.removeLink(link.id);
           continue;
         }
 
         if (originBlock.id === targetBlock.id) {
-          console.log("Loop detected, remove link", link);
+          console.log('Loop detected, remove link', link);
           this.removeLink(link.id);
           continue;
         }
 
-        let originLinkPos = this.getConnectionPos(
-          originBlock,
-          link.originSlot,
-          false
-        );
-        let targetLinkPos = this.getConnectionPos(
-          targetBlock,
-          link.targetSlot,
-          true
-        );
+        let originLinkPos = this.getConnectionPos(originBlock, link.originSlot, false);
+        let targetLinkPos = this.getConnectionPos(targetBlock, link.targetSlot, true);
 
         if (!originLinkPos || !targetLinkPos) {
-          console.log("Remove invalid link (slot not exist)", link);
+          console.log('Remove invalid link (slot not exist)', link);
           this.removeLink(link.id);
           continue;
         }
@@ -136,15 +121,15 @@ export default {
           x2: x2,
           y2: y2,
           style: {
-            stroke: "#F85",
+            stroke: '#F85',
             strokeWidth: 4 * this.scale,
-            fill: "none"
+            fill: 'none'
           },
           outlineStyle: {
-            stroke: "#666",
+            stroke: '#666',
             strokeWidth: 6 * this.scale,
             strokeOpacity: 0.6,
-            fill: "none"
+            fill: 'none'
           }
         });
       }
@@ -184,11 +169,7 @@ export default {
       }
 
       if (this.linking && this.linkStartData) {
-        let linkStartPos = this.getConnectionPos(
-          this.linkStartData.block,
-          this.linkStartData.slotNumber,
-          false
-        );
+        let linkStartPos = this.getConnectionPos(this.linkStartData.block, this.linkStartData.slotNumber, false);
         this.tempLink = {
           x1: linkStartPos.x,
           y1: linkStartPos.y,
@@ -199,10 +180,7 @@ export default {
     },
     handleDown(e) {
       const target = e.target || e.srcElement;
-      if (
-        (target === this.$el || target.matches("svg, svg *")) &&
-        e.which === 1
-      ) {
+      if ((target === this.$el || target.matches('svg, svg *')) && e.which === 1) {
         this.dragging = true;
 
         let mouse = mouseHelper.getMousePosition(this.$el, e);
@@ -228,11 +206,7 @@ export default {
         }
       }
 
-      if (
-        this.$el.contains(target) &&
-        (typeof target.className !== "string" ||
-          target.className.indexOf(this.inputSlotClassName) === -1)
-      ) {
+      if (this.$el.contains(target) && (typeof target.className !== 'string' || target.className.indexOf(this.inputSlotClassName) === -1)) {
         this.linking = false;
         this.tempLink = null;
         this.linkStartData = null;
@@ -283,14 +257,11 @@ export default {
       y += this.optionsForChild.titleHeight;
 
       if (isInput && block.inputs.length > slotNumber) {
-        console.log("输入输出卡槽与block不一致");
+        console.log('输入输出卡槽与block不一致');
       } else if (!isInput && block.outputs.length > slotNumber) {
         x += this.optionsForChild.width;
       } else {
-        console.error(
-          "slot " + slotNumber + " not found, is input: " + isInput,
-          block
-        );
+        console.error('slot ' + slotNumber + ' not found, is input: ' + isInput, block);
         return undefined;
       }
 
@@ -347,11 +318,11 @@ export default {
       let values = {};
 
       node.fields.forEach(field => {
-        if (field.attr === "input") {
+        if (field.attr === 'input') {
           inputs.push({
             name: field.name
           });
-        } else if (field.attr === "output") {
+        } else if (field.attr === 'output') {
           outputs.push({
             name: field.name
           });
@@ -361,8 +332,8 @@ export default {
           }
 
           let newField = merge({}, field);
-          delete newField["name"];
-          delete newField["attr"];
+          delete newField['name'];
+          delete newField['attr'];
 
           if (!values[field.attr][field.name]) {
             values[field.attr][field.name] = {};
@@ -395,7 +366,7 @@ export default {
       block.selected = true;
       this.selectedBlock = block;
       this.deselectAll(block.id);
-      this.$emit("blockSelect", block);
+      this.$emit('blockSelect', block);
     },
     blockDeselect(block) {
       block.selected = false;
@@ -404,7 +375,7 @@ export default {
         this.selectedBlock = null;
       }
 
-      this.$emit("blockDeselect", block);
+      this.$emit('blockDeselect', block);
     },
     //
     prepareBlocks(blocks) {
@@ -455,9 +426,7 @@ export default {
 
         block.outputs.forEach((s, index) => {
           // is linked
-          block.outputs[index].active = outputs.some(
-            i => i.originSlot === index
-          );
+          block.outputs[index].active = outputs.some(i => i.originSlot === index);
         });
 
         newBlocks.push(block);
@@ -501,9 +470,9 @@ export default {
     exportScene() {
       let clonedBlocks = merge([], this.blocks);
       let blocks = clonedBlocks.map(value => {
-        delete value["inputs"];
-        delete value["outputs"];
-        delete value["selected"];
+        delete value['inputs'];
+        delete value['outputs'];
+        delete value['selected'];
 
         return value;
       });
@@ -515,7 +484,7 @@ export default {
       };
     },
     updateScene() {
-      this.$emit("update:scene", this.exportScene());
+      this.$emit('update:scene', this.exportScene());
     }
   },
   created() {
@@ -531,7 +500,7 @@ export default {
     this.linking = false;
     this.linkStartData = null;
 
-    this.inputSlotClassName = "inputSlot";
+    this.inputSlotClassName = 'inputSlot';
 
     this.defaultScene = {
       blocks: [],
@@ -540,18 +509,10 @@ export default {
     };
   },
   mounted() {
-    document.documentElement.addEventListener(
-      "mousemove",
-      this.handleMove,
-      true
-    );
-    document.documentElement.addEventListener(
-      "mousedown",
-      this.handleDown,
-      true
-    );
-    document.documentElement.addEventListener("mouseup", this.handleUp, true);
-    document.documentElement.addEventListener("wheel", this.handleWheel, true);
+    document.documentElement.addEventListener('mousemove', this.handleMove, true);
+    document.documentElement.addEventListener('mousedown', this.handleDown, true);
+    document.documentElement.addEventListener('mouseup', this.handleUp, true);
+    document.documentElement.addEventListener('wheel', this.handleWheel, true);
 
     this.centerX = this.$el.clientWidth / 2;
     this.centerY = this.$el.clientHeight / 2;
@@ -560,26 +521,10 @@ export default {
     this.importScene();
   },
   beforeDestroy() {
-    document.documentElement.removeEventListener(
-      "mousemove",
-      this.handleMove,
-      true
-    );
-    document.documentElement.removeEventListener(
-      "mousedown",
-      this.handleDown,
-      true
-    );
-    document.documentElement.removeEventListener(
-      "mouseup",
-      this.handleUp,
-      true
-    );
-    document.documentElement.removeEventListener(
-      "wheel",
-      this.handleWheel,
-      true
-    );
+    document.documentElement.removeEventListener('mousemove', this.handleMove, true);
+    document.documentElement.removeEventListener('mousedown', this.handleDown, true);
+    document.documentElement.removeEventListener('mouseup', this.handleUp, true);
+    document.documentElement.removeEventListener('wheel', this.handleWheel, true);
   },
   components: {
     VueBlock,

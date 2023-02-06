@@ -27,8 +27,6 @@
     <div class="page-content">
       <router-view class="scroll-item"></router-view>
     </div>
-
-    
   </div>
 </template>
 
@@ -46,16 +44,16 @@ export default {
 
   computed: {
     ...mapState({
-      role: (state) => state.permission.role,
-      name: (state) => state.user.name,
-      userId: (state) => state.user.userId,
-    }),
+      role: state => state.permission.role,
+      name: state => state.user.name,
+      userId: state => state.user.userId
+    })
   },
- 
+
   async beforeRouteUpdate(to, from, next) {
-    this.projectId = to.params.id
-    await this.init()
-    next()
+    this.projectId = to.params.id;
+    await this.init();
+    next();
   },
 
   // watch: {
@@ -69,7 +67,7 @@ export default {
       projectId: this.$route.params.id,
       projectInfo: {},
       creator: {},
-      members: [],
+      members: []
     };
   },
 
@@ -86,7 +84,7 @@ export default {
       // let data = await getProjectById(this.projectId);
 
       let data = await getProjectAndUsers(this.projectId);
-      console.log(data)
+      console.log(data);
       this.projectInfo = data.project;
       this.creator = data.creator;
       this.members = data.members;
@@ -95,7 +93,7 @@ export default {
     async judgeRole(project) {
       await this.$store.dispatch('permission/getRole', {
         project: project,
-        userId: this.userId,
+        userId: this.userId
       });
     },
 
@@ -118,18 +116,18 @@ export default {
         purpose: this.projectInfo.purpose,
         privacy: this.projectInfo.privacy,
         picture: this.projectInfo.picture,
-        forkingProjectId: this.projectInfo.id,
+        forkingProjectId: this.projectInfo.id
       };
       let data = await forkProject(form);
 
       this.userInfo.folkedProjects.push(data.id);
       // await updateUserByJwtUserId({ createdProjects: this.userInfo.createdProjects });
-    },
+    }
   },
 
   mounted() {
     this.init();
-  },
+  }
 };
 </script>
 <style lang="scss" scoped>

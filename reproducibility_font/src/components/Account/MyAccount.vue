@@ -2,19 +2,19 @@
   <el-card class="box-card">
     <div class="card-header">
       <span>Personal Infomation</span>
-      <edit-userinfo :user="user" :form="form"/>
+      <edit-userinfo :user="user" :form="form" />
     </div>
     <div v-for="(value, key) in form" :key="key">
-      <div v-if="user[key] != undefined" class="item">{{key + ': ' + user[key]}}</div>
-      <div v-else class="item">{{key + ': ' + value}}</div>
+      <div v-if="user[key] != undefined" class="item">{{ key + ': ' + user[key] }}</div>
+      <div v-else class="item">{{ key + ': ' + value }}</div>
     </div>
     <div class="changePWD"><change-password /></div>
   </el-card>
 </template>
 
 <script>
-import EditUserinfo from './EditUserinfo.vue'
-import ChangePassword from './ChangePassword.vue'
+import EditUserinfo from './EditUserinfo.vue';
+import ChangePassword from './ChangePassword.vue';
 import { getUserinfo } from '@/api/request';
 export default {
   data() {
@@ -35,14 +35,14 @@ export default {
   },
   methods: {
     async init() {
-      let temp = await getUserinfo()
-      this.user = temp.data
+      let temp = await getUserinfo();
+      this.user = temp.data;
     }
   },
   components: { EditUserinfo, ChangePassword },
-  
+
   mounted() {
-    this.init()
+    this.init();
   }
 };
 </script>
@@ -59,6 +59,6 @@ export default {
   padding: 13px 0;
 }
 .changePWD {
-    text-align: center;
+  text-align: center;
 }
 </style>

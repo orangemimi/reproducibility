@@ -32,7 +32,16 @@
       </div>
     </div>
     <div style="text-align: center;">
-      <el-pagination layout="prev, pager, next" :total="total" background small :pager-count="5" :page-size="12" :current-page="1" @current-change="currentChange"></el-pagination>
+      <el-pagination
+        layout="prev, pager, next"
+        :total="total"
+        background
+        small
+        :pager-count="5"
+        :page-size="12"
+        :current-page="1"
+        @current-change="currentChange"
+      ></el-pagination>
     </div>
 
     <!-- add model -->
@@ -54,7 +63,7 @@ export default {
       value: '',
       pageFilter: {
         pageSize: 8,
-        page: 0,
+        page: 0
       },
       addModelDialogShow: false,
       total: 0,
@@ -68,29 +77,29 @@ export default {
     },
     disabled() {
       return this.loading || this.noMore;
-    },
+    }
   },
   methods: {
     async getModelList() {
       let params = {
         page: 0,
         pageSize: 12,
-        searchText: '',
+        searchText: ''
       };
       let result = await getModelList(params);
-      this.total = result.data.total
-      this.data = result.data.list
+      this.total = result.data.total;
+      this.data = result.data.list;
     },
     init() {
-      this.getModelList()
+      this.getModelList();
     },
     async currentChange(val) {
       let params = {
         page: val - 1,
         pageSize: 12,
         searchText: ''
-      }
-      this.data = (await getModelList(params)).data.list
+      };
+      this.data = (await getModelList(params)).data.list;
     },
     async searchData() {
       // this.pageFilter.page = 0;
@@ -99,10 +108,9 @@ export default {
         page: 0,
         pageSize: 12,
         searchText: this.value
-      }
-      let result = await getModelList(params)
-      this.total = result.data.total,
-      this.data = result.data.list
+      };
+      let result = await getModelList(params);
+      (this.total = result.data.total), (this.data = result.data.list);
     },
 
     async getData() {
@@ -121,22 +129,20 @@ export default {
       console.log(this.data);
     },
 
-
-    addModelItem() {},
+    addModelItem() {}
   },
   mounted() {
     // this.getData();
-    this.init()
+    this.init();
     // window.addEventListener('scroll', this.scrollDown);
   },
-  components: { serviceCard, createModel },
+  components: { serviceCard, createModel }
 };
 </script>
 
 <style lang="scss">
 .container {
   .top {
-    
     // background-color: #000;
     color: #fff;
     //   margin-bottom: 48px;

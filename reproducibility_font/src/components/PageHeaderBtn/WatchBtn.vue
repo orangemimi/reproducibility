@@ -17,14 +17,11 @@
 </template>
 
 <script>
-
-
-
 export default {
   props: {
     count: {
-      type: Number,
-    },
+      type: Number
+    }
   },
   components: {},
 
@@ -33,16 +30,12 @@ export default {
   computed: {},
 
   data() {
-    return {
-      
-    };
+    return {};
   },
 
-  methods: {
-    
-  },
+  methods: {},
 
-  mounted() {},
+  mounted() {}
 };
 </script>
 <style lang="scss" scoped>

@@ -33,15 +33,15 @@ import { addFileItem } from '@/api/request';
 export default {
   props: {
     stack: {
-      type: Array,
-    },
+      type: Array
+    }
   },
   data() {
     return {
       form: {
-        name: '',
+        name: ''
       },
-      selectedFile: '',
+      selectedFile: ''
     };
   },
   methods: {
@@ -55,20 +55,20 @@ export default {
       this.selectedFile = '';
     },
     submit() {
-      this.addFileItem()
+      this.addFileItem();
     },
     async addFileItem() {
       if (this.selectedFile != '') {
-        let formData = new FormData()
-        formData.append("name", this.form.name)
-        formData.append("parent", this.stack[this.stack.length - 1])
-        formData.append("storey", this.stack.length - 1)
-        formData.append("datafile", this.selectedFile.raw)
-        let data = await addFileItem(formData)
-        this.$emit("uploadData", data)
+        let formData = new FormData();
+        formData.append('name', this.form.name);
+        formData.append('parent', this.stack[this.stack.length - 1]);
+        formData.append('storey', this.stack.length - 1);
+        formData.append('datafile', this.selectedFile.raw);
+        let data = await addFileItem(formData);
+        this.$emit('uploadData', data);
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

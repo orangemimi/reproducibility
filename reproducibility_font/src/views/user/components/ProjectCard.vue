@@ -27,18 +27,17 @@
 </template>
 
 <script>
-
 import { imgBase64 } from '@/lib/utils';
 export default {
   props: {
     project: {
-      type: Object,
-    },
+      type: Object
+    }
   },
 
   computed: {
     getColor() {
-      return function (tag) {
+      return function(tag) {
         let temp = '';
         for (let i = 0; i < tag.length; i++) {
           temp += tag[i].charCodeAt().toString(16);
@@ -55,25 +54,24 @@ export default {
         }
         return 'background-color: #' + temp;
       };
-    },
+    }
   },
   data() {
     return {
-      tags: [],
+      tags: []
     };
   },
   methods: {
-    
     imgBase64(projectName) {
       return imgBase64(projectName);
     },
     async clickProjectCard() {
       await this.$store.dispatch('permission/getRole', {
         project: this.project,
-        userId: this.$store.userId,
+        userId: this.$store.userId
       });
       this.$router.push({ path: `/project/${this.project.id}/info` });
-    },
+    }
   },
   created() {
     if (this.project.tags == null) {
@@ -81,7 +79,7 @@ export default {
     } else {
       this.tags = this.project.tags;
     }
-  },
+  }
 };
 </script>
 

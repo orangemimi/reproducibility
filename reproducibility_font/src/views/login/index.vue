@@ -45,8 +45,8 @@ export default {
       tab: 'login',
       formItem: {
         email: '',
-        password: '',
-      },
+        password: ''
+      }
     };
   },
   components: { SendEmailAndChangePWD, register },
@@ -65,7 +65,7 @@ export default {
             await this.judgeRole(arr[2]);
           }
           this.$router.push({
-            path: redirect,
+            path: redirect
           });
         } else {
           this.$router.push({ name: 'Home' });
@@ -79,13 +79,13 @@ export default {
       let projectInfo = await getProjectById(projectId);
       let userId = this.$store.state.user.userId;
       await this.$store.dispatch('permission/getRole', { project: projectInfo, userId: userId });
-    },
+    }
   },
   mounted() {
     if (this.$route.params.tab == 'register') {
       this.tab = 'register';
     }
-  },
+  }
 };
 </script>
 

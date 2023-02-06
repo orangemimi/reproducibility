@@ -27,18 +27,18 @@ export default {
   data() {
     return {
       projectId: this.$route.params.id,
-      dataList: '',
+      dataList: ''
     };
   },
   methods: {
     async getData() {
       this.dataList = await getAllInstancesOfReproductionByProjectId(this.projectId);
       console.log(this.dataList);
-    },
+    }
   },
   mounted() {
     this.getData();
-  },
+  }
 };
 </script>
 

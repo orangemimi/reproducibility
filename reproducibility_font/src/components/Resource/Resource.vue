@@ -30,7 +30,7 @@
       <el-table-column label="Data Type" width="180" :sortable="true" prop="dataType">
         <template #default="scope">
           <div class="name-wrapper">
-            <el-tag size="medium">{{scope.row.type}}</el-tag>
+            <el-tag size="medium">{{ scope.row.type }}</el-tag>
             <!-- <el-tag size="medium">STRING</el-tag> -->
           </div>
         </template>
@@ -58,20 +58,19 @@
           <el-button size="mini" @click="handleEdit(scope.row)">EDIT</el-button>
           <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">DEL</el-button>
           <el-button size="mini" class="el-icon-view"></el-button>
-          <el-link :href="scope.row.value" style="margin-left: 10px"> 
+          <el-link :href="scope.row.value" style="margin-left: 10px">
             <el-button size="mini" class="el-icon-download"></el-button>
           </el-link>
-          
         </template>
       </el-table-column>
     </el-table>
 
-    <el-dialog title="Add resource" :visible.sync="addResourceDialogShow" width="40%" :close-on-click-modal="false" >
-      <add-resource @dataItem="dataItem" v-if="addResourceDialogShow"/>
+    <el-dialog title="Add resource" :visible.sync="addResourceDialogShow" width="40%" :close-on-click-modal="false">
+      <add-resource @dataItem="dataItem" v-if="addResourceDialogShow" />
     </el-dialog>
 
-    <el-dialog title="Edit resource" :visible.sync="editResourceDialogShow" width="40%" :close-on-click-modal="false" >
-      <add-resource :parameter="editParameter" @update="update" v-if="editResourceDialogShow"/>
+    <el-dialog title="Edit resource" :visible.sync="editResourceDialogShow" width="40%" :close-on-click-modal="false">
+      <add-resource :parameter="editParameter" @update="update" v-if="editResourceDialogShow" />
     </el-dialog>
   </div>
 </template>
@@ -84,7 +83,7 @@ import { mapState } from 'vuex';
 
 export default {
   components: {
-    addResource,
+    addResource
   },
 
   data() {
@@ -95,18 +94,18 @@ export default {
       addResourceDialogShow: false,
       editResourceDialogShow: false,
       editParameter: {},
-      selection: [],
+      selection: []
     };
   },
   computed: {
     ...mapState({
-      role: (state) => state.permission.role,
-    }),
+      role: state => state.permission.role
+    })
   },
 
   methods: {
     async dataItem(val) {
-      await updatePerformanceById('resource', this.projectId, {content: 'add resource'})
+      await updatePerformanceById('resource', this.projectId, { content: 'add resource' });
       console.log(val);
       let date = new Date();
       console.log(dateFormat(date, 'yyyy/MM/dd hh:mm'));
@@ -116,40 +115,40 @@ export default {
         format: val.format,
         type: val.type,
         description: val.description,
-        id: val.id,
+        id: val.id
       });
       this.addResourceDialogShow = false;
     },
 
     async update(val) {
-      await updatePerformanceById('resource', this.projectId, 'update resource')
-      console.log(val)
+      await updatePerformanceById('resource', this.projectId, 'update resource');
+      console.log(val);
       this.dataItemList.forEach(dataItem => {
-        if(dataItem.id == val.id) {
-          dataItem.name = val.name
-          dataItem.format = val.type
-          dataItem.type = val.dataType
-          dataItem.description = val.desc
+        if (dataItem.id == val.id) {
+          dataItem.name = val.name;
+          dataItem.format = val.type;
+          dataItem.type = val.dataType;
+          dataItem.description = val.desc;
         }
-      })
-      console.log(this.dataItemList)
-      this.editResourceDialogShow = false
+      });
+      console.log(this.dataItemList);
+      this.editResourceDialogShow = false;
     },
 
     handleEdit(row) {
-      console.log(row)
-      this.editParameter = row
-      this.editResourceDialogShow = true
+      console.log(row);
+      this.editParameter = row;
+      this.editResourceDialogShow = true;
     },
     async handleDelete(index, row) {
       this.$confirm('This operation will permanently delete the file. Do you want to continue?', 'Tips', {
         confirmButtonText: 'comfirm',
         cancelButtonText: 'cancel',
-        type: 'warning',
+        type: 'warning'
       })
         .then(async () => {
           await deleteDataItemById(row.id);
-          await updatePerformanceById('resource', this.projectId, 'delete resource')
+          await updatePerformanceById('resource', this.projectId, 'delete resource');
           this.dataItemList.forEach((item, itemIndex) => {
             if (item.id == row.id) {
               this.dataItemList.splice(itemIndex, 1);
@@ -157,27 +156,26 @@ export default {
           });
           this.$message({
             type: 'success',
-            message: 'Delete succeeded!',
+            message: 'Delete succeeded!'
           });
         })
         .catch(() => {
           this.$message({
             type: 'info',
-            message: 'Deletion cancelled!',
+            message: 'Deletion cancelled!'
           });
         });
     },
 
-
     select(selection) {
       this.selection = [];
-      selection.forEach((item) => {
+      selection.forEach(item => {
         this.selection.push(item.id);
       });
     },
     selectAll(selection) {
       this.selection = [];
-      selection.forEach((item) => {
+      selection.forEach(item => {
         this.selection.push(item.id);
       });
     },
@@ -186,13 +184,13 @@ export default {
         this.$confirm('This operation will permanently delete the file. Do you want to continue?', 'Tips', {
           confirmButtonText: 'comfirm',
           cancelButtonText: 'cancel',
-          type: 'warning',
+          type: 'warning'
         })
           .then(async () => {
             await batchDelete(this.selection);
-            await updatePerformanceById('resource', this.projectId, 'delete resource')
+            await updatePerformanceById('resource', this.projectId, 'delete resource');
             this.dataItemList.forEach((item, itemIndex) => {
-              this.selection.forEach((select) => {
+              this.selection.forEach(select => {
                 if (item.id == select) {
                   this.dataItemList.splice(itemIndex, 1);
                 }
@@ -200,20 +198,20 @@ export default {
             });
             this.$message({
               type: 'success',
-              message: 'Delete succeeded!',
+              message: 'Delete succeeded!'
             });
           })
           .catch(() => {
             this.$message({
               type: 'info',
-              message: 'Deletion cancelled!',
+              message: 'Deletion cancelled!'
             });
           });
       } else {
         this.$notify({
           title: 'warning',
           message: 'Please select the data to delete!',
-          type: 'warning',
+          type: 'warning'
         });
       }
     },
@@ -221,17 +219,17 @@ export default {
     //get all the data
     async getDataCollection() {
       let data = await getDataItemsByProjectId(this.projectId);
-      data.forEach((item) => {
+      data.forEach(item => {
         item.updateTime = dateFormat(item.updateTime, 'yyyy/MM/dd hh:mm');
       });
       this.dataItemList = data;
-      console.log(data)
+      console.log(data);
     },
     async getDataAsOperator() {
       let data = await getDataItemsByProjectId(this.projectId);
       this.dataItemListFromResource = data;
       this.$refs.multipleTable.toggleAllSelection();
-    },
+    }
   },
   async mounted() {
     if (this.role == 'builder') {
@@ -240,7 +238,7 @@ export default {
     if (this.role == 'rebuilder_operator') {
       await this.getDataAsOperator();
     }
-  },
+  }
 };
 </script>
 
@@ -249,7 +247,7 @@ export default {
   padding: 0 10px;
   height: 100%;
   width: 100%;
-  
+
   .row-style {
     padding: 0 10px;
     height: 100%;

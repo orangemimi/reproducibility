@@ -1,13 +1,6 @@
 <template>
   <div>
-    <el-input
-      :disabled="disabled"
-      type="textarea"
-      :rows="3"
-      :placeholder="columnsFeilds"
-      v-model="dataTemplate.value"
-    >
-    </el-input>
+    <el-input :disabled="disabled" type="textarea" :rows="3" :placeholder="columnsFeilds" v-model="dataTemplate.value"></el-input>
   </div>
 </template>
 <script>

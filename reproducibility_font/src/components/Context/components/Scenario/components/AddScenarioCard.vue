@@ -65,13 +65,13 @@ export default {
     return {
       textGroup: {
         content: '',
-        title: '',
+        title: ''
       },
 
       groupForm: {
         origin: '',
         name: '',
-        remarks: '',
+        remarks: ''
       },
       pictureList: [],
 
@@ -79,16 +79,16 @@ export default {
         title: '',
         origin: '',
         description: '',
-        formList: [],
-      },
+        formList: []
+      }
     };
   },
   components: {
-    addImage,
+    addImage
   },
   methods: {
     formHandleChange(file, fileList) {
-      this.formGroup.formList = fileList
+      this.formGroup.formList = fileList;
     },
     scenarioUser(fileList) {
       console.log(fileList);
@@ -128,8 +128,8 @@ export default {
     },
     formSubmit() {
       this.addFormGroup();
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -137,7 +137,6 @@ export default {
 .main {
   .text {
     text-align: center;
-   
   }
   .picture {
     .picture-btn {

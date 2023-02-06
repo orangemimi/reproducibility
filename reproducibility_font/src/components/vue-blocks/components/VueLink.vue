@@ -5,13 +5,7 @@
       <path :d="p.data" :style="p.style"></path>
     </g>
     <g>
-      <path
-        v-for="(a, index) in renderedArrows"
-        :key="index"
-        d="M -1 -1 L 0 1 L 1 -1 z"
-        :style="a.style"
-        :transform="a.transform"
-      ></path>
+      <path v-for="(a, index) in renderedArrows" :key="index" d="M -1 -1 L 0 1 L 1 -1 z" :style="a.style" :transform="a.transform"></path>
     </g>
   </svg>
 </template>
@@ -40,8 +34,7 @@ export default {
       this.lines.forEach(l => {
         let dist = this.distance(l.x1, l.y1, l.x2, l.y2) * 0.25;
         pathes.push({
-          data: `M ${l.x1}, ${l.y1} C ${l.x1 + dist}, ${l.y1}, ${l.x2 -
-            dist}, ${l.y2}, ${l.x2}, ${l.y2}`,
+          data: `M ${l.x1}, ${l.y1} C ${l.x1 + dist}, ${l.y1}, ${l.x2 - dist}, ${l.y2}, ${l.x2}, ${l.y2}`,
           style: l.style,
           outlineStyle: l.outlineStyle
         });
@@ -61,8 +54,7 @@ export default {
         let pos2 = this.computeConnectionPoint(l.x1, l.y1, l.x2, l.y2, 0.51);
 
         let angle = -Math.atan2(pos2.x - pos.x, pos2.y - pos.y);
-        let degrees =
-          ((angle >= 0 ? angle : 2 * Math.PI + angle) * 180) / Math.PI;
+        let degrees = ((angle >= 0 ? angle : 2 * Math.PI + angle) * 180) / Math.PI;
 
         arrows.push({
           transform: `translate(${pos.x}, ${pos.y}) rotate(${degrees})`,

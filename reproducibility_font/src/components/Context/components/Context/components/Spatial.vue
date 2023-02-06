@@ -9,12 +9,12 @@ import spatialInfo from './SpatialInfo.vue';
 import { getSpatial } from '@/api/request';
 export default {
   components: {
-    spatialInfo,
+    spatialInfo
   },
   data() {
     return {
       spatialInfo: [],
-      projectId: this.$route.params.projectId,
+      projectId: this.$route.params.projectId
     };
   },
   methods: {
@@ -25,20 +25,20 @@ export default {
     async getSpatial() {
       let data = await getSpatial(this.projectId);
       console.log(data);
-      this.spatialInfo = data
+      this.spatialInfo = data;
     },
     async init() {
       await this.getSpatial();
-    },
+    }
   },
   async mounted() {
     await this.init();
-  },
+  }
 };
 </script>
 
 <style lang="scss" scoped>
 .map {
-    width: 500px;
+  width: 500px;
 }
 </style>

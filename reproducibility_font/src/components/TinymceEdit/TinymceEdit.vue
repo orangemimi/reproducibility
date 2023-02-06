@@ -3,7 +3,6 @@
     <keep-alive>
       <editor v-model="content" :init="init" :disabled="disabled" ref="editor"></editor>
     </keep-alive>
-    
   </div>
 </template>
 
@@ -50,30 +49,30 @@ import 'tinymce/plugins/autoresize';
 
 export default {
   components: {
-    Editor,
+    Editor
   },
   props: {
     value: {
       type: String,
-      default: '',
+      default: ''
     },
     disabled: {
       type: Boolean,
-      default: false,
+      default: false
     },
     plugins: {
       type: [String, Array],
       default:
         // 'preview searchreplace autolink directionality visualblocks visualchars fullscreen image link media template code codesample table charmap hr nonbreaking insertdatetime advlist lists wordcount imagetools textpattern autosave bdmap autoresize lineheight',
-        'preview searchreplace autolink directionality visualblocks visualchars fullscreen image link media template code codesample table charmap hr nonbreaking insertdatetime advlist lists wordcount imagetools textpattern autosave autoresize',
+        'preview searchreplace autolink directionality visualblocks visualchars fullscreen image link media template code codesample table charmap hr nonbreaking insertdatetime advlist lists wordcount imagetools textpattern autosave autoresize'
     },
     toolbar: {
       type: [String, Array],
       default:
         'code undo redo restoredraft | cut copy paste pastetext | forecolor backcolor bold italic underline strikethrough link codesample | alignleft aligncenter alignright alignjustify outdent indent lineheight formatpainter | \
     styleselect formatselect fontselect fontsizeselect | bullist numlist | blockquote subscript superscript removeformat | \
-    table image media charmap hr pagebreak insertdatetime | bdmap fullscreen preview',
-    },
+    table image media charmap hr pagebreak insertdatetime | bdmap fullscreen preview'
+    }
   },
   data() {
     return {
@@ -93,7 +92,7 @@ export default {
         fontsize_formats: '12px 14px 16px 18px 24px 36px 48px 56px 72px',
         font_formats:
           '微软雅黑=Microsoft YaHei,Helvetica Neue,PingFang SC,sans-serif;苹果苹方=PingFang SC,Microsoft YaHei,sans-serif;宋体=simsun,serif;仿宋体=FangSong,serif;黑体=SimHei,sans-serif;Arial=arial,helvetica,sans-serif;Arial Black=arial black,avant garde;Book Antiqua=book antiqua,palatino;',
-        branding: false,
+        branding: false
         //此处为图片上传处理函数，这个直接用了base64的图片形式上传图片，
         //如需ajax上传可参考https://www.tiny.cloud/docs/configure/file-image-upload/#images_upload_handler
         // images_upload_handler: (blobInfo, success, failure) => {
@@ -106,20 +105,20 @@ export default {
     };
   },
   beforeDestroy() {
-    console.log('beforeDestroy')
+    console.log('beforeDestroy');
   },
 
-  mounted() { 
-    console.log(this.value)
-    console.log(this.disabled)
-    tinymce.init({})
+  mounted() {
+    console.log(this.value);
+    console.log(this.disabled);
+    tinymce.init({});
   },
   activated() {
-    this.tinymceFlag++
+    this.tinymceFlag++;
   },
   methods: {
     click() {
-      console.log(this.$refs.editor)
+      console.log(this.$refs.editor);
     }
   },
   watch: {
@@ -128,10 +127,8 @@ export default {
     },
     content(newValue) {
       this.$emit('input', newValue);
-    },
-  },
+    }
+  }
 };
 </script>
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

@@ -111,12 +111,12 @@ export default {
   methods: {
     butclick(address) {
       this.$router.push({
-        name: address ,
+        name: address
       });
-    },
+    }
   },
 
-  mounted() {},
+  mounted() {}
 };
 </script>
 <style lang="scss" scoped>
@@ -144,6 +144,5 @@ export default {
   .h5 {
     font-size: 14px;
   }
-
 }
 </style>

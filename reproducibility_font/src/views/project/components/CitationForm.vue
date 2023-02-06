@@ -62,7 +62,7 @@ export default {
         { label: 'Book', value: 'Book' },
         { label: 'Patent', value: 'Patent' },
         { label: 'Standard', value: 'Standard' },
-        { label: 'Achievement', value: 'Achievement' },
+        { label: 'Achievement', value: 'Achievement' }
       ],
       title1: 'loading',
       title2: 'wating',
@@ -74,14 +74,14 @@ export default {
       formData: {
         name: '',
         author: '',
-        source: '',
+        source: ''
       },
       date: {
         selectedId: -1,
         year: '',
         month: '',
-        date: '',
-      },
+        date: ''
+      }
     };
   },
 
@@ -93,7 +93,7 @@ export default {
 
   computed: {
     getAuthorLabel() {
-      return function (type) {
+      return function(type) {
         if (type == 'Almanac') {
           return 'Almanac name';
         } else if (type == 'Standard') {
@@ -106,7 +106,7 @@ export default {
       };
     },
     getSourceLable() {
-      return function (type) {
+      return function(type) {
         if (type == 'Thesis') {
           return 'Periodical';
         } else if (type == 'Dissertation') {
@@ -127,29 +127,29 @@ export default {
           return 'First completion unit';
         }
       };
-    },
+    }
   },
 
   methods: {
     init() {
-      if(this.citationData != undefined && this.citationData != null) {
-        this.classValue = this.citationData.type
-        this.formData.name = this.citationData.name
-        this.formData.author = this.citationData.author
-        this.formData.source = this.citationData.source
-        console.log(this.citationData)
-        if(this.citationData.dateType == 'year') {
-          this.date.selectedId = 1
-          this.date.year = this.citationData.date
-        } else if(this.citationData.dateType == 'month') {
-          this.date.selectedId = 2
-          this.date.month = this.citationData.date
-        } else if(this.citationData.dateType == 'date') {
-          this.date.selectedId = 3
-          this.date.date = this.citationData.date
+      if (this.citationData != undefined && this.citationData != null) {
+        this.classValue = this.citationData.type;
+        this.formData.name = this.citationData.name;
+        this.formData.author = this.citationData.author;
+        this.formData.source = this.citationData.source;
+        console.log(this.citationData);
+        if (this.citationData.dateType == 'year') {
+          this.date.selectedId = 1;
+          this.date.year = this.citationData.date;
+        } else if (this.citationData.dateType == 'month') {
+          this.date.selectedId = 2;
+          this.date.month = this.citationData.date;
+        } else if (this.citationData.dateType == 'date') {
+          this.date.selectedId = 3;
+          this.date.date = this.citationData.date;
         }
       }
-      console.log(this.date)
+      console.log(this.date);
     },
     nextClick() {
       if (this.activeCount == 0) {
@@ -189,7 +189,7 @@ export default {
         name: this.formData.name,
         author: this.formData.author,
         source: this.formData.source,
-        type: this.classValue,
+        type: this.classValue
       };
       if (this.date.selectedId == 1) {
         form['date'] = this.date.year;
@@ -219,10 +219,10 @@ export default {
         this.date.year = '';
         this.date.selectedId = 3;
       }
-    },
+    }
   },
   mounted() {
-    this.init()
+    this.init();
   }
 };
 </script>

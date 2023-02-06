@@ -40,7 +40,7 @@ export default {
       isReproductionActive: false,
       isContributorActive: false,
       isSettingsActive: false,
-      isCommunityActive: false,
+      isCommunityActive: false
     };
   },
 
@@ -84,12 +84,12 @@ export default {
           this.isInfoActive = this.isReproductionActive = this.isSettingsActive = this.isContributorActive = false;
         }
       }
-    },
+    }
   },
 
   mounted() {
     this.init();
-  },
+  }
 };
 </script>
 <style lang="scss" scoped>

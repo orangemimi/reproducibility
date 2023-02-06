@@ -9,9 +9,9 @@
 export default {
   data() {
     return {
-      textarea: '',
+      textarea: ''
     };
-  },
+  }
 };
 </script>
 

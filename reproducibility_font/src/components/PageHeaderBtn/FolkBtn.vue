@@ -14,7 +14,6 @@
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -22,11 +21,11 @@
 export default {
   props: {
     count: {
-      type: Number,
+      type: Number
     },
     isDisable: {
-      type: Boolean,
-    },
+      type: Boolean
+    }
   },
   components: {},
 
@@ -35,7 +34,7 @@ export default {
   data() {
     return {
       projectId: this.$route.params.id,
-      isDisable2: this.isDisable,
+      isDisable2: this.isDisable
     };
   },
 
@@ -43,11 +42,9 @@ export default {
     folkClick() {
       this.$router.push({
         path: `/project/fork/${this.projectId}`
-      })
-    },
-    
-  },
-
+      });
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>
@@ -94,5 +91,4 @@ export default {
     color: $blueEmplasisFont;
   }
 }
-
 </style>

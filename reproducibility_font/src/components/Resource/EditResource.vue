@@ -93,15 +93,15 @@ import spatialInfoDialog from '_com/ContextTable/SpatialInfoDialog';
 export default {
   props: {
     initFormData: {
-      type: Object,
-    },
+      type: Object
+    }
   },
   components: {
     VueTreeList,
     temporalInfoTable,
     spatialInfoTable,
     temporalInfoDialog,
-    spatialInfoDialog,
+    spatialInfoDialog
   },
   data() {
     return {
@@ -110,48 +110,48 @@ export default {
       addSpatialInfodialogVisible: false,
       addTemporalInfodialogVisible: false,
       dataForm: {
-        agentAttribute: {},
+        agentAttribute: {}
       },
       treeData: new Tree([
         {
           name: 'Name',
           value: 'Description',
           id: 1,
-          pid: 0,
-        },
+          pid: 0
+        }
       ]),
       Rules: {
         name: [{ required: true, message: 'Name cannot be empty', trigg: 'blur' }],
         value: [{ required: true, message: 'Data cannot be empty' }],
         version: [{ required: true, message: 'Version cannot be empty', trigg: 'blur' }],
-        token: [{ required: true, message: 'Token cannot be empty', trigg: 'blur' }],
+        token: [{ required: true, message: 'Token cannot be empty', trigg: 'blur' }]
       },
       spatialInfoForm: {
         enable: false,
         spatialReference: {
           general: '',
-          wkt: '',
+          wkt: ''
         },
         spatialDimension: '',
         spatialScale: {
           type: '',
-          description: '',
+          description: ''
         },
         spatialExtentList: [],
-        resolutionConstraintList: [],
+        resolutionConstraintList: []
       },
       temporalInfoForm: {
         enable: false,
         temporalScale: {
           type: '',
-          description: '',
+          description: ''
         },
         temporalReference: {
-          value: '',
+          value: ''
         },
         temporalExtentList: [],
-        stepConstraintList: [],
-      },
+        stepConstraintList: []
+      }
     };
   },
   methods: {
@@ -166,17 +166,17 @@ export default {
       this.currentFile = {};
     },
     submit() {
-      this.$refs['form'].validate(async (valid) => {
+      this.$refs['form'].validate(async valid => {
         if (!valid) {
           this.$notify.error({
             title: 'Error',
-            message: 'Validation failed',
+            message: 'Validation failed'
           });
           return;
         }
         console.log(111);
       });
-    },
+    }
   },
   mounted() {
     this.dataForm = this.initFormData;
@@ -188,9 +188,8 @@ export default {
         this.type = 'Input';
       }
     }
-  },
+  }
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

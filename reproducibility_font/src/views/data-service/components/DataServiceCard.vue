@@ -51,7 +51,7 @@ export default {
       dialogVisible: false,
       selectNum: -1,
       selectNumArr: [],
-      description: '',
+      description: ''
     };
   },
 
@@ -62,8 +62,8 @@ export default {
           this.select = false;
           this.badgeNum = 0;
         }
-      },
-    },
+      }
+    }
   },
 
   methods: {
@@ -159,7 +159,7 @@ export default {
         }
         localStorage.selectDataServices = JSON.stringify({
           dataServiceItem: dataServiceItem,
-          dataServices: temp,
+          dataServices: temp
         });
 
         this.$store.state.user.selectNum = this.$store.state.user.selectNum + tempArr.length - this.badgeNum;
@@ -172,11 +172,11 @@ export default {
         this.select = false;
       }
       this.dialogVisible = false;
-    },
+    }
   },
   mounted() {
     this.init();
-  },
+  }
 };
 </script>
 
@@ -242,4 +242,3 @@ export default {
   margin-top: 15px;
 }
 </style>
-

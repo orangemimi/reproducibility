@@ -31,15 +31,15 @@ export default {
           specifyBorderRadius: false,
           minSize: 0,
           size: '6px',
-          disable: false,
-        },
-      },
+          disable: false
+        }
+      }
     };
   },
   components: {
-    contextCard,
+    contextCard
   },
-  methods: {},
+  methods: {}
 };
 </script>
 

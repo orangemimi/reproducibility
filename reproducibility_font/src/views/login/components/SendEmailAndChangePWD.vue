@@ -1,4 +1,3 @@
-
 <template>
   <div>
     <el-button type="text" @click="dialogClick">Forget your password ?</el-button>
@@ -57,45 +56,44 @@ export default {
       email: '',
       code: '',
       password: '',
-      confirm_password: '',
+      confirm_password: ''
     };
   },
   props: ['f_email'],
   methods: {
     send_email() {
-      if(this.email == '') {
-        errorNotification('Mailbox cannot be empty!')
-        return
+      if (this.email == '') {
+        errorNotification('Mailbox cannot be empty!');
+        return;
       }
       this.$confirm('send verification code to this mailbox ?', 'prompt', {
         confirmButtonText: 'confirm',
-        cancelButtonText: 'cancel',
-      })
-        .then(async () => {
-          try {
-            await sendCodeEmail(this.email);
-            successNotification("send", "email")
-            this.flag = 0;
-          } catch {
-            // this.$message({
-            //   type: 'error',
-            //   message: 'Mailbox does not exist!',
-            // });
-          }
-        })
+        cancelButtonText: 'cancel'
+      }).then(async () => {
+        try {
+          await sendCodeEmail(this.email);
+          successNotification('send', 'email');
+          this.flag = 0;
+        } catch {
+          // this.$message({
+          //   type: 'error',
+          //   message: 'Mailbox does not exist!',
+          // });
+        }
+      });
     },
 
     async changePWDbyCode(code, password) {
       if (this.password != this.confirm_password) {
         this.$message({
           type: 'error',
-          message: 'Inconsistent passwords!',
+          message: 'Inconsistent passwords!'
         });
         return;
       } else if (this.password == '') {
         this.$message({
           type: 'error',
-          message: 'Password cannot be empty!',
+          message: 'Password cannot be empty!'
         });
         return;
       } else {
@@ -104,13 +102,13 @@ export default {
           await changePWDbyCode(this.email, code, pwd);
           this.$message({
             type: 'success',
-            message: 'Password modified successfully!',
+            message: 'Password modified successfully!'
           });
           this.dialogVisible = false;
         } catch {
           this.$message({
             type: 'error',
-            message: 'Invalid verification code!',
+            message: 'Invalid verification code!'
           });
         }
       }
@@ -126,8 +124,8 @@ export default {
     },
     previousClick() {
       this.flag = 1;
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -137,5 +135,3 @@ export default {
   margin-right: 75px;
 }
 </style>
-
-

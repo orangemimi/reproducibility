@@ -18,38 +18,21 @@ export function resetScrollbars(vueItem) {
   let bounds = vueItem.graph.getGraphBounds();
 
   vueItem.graph.container.scrollTop = Math.floor(pad.y) - 1;
-  vueItem.graph.container.scrollLeft =
-    Math.floor(
-      Math.min(
-        pad.x,
-        (vueItem.graph.container.scrollWidth - vueItem.graph.container.clientWidth) / 2
-      )
-    ) - 1;
+  vueItem.graph.container.scrollLeft = Math.floor(Math.min(pad.x, (vueItem.graph.container.scrollWidth - vueItem.graph.container.clientWidth) / 2)) - 1;
 
   if (bounds.width > 0 && bounds.height > 0) {
     if (bounds.x > vueItem.graph.container.scrollLeft + vueItem.graph.container.clientWidth * 0.9) {
-      vueItem.graph.container.scrollLeft = Math.min(
-        bounds.x + bounds.width - vueItem.graph.container.clientWidth,
-        bounds.x - 10
-      );
+      vueItem.graph.container.scrollLeft = Math.min(bounds.x + bounds.width - vueItem.graph.container.clientWidth, bounds.x - 10);
     }
     if (bounds.y > vueItem.graph.container.scrollTop + vueItem.graph.container.clientHeight * 0.9) {
-      vueItem.graph.container.scrollTop = Math.min(
-        bounds.y + bounds.height - vueItem.graph.container.clientHeight,
-        bounds.y - 10
-      );
+      vueItem.graph.container.scrollTop = Math.min(bounds.y + bounds.height - vueItem.graph.container.clientHeight, bounds.y - 10);
     }
   }
 }
 
 export function getPageSize(vueItem) {
   // console.log('size', vueItem.graph.pageFormat.width, vueItem.graph.view.scale);
-  return new mxRectangle(
-    0,
-    0,
-    vueItem.graph.pageFormat.width * vueItem.graph.view.scale,
-    vueItem.graph.pageFormat.height * vueItem.graph.view.scale
-  );
+  return new mxRectangle(0, 0, vueItem.graph.pageFormat.width * vueItem.graph.view.scale, vueItem.graph.pageFormat.height * vueItem.graph.view.scale);
 }
 
 export function getPagePadding(vueItem) {

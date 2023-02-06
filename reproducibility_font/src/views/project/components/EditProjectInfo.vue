@@ -60,8 +60,8 @@ import { updateProject, postFile } from '@/api/request';
 export default {
   props: {
     projectInfo: {
-      type: Object,
-    },
+      type: Object
+    }
   },
 
   components: { addImage, wangEditor },
@@ -82,7 +82,7 @@ export default {
     return {
       form: JSON.parse(JSON.stringify(this.projectInfo)),
       inputTagValue: '',
-      pictureFile: '',
+      pictureFile: ''
     };
   },
 
@@ -121,8 +121,8 @@ export default {
 
     textChange(val) {
       this.form.description = val;
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>

@@ -114,14 +114,14 @@ import { getCellStyle } from '_com/Scenario/components/configuration.js';
 const {
   // mxGraph
   mxGraphHandler,
-  mxEvent,
+  mxEvent
 } = mxgraph;
 
 export default {
   props: {
     instance: {
-      type: Object,
-    },
+      type: Object
+    }
   },
   computed: {
     getOutputValue() {
@@ -147,7 +147,7 @@ export default {
         }
       }
       return false;
-    },
+    }
   },
 
   data() {
@@ -161,9 +161,9 @@ export default {
       type: '',
       clickedCell: {
         nodeAttribute: {
-          dataSelect: {},
-        },
-      },
+          dataSelect: {}
+        }
+      }
     };
   },
 
@@ -173,8 +173,8 @@ export default {
         this.changeCell();
         // console.log(this.graph.getModel())
         // console.log(this.taskInfo)
-      },
-    },
+      }
+    }
   },
   methods: {
     init() {
@@ -246,64 +246,64 @@ export default {
           }
         }
       }
-      if(type == 'input') {
-        location.href = this.clickedCell.nodeAttribute.dataSelect.value
+      if (type == 'input') {
+        location.href = this.clickedCell.nodeAttribute.dataSelect.value;
       }
     },
 
     changeCell() {
       this.getTaskInfo();
-      this.taskInfo.modelActionList.running.forEach((item) => {
+      this.taskInfo.modelActionList.running.forEach(item => {
         this.changeCellStyleByStatus(0, this.graph.getModel().cells[item.id], false);
-        item.inputData.inputs.forEach((input) => {
+        item.inputData.inputs.forEach(input => {
           this.changeCellStyleByStatus(0, this.graph.getModel().cells[input.dataId], true);
         });
-        item.outputData.outputs.forEach((output) => {
+        item.outputData.outputs.forEach(output => {
           this.changeCellStyleByStatus(0, this.graph.getModel().cells[output.dataId], true);
         });
       });
-      this.taskInfo.modelActionList.failed.forEach((item) => {
+      this.taskInfo.modelActionList.failed.forEach(item => {
         this.changeCellStyleByStatus(2, this.graph.getModel().cells[item.id], false);
-        item.inputData.inputs.forEach((input) => {
+        item.inputData.inputs.forEach(input => {
           this.changeCellStyleByStatus(2, this.graph.getModel().cells[input.dataId], true);
         });
-        item.outputData.outputs.forEach((output) => {
+        item.outputData.outputs.forEach(output => {
           this.changeCellStyleByStatus(2, this.graph.getModel().cells[output.dataId], true);
         });
       });
-      this.taskInfo.modelActionList.completed.forEach((item) => {
+      this.taskInfo.modelActionList.completed.forEach(item => {
         this.changeCellStyleByStatus(1, this.graph.getModel().cells[item.id], false);
-        item.inputData.inputs.forEach((input) => {
+        item.inputData.inputs.forEach(input => {
           this.changeCellStyleByStatus(1, this.graph.getModel().cells[input.dataId], true);
         });
-        item.outputData.outputs.forEach((output) => {
+        item.outputData.outputs.forEach(output => {
           this.changeCellStyleByStatus(1, this.graph.getModel().cells[output.dataId], true);
         });
       });
-      this.taskInfo.dataProcessingList.running.forEach((item) => {
+      this.taskInfo.dataProcessingList.running.forEach(item => {
         this.changeCellStyleByStatus(0, this.graph.getModel().cells[item.id], false);
-        item.inputData.inputs.forEach((input) => {
+        item.inputData.inputs.forEach(input => {
           this.changeCellStyleByStatus(0, this.graph.getModel().cells[input.dataId], true);
         });
-        item.outputData.outputs.forEach((output) => {
+        item.outputData.outputs.forEach(output => {
           this.changeCellStyleByStatus(0, this.graph.getModel().cells[output.dataId], true);
         });
       });
-      this.taskInfo.dataProcessingList.failed.forEach((item) => {
+      this.taskInfo.dataProcessingList.failed.forEach(item => {
         this.changeCellStyleByStatus(2, this.graph.getModel().cells[item.id], false);
-        item.inputData.inputs.forEach((input) => {
+        item.inputData.inputs.forEach(input => {
           this.changeCellStyleByStatus(2, this.graph.getModel().cells[input.dataId], true);
         });
-        item.outputData.outputs.forEach((output) => {
+        item.outputData.outputs.forEach(output => {
           this.changeCellStyleByStatus(2, this.graph.getModel().cells[output.dataId], true);
         });
       });
-      this.taskInfo.dataProcessingList.completed.forEach((item) => {
+      this.taskInfo.dataProcessingList.completed.forEach(item => {
         this.changeCellStyleByStatus(1, this.graph.getModel().cells[item.id], false);
-        item.inputData.inputs.forEach((input) => {
+        item.inputData.inputs.forEach(input => {
           this.changeCellStyleByStatus(1, this.graph.getModel().cells[input.dataId], true);
         });
-        item.outputData.outputs.forEach((output) => {
+        item.outputData.outputs.forEach(output => {
           this.changeCellStyleByStatus(1, this.graph.getModel().cells[output.dataId], true);
         });
       });
@@ -315,20 +315,20 @@ export default {
       if (status == 0) {
         style = {
           fontColor: '#f6f6f6',
-          fillColor: '#E6A23C',
+          fillColor: '#E6A23C'
         };
       }
       //finish
       if (status == 1) {
         style = {
           fillColor: '#67C23A',
-          fontColor: '#24292E',
+          fontColor: '#24292E'
         };
       } //error
       if (status == 2) {
         style = {
           fillColor: '#ce1212',
-          fontColor: '#f6f6f6',
+          fontColor: '#f6f6f6'
         };
       }
       if (isData) {
@@ -337,11 +337,11 @@ export default {
       }
       let styleIn = getCellStyle(style, item);
       this.graph.getModel().setStyle(item, styleIn);
-    },
+    }
   },
   mounted() {
     this.init();
-  },
+  }
 };
 </script>
 

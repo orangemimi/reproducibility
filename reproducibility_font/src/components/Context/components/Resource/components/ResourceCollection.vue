@@ -91,8 +91,8 @@ export default {
         alignright: true, // 右对齐
         /* 2.2.1 */
         subfield: true, // 单双栏模式
-        preview: true, // 预览
-      },
+        preview: true // 预览
+      }
     };
   },
   computed: {
@@ -117,7 +117,7 @@ export default {
       } else {
         return 'warning';
       }
-    },
+    }
   },
   methods: {
     async titleClick() {
@@ -136,19 +136,19 @@ export default {
       let form = {
         projectId: this.projectId,
         format: this.resourceItem.format,
-        bean: JSON.parse(JSON.stringify(this.resourceItem)),
+        bean: JSON.parse(JSON.stringify(this.resourceItem))
       };
       form.bean.markDown = this.$refs.md.d_value;
       form.bean.markDownHtml = this.$refs.md.d_render;
 
       await updateResourceOfContent(form);
-    },
+    }
   },
   created() {
     let obj = decodeURIComponent(this.$route.query.resourceItem);
     this.resourceItem = JSON.parse(obj);
     console.log(this.resourceItem);
-  },
+  }
 };
 </script>
 

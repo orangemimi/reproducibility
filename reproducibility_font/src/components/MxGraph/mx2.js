@@ -4,20 +4,7 @@ import FileSaver from 'file-saver';
 // import { init } from 'echarts';
 // import _ from 'lodash';
 
-const {
-  mxGraph,
-  mxConstants,
-  mxCellState,
-  mxCellEditor,
-  mxEvent,
-  mxRubberband,
-  mxUndoManager,
-  mxCodec,
-  mxUtils,
-  mxActor,
-  mxPoint,
-  mxCellRenderer
-} = mxgraph;
+const { mxGraph, mxConstants, mxCellState, mxCellEditor, mxEvent, mxRubberband, mxUndoManager, mxCodec, mxUtils, mxActor, mxPoint, mxCellRenderer } = mxgraph;
 
 export class Graph extends mxGraph {
   constructor(container) {
@@ -173,15 +160,8 @@ export class Graph extends mxGraph {
       var dx = fixed
         ? Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'size', this.fixedSize))))
         : w * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
-      var arcSize =
-        mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
-      this.addPoints(
-        c,
-        [new mxPoint(0, h), new mxPoint(dx, 0), new mxPoint(w, 0), new mxPoint(w - dx, h)],
-        this.isRounded,
-        arcSize,
-        true
-      );
+      var arcSize = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
+      this.addPoints(c, [new mxPoint(0, h), new mxPoint(dx, 0), new mxPoint(w, 0), new mxPoint(w - dx, h)], this.isRounded, arcSize, true);
       c.end();
     };
 

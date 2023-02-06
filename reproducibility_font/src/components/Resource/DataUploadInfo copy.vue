@@ -14,7 +14,14 @@
         <el-button icon="el-icon-circle-plus-outline" @click="addNode"></el-button>
 
         <div class="tree">
-          <vue-tree-list @click="onClick" @delete-node="onDel" :model="data" default-tree-node-name="new node" default-leaf-node-name="new leaf" v-bind:default-expanded="false">
+          <vue-tree-list
+            @click="onClick"
+            @delete-node="onDel"
+            :model="data"
+            default-tree-node-name="new node"
+            default-leaf-node-name="new leaf"
+            v-bind:default-expanded="false"
+          >
             <template v-slot:leafNameDisplay="slotProps" class="content">
               <div class="name">
                 {{ slotProps.model.name }}

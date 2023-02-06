@@ -1,7 +1,14 @@
 <template>
   <div class="vtl">
     <div v-if="model.name !== 'root'" :id="model.id" class="vtl-node" :class="{ 'vtl-leaf-node': model.isLeaf, 'vtl-tree-node': !model.isLeaf }">
-      <div class="vtl-border vtl-up" :class="{ 'vtl-active': isDragEnterUp }" @drop="dropBefore" @dragenter="dragEnterUp" @dragover="dragOverUp" @dragleave="dragLeaveUp"></div>
+      <div
+        class="vtl-border vtl-up"
+        :class="{ 'vtl-active': isDragEnterUp }"
+        @drop="dropBefore"
+        @dragenter="dragEnterUp"
+        @dragover="dragOverUp"
+        @dragleave="dragLeaveUp"
+      ></div>
       <div
         :class="treeNodeClass"
         :draggable="!model.dragDisabled"
@@ -404,8 +411,8 @@ export default {
 @font-face {
   font-family: 'icomoon';
   src: url('fonts/icomoon.eot?ui1hbx');
-  src: url('fonts/icomoon.eot?ui1hbx#iefix') format('embedded-opentype'), url('fonts/icomoon.ttf?ui1hbx') format('truetype'), url('fonts/icomoon.woff?ui1hbx') format('woff'),
-    url('fonts/icomoon.svg?ui1hbx#icomoon') format('svg');
+  src: url('fonts/icomoon.eot?ui1hbx#iefix') format('embedded-opentype'), url('fonts/icomoon.ttf?ui1hbx') format('truetype'),
+    url('fonts/icomoon.woff?ui1hbx') format('woff'), url('fonts/icomoon.svg?ui1hbx#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }

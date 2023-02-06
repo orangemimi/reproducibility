@@ -137,27 +137,27 @@ const { mxEvent, mxGraphHandler, mxConstants } = mxgraph;
 export default {
   components: {
     // dataCellInfo,
-    instanceCard,
+    instanceCard
   },
   props: {
     id: {
-      type: String,
-    },
+      type: String
+    }
   },
   watch: {
     id: {
       handler(val, oldval) {
         console.log(oldval);
         console.log(val);
-        this.changeStyle(val, oldval)
-      },
-    },
+        this.changeStyle(val, oldval);
+      }
+    }
   },
 
   computed: {
     ...mapState({
-      role: (state) => state.permission.role,
-    }),
+      role: state => state.permission.role
+    })
   },
 
   data() {
@@ -178,8 +178,8 @@ export default {
           specifyBorderRadius: false,
           minSize: 0,
           size: '6px',
-          disable: false,
-        },
+          disable: false
+        }
       },
 
       container: null,
@@ -198,7 +198,7 @@ export default {
       dataServiceListInGraph: '',
       dataServiceInputInGraph: '',
       dataServiceOutputListInGraph: '',
-      dataServiceLinkInGraph: '',
+      dataServiceLinkInGraph: ''
     };
   },
 
@@ -227,17 +227,17 @@ export default {
         dataServiceListInGraph: this.dataServiceListInGraph,
         dataServiceInputInGraph: this.dataServiceInputInGraph,
         dataServiceOutputListInGraph: this.dataServiceOutputListInGraph,
-        dataServiceLinkInGraph: this.dataServiceLinkInGraph,
+        dataServiceLinkInGraph: this.dataServiceLinkInGraph
       };
       this.$emit('getCells', cells);
     },
 
     changeStyle(id, oldid) {
-      if(oldid != '') {
-        this.changeOldStyly(oldid)
+      if (oldid != '') {
+        this.changeOldStyly(oldid);
       }
-      if(id != '') {
-        this.changeNewStyle(id)
+      if (id != '') {
+        this.changeNewStyle(id);
       }
     },
 
@@ -258,10 +258,10 @@ export default {
         align: mxConstants.ALIGN_CENTER,
         imageAlign: mxConstants.ALIGN_CENTER,
         imageVerticalAlign: mxConstants.ALIGN_TOP,
-        strokeColor: '#15FE16',
+        strokeColor: '#15FE16'
       };
       const styleResult = Object.keys(styleObj)
-        .map((attr) => `${attr}=${styleObj[attr]}`)
+        .map(attr => `${attr}=${styleObj[attr]}`)
         .join(';');
       this.graph.getModel().setStyle(this.graph.model.cells[id], styleResult);
     },
@@ -277,7 +277,7 @@ export default {
       } else {
         style = differCellStyle(this.graph.model.cells[oldId].type);
       }
-      let styleResult = getCellStyle(style, this.graph.model.cells[oldId])
+      let styleResult = getCellStyle(style, this.graph.model.cells[oldId]);
       this.graph.getModel().setStyle(this.graph.model.cells[oldId], styleResult);
     },
 
@@ -292,7 +292,7 @@ export default {
     },
 
     createCell() {
-      if(this.records.length > 0) {
+      if (this.records.length > 0) {
         this.graph.importGraph(this.records[this.records.length - 1].taskContent);
       }
       this.graph.getModel().beginUpdate();
@@ -306,8 +306,8 @@ export default {
 
     async getSelectedInstances() {
       // let data1 = await getSelectedInstancesByProjectId(this.projectId);
-      this.records = await getRecordsByMyself(this.projectId)
-      
+      this.records = await getRecordsByMyself(this.projectId);
+
       let data2 = await getAllInstances(this.currentTask.id, 0, 7);
       this.allMyTaskList = data2.content;
       this.total = data2.total;
@@ -349,7 +349,7 @@ export default {
       let dataServiceLinkInGraph = [];
       let dataServiceOutputListInGraph = [];
 
-      Object.values(this.graph.getModel().cells).forEach((cell) => {
+      Object.values(this.graph.getModel().cells).forEach(cell => {
         if (cell.style != undefined) {
           if (cell.type == 'modelService') {
             modelListInGraph.push(cell);
@@ -371,7 +371,7 @@ export default {
           }
         }
       });
-      let links = Object.values(this.graph.getModel().cells).filter((cell) => Object.prototype.hasOwnProperty.call(cell, 'edge'));
+      let links = Object.values(this.graph.getModel().cells).filter(cell => Object.prototype.hasOwnProperty.call(cell, 'edge'));
 
       this.linkEdgeList = links;
       this.modelListInGraph = modelListInGraph;
@@ -407,7 +407,7 @@ export default {
       );
 
       let file = new File([xml], this.currentTask.taskName + '.xml', {
-        type: 'text/xml',
+        type: 'text/xml'
       });
       let formData = new FormData();
       formData.append('file', file);
@@ -426,25 +426,25 @@ export default {
           completed: [],
           running: [],
           waiting: [],
-          failed: [],
+          failed: []
         },
         dataProcessingList: {
           completed: [],
           running: [],
           waiting: [],
-          failed: [],
-        },
+          failed: []
+        }
       };
-      this.modelListInGraph.forEach((cell) => {
+      this.modelListInGraph.forEach(cell => {
         taskInfo.modelActionList.waiting.push({
           processId: cell.id,
-          processName: cell.name,
+          processName: cell.name
         });
       });
-      this.dataServiceListInGraph.forEach((cell) => {
+      this.dataServiceListInGraph.forEach(cell => {
         taskInfo.dataProcessingList.waiting.push({
           processId: cell.id,
-          processName: cell.name,
+          processName: cell.name
         });
       });
       // let graphXml = this.graph.getGraphXml();
@@ -455,7 +455,7 @@ export default {
         taskInfo: taskInfo,
         taskContent: this.currentTask.taskContent,
         status: 0,
-        tid: tid,
+        tid: tid
       };
       let data = await saveIntegrateTaskInstance(postJson);
       console.log(data);
@@ -482,12 +482,12 @@ export default {
           this.allMyTaskList.splice(index, 1, val);
         }
       });
-    },
+    }
   },
 
   mounted() {
     this.init();
-  },
+  }
 };
 </script>
 

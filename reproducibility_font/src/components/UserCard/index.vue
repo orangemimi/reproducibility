@@ -3,14 +3,18 @@
   <div class="user">
     <div v-if="user.role == 'builder'" class="builder">
       <div class="block">
-        <el-avatar :size="50" :src="user.avatar == '' ? '' : 'http://172.21.212.103:8088/userServer' + user.avatar" :title="user.name" @click.native="click">{{user.name}}</el-avatar>
+        <el-avatar :size="50" :src="user.avatar == '' ? '' : 'http://172.21.212.103:8088/userServer' + user.avatar" :title="user.name" @click.native="click">
+          {{ user.name }}
+        </el-avatar>
       </div>
       <div class="text" :title="user.name" @click="click">{{ user.name }}</div>
     </div>
     <div v-else class="member">
       <!-- <div class="member"> -->
       <div class="block">
-        <el-avatar :size="50" :src="user.avatar == '' ? '' : 'http://172.21.212.103:8088/userServer' + user.avatar" :title="user.name" @click.native="click">{{user.name}}</el-avatar>
+        <el-avatar :size="50" :src="user.avatar == '' ? '' : 'http://172.21.212.103:8088/userServer' + user.avatar" :title="user.name" @click.native="click">
+          {{ user.name }}
+        </el-avatar>
       </div>
       <div class="text" :title="user.name" @click="click">{{ user.name }}</div>
     </div>
@@ -21,8 +25,8 @@
 export default {
   props: {
     user: {
-      type: Object,
-    },
+      type: Object
+    }
   },
 
   computed: {},
@@ -33,22 +37,20 @@ export default {
 
   methods: {
     click() {
-      console.log(1)
+      console.log(1);
       this.$router.push({
-        path: `/Homepage/${this.user.id}`,
+        path: `/Homepage/${this.user.id}`
       });
-    },
+    }
   },
 
   mounted() {
     console.log(this.user);
-  },
+  }
 };
 </script>
 <style lang="scss" scoped>
 .user {
-
-
   .text {
     text-overflow: ellipsis;
     overflow: hidden;

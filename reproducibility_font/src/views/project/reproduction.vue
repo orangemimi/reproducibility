@@ -6,7 +6,7 @@
         <el-row :gutter="20">
           <el-col :span="17">
             <div class="scenario">
-              <div ref="scenario"><re-scenario-content @getCells="getCells" :id="selectedNodeId"/></div>
+              <div ref="scenario"><re-scenario-content @getCells="getCells" :id="selectedNodeId" /></div>
               <div class="md" v-if="content.context != undefined" ref="abstract">
                 <div class="head">
                   <i class="iconfont icon-xiangqing" style="margin-left: 15px; margin-right: 15px"></i>
@@ -61,7 +61,13 @@
                   </span>
                 </span>
               </el-tree>
-              <el-descriptions direction="vertical" :column="3" border v-if="resourceFlag && (selectedNode.classify != 'model' && selectedNode.classify != 'dataService')" style="margin-top: 20px">
+              <el-descriptions
+                direction="vertical"
+                :column="3"
+                border
+                v-if="resourceFlag && selectedNode.classify != 'model' && selectedNode.classify != 'dataService'"
+                style="margin-top: 20px"
+              >
                 <el-descriptions-item label="Name">{{ selectedNode.label }}</el-descriptions-item>
                 <el-descriptions-item label="Type">
                   <el-tag size="small" :type="getFormat">{{ selectedNode.classify }}</el-tag>
@@ -72,7 +78,10 @@
                 </el-descriptions-item>
               </el-descriptions>
 
-              <model-item :modelItem="selectedNode" v-if="resourceFlag && (selectedNode.classify == 'model' || selectedNode.classify == 'dataService')"></model-item>
+              <model-item
+                :modelItem="selectedNode"
+                v-if="resourceFlag && (selectedNode.classify == 'model' || selectedNode.classify == 'dataService')"
+              ></model-item>
 
               <el-divider></el-divider>
               <div @click="toAbstract" class="nav">
@@ -83,7 +92,6 @@
                 <i class="el-icon-data-board" style="margin-right: 10px"></i>
                 Scenario
               </div>
-
 
               <div v-if="content.context.spatialInfos.length > 0 || content.context.temporalInfo.start != null">
                 <el-divider>Scale</el-divider>
@@ -140,7 +148,7 @@
 import { getContent } from '@/api/request';
 import axios from 'axios';
 import ReScenarioContent from '_com/Scenario/reScenario';
-import ModelItem from './components/Modeltem.vue'
+import ModelItem from './components/Modeltem.vue';
 
 export default {
   components: {
@@ -157,7 +165,7 @@ export default {
       resourceFlag: false,
       defaultProps: {
         children: 'children',
-        label: 'label',
+        label: 'label'
       },
       selectedNode: {},
       resourceMD: [],
@@ -177,7 +185,7 @@ export default {
       value2: '',
       value3: '',
       flag2: false,
-      flag3: false,
+      flag3: false
     };
   },
   computed: {
@@ -202,7 +210,7 @@ export default {
       } else {
         return 'warning';
       }
-    },
+    }
   },
 
   methods: {
@@ -216,10 +224,10 @@ export default {
     //   console.log((size / 1024).toFixed(2));
     // },
     download(val) {
-      location.href = val.value
+      location.href = val.value;
     },
     async getCityList() {
-      await axios.get('/json/Region.json').then((res) => {
+      await axios.get('/json/Region.json').then(res => {
         this.options1 = res.data.districts[0].districts;
       });
     },
@@ -228,14 +236,14 @@ export default {
       if (data.flag) {
         this.resourceFlag = true;
         this.selectedNode = data;
-        this.selectedNodeId = data.id
+        this.selectedNodeId = data.id;
       } else {
         this.resourceFlag = false;
       }
     },
     handleNodeCollapse() {
       this.resourceFlag = false;
-      this.selectedNodeId = ''
+      this.selectedNodeId = '';
     },
 
     async getContent() {
@@ -245,7 +253,7 @@ export default {
       this.temporalInfo.push(this.content.context.temporalInfo.end);
       this.selectData = this.content.context.spatialInfos;
       if (this.selectData.length > 0) {
-        this.selectData.forEach((item) => {
+        this.selectData.forEach(item => {
           if (item.type == 'polygon') {
             this.paths.push(item.points);
           } else if (item.type == 'boundary') {
@@ -324,24 +332,24 @@ export default {
       this.data.push({
         label: 'models',
         children: [],
-        classify: 'model',
+        classify: 'model'
       });
       this.data.push({
         label: 'dataServices',
         children: [],
-        classify: 'dataService',
+        classify: 'dataService'
       });
       this.data.push({
         label: 'inputs',
         children: [],
-        classify: 'input',
+        classify: 'input'
       });
       this.data.push({
         label: 'parameters',
         children: [],
-        classify: 'parameter',
+        classify: 'parameter'
       });
-      val.modelListInGraph.forEach((item) => {
+      val.modelListInGraph.forEach(item => {
         this.data[0].children.push({
           label: item.name,
           classify: 'model',
@@ -352,7 +360,7 @@ export default {
         });
         this.resourceCount = this.resourceCount + 1;
       });
-      val.dataServiceListInGraph.forEach((item) => {
+      val.dataServiceListInGraph.forEach(item => {
         this.data[1].children.push({
           label: item.name,
           classify: 'dataService',
@@ -361,7 +369,7 @@ export default {
         });
         this.resourceCount = this.resourceCount + 1;
       });
-      val.modelInputInGraph.forEach((item) => {
+      val.modelInputInGraph.forEach(item => {
         if (item.nodeAttribute.isParameter == 'true') {
           this.data[3].children.push({
             label: item.nodeAttribute.dataSelect.name,
@@ -384,7 +392,7 @@ export default {
           this.resourceCount = this.resourceCount + 1;
         }
       });
-      val.dataServiceInputInGraph.forEach((item) => {
+      val.dataServiceInputInGraph.forEach(item => {
         if (item.nodeAttribute.isParameter == 'true') {
           this.data[3].children.push({
             label: item.nodeAttribute.dataSelect.name,
@@ -407,9 +415,9 @@ export default {
           this.resourceCount = this.resourceCount + 1;
         }
       });
-      val.modelLinkInGraph.forEach((item) => {
+      val.modelLinkInGraph.forEach(item => {
         if (item.nodeAttribute.isParameter == 'true') {
-          item.edges.forEach((edge) => {
+          item.edges.forEach(edge => {
             if (edge.target.id == item.id) {
               this.data[3].children.push({
                 label: 'Intermediate result',
@@ -423,7 +431,7 @@ export default {
           });
           this.resourceCount = this.resourceCount + 1;
         } else {
-          item.edges.forEach((edge) => {
+          item.edges.forEach(edge => {
             if (edge.target.id == item.id) {
               this.data[2].children.push({
                 label: 'Intermediate result',
@@ -438,9 +446,9 @@ export default {
           this.resourceCount = this.resourceCount + 1;
         }
       });
-      val.dataServiceLinkInGraph.forEach((item) => {
+      val.dataServiceLinkInGraph.forEach(item => {
         if (item.nodeAttribute.isParameter == 'true') {
-          item.edges.forEach((edge) => {
+          item.edges.forEach(edge => {
             if (edge.target.id == item.id) {
               this.data[3].children.push({
                 label: 'Intermediate result',
@@ -454,7 +462,7 @@ export default {
           });
           this.resourceCount = this.resourceCount + 1;
         } else {
-          item.edges.forEach((edge) => {
+          item.edges.forEach(edge => {
             if (edge.target.id == item.id) {
               this.data[2].children.push({
                 label: 'Intermediate result',
@@ -533,11 +541,11 @@ export default {
     async init() {
       await this.getContent();
       await this.getCityList();
-    },
+    }
   },
   created() {
     this.init();
-  },
+  }
 };
 </script>
 
@@ -574,7 +582,7 @@ export default {
     }
     .nav:hover {
       cursor: pointer;
-      color: #27A5C4;
+      color: #27a5c4;
     }
   }
   .row-style {

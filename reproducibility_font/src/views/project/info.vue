@@ -207,7 +207,7 @@ export default {
     userCard,
     editInfoForm,
     shareProject,
-    citationForm,
+    citationForm
     // reBuilderCard
   },
 
@@ -225,24 +225,24 @@ export default {
       members: [],
       ops: {
         bar: {
-          background: '#808695',
-        },
+          background: '#808695'
+        }
       },
       editProjectInfoDialogShow: false,
       addParticipantDialogShow: false,
-      editCitation: false,
+      editCitation: false
     };
   },
 
   computed: {
     ...mapState({
       // userId: state => state.user.userId,
-      role: (state) => state.permission.role,
+      role: state => state.permission.role
 
       // token: state => state.user.token
     }),
     getAuthorLabel() {
-      return function (type) {
+      return function(type) {
         if (type == 'Almanac') {
           return 'Almanac name';
         } else if (type == 'Standard') {
@@ -255,7 +255,7 @@ export default {
       };
     },
     getSourceLable() {
-      return function (type) {
+      return function(type) {
         if (type == 'Thesis') {
           return 'Periodical';
         } else if (type == 'Dissertation') {
@@ -276,7 +276,7 @@ export default {
           return 'First completion unit';
         }
       };
-    },
+    }
   },
 
   methods: {
@@ -312,7 +312,7 @@ export default {
         this.$notify({
           title: 'Success',
           message: 'You have update the project successfully!',
-          type: 'success',
+          type: 'success'
         });
       }
     },
@@ -334,12 +334,12 @@ export default {
 
     dateFormat(time, format = 'yyyy-MM-dd hh:mm:ss') {
       return dateFormat(time, format);
-    },
+    }
   },
 
   mounted() {
     this.init();
-  },
+  }
 };
 </script>
 <style lang="scss" scoped>

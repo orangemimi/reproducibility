@@ -54,21 +54,21 @@ import { dateFormat } from '@/utils/utils';
 export default {
   props: {
     instanceItem: {
-      type: Object,
+      type: Object
     },
     taskItem: {
-      type: Object,
+      type: Object
     },
     role: {
-      type: String,
-    },
+      type: String
+    }
   },
   components: { instanceGraph },
 
   computed: {
     getTime() {
       return dateFormat(this.instanceItem.createTime);
-    },
+    }
   },
 
   data() {
@@ -79,7 +79,7 @@ export default {
       direction: 'rtl',
       drawer: false,
       record: {},
-      timer: '',
+      timer: ''
     };
   },
 
@@ -92,8 +92,8 @@ export default {
         if (val.status != 1 && oldval.id != val.id) {
           await this.getOutputs(val.tid);
         }
-      },
-    },
+      }
+    }
   },
 
   methods: {
@@ -106,7 +106,7 @@ export default {
       if (!isStar) {
         let form = {
           id: this.taskItem.id,
-          instanceId: this.instanceItem.id,
+          instanceId: this.instanceItem.id
         };
         await updateIntegrateTaskInstance(form);
 
@@ -116,13 +116,12 @@ export default {
         let form = {
           id: this.taskItem.id,
           instanceId: '',
-          type: 'unstar',
+          type: 'unstar'
         };
         await updateIntegrateTaskInstance(form);
         this.$emit('changeSelectInstanceId', '');
       }
     },
-
 
     async updateIntegrateTaskInstanceById(authority) {
       let json = { authority: '' };
@@ -160,7 +159,7 @@ export default {
         console.log(this.timer);
         await this.getOutputs(this.instanceItem.tid);
       }
-    },
+    }
   },
   async mounted() {
     await this.init();
@@ -169,7 +168,7 @@ export default {
     if (this.timer != '') {
       clearInterval(this.timer);
     }
-  },
+  }
 };
 </script>
 <style lang="scss" scoped>

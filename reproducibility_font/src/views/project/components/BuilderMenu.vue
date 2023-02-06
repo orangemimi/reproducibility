@@ -30,7 +30,6 @@
         <i class="el-icon-info"></i>
         Settings
       </div>
-      
     </div>
   </div>
 </template>
@@ -50,7 +49,7 @@ export default {
       isContributorActive: false,
       isSettingsActive: false,
       isCommunityActive: false,
-      isConstruction1Active: false,
+      isConstruction1Active: false
     };
   },
 
@@ -65,11 +64,11 @@ export default {
       } else if (type == 'Community') {
         this.isCommunityActive = true;
         this.isInfoActive = this.isConstructionActive = this.isSettingsActive = this.isContributorActive = this.isConstruction1Active = false;
-      } else if (type == 'Settings'){
+      } else if (type == 'Settings') {
         this.isSettingsActive = true;
         this.isInfoActive = this.isConstructionActive = this.isContributorActive = this.isCommunityActive = this.isConstruction1Active = false;
       } else if (type == 'Construction1') {
-        this.isConstruction1Active = true
+        this.isConstruction1Active = true;
         this.isInfoActive = this.isConstructionActive = this.isContributorActive = this.isSettingsActive = this.isCommunityActive = false;
       }
       this.$emit('toRouterType', type);
@@ -102,12 +101,12 @@ export default {
           this.isInfoActive = this.isReproductionActive = this.isSettingsActive = this.isContributorActive = false;
         }
       }
-    },
+    }
   },
 
   mounted() {
     this.init();
-  },
+  }
 };
 </script>
 <style lang="scss" scoped>

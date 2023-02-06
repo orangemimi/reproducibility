@@ -10,7 +10,9 @@ const state = {
   email: localStorage.getItem('email'),
   unreadApplynum: localStorage.getItem('unreadApplynum'),
   unreadReplynum: localStorage.getItem('unreadReplynum'),
-  selectNum: (localStorage.getItem('selectModels') == undefined ? 0 : JSON.parse(localStorage.selectModels).computableModels.length) + (localStorage.getItem('selectDataServices') == undefined ? 0 : JSON.parse(localStorage.selectDataServices).dataServices.length)
+  selectNum:
+    (localStorage.getItem('selectModels') == undefined ? 0 : JSON.parse(localStorage.selectModels).computableModels.length) +
+    (localStorage.getItem('selectDataServices') == undefined ? 0 : JSON.parse(localStorage.selectDataServices).dataServices.length)
 };
 //commit mutation ,同步
 const mutations = {
@@ -44,18 +46,17 @@ const mutations = {
   },
 
   setUnreadApplynum(state, unreadApplynum) {
-    state.unreadApplynum = unreadApplynum
-    localStorage.setItem('unreadApplynum', unreadApplynum)
+    state.unreadApplynum = unreadApplynum;
+    localStorage.setItem('unreadApplynum', unreadApplynum);
   },
 
   setUnreadReplynum(state, unreadReplynum) {
-    state.unreadReplynum = unreadReplynum
-    localStorage.setItem('unreadReplynum', unreadReplynum)
+    state.unreadReplynum = unreadReplynum;
+    localStorage.setItem('unreadReplynum', unreadReplynum);
   },
   setSelectNum(state, selectNum) {
-    state.selectNum = selectNum
+    state.selectNum = selectNum;
   }
-
 };
 //dispatch action ，异步
 const actions = {
@@ -65,10 +66,10 @@ const actions = {
     commit('setName', '');
     commit('setAvatar', '');
     commit('setUserId', '');
-    commit('setEmail', '')
-    commit('setUnreadApplynum', '')
-    commit('setUnreadReplynum', '')
-    commit('setSelectNum', 0)
+    commit('setEmail', '');
+    commit('setUnreadApplynum', '');
+    commit('setUnreadReplynum', '');
+    commit('setSelectNum', 0);
     localStorage.clear();
   },
 
@@ -87,18 +88,24 @@ const actions = {
           commit('setName', response.name);
           commit('setAvatar', response.avatar);
           commit('setUserId', response.userId);
-          commit('setEmail', response.email)
-          commit('setUnreadApplynum', response.unreadApply)
-          commit('setUnreadReplynum', response.unreadReply)
-          commit('setSelectNum', 0)
-          localStorage.setItem("selectModels", JSON.stringify({
-            computableModels: [],
-            modelItem: []
-          }))
-          localStorage.setItem("selectDataServices", JSON.stringify({
-            dataServices: [],
-            dataServiceItem: {}
-          }))
+          commit('setEmail', response.email);
+          commit('setUnreadApplynum', response.unreadApply);
+          commit('setUnreadReplynum', response.unreadReply);
+          commit('setSelectNum', 0);
+          localStorage.setItem(
+            'selectModels',
+            JSON.stringify({
+              computableModels: [],
+              modelItem: []
+            })
+          );
+          localStorage.setItem(
+            'selectDataServices',
+            JSON.stringify({
+              dataServices: [],
+              dataServiceItem: {}
+            })
+          );
           resolve();
         })
         .catch(error => {

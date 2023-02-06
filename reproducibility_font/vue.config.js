@@ -24,7 +24,7 @@ module.exports = {
 
     config.plugin('webpack-bundle-analyzer').use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin);
   },
-  
+
   devServer: {
     host: '0.0.0.0',
     port: 8080,
@@ -36,7 +36,7 @@ module.exports = {
         // pathRewrite: {
         //   "^/api": ""
         // }
-      },
+      }
       // '/api': {
       //   target: 'http://api.map.baidu.com',
       //   ws: true,
@@ -46,5 +46,5 @@ module.exports = {
       //   }
       // }
     }
-  },
+  }
 };

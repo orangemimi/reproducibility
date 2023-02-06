@@ -18,24 +18,24 @@
 import addScenarioCard from './components/AddScenarioCard.vue';
 export default {
   components: {
-    addScenarioCard,
+    addScenarioCard
   },
   data() {
     return {
-      plus: false,
+      plus: false
     };
   },
   props: {
     type: {
-      type: String,
-    },
+      type: String
+    }
   },
 
   methods: {
     clickPlus() {
       this.plus = true;
-    },
-  },
+    }
+  }
 };
 </script>
 

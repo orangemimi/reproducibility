@@ -44,8 +44,8 @@
               <i class="iconfont icon-result"></i>
               Result analysis
             </span>
-            <div style="padding-top: 100px">
-              <wang-editor />
+            <div>
+              <Result></Result>
             </div>
           </el-tab-pane>
           <el-tab-pane>
@@ -103,18 +103,20 @@
 </template>
 
 <script>
+import Result from '@/components/ResultAnalysis/Result.vue';
 import stepCard from '_com/StepCard';
 // import tinymceEdit from '_com/TinymceEdit/TinymceEdit.vue';
-import wangEditor from '_com/WangEditor/WangEditor.vue';
+// import wangEditor from '_com/WangEditor/WangEditor.vue';
 // import tinymce from '_com/Tinymce/Tinymce.vue'
 import { getPerformanceByProjectId } from '@/api/request';
 import { dateFormat } from '@/utils/utils';
 
 export default {
   components: {
+    Result,
     stepCard,
     // tinymceEdit,
-    wangEditor,
+    // wangEditor
     // tinymce
   },
   data() {
@@ -125,9 +127,9 @@ export default {
         context: [],
         resource: [],
         scenario: [],
-        results: [],
+        results: []
       },
-      dialogVisible: false,
+      dialogVisible: false
     };
   },
   methods: {
@@ -144,11 +146,11 @@ export default {
     init() {
       this.getPerformance();
       console.log(this.$route.query.forkingProjectId);
-    },
+    }
   },
   mounted() {
     this.init();
-  },
+  }
 };
 </script>
 

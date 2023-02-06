@@ -36,7 +36,7 @@
     </vue-scroll>
 
     <el-dialog title="New Project" :visible.sync="dialogNewProject" width="30%">
-      <create @dialogShow="dialogShow"/>
+      <create @dialogShow="dialogShow" />
     </el-dialog>
   </div>
 </template>
@@ -44,7 +44,7 @@
 <script>
 import { getMyProjects } from '@/api/request';
 import projectCard from './ProjectCard.vue';
-import create from '../../projects/components/create.vue'
+import create from '../../projects/components/create.vue';
 
 export default {
   data() {
@@ -80,16 +80,16 @@ export default {
       }
     },
     createProject() {
-      this.dialogNewProject = true
+      this.dialogNewProject = true;
     },
 
     dialogShow(val) {
-      this.dialogNewProject = val
+      this.dialogNewProject = val;
     }
   },
   mounted() {
     this.getprojects();
-  },
+  }
 };
 </script>
 
@@ -123,5 +123,4 @@ export default {
     width: 20%;
   }
 }
-
 </style>

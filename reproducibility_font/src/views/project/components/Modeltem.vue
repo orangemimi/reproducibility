@@ -21,12 +21,12 @@ import { imgBase64 } from '@/lib/utils';
 export default {
   props: {
     modelItem: {
-      type: Object,
-    },
+      type: Object
+    }
   },
   data() {
     return {
-      image: '',
+      image: ''
     };
   },
   methods: {
@@ -48,13 +48,13 @@ export default {
       if (this.modelItem.classify == 'model') {
         await this.getPictureByDOI();
       } else {
-          this.image = ''
+        this.image = '';
       }
-    },
+    }
   },
   async mounted() {
     await this.init();
-  },
+  }
 };
 </script>
 

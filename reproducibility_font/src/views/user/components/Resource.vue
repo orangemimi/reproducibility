@@ -117,7 +117,7 @@ export default {
       stack: ['-1'],
       arrayStack: [],
       oldName: '',
-      centerDialogVisible: false,
+      centerDialogVisible: false
     };
   },
   methods: {
@@ -190,7 +190,7 @@ export default {
     //双击单元格进入下一层
     async rowDblclick(row) {
       let data = await getFileItemByStoreyAndParent(this.stack.length.toString(), row.id);
-      data.forEach((item) => {
+      data.forEach(item => {
         item['flag'] = false;
         item.date = dateFormat(item.date, 'yyyy/MM/dd hh:mm');
       });
@@ -227,7 +227,7 @@ export default {
     //查询用户根目录
     async getFileItemByStoreyAndParent() {
       let data = await getFileItemByStoreyAndParent('0', '-1');
-      data.forEach((item) => {
+      data.forEach(item => {
         item.date = dateFormat(item.date, 'yyyy/MM/dd hh:mm');
         item['flag'] = false;
       });
@@ -251,7 +251,7 @@ export default {
     async Rename(id, name) {
       let form = {
         id: id,
-        name: name,
+        name: name
       };
       let data = await Rename(form);
       return data;
@@ -264,7 +264,7 @@ export default {
         folder: val.folder,
         fileSize: val.fileSize,
         flag: false,
-        date: dateFormat(val.updateTime, 'yyyy/MM/dd hh:mm'),
+        date: dateFormat(val.updateTime, 'yyyy/MM/dd hh:mm')
       });
       this.centerDialogVisible = false;
     },
@@ -277,7 +277,7 @@ export default {
           fileSize: '',
           folder: true,
           parent: this.stack[this.stack.length - 1],
-          storey: this.stack.length - 1,
+          storey: this.stack.length - 1
         };
         let data = await saveFileItem(jsonData);
         this.tableData.push({
@@ -286,7 +286,7 @@ export default {
           fileSize: data.fileSize,
           id: data.id,
           folder: data.folder,
-          flag: true,
+          flag: true
         });
         await this.$nextTick();
         this.$refs.input.focus();
@@ -300,7 +300,7 @@ export default {
     //选中菜单栏触发的对应方法事件
     async menu(val) {
       if (val == 'rename') {
-        this.tableData.forEach(async (item) => {
+        this.tableData.forEach(async item => {
           if (item.id == this.selectedItem[0].id) {
             item.flag = true;
             await this.$nextTick();
@@ -323,14 +323,13 @@ export default {
           index++;
         });
       }
-    },
+    }
   },
   mounted() {
     this.init();
-  },
+  }
 };
 </script>
-
 
 <style lang="scss" scoped>
 .main {
@@ -378,4 +377,3 @@ export default {
   border: none;
 }
 </style>
-

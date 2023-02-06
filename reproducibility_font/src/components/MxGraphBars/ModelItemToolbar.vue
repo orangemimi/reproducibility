@@ -49,26 +49,25 @@ export default {
       ops: {
         bar: {
           background: '#808695',
-          keepShow: true,
-        },
+          keepShow: true
+        }
       },
 
       publicModelFilter: { page: 1, pageSize: 8 },
       personalModelFilter: { page: 0, pageSize: 8 },
 
-      switchValue: true,
+      switchValue: true
     };
   },
 
   watch: {
     publicModels: {
       handler: function() {
-        this.$nextTick(function () {
+        this.$nextTick(function() {
           this.$emit('getModels', this.publicModels);
         });
-      },
-      
-    },
+      }
+    }
   },
 
   methods: {
@@ -78,10 +77,10 @@ export default {
     },
 
     async getModelsByProjectId() {
-      let data = await getModelsByProjectId(this.projectId)
-      console.log(data)
-      this.publicModels = data
-      console.log(this.publicModels)
+      let data = await getModelsByProjectId(this.projectId);
+      console.log(data);
+      this.publicModels = data;
+      console.log(this.publicModels);
     },
 
     async getPersonalModels() {
@@ -93,11 +92,11 @@ export default {
     getModelInfo() {
       console.log(this.$refs['modelItemList']);
       return this.$refs['modelItemList'];
-    },
+    }
   },
   created() {
-    this.getModelsByProjectId()
-  },
+    this.getModelsByProjectId();
+  }
 };
 </script>
 <style lang="scss" scoped>
@@ -115,7 +114,6 @@ export default {
   // margin: 0 5px;
   .el-card__body {
     padding: 0px;
-    
   }
 
   .model-top {

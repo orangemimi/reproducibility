@@ -15,4 +15,6 @@ public interface IntegrateTaskRepository extends MongoRepository<IntegrateTask,S
     Optional<IntegrateTask> findFirstById(String id);
     List<IntegrateTask> findAllByProjectId(String userId);
     Optional<IntegrateTask> findById(String id);
+
+    Optional<IntegrateTask> findByProjectId(String id);
 }

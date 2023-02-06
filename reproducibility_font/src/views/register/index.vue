@@ -5,7 +5,7 @@
       <div class="register-form">
         <el-form ref="registerForm" :rules="registerRules" :model="registerForm" label-width="150px" label-position="right">
           <el-form-item label="Name" prop="name" required label-width="90px">
-            <el-input v-model="registerForm.name" placeholder="Please enter your name" ref="name"/>
+            <el-input v-model="registerForm.name" placeholder="Please enter your name" ref="name" />
           </el-form-item>
           <el-form-item label="E-mail" prop="email" required label-width="90px">
             <el-input v-model="registerForm.email" placeholder="Please enter your email" />
@@ -67,27 +67,27 @@ export default {
         email: '',
         password: '',
         checkPassword: '',
-        organization: '',
+        organization: ''
       },
 
       registerRules: {
         password: [{ validator: validatePass, trigger: 'blur' }],
-        checkPassword: [{ validator: validateCheckPass, trigger: 'blur' }],
-      },
+        checkPassword: [{ validator: validateCheckPass, trigger: 'blur' }]
+      }
     };
   },
 
   methods: {
     reset() {
-      this.registerForm.name = ''
-      this.registerForm.email = ''
-      this.registerForm.password = ''
-      this.registerForm.checkPassword = ''
-      this.registerForm.organization = ''
-      this.$refs['name'].focus()
+      this.registerForm.name = '';
+      this.registerForm.email = '';
+      this.registerForm.password = '';
+      this.registerForm.checkPassword = '';
+      this.registerForm.organization = '';
+      this.$refs['name'].focus();
     },
     submit() {
-      this.$refs['registerForm'].validate(async (valid) => {
+      this.$refs['registerForm'].validate(async valid => {
         if (valid) {
           let form = {
             name: this.registerForm.name,
@@ -95,31 +95,30 @@ export default {
             organization: this.registerForm.organization,
             password: md5(this.registerForm.password), //前端加密
             joinedProjects: [],
-            createdProjects: [],
+            createdProjects: []
           };
           await saveUser(form);
           this.$notify({
             title: 'Success',
             message: 'Register successfully!',
-            type: 'success',
+            type: 'success'
           });
         } else {
           this.$notify.error({
             title: 'Error',
-            message: 'Register failed!',
+            message: 'Register failed!'
           });
         }
       });
-    },
+    }
   },
 
-  mounted() {},
+  mounted() {}
 };
 </script>
 <style lang="scss" scoped>
 .register-form {
   margin: 0 auto;
-  
 }
 .btn-wrapper {
   margin-top: 40px;

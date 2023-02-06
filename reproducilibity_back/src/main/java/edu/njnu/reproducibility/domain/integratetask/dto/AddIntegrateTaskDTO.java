@@ -21,6 +21,6 @@ public class AddIntegrateTaskDTO implements ToDomainConverter<IntegrateTask> {
 
     String taskContent;
     String selectInstanceId;
-//    String type;//Integrate Task; notebook
+    String type;
 
 }

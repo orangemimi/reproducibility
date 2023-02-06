@@ -29,7 +29,7 @@
                     :disabled="form.type == '' || form.type == 'model' || form.type == 'dataservice'"
                   ></el-input>
                 </el-form-item>
-                
+
                 <el-form-item label="Data Type" prop="dataType">
                   <el-radio v-model="form.dataType" label="FILE" :disabled="form.type != 'output'"></el-radio>
                   <el-radio v-model="form.dataType" label="STRING" :disabled="!(form.type == 'output' || form.type == 'parameter')"></el-radio>
@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import { addResourceCard } from '@/api/request'
+import { addResourceCard } from '@/api/request';
 export default {
   data() {
     return {
@@ -63,7 +63,7 @@ export default {
         type: '',
         dataType: '',
         eventName: '',
-        description: '',
+        description: ''
       },
       toolbars: {
         bold: true, // 粗体
@@ -98,18 +98,18 @@ export default {
         alignright: true, // 右对齐
         /* 2.2.1 */
         subfield: true, // 单双栏模式
-        preview: true, // 预览
+        preview: true // 预览
       },
       rules: {
         name: [{ required: true, message: 'Please enter the name', trigger: 'blur' }],
-        type: [{ required: true, message: 'Please select the type', trigger: 'change' }],
+        type: [{ required: true, message: 'Please select the type', trigger: 'change' }]
       },
-      projectId: this.$route.params.projectId,
+      projectId: this.$route.params.projectId
     };
   },
   methods: {
     async addResourceCard() {
-      if(this.form.type == 'input') {
+      if (this.form.type == 'input') {
         let form = {
           projectId: this.projectId,
           resourceType: this.form.type,
@@ -120,23 +120,9 @@ export default {
             markDown: this.$refs.md.d_value,
             markDownHtml: this.$refs.md.d_render
           }
-        }
-        await addResourceCard(form)
-      } else if(this.form.type == 'parameter') {
-        let form = {
-          projectId: this.projectId,
-          resourceType: this.form.type,
-          info: {
-            name: this.form.name,
-            eventName: this.form.eventName,
-            type: this.form.dataType,
-            description: this.form.description,
-            markDown: this.$refs.md.d_value,
-            markDownHtml: this.$refs.md.d_render
-          }
-        }
-        await addResourceCard(form)
-      } else if(this.form.type == 'output') {
+        };
+        await addResourceCard(form);
+      } else if (this.form.type == 'parameter') {
         let form = {
           projectId: this.projectId,
           resourceType: this.form.type,
@@ -148,9 +134,23 @@ export default {
             markDown: this.$refs.md.d_value,
             markDownHtml: this.$refs.md.d_render
           }
-        }
-        await addResourceCard(form)
-      } else if(this.form.type == 'model' || this.form.type == 'dataservice') {
+        };
+        await addResourceCard(form);
+      } else if (this.form.type == 'output') {
+        let form = {
+          projectId: this.projectId,
+          resourceType: this.form.type,
+          info: {
+            name: this.form.name,
+            eventName: this.form.eventName,
+            type: this.form.dataType,
+            description: this.form.description,
+            markDown: this.$refs.md.d_value,
+            markDownHtml: this.$refs.md.d_render
+          }
+        };
+        await addResourceCard(form);
+      } else if (this.form.type == 'model' || this.form.type == 'dataservice') {
         let form = {
           projectId: this.projectId,
           resourceType: this.form.type,
@@ -160,14 +160,14 @@ export default {
             markDown: this.$refs.md.d_value,
             markDownHtml: this.$refs.md.d_render
           }
-        }
-        await addResourceCard(form)
+        };
+        await addResourceCard(form);
       }
     },
     create() {
-      this.$refs['form'].validate(async (valid) => {
+      this.$refs['form'].validate(async valid => {
         if (valid) {
-          await this.addResourceCard()
+          await this.addResourceCard();
         } else {
           return false;
         }
@@ -175,42 +175,42 @@ export default {
     },
     change(val) {
       if (val == 'parameter') {
-        this.form.dataType = 'STRING'
+        this.form.dataType = 'STRING';
         this.$refs.form.clearValidate();
         this.rules = {
           name: [{ required: true, message: 'Please enter the name', trigger: 'blur' }],
           type: [{ required: true, message: 'Please select the type', trigger: 'change' }],
-          eventName: [{ required: true, message: 'Please enter the eventName', trigger: 'blur' }],
+          eventName: [{ required: true, message: 'Please enter the eventName', trigger: 'blur' }]
         };
       } else if (val == 'input') {
-        this.form.value = ''
-        this.form.dataType = ''
+        this.form.value = '';
+        this.form.dataType = '';
         this.$refs.form.clearValidate();
         this.rules = {
           name: [{ required: true, message: 'Please enter the name', trigger: 'blur' }],
-          type: [{ required: true, message: 'Please select the type', trigger: 'change' }],
+          type: [{ required: true, message: 'Please select the type', trigger: 'change' }]
         };
       } else if (val == 'model' || val == 'dataservice') {
-        this.form.eventName = ''
-        this.form.value = ''
-        this.form.dataType = ''
+        this.form.eventName = '';
+        this.form.value = '';
+        this.form.dataType = '';
         this.$refs.form.clearValidate();
         this.rules = {
           name: [{ required: true, message: 'Please enter the name', trigger: 'blur' }],
-          type: [{ required: true, message: 'Please select the type', trigger: 'change' }],
+          type: [{ required: true, message: 'Please select the type', trigger: 'change' }]
         };
       } else if (val == 'output') {
-        this.form.value = ''
-        this.form.dataType = 'FILE'
+        this.form.value = '';
+        this.form.dataType = 'FILE';
         this.$refs.form.clearValidate();
         this.rules = {
           name: [{ required: true, message: 'Please enter the name', trigger: 'blur' }],
           type: [{ required: true, message: 'Please select the type', trigger: 'change' }],
-          eventName: [{ required: true, message: 'Please enter the eventName', trigger: 'blur' }],
+          eventName: [{ required: true, message: 'Please enter the eventName', trigger: 'blur' }]
         };
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

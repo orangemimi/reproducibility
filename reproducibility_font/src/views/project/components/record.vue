@@ -45,8 +45,8 @@ import { dateFormat } from '@/utils/utils';
 export default {
   props: {
     record: {
-      type: Object,
-    },
+      type: Object
+    }
   },
   data() {
     return {};
@@ -54,11 +54,10 @@ export default {
   computed: {
     getDate() {
       return dateFormat(new Date(parseInt(this.record.createTime)));
-    },
+    }
   },
   methods: {},
-  mounted() {
-  },
+  mounted() {}
 };
 </script>
 
@@ -98,7 +97,7 @@ export default {
           background-color: #67c23a;
         }
         .fail {
-          background-color: #F56C6C;
+          background-color: #f56c6c;
         }
       }
       .el-divider {

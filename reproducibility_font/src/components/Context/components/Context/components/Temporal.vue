@@ -67,13 +67,13 @@ export default {
         alignright: true, // 右对齐
         /* 2.2.1 */
         subfield: true, // 单双栏模式
-        preview: true, // 预览
-      },
+        preview: true // 预览
+      }
     };
   },
 
   components: {
-    temporalInfo,
+    temporalInfo
   },
   methods: {
     async getTemporal() {
@@ -97,14 +97,14 @@ export default {
           start: null,
           end: null,
           mdText: this.$refs.md.d_value,
-          htmlText: this.$refs.md.d_render,
+          htmlText: this.$refs.md.d_render
         };
       } else {
         jsonData = {
           start: this.temporalInfo[0],
           end: this.temporalInfo[1],
           mdText: this.$refs.md.d_value,
-          htmlText: this.$refs.md.d_render,
+          htmlText: this.$refs.md.d_render
         };
       }
 
@@ -117,11 +117,11 @@ export default {
 
     async init() {
       await this.getTemporal();
-    },
+    }
   },
   async mounted() {
     await this.init();
-  },
+  }
 };
 </script>
 

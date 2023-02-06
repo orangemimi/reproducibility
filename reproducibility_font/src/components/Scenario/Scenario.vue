@@ -33,6 +33,9 @@
     <div class="customToolbarContainer" v-show="isNoteTaskShow">
       <comparison-task :taskInfoInit="taskInfoInit" v-if="taskInfoInit != null"></comparison-task>
     </div>
+    <div class="customToolbarContainer" v-show="isRDTaskShow">
+      <RDDocument :taskInfoInit="taskInfoInit" v-if="taskInfoInit != null"></RDDocument>
+    </div>
   </div>
 </template>
 
@@ -42,13 +45,15 @@ import mxGraph from './components/MxGraph';
 import { mapState } from 'vuex';
 import integrateTasks from '_com/IntegrateTasks';
 import comparisonTask from '_com/Comparison/Comparison';
+import RDDocument from '@/components/RDDocument/RDDocument.vue';
 // import { initSetTimeOut } from '@/utils/utils';
 
 export default {
   components: {
     mxGraph,
     integrateTasks,
-    comparisonTask
+    comparisonTask,
+    RDDocument
   },
 
   computed: {
@@ -64,13 +69,15 @@ export default {
       isNewTaskShow: false,
       isIntegrateTaskShow: false,
       isNoteTaskShow: false,
+      isRDTaskShow: false,
       taskInfo: { type: 'integrateTask' },
       taskInfoInit: null,
       taskList: [],
       content: '', //task selected mxgraph
       typeOptions: [
         { label: 'Integrate Task', value: 'integrateTask' },
-        { label: 'Notebook', value: 'notebook' }
+        { label: 'Notebook', value: 'notebook' },
+        { label: 'RDDocument', value: 'RDDocument' }
       ]
     };
   },
@@ -90,12 +97,17 @@ export default {
         if (data.type == 'integrateTask') {
           let data2 = await getIntegrateTaskByTaskId(data.selectTaskId);
           this.$set(this, 'taskInfoInit', data2);
-          this.isNoteTaskShow = this.isNewTaskShow = false;
+          this.isRDTaskShow = this.isNoteTaskShow = this.isNewTaskShow = false;
           this.isIntegrateTaskShow = true;
         }
         if (data.type == 'notebook') {
-          this.isIntegrateTaskShow = this.isNewTaskShow = false;
+          this.isRDTaskShow = this.isIntegrateTaskShow = this.isNewTaskShow = false;
           this.isNoteTaskShow = true;
+          this.taskInfoInit = await getIntegrateTaskByTaskId(data.selectTaskId);
+        }
+        if (data.type == 'RDDocument') {
+          this.isNoteTaskShow = this.isIntegrateTaskShow = this.isNewTaskShow = false;
+          this.isRDTaskShow = true;
           this.taskInfoInit = await getIntegrateTaskByTaskId(data.selectTaskId);
         }
       }
@@ -107,6 +119,7 @@ export default {
       let postJson = {
         projectId: this.projectId,
         taskContent: '',
+        type: this.taskInfo.type,
         ...this.taskInfo
       };
       if (this.taskInfo.type == 'integrateTask') {
@@ -115,6 +128,10 @@ export default {
       }
       if (this.taskInfo.type == 'notebook') {
         this.isNoteTaskShow = true;
+      }
+      if (this.taskInfo.type == 'RDDocument') {
+        postJson.processes = [];
+        this.isRDTaskShow = true;
       }
       let data = await saveIntegrateTask(postJson);
       this.taskInfoInit = data;
@@ -126,7 +143,6 @@ export default {
       //选择task之后的回调
       this.taskInfoInit = val;
       this.isIntegrateTaskShow = false;
-      console.log(val)
     }
   },
 

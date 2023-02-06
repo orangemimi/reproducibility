@@ -77,7 +77,7 @@ export default {
         {
           name: 'Result Item',
           value: '',
-          id: 1,
+          id: 1
 
           // children: [
           //   { name: 'Name', value: '', id: 2 },
@@ -93,9 +93,9 @@ export default {
         {
           name: 'Comparison',
           value: '',
-          id: 10,
+          id: 10
           // children: [{ name: 'Method', value: '', id: 11 }]
-        },
+        }
       ],
       formResult: [
         { name: 'Name', value: '', id: 2 },
@@ -105,12 +105,12 @@ export default {
         { name: 'Distributors', value: '', id: 6 },
         { name: 'Existing File', value: '', id: 7 },
         { name: 'Restriction', value: '', id: 8 },
-        { name: 'Conclusion', value: '', id: 9 },
+        { name: 'Conclusion', value: '', id: 9 }
       ],
       formComparison: [{ name: 'Method', value: '', id: 11 }],
       formResultValue: {},
       formComparisonValue: {},
-      editResultDialogShow: false,
+      editResultDialogShow: false
     };
   },
 
@@ -134,10 +134,10 @@ export default {
     onJsonSave() {
       // 点击保存触发
     },
-    saveResult() {},
+    saveResult() {}
   },
 
-  mounted() {},
+  mounted() {}
 };
 </script>
 //

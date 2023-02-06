@@ -24,14 +24,14 @@ export default {
   data() {
     return {
       container: '',
-      graph: '',
+      graph: ''
     };
   },
 
   props: {
     record: {
-      type: Object,
-    },
+      type: Object
+    }
   },
 
   watch: {
@@ -40,8 +40,8 @@ export default {
         console.log(val);
         console.log('执行watch');
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
 
   methods: {
@@ -66,13 +66,13 @@ export default {
       this.container = this.$refs.container;
       this.createGraph();
       this.createCell();
-    },
+    }
   },
   mounted() {
     console.log(this.record);
     this.init();
     console.log(this.graph.model);
-  },
+  }
 };
 </script>
 

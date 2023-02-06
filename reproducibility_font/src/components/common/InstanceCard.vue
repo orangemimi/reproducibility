@@ -23,7 +23,7 @@
         </el-col>
       </el-row>
       <el-row>
-        <div v-if="cardData.description != null" class="cmpItemDesc">{{cardData.description}}</div>
+        <div v-if="cardData.description != null" class="cmpItemDesc">{{ cardData.description }}</div>
         <div v-else class="noDes">No Description !</div>
       </el-row>
       <el-row>
@@ -31,7 +31,7 @@
           <div class="info">
             <el-col :span="11">
               <i class="el-icon-user" :size="12" />
-              <span style="color:#2b85e4">{{cardData.creator ? cardData.creator : "sunlingzhi"}}</span>
+              <span style="color:#2b85e4">{{ cardData.creator ? cardData.creator : 'sunlingzhi' }}</span>
             </el-col>
             <el-col :span="13">
               <div style="float:right">
@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import config from "@/config";
+import config from '@/config';
 export default {
   props: {
     cardData: {
@@ -56,11 +56,8 @@ export default {
   },
   methods: {
     reTry({ type, id, serviceId }) {
-      if (type === "evaluation") {
-        window.open(
-          `${config.tomcatURL}/evaluation/#/gist/${serviceId}`,
-          "_blank"
-        );
+      if (type === 'evaluation') {
+        window.open(`${config.tomcatURL}/evaluation/#/gist/${serviceId}`, '_blank');
       } else {
         this.$router.push({
           path: `/resource/${serviceId}/${type}/invoke?instanceId=${id}`

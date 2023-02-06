@@ -1,4 +1,3 @@
-
 <template>
   <div>
     <el-table
@@ -37,7 +36,7 @@ export default {
     return {
       selectionList: [],
       unreadnum: 0,
-      noticeList: [],
+      noticeList: []
     };
   },
   methods: {
@@ -124,9 +123,9 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
       this.selectionList = val;
-    },
+    }
   },
-  mounted: async function () {
+  mounted: async function() {
     await this.init();
     let num = 0;
     for (let i = 0; i < this.noticeList.length; i++) {
@@ -135,7 +134,7 @@ export default {
       }
     }
     this.unreadnum = num;
-  },
+  }
 };
 </script>
 

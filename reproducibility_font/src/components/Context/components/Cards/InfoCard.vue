@@ -30,7 +30,9 @@
           <div class="tags">
             <div class="tag" ref="tag">
               <el-tag size="mini" type="info">+</el-tag>
-              <el-tag size="mini" closable v-for="(item, index) in tagData" :key="index" class="tag-item" v-show="index < 3"><span>{{ item }}</span></el-tag>
+              <el-tag size="mini" closable v-for="(item, index) in tagData" :key="index" class="tag-item" v-show="index < 3">
+                <span>{{ item }}</span>
+              </el-tag>
             </div>
             <el-tag size="mini" v-if="tagData.length > 3">...</el-tag>
           </div>
@@ -74,7 +76,7 @@ export default {
         '该研究借助通用地球系统模式CESM、区域气候模式RegCM和WRF，开展了不同外强驱动下的全新世气候模拟试验(NNU-Holocene)，探究了历史时期多尺度气候变化的史实和特征，阐明了过去1万年全球气候的多时间尺度变化特征，以及主控年代尺度气候变化的关键因子；揭示了自然外强迫与气候系统内部自然反馈过程共同驱动下的历史时期东亚年代际气候变化的驱动机制。',
       editTitle: false,
       title: 'TEST',
-      tagData: ['1', 'K-means','敏感性分析111111', 'dsadsa' ],
+      tagData: ['1', 'K-means', '敏感性分析111111', 'dsadsa']
     };
   },
   methods: {
@@ -90,10 +92,8 @@ export default {
     blur() {
       this.editTitle = !this.editTitle;
     },
-    test() {
-      
-    },
-  },
+    test() {}
+  }
 };
 </script>
 

@@ -23,8 +23,7 @@ import java.util.Map;
 
 @Service
 public class UserServiceServie {
-    @Value("172.21.212.103:8088")
-//    @Value("94.191.49.160:8088")
+    @Value("172.21.213.245:8088")
     private String userServiceIp;
     @Value("zzy")
     private String userServerCilent;

@@ -16,15 +16,15 @@ export default {
   watch: {
     temporalInfo: {
       handler(val) {
-        this.value = JSON.parse(JSON.stringify(val))
+        this.value = JSON.parse(JSON.stringify(val));
       },
       deep: true
     }
   },
   props: {
     temporalInfo: {
-      type: Array,
-    },
+      type: Array
+    }
   },
   methods: {
     // close() {
@@ -34,8 +34,8 @@ export default {
     change(val) {
       console.log(val);
       this.$emit('date', val);
-    },
-  },
+    }
+  }
 };
 </script>
 

@@ -1,7 +1,6 @@
 <!--  -->
 <template>
   <div class="select">
-
     <el-dropdown @command="selectTask">
       <span class="el-dropdown-link">
         Select an Exist Task
@@ -25,7 +24,7 @@ export default {
   data() {
     return {
       projectId: this.$route.params.id,
-      taskList: [],
+      taskList: []
     };
   },
 
@@ -44,12 +43,12 @@ export default {
 
     selectTask(task) {
       this.$emit('selectTask', task);
-    },
+    }
   },
 
   async mounted() {
     await this.init();
-  },
+  }
 };
 </script>
 <style lang="scss" scoped>

@@ -1,4 +1,3 @@
-
 <template>
   <div>
     <el-button class="button" type="text" @click="click">Edit</el-button>
@@ -24,11 +23,11 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      input: {},
+      input: {}
     };
   },
   props: ['user', 'form'],
-  
+
   methods: {
     reset() {
       let flag = 0;
@@ -48,34 +47,34 @@ export default {
         await updateUserByJwtUserId(this.input);
         this.$message({
           type: 'success',
-          message: 'User information modification successfully!',
+          message: 'User information modification successfully!'
         });
         for (let temp in this.input) {
-          localStorage[temp] = this.input[temp]
+          localStorage[temp] = this.input[temp];
         }
-        this.dialogVisible = false
-        location.reload()
+        this.dialogVisible = false;
+        location.reload();
       } catch {
         this.$message({
           type: 'error',
-          message: 'User information modification error!',
+          message: 'User information modification error!'
         });
       }
     },
 
     click() {
       this.dialogVisible = true;
-      this.input = this.form
+      this.input = this.form;
       for (let key in this.input) {
-        if(this.user[key] != undefined) {
-          this.input[key] = this.user[key]
+        if (this.user[key] != undefined) {
+          this.input[key] = this.user[key];
         }
       }
-      delete this.input.email
-      console.log(this.input)
-      console.log(this.form)
-    },
-  },
+      delete this.input.email;
+      console.log(this.input);
+      console.log(this.form);
+    }
+  }
 };
 </script>
 

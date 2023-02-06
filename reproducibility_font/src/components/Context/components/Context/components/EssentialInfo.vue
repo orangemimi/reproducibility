@@ -74,7 +74,7 @@
 
 <script>
 import { getContextByProject, updateContext, updatePerformanceById } from '@/api/request';
-import { dateFormat } from '@/utils/utils'
+import { dateFormat } from '@/utils/utils';
 // import temporalInfo from './TemporalInfo.vue';
 // import spatialInfo from './SpatialInfo.vue';
 export default {
@@ -88,7 +88,7 @@ export default {
       title: '',
       editTitle: false,
       form: {
-        purpose: '',
+        purpose: ''
       },
 
       temporalInfoFlag: false,
@@ -129,8 +129,8 @@ export default {
         alignright: true, // 右对齐
         /* 2.2.1 */
         subfield: true, // 单双栏模式
-        preview: true, // 预览
-      },
+        preview: true // 预览
+      }
     };
   },
 
@@ -173,12 +173,11 @@ export default {
 
     async getContextByProject() {
       let data = await getContextByProject(this.projectId);
-      console.log(data)
+      console.log(data);
       this.title = data.essentialInformation.name;
       this.form.purpose = data.essentialInformation.purpose;
       this.dynamicTags = data.essentialInformation.keyWords;
       this.value = data.essentialInformation.abstractText;
-      
     },
 
     async updateContext() {
@@ -190,36 +189,35 @@ export default {
             purpose: this.form.purpose,
             keyWords: this.dynamicTags,
             abstractText: this.$refs.md.d_value,
-            abstractRender: this.$refs.md.d_render,
+            abstractRender: this.$refs.md.d_render
           },
           spatialInfos: [],
-          temporalInfo: {
-          },
-        },
+          temporalInfo: {}
+        }
       };
       if (this.spatialInfo.length > 0 && this.spatialInfoFlag != false) {
-        this.spatialInfo.forEach((item) => {
+        this.spatialInfo.forEach(item => {
           if (item.type == 'polygon') {
             jsonData.context.spatialInfos.push({
               name: item.name,
               type: item.type,
-              points: item.points,
+              points: item.points
             });
           } else {
             jsonData.context.spatialInfos.push({
               name: item.name,
               type: item.type,
-              value: item.value,
+              value: item.value
             });
           }
         });
       }
-      if(this.temporalInfo.length > 0 && this.temporalInfoFlag != false) {
-        jsonData.context.temporalInfo.start = dateFormat(this.temporalInfo[0])
-        jsonData.context.temporalInfo.end = dateFormat(this.temporalInfo[1])
+      if (this.temporalInfo.length > 0 && this.temporalInfoFlag != false) {
+        jsonData.context.temporalInfo.start = dateFormat(this.temporalInfo[0]);
+        jsonData.context.temporalInfo.end = dateFormat(this.temporalInfo[1]);
       }
       await updateContext(jsonData);
-      await updatePerformanceById('context', this.projectId, {content: 'update context'})
+      await updatePerformanceById('context', this.projectId, { content: 'update context' });
     },
 
     handleCommand(val) {
@@ -240,7 +238,7 @@ export default {
     },
     getTemporalInfo(val) {
       this.temporalInfo = val;
-      console.log(dateFormat(val[0]))
+      console.log(dateFormat(val[0]));
       console.log(val[0].getDate());
     },
     getSpatialInfo(val) {
@@ -250,11 +248,11 @@ export default {
 
     init() {
       this.getContextByProject();
-    },
+    }
   },
   mounted() {
     this.init();
-  },
+  }
 };
 </script>
 

@@ -58,10 +58,10 @@ export default {
 
   computed: {
     ...mapState({
-      userId: (state) => state.user.userId,
-      role: (state) => state.permission.role,
-      token: (state) => state.user.token,
-    }),
+      userId: state => state.user.userId,
+      role: state => state.permission.role,
+      token: state => state.user.token
+    })
   },
 
   data() {
@@ -70,7 +70,7 @@ export default {
       userProjectsInfo: {},
       myProjects: [],
       total: 0,
-      dialogNewProject: false,
+      dialogNewProject: false
     };
   },
 
@@ -94,12 +94,12 @@ export default {
 
     dialogShow(val) {
       this.dialogNewProject = val;
-    },
+    }
   },
 
   mounted() {
     this.init();
-  },
+  }
 };
 </script>
 <style lang="scss" scoped>

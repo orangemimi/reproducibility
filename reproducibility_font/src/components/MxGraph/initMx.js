@@ -167,7 +167,6 @@ export class Graph extends mxGraph {
 
     mxCellRenderer.registerShape('parallelogram', this.ParallelogramShape);
   }
-  
 }
 
 let graph = {};

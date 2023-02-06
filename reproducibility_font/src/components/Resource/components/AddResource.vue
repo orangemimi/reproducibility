@@ -78,7 +78,14 @@
 
 <script>
 import fileSelect from './FileSelect.vue';
-import { saveDataItemOfUploaded, saveDataItem, saveDataItemOfNoUpload, updateDataItemById, updateDataItemOfUploaded, updateDataItemOfNoUpload } from '@/api/request';
+import {
+  saveDataItemOfUploaded,
+  saveDataItem,
+  saveDataItemOfNoUpload,
+  updateDataItemById,
+  updateDataItemOfUploaded,
+  updateDataItemOfNoUpload
+} from '@/api/request';
 export default {
   data() {
     return {
@@ -91,22 +98,22 @@ export default {
         radio: '',
         inputUser: '',
         inputLocal: '',
-        shareId: '',
+        shareId: ''
       },
       userFile: false,
       resource: '',
-      localFile: '',
+      localFile: ''
     };
   },
 
   props: {
     parameter: {
-      type: Object,
-    },
+      type: Object
+    }
   },
 
   components: {
-    fileSelect,
+    fileSelect
   },
   methods: {
     async onSubmit() {
@@ -169,8 +176,8 @@ export default {
           await this.updateDataItemById('share_file');
         }
       }
-      this.form.id = this.parameter.id
-      this.$emit('update', this.form)
+      this.form.id = this.parameter.id;
+      this.$emit('update', this.form);
     },
 
     async updateDataItemById(type) {
@@ -180,7 +187,7 @@ export default {
           description: this.form.desc,
           format: this.form.type,
           type: this.form.dataType,
-          value: this.form.value,
+          value: this.form.value
         };
         await updateDataItemById(this.parameter.id, form);
       } else if (type == 'uploaded') {
@@ -193,17 +200,17 @@ export default {
             format: this.form.type,
             type: this.form.dataType
           }
-        }
-        await updateDataItemOfUploaded(form)
-      } else if(type == 'noUpload') {
+        };
+        await updateDataItemOfUploaded(form);
+      } else if (type == 'noUpload') {
         let form = new FormData();
-        form.append('name', this.form.name)
-        form.append('format', this.form.type)
-        form.append('description', this.form.desc)
-        form.append('type', this.form.dataType)
-        form.append('dataId', this.parameter.id)
-        form.append('multipartFile', this.localFile)
-        await updateDataItemOfNoUpload(form)
+        form.append('name', this.form.name);
+        form.append('format', this.form.type);
+        form.append('description', this.form.desc);
+        form.append('type', this.form.dataType);
+        form.append('dataId', this.parameter.id);
+        form.append('multipartFile', this.localFile);
+        await updateDataItemOfNoUpload(form);
       }
     },
 
@@ -211,7 +218,7 @@ export default {
       this.$notify({
         title: type,
         message: text,
-        type: type,
+        type: type
       });
     },
 
@@ -224,8 +231,8 @@ export default {
           description: this.form.desc,
           format: this.form.type,
           type: this.form.dataType,
-          projectId: this.$route.params.id,
-        },
+          projectId: this.$route.params.id
+        }
       };
       let data = await saveDataItemOfUploaded(form);
       form.dataItem.id = data;
@@ -247,7 +254,7 @@ export default {
         description: this.form.desc,
         format: this.form.type,
         type: this.form.dataType,
-        id: data,
+        id: data
       };
     },
 
@@ -259,7 +266,7 @@ export default {
         format: this.form.type,
         type: this.form.dataType,
         projectId: this.$route.params.id,
-        value: this.form.value,
+        value: this.form.value
       };
       return await saveDataItem(form);
     },
@@ -271,7 +278,7 @@ export default {
         format: this.form.type,
         type: this.form.dataType,
         projectId: this.$route.params.id,
-        value: this.form.shareId,
+        value: this.form.shareId
       };
       return await saveDataItem(form);
     },
@@ -280,8 +287,8 @@ export default {
       if (val == 'input') {
         this.form.radio = '1';
         this.form.dataType = 'FILE';
-        this.form.value = ''
-        this.form.shareId = ''
+        this.form.value = '';
+        this.form.shareId = '';
       } else if (val == 'parameter') {
         this.form.radio = '';
         this.form.dataType = 'STRING';
@@ -301,7 +308,7 @@ export default {
       this.resource = {
         id: val.row.id,
         parent: val.stack[val.stack.length - 1].id,
-        storey: val.stack.length - 1,
+        storey: val.stack.length - 1
       };
     },
     fileChange() {
@@ -339,13 +346,12 @@ export default {
           this.form.dataType = 'FILE';
         }
       }
-    },
+    }
   },
   mounted() {
     this.init();
-  },
+  }
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

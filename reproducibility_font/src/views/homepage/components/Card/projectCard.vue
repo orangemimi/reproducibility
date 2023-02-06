@@ -29,22 +29,22 @@ import { getProjectById } from '@/api/request';
 export default {
   props: {
     projectId: {
-      type: String,
+      type: String
     },
     type: {
-      type: String,
-    },
+      type: String
+    }
   },
   data() {
     return {
       project: '',
-      tags: [],
+      tags: []
     };
   },
 
   computed: {
     getColor() {
-      return function (tag) {
+      return function(tag) {
         let temp = '';
         for (let i = 0; i < tag.length; i++) {
           temp += tag[i].charCodeAt().toString(16);
@@ -61,7 +61,7 @@ export default {
         }
         return 'background-color: #' + temp;
       };
-    },
+    }
   },
 
   methods: {
@@ -74,11 +74,11 @@ export default {
         this.tags = data.tags;
       }
       // console.log(data);
-    },
+    }
   },
   mounted() {
     this.init();
-  },
+  }
 };
 </script>
 

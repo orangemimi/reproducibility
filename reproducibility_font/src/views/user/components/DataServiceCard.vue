@@ -4,7 +4,7 @@
       <template #header>
         <div class="card-header">
           <div class="title" :title="dataService.name">{{ dataService.name }}</div>
-          
+
           <div>
             <el-button type="primary" icon="el-icon-edit" circle></el-button>
             <el-button type="danger" icon="el-icon-delete" circle></el-button>
@@ -37,9 +37,9 @@
 export default {
   props: {
     dataService: {
-      type: Object,
-    },
-  },
+      type: Object
+    }
+  }
 };
 </script>
 
@@ -60,11 +60,11 @@ export default {
     white-space: nowrap;
     font-size: 20px;
     font-weight: 500;
-    color: #409EFF;
-    
+    color: #409eff;
   }
 
-  .item, label:hover {
+  .item,
+  label:hover {
     cursor: pointer;
   }
   .item {
@@ -85,5 +85,4 @@ export default {
     font-size: 20px;
   }
 }
-
 </style>

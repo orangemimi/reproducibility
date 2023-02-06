@@ -52,10 +52,10 @@ export default {
 
   computed: {
     ...mapState({
-      userId: (state) => state.user.userId,
-      role: (state) => state.permission.role,
-      token: (state) => state.user.token,
-    }),
+      userId: state => state.user.userId,
+      role: state => state.permission.role,
+      token: state => state.user.token
+    })
   },
 
   //state用来跟踪状态
@@ -109,7 +109,7 @@ export default {
           {
             if (this.$router.currentRoute.name != 'UserHome') {
               this.$router.push({
-                name: 'UserHome',
+                name: 'UserHome'
               });
             }
           }
@@ -118,7 +118,7 @@ export default {
           {
             if (this.$router.currentRoute.name != 'UserResource') {
               this.$router.push({
-                name: 'UserResource',
+                name: 'UserResource'
               });
             }
           }
@@ -127,7 +127,7 @@ export default {
           {
             if (this.$router.currentRoute.name != 'UserProject') {
               this.$router.push({
-                name: 'UserProject',
+                name: 'UserProject'
               });
             }
           }
@@ -137,7 +137,7 @@ export default {
             //TOD
             if (this.$router.currentRoute.name != 'UserModel') {
               this.$router.push({
-                name: 'UserModel',
+                name: 'UserModel'
               });
             }
           }
@@ -145,7 +145,7 @@ export default {
         case '5': {
           if (this.$router.currentRoute.name != 'UserDataService') {
             this.$router.push({
-              name: 'UserDataService',
+              name: 'UserDataService'
             });
           }
           break;
@@ -153,7 +153,7 @@ export default {
         case '6': {
           if (this.$router.currentRoute.name != 'UserAccount') {
             this.$router.push({
-              name: 'UserAccount',
+              name: 'UserAccount'
             });
           }
           break;
@@ -161,17 +161,17 @@ export default {
         case '7': {
           if (this.$router.currentRoute.name != 'UserMessage') {
             this.$router.push({
-              name: 'UserMessage',
+              name: 'UserMessage'
             });
           }
         }
       }
-    },
+    }
   },
 
   mounted() {
     this.init();
-  },
+  }
 };
 </script>
 <style lang="scss" scoped>

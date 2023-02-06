@@ -2,11 +2,10 @@
 <template>
   <div class="select_data">
     <div class="select-data select-data-line">
-      <div class="data-name" v-if="type =='model'">{{ currentItem.eventName }}</div>
-      <div class="data-name" v-if="type =='dataService'">{{ currentItem.name }}</div>
+      <div class="data-name" v-if="type == 'model'">{{ currentItem.eventName }}</div>
+      <div class="data-name" v-if="type == 'dataService'">{{ currentItem.name }}</div>
       <i class="el-icon-close" @click="remove"></i>
     </div>
-
   </div>
 </template>
 

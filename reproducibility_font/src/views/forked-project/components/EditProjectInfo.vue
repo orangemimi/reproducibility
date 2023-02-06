@@ -24,7 +24,14 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item label="Tag">
-            <el-input v-model="inputTagValue" ref="addTagRef" size="small" @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm" style="margin-bottom:5px">
+            <el-input
+              v-model="inputTagValue"
+              ref="addTagRef"
+              size="small"
+              @keyup.enter.native="handleInputConfirm"
+              @blur="handleInputConfirm"
+              style="margin-bottom:5px"
+            >
               <template slot="append">
                 + New Tag
               </template>

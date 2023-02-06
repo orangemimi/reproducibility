@@ -24,7 +24,14 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item label="Tag">
-            <el-input v-model="inputTagValue" ref="addTagRef" size="small" @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm" style="margin-bottom:5px">
+            <el-input
+              v-model="inputTagValue"
+              ref="addTagRef"
+              size="small"
+              @keyup.enter.native="handleInputConfirm"
+              @blur="handleInputConfirm"
+              style="margin-bottom:5px"
+            >
               <template slot="append">
                 + New Tag
               </template>
@@ -63,7 +70,7 @@ export default {
         tags: [],
         picture: '',
         userInfo: {},
-        members:[]
+        members: []
       },
       inputTagValue: ''
     };
@@ -88,7 +95,7 @@ export default {
       await savePerformance(completionJson);
 
       this.userInfo.createdProjects.push(data.id);
-      this.$router.push({name: 'Projects'})
+      this.$router.push({ name: 'Projects' });
     },
 
     //为了获得创建的项目信息
@@ -103,9 +110,9 @@ export default {
     },
 
     handleInputConfirm() {
-      if(this.inputTagValue != '') {
-        this.form.tags.push(this.inputTagValue)
-        this.inputTagValue = ''
+      if (this.inputTagValue != '') {
+        this.form.tags.push(this.inputTagValue);
+        this.inputTagValue = '';
       }
     },
     handleClose(index) {

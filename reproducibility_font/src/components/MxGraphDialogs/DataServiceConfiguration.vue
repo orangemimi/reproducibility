@@ -2,7 +2,6 @@
   <div class="main">
     <div class="info">
       <div>Information:</div>
-      
     </div>
     <div class="event">
       <div>Input:</div>
@@ -62,8 +61,8 @@ import { hasProperty } from '@/utils/utils';
 export default {
   props: {
     cell: {
-      type: Object,
-    },
+      type: Object
+    }
   },
   components: { selectCard },
   // watch: {
@@ -90,38 +89,38 @@ export default {
       stateListOutput: [],
       stateListParameter: [],
       activeName: 'input',
-      selectItemListToGraph: [],
+      selectItemListToGraph: []
     };
   },
 
   methods: {
     async init() {
       // await this.getServiceInfo();
-      await this.getDataServiceInfoByPortal()
+      await this.getDataServiceInfoByPortal();
     },
 
     async getDataServiceInfoByPortal() {
-      let data = await getDataServiceInfoByPortal(this.cell.nodeAttribute.oid, this.cell.nodeAttribute.dataServiceId)
-      console.log(data)
-      this.stateListInput = data.input
-      this.stateListParameter = data.parameter
-      this.stateListOutput = data.output
+      let data = await getDataServiceInfoByPortal(this.cell.nodeAttribute.oid, this.cell.nodeAttribute.dataServiceId);
+      console.log(data);
+      this.stateListInput = data.input;
+      this.stateListParameter = data.parameter;
+      this.stateListOutput = data.output;
       this.stateListInput.forEach(item => {
-        item.nodeType = 'input'
-      })
+        item.nodeType = 'input';
+      });
       this.stateListParameter.forEach(item => {
-        item.nodeType = "parameter"
-      })
+        item.nodeType = 'parameter';
+      });
       this.stateListOutput.forEach(item => {
-        item.nodeType = "output"
-      })
+        item.nodeType = 'output';
+      });
     },
 
     async getServiceInfo() {
       let form = {
         // dataServiceId:this.cell.nodeAttribute.dataServiceId,
         token: this.cell.nodeAttribute.token,
-        name: this.cell.name,
+        name: this.cell.name
         // type: this.cell.nodeAttribute.type
       };
       let data = await getDataServiceInfo1(form); //获得模型所有信息
@@ -132,7 +131,7 @@ export default {
       let stateListOutput = json[0].list.metaDetailJSON.Output;
       let stateListParameter = json[0].list.metaDetailJSON.Parameter;
 
-      this.stateListInput = stateListInput.map((element) => {
+      this.stateListInput = stateListInput.map(element => {
         element.nodeType = 'input';
         element.dataServiceId = this.cell.nodeAttribute.dataServiceId;
         element.token = this.cell.nodeAttribute.token;
@@ -140,7 +139,7 @@ export default {
         element.stateName = this.cell.name;
         return element;
       });
-      this.stateListOutput = stateListOutput.map((element) => {
+      this.stateListOutput = stateListOutput.map(element => {
         element.nodeType = 'output';
         element.dataServiceId = this.cell.nodeAttribute.dataServiceId;
         element.token = this.cell.nodeAttribute.token;
@@ -148,7 +147,7 @@ export default {
         element.stateName = this.cell.name;
         return element;
       });
-      this.stateListParameter = stateListParameter.map((element) => {
+      this.stateListParameter = stateListParameter.map(element => {
         element.nodeType = 'parameter';
         element.dataServiceId = this.cell.nodeAttribute.dataServiceId;
         element.token = this.cell.nodeAttribute.token;
@@ -161,30 +160,30 @@ export default {
     addSelectItem(item) {
       console.log('selecty', item);
       if (hasProperty(item, 'isSelect') && item.isSelect) {
-        this.selectItemListToGraph.splice(this.selectItemListToGraph.findIndex((arrItem) => arrItem.name == item.name));
-        item.isSelect = false
+        this.selectItemListToGraph.splice(this.selectItemListToGraph.findIndex(arrItem => arrItem.name == item.name));
+        item.isSelect = false;
       } else {
         item.isSelect = true;
         this.selectItemListToGraph.push(item);
       }
     },
     removeItem(item) {
-      let index = this.selectItemListToGraph.findIndex((arrItem) => arrItem.eventId == item.eventId);
+      let index = this.selectItemListToGraph.findIndex(arrItem => arrItem.eventId == item.eventId);
       console.log('index', index);
       this.selectItemListToGraph.splice(index, 1);
       item.isSelect = false;
     },
     submit() {
       this.$emit('selectItemListToGraph', this.selectItemListToGraph);
-    },
+    }
   },
   created() {
     // if (this.cell != undefined) {
     //   this.init();
     // }
-    console.log(1)
+    console.log(1);
     this.init();
-  },
+  }
 };
 </script>
 
